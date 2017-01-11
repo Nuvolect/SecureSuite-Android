@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_shared_search"
+        android:title="@string/search_title"
+        android:icon="@drawable/ic_menu_search"
+        android:showAsAction="collapseActionView|ifRoom"
+        >
+    </item>
+    <item
+        android:id="@+id/menu_add_group"
+        android:icon="@drawable/ic_menu_allfriends"
+        android:showAsAction="ifRoom"
+        android:title="New group"
+        android:titleCondensed="New group">
+    </item>
+    <item
+        android:id="@+id/submenu_account"
+        android:title="Account&#58;">
+        <menu>
+            <item
+                android:id="@+id/menu_add_account"
+                android:title="Add account"
+                android:titleCondensed="Add account">
+            </item>
+            <item
+                android:id="@+id/menu_delete_account"
+                android:title="Delete account"
+                android:titleCondensed="Delete account">
+            </item>
+            <item
+                android:id="@+id/menu_accounts"
+                android:title="Android accounts"
+                android:titleCondensed="Android accounts">
+            </item>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/submenu_import_export"
+        android:title="Import/export&#58;">
+        <menu>
+            <item
+                android:id="@+id/menu_import_single_contact"
+                android:title="Import single contact"
+                android:titleCondensed="Import single contact">
+            </item>
+            <item
+                android:id="@+id/menu_import_vcard"
+                android:title="Import vCard"
+                android:titleCondensed="Import vCard">
+            </item>
+            <item
+                android:id="@+id/menu_export_account"
+                android:title="Export account"
+                android:titleCondensed="Export account">
+            </item>
+            <item
+                android:id="@+id/menu_export_all"
+                android:title="Export all"
+                android:titleCondensed="Export all">
+            </item>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/submenu_backup_restore"
+        android:title="Backup/restore&#58;">
+        <menu>
+            <item
+                android:id="@+id/menu_backup_to_storage"
+                android:title="Backup to storage"
+                android:titleCondensed="Backup to storage">
+            </item>
+            <item
+                android:id="@+id/menu_backup_to_email"
+                android:title="Backup to email"
+                android:titleCondensed="Backup to email">
+            </item>
+            <item
+                android:id="@+id/menu_backup_to_lan"
+                android:title="Backup to LAN"
+                android:titleCondensed="Backup to LAN">
+            </item>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menu_empty_trash"
+        android:title="Empty trash"
+        android:titleCondensed="Empty Trash">
+    </item>
+    <item
+        android:id="@+id/menu_settings"
+        android:title="Settings"
+        android:titleCondensed="Settings">
+    </item>
+    <item
+        android:id="@+id/menu_help"
+        android:title="Help"
+        android:titleCondensed="Help">
+    </item>
+    <item
+        android:id="@+id/menu_developer"
+        android:visible="false"
+        android:title="Developer"
+        android:titleCondensed="Developer">
+    </item>
+
+</menu>

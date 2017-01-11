@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppThemeParentLight_future" parent="android:Theme.Holo.Light" >
+
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColor"       >@color/black</item>
+        <item name="h1_color"                >@color/black</item>
+        <item name="h2_color"                >@color/greydark</item>
+        <item name="h3_color"                >@color/bluedark</item>
+        <item name="body_color"              >@color/greydark</item>
+        <item name="rule_color"              >@color/blue</item>
+        <item name="android:shadowColor"     >@color/greydarktrans</item>
+        <item name="android:shadowDx"        >0</item>
+        <item name="android:shadowDy"        >0</item>
+        <item name="android:shadowRadius"    >0</item>
+        <item name="android:textColorHint"   >@color/black</item>
+        <item name="android:textColorLink"   >@color/blue</item>
+<!-- <item name="android:background"      >@color/green</item>  --> <!-- color behind everything -->
+        <item name="action_bar_background"   >@color/greytrans</item>
+ 	</style>
+    <style name="AppThemeParentDark_future" parent="android:Theme.Holo" >
+
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColor"       >@color/white</item>
+        <item name="h1_color"                >@color/white</item>
+        <item name="h2_color"                >@color/grey</item>
+        <item name="h3_color"                >@color/greydark</item>
+        <item name="body_color"              >@color/greylight</item>
+        <item name="rule_color"              >@color/blue</item>
+        <item name="android:shadowColor"     >#CCFFFFFF</item>
+        <item name="android:shadowDx"        >0</item>
+        <item name="android:shadowDy"        >0</item>
+        <item name="android:shadowRadius"    >0</item>
+        <item name="android:textColorHint"   >@color/greylight</item>
+        <item name="android:textColorLink"   >@color/blue</item>
+        <item name="action_bar_background"   >@color/blacktrans</item>
+ 	</style>
+
+    <style name="AppTheme1_future" parent="AppThemeParentLight" >
+
+        <item name="android:windowBackground">@drawable/app_theme_1</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColor"       >@color/black</item>
+        <item name="android:textColorHint"   >@color/bluedark</item>
+        <item name="android:textColorLink"   >@color/blue</item>
+        <item name="android:shadowRadius"    >1.0</item>
+        <item name="rule_color"              >@color/black</item>
+        <item name="action_bar_background"   >@color/white</item>
+ 	</style>
+
+    <style name="AppTheme2_future" parent="AppThemeParentLight" >
+
+        <item name="android:windowBackground">@drawable/app_theme_2</item>
+        <item name="android:textColorPrimary">@color/bluedark</item>
+        <item name="android:textColor"       >@color/bluedark</item>
+        <item name="android:textColorHint"   >@color/blue</item>
+        <item name="android:textColorLink"   >@color/teal</item>
+        <item name="android:shadowRadius"    >0.0</item>
+        <item name="rule_color"              >@color/black</item>
+        <item name="action_bar_background"   >@color/tanlighttrans</item>
+ 	</style>
+    <style name="AppTheme3_future" parent="AppThemeParentLight" >
+
+        <item name="action_bar_background"   >@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_3</item>
+ 	</style>
+    <style name="AppTheme4_future" parent="AppThemeParentLight" >
+
+        <item name="action_bar_background"   >@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_4</item>
+ 	</style>
+    <style name="AppTheme5_future" parent="AppThemeParentLight" >
+
+        <item name="action_bar_background"   >@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_5</item>
+ 	</style>
+    <style name="AppTheme6_future" parent="AppThemeParentLight" >
+
+        <item name="action_bar_background"   >@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_6</item>
+ 	</style>
+    <style name="AppTheme7_future" parent="AppThemeParentLight" >
+
+        <item name="action_bar_background"   >@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_7</item>
+ 	</style>
+    <style name="AppTheme8_future" parent="AppThemeParentLight" >
+
+        <item name="action_bar_background"   >@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_8</item>
+ 	</style>
+    <style name="AppTheme9_future" parent="AppThemeParentLight" >
+
+        <item name="action_bar_background"   >@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_9</item>
+ 	</style>
+    <style name="AppTheme10_future" parent="AppThemeParentDark" >
+
+        <item name="h2_color"                >@color/greenlight</item>
+        <item name="h3_color"                >@color/green</item>
+        <item name="body_color"              >@color/white</item>
+        <item name="rule_color"              >@color/greenlighttrans</item>
+        <item name="android:shadowColor"     >@color/black</item>
+        <item name="android:shadowDx"        >1</item>
+        <item name="android:shadowDy"        >1</item>
+        <item name="android:shadowRadius"    >1</item>
+        <item name="android:windowBackground">@drawable/app_theme_10</item>
+        <item name="action_bar_background"   >@color/blacktrans</item>
+ 	</style>
+
+</resources>

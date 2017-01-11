@@ -1,0 +1,50 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/DetailFragmentPortrait"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="2dp"
+    android:paddingTop="2dp"
+    android:paddingLeft="3dp"
+    android:paddingRight="3dp"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/group_name_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dip"
+        android:paddingLeft="10dip"
+        android:singleLine="true"
+        android:text="@+id/dummy_content"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/group_name_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dip"
+        android:paddingLeft="10dip"
+        android:paddingBottom="4dip"
+        android:singleLine="true"
+        android:text="@+id/dummy_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#888888" />
+
+    <GridView
+        android:id="@+id/groupDetailGridView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="0dp"
+        android:gravity="center"
+        android:horizontalSpacing="1dp"
+        android:verticalSpacing="1dp"
+        android:columnWidth="120dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+         >
+    </GridView>
+
+</LinearLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string-array name="action_bar_spinner_menu">
+    	<item>Contacts</item>
+    	<item>Groups</item>
+		<item>Passwords</item>
+		<item>Server</item>
+	</string-array>
+
+</resources>

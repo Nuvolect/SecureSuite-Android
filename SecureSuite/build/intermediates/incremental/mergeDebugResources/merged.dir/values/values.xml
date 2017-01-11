@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="action_bar_spinner_menu">
+    	<item>Contacts</item>
+    	<item>Groups</item>
+		<item>Passwords</item>
+		<item>Server</item>
+	</string-array>
+    <string-array name="app_themes">
+        <item>Black text on white</item>
+        <item>Blue text on wheat</item>
+        <item>Earth tone on hex</item>
+        <item>Matrix</item>
+    </string-array>
+    <string-array name="app_themes_future">
+        <item>Black text on white</item>
+        <item>Blue text on wheat</item>
+        <item>Simple hex</item>
+        <item>Concentric hex</item>
+        <item>Stainless 1</item>
+        <item>Rivets 1</item>
+        <item>Rivets 2</item>
+        <item>Mesh grid 1</item>
+        <item>Mesh grid 2</item>
+        <item>Matrix</item>
+    </string-array>
+    <string-array name="password_length_array">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+        <item>34</item>
+        <item>35</item>
+        <item>36</item>
+        <item>37</item>
+        <item>38</item>
+        <item>39</item>
+        <item>40</item>
+    </string-array>
+    <string-array name="password_length_array_future">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+        <item>34</item>
+        <item>35</item>
+        <item>36</item>
+        <item>37</item>
+        <item>38</item>
+        <item>39</item>
+        <item>40</item>
+    </string-array>
+    <string-array name="theme_settings">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>10</item>
+    </string-array>
+    <string-array name="theme_settings_future">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+    <attr format="reference|color" name="action_bar_background"/>
+    <attr format="reference|color" name="body_color"/>
+    <attr format="reference|color" name="h1_color"/>
+    <attr format="reference|color" name="h2_color"/>
+    <attr format="reference|color" name="h3_color"/>
+    <attr format="reference|color" name="rule_color"/>
+    <color name="action_bar_background">#e6e6e6</color>
+    <color name="action_bar_background_highlight">#cecece</color>
+    <color name="action_bar_button_text_color">#FFFFFF</color>
+    <color name="background_primary">#f5f5f5</color>
+    <color name="background_social_updates">#ffeeeeee</color>
+    <color name="black">#FF000000</color>
+    <color name="blacktrans">#88000000</color>
+    <color name="blue">#FF0000ff</color>
+    <color name="bluedark">#FF00008b</color>
+    <color name="bluelight">#FFadd8e6</color>
+    <color name="chocolate">#FF4E2E28</color>
+    <color name="detail_tab_carousel_tab_label_color">#EEEEEE</color>
+    <color name="detail_update_tab_text_color">#777777</color>
+    <color name="gray">#eaeaea</color>
+    <color name="green">#FF00b300</color>
+    <color name="greendark">#FF324C42</color>
+    <color name="greendarktrans">#cc013220</color>
+    <color name="greenlight">#FF90ee90</color>
+    <color name="greenlighttrans">#cc90ee90</color>
+    <color name="greentrans">#cc00b300</color>
+    <color name="grey">#FF808080</color>
+    <color name="greydark">#FF525252</color>
+    <color name="greydarktrans">#cc525252</color>
+    <color name="greylight">#FFd8d8d8</color>
+    <color name="greylighttrans">#ccbebebe</color>
+    <color name="greytrans">#cc808080</color>
+    <color name="lightgrey">#FFbebebe</color>
+    <color name="linen">#FFFAF0E6</color>
+    <color name="navy">#FF000080</color>
+    <color name="offwhite">#FFF5F5F5</color>
+    <color name="orange">#FFffa500</color>
+    <color name="orangedark">#FFb36200</color>
+    <color name="purple">#FF800080</color>
+    <color name="purpledark">#FF4d004d</color>
+    <color name="quickcontact_activity_background">#fff5f5f5</color>
+    <color name="quickcontact_list_background">#ffe2e2e2</color>
+    <color name="quickcontact_list_divider">#ffcdcdcd</color>
+    <color name="quickcontact_name_detail_background">#66000000</color>
+    <color name="quickcontact_tab_indicator">#ffc6c6c6</color>
+    <color name="quickcontact_track_background">#fff5f5f5</color>
+    <color name="red">#FFff0000</color>
+    <color name="reddark">#FF580000</color>
+    <color name="section_header_text_color">#363636</color>
+    <color name="stream_item_stripe_color">#CCCCCC</color>
+    <color name="tan">#ffd2b48c</color>
+    <color name="tandark">#ff918151</color>
+    <color name="tandarktrans">#cc918151</color>
+    <color name="tanlight">#ffe8d8c3</color>
+    <color name="tanlighttrans">#cce8d8c3</color>
+    <color name="tantrans">#ccd2b48c</color>
+    <color name="teal">#ff008080</color>
+    <color name="titlebackgroundcolor">#00abd7</color>
+    <color name="titlecolor">#666666</color>
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="yellow">#FFFCCD00</color>
+    <color name="yellowtrans">#ccFCCD00</color>
+    <declare-styleable name="RoundedImageView"><attr format="dimension" name="riv_corner_radius"/><attr format="dimension" name="riv_border_width"/><attr format="color" name="riv_border_color"/><attr format="boolean" name="riv_mutate_background"/><attr format="boolean" name="riv_oval"/><attr name="android:scaleType"/><attr name="riv_tile_mode">
+      <enum name="clamp" value="0"/>
+      <enum name="repeat" value="1"/>
+      <enum name="mirror" value="2"/>
+    </attr><attr name="riv_tile_mode_x">
+      <enum name="clamp" value="0"/>
+      <enum name="repeat" value="1"/>
+      <enum name="mirror" value="2"/>
+    </attr><attr name="riv_tile_mode_y">
+      <enum name="clamp" value="0"/>
+      <enum name="repeat" value="1"/>
+      <enum name="mirror" value="2"/>
+    </attr></declare-styleable>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="padding_5dp">5dp</dimen>
+    <dimen name="title_text_size">24sp</dimen>
+    <plurals name="error_pin">
+        <item quantity="one">"Incorrect PIN!\n%d try remaining."</item>
+        <item quantity="other">"Incorrect PIN!\n%d tries remaining."</item>
+    </plurals>
+    <string name="action_settings">Settings</string>
+    <string name="add_contact">Add Contact</string>
+    <string name="add_title">Add</string>
+    <string name="app_name">SecureSuite debug</string>
+    <string name="app_signature">com.nuvolect.securesuite-debug</string>
+    <string name="contacts_title">Contacts</string>
+    <string name="default_ip_port">0.0.0.0:8002</string>
+    <string name="default_port">8002</string>
+    <string name="delete_button">Delete</string>
+    <string name="dummy_content">Dummy content</string>
+    <string name="dummy_text">Dummy text</string>
+    <string name="edit_Done">Done</string>
+    <string name="edit_button">Edit</string>
+    <string name="edit_contact_title">Edit Contact</string>
+    <string name="edit_title">Edit</string>
+    <string name="email_address">Email Address</string>
+    <string name="error_nfc">"NFC Error: %s"</string>
+    <string name="error_nfc_authentication_blocked">"PIN blocked after too many attempts."</string>
+    <string name="error_nfc_bad_data">"YubiKey reported invalid data."</string>
+    <string name="error_nfc_chaining_error">"YubiKey expected last command in a chain."</string>
+    <string name="error_nfc_conditions_not_satisfied">"Conditions of use not satisfied."</string>
+    <string name="error_nfc_data_not_found">"Key or object not found."</string>
+    <string name="error_nfc_header">"YubiKey reported invalid %s byte."</string>
+    <string name="error_nfc_security_not_satisfied">"Security status not satisfied."</string>
+    <string name="error_nfc_tag_lost">"YubiKey has been taken off too early. Keep the YubiKey at the back until the operation finishes."</string>
+    <string name="error_nfc_terminated">"YubiKey in termination state."</string>
+    <string name="error_nfc_try_again">"Try again"</string>
+    <string name="error_nfc_unknown">"Unknown Error"</string>
+    <string name="error_nfc_wrong_length">"Entered PIN is too short. PINs are at least 6 digits long."</string>
+    <string name="first_name">First Name</string>
+    <string name="home_address">Address</string>
+    <string name="last_name">Last Name</string>
+    <string name="loading">Loading...</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="save_data">Save</string>
+    <string name="search_hint">Enter search</string>
+    <string name="search_title">Search contacts</string>
+    <string name="title_contact_detail">Contact Detail</string>
+    <string name="title_contact_edit">Contact Edit</string>
+    <string name="title_group_detail">Group Detail</string>
+    <string name="verbose_debug">true</string>
+    <style name="AppBaseTheme" parent="@android:style/Theme.Holo.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    <style name="AppTheme1" parent="AppThemeParentLight">
+
+        <item name="android:windowBackground">@drawable/app_theme_1</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/bluedark</item>
+        <item name="android:textColorLink">@color/blue</item>
+        <item name="android:shadowRadius">1.0</item>
+        <item name="rule_color">@color/black</item>
+        <item name="action_bar_background">@color/offwhite</item>
+ 	</style>
+    <style name="AppTheme10" parent="AppThemeParentDark">
+
+        <item name="h2_color">@color/greenlight</item>
+        <item name="h3_color">@color/green</item>
+        <item name="body_color">@color/white</item>
+        <item name="rule_color">@color/greenlighttrans</item>
+        <item name="android:shadowColor">@color/black</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">1</item>
+        <item name="android:windowBackground">@drawable/app_theme_10</item>
+        <item name="action_bar_background">@color/blacktrans</item>
+ 	</style>
+    <style name="AppTheme10_future" parent="AppThemeParentDark">
+
+        <item name="h2_color">@color/greenlight</item>
+        <item name="h3_color">@color/green</item>
+        <item name="body_color">@color/white</item>
+        <item name="rule_color">@color/greenlighttrans</item>
+        <item name="android:shadowColor">@color/black</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">1</item>
+        <item name="android:windowBackground">@drawable/app_theme_10</item>
+        <item name="action_bar_background">@color/blacktrans</item>
+ 	</style>
+    <style name="AppTheme1_future" parent="AppThemeParentLight">
+
+        <item name="android:windowBackground">@drawable/app_theme_1</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/bluedark</item>
+        <item name="android:textColorLink">@color/blue</item>
+        <item name="android:shadowRadius">1.0</item>
+        <item name="rule_color">@color/black</item>
+        <item name="action_bar_background">@color/white</item>
+ 	</style>
+    <style name="AppTheme2" parent="AppThemeParentLight">
+
+        <item name="android:windowBackground">@drawable/app_theme_2</item>
+        <item name="android:textColorPrimary">@color/bluedark</item>
+        <item name="android:textColor">@color/bluedark</item>
+        <item name="android:textColorHint">@color/blue</item>
+        <item name="android:textColorLink">@color/teal</item>
+        <item name="android:shadowRadius">0.0</item>
+        <item name="rule_color">@color/black</item>
+        <item name="action_bar_background">@color/tanlighttrans</item>
+ 	</style>
+    <style name="AppTheme2_future" parent="AppThemeParentLight">
+
+        <item name="android:windowBackground">@drawable/app_theme_2</item>
+        <item name="android:textColorPrimary">@color/bluedark</item>
+        <item name="android:textColor">@color/bluedark</item>
+        <item name="android:textColorHint">@color/blue</item>
+        <item name="android:textColorLink">@color/teal</item>
+        <item name="android:shadowRadius">0.0</item>
+        <item name="rule_color">@color/black</item>
+        <item name="action_bar_background">@color/tanlighttrans</item>
+ 	</style>
+    <style name="AppTheme3" parent="AppThemeParentLight">
+
+        <item name="android:windowBackground">@drawable/app_theme_3</item>
+
+        <item name="h1_color">@color/greendark</item>
+        <item name="h2_color">@color/black</item>
+        <item name="h3_color">@color/chocolate</item>
+        <item name="body_color">@color/black</item>
+        <item name="android:shadowColor">@color/yellowtrans</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowRadius">0</item>
+
+        <item name="android:textColorPrimary">@color/greendark</item>
+        <item name="android:textColor">@color/greendark</item>
+        <item name="android:textColorHint">@color/blue</item>
+        <item name="android:textColorLink">@color/teal</item>
+        <item name="rule_color">@color/yellow</item>
+        <item name="action_bar_background">@color/greylighttrans</item>
+ 	</style>
+    <style name="AppTheme3_future" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_3</item>
+ 	</style>
+    <style name="AppTheme4" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_4</item>
+ 	</style>
+    <style name="AppTheme4_future" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_4</item>
+ 	</style>
+    <style name="AppTheme5" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_5</item>
+ 	</style>
+    <style name="AppTheme5_future" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_5</item>
+ 	</style>
+    <style name="AppTheme6" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_6</item>
+ 	</style>
+    <style name="AppTheme6_future" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_6</item>
+ 	</style>
+    <style name="AppTheme7" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_7</item>
+ 	</style>
+    <style name="AppTheme7_future" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_7</item>
+ 	</style>
+    <style name="AppTheme8" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_8</item>
+ 	</style>
+    <style name="AppTheme8_future" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_8</item>
+ 	</style>
+    <style name="AppTheme9" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_9</item>
+ 	</style>
+    <style name="AppTheme9_future" parent="AppThemeParentLight">
+
+        <item name="action_bar_background">@color/tanlighttrans</item>
+        <item name="android:windowBackground">@drawable/app_theme_9</item>
+ 	</style>
+    <style name="AppThemeParentDark" parent="android:Theme.Holo">
+
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="h1_color">@color/white</item>
+        <item name="h2_color">@color/grey</item>
+        <item name="h3_color">@color/greydark</item>
+        <item name="body_color">@color/greylight</item>
+        <item name="rule_color">@color/blue</item>
+        <item name="android:shadowColor">#CCFFFFFF</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowRadius">0</item>
+        <item name="android:textColorHint">@color/greylight</item>
+        <item name="android:textColorLink">@color/blue</item>
+        <item name="action_bar_background">@color/blacktrans</item>
+ 	</style>
+    <style name="AppThemeParentDark_future" parent="android:Theme.Holo">
+
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="h1_color">@color/white</item>
+        <item name="h2_color">@color/grey</item>
+        <item name="h3_color">@color/greydark</item>
+        <item name="body_color">@color/greylight</item>
+        <item name="rule_color">@color/blue</item>
+        <item name="android:shadowColor">#CCFFFFFF</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowRadius">0</item>
+        <item name="android:textColorHint">@color/greylight</item>
+        <item name="android:textColorLink">@color/blue</item>
+        <item name="action_bar_background">@color/blacktrans</item>
+ 	</style>
+    <style name="AppThemeParentLight" parent="android:Theme.Holo.Light">
+
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="h1_color">@color/black</item>
+        <item name="h2_color">@color/greydark</item>
+        <item name="h3_color">@color/bluedark</item>
+        <item name="body_color">@color/greydark</item>
+        <item name="rule_color">@color/blue</item>
+        <item name="android:shadowColor">@color/greydarktrans</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowRadius">0</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textColorLink">@color/blue</item>
+<!-- <item name="android:background"      >@color/green</item>  --> <!-- color behind everything -->
+        <item name="action_bar_background">@color/greytrans</item>
+ 	</style>
+    <style name="AppThemeParentLight_future" parent="android:Theme.Holo.Light">
+
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="h1_color">@color/black</item>
+        <item name="h2_color">@color/greydark</item>
+        <item name="h3_color">@color/bluedark</item>
+        <item name="body_color">@color/greydark</item>
+        <item name="rule_color">@color/blue</item>
+        <item name="android:shadowColor">@color/greydarktrans</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowRadius">0</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textColorLink">@color/blue</item>
+<!-- <item name="android:background"      >@color/green</item>  --> <!-- color behind everything -->
+        <item name="action_bar_background">@color/greytrans</item>
+ 	</style>
+    <style name="ClDarkBold1" parent="@android:style/TextAppearance.Medium">
+  	</style>
+    <style name="ContactsActionBarDropDownStyle" parent="@android:style/Widget.Holo.Light.Spinner">
+        <item name="android:background">@drawable/ab_dropdown_navigation_item_background</item>
+    </style>
+</resources>

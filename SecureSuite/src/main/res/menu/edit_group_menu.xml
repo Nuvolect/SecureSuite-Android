@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:compat="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/menu_edit_save"
+        android:icon="@drawable/ic_menu_save"
+        android:showAsAction="withText|always"
+        android:title="Save"
+        android:titleCondensed="Save"
+        >
+    </item>
+    <item
+        android:id="@+id/menu_edit_discard"
+        android:icon="@drawable/ic_menu_revert"
+        android:showAsAction="ifRoom"
+        android:title="Discard"
+        android:titleCondensed="Discard"
+        >
+    </item>
+    <item
+        android:id="@+id/menu_help"
+        android:title="Help"
+        android:titleCondensed="Help">
+    </item>
+
+</menu>

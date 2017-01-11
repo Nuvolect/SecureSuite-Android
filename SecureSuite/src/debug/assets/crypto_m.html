@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html ng-app="myApp" ng-controller="debugController">
+<head>
+    <title>Crypto M</title>
+
+    <script src="/js/angular.min.js"></script>
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+
+</head>
+
+<body>
+<!-- Bootstrap core JavaScript -->
+<script src="/js/jquery-1.11.2.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+<div class="container">
+
+    <br>
+    <br>
+    <div align="center">
+        <a href="/"><img src="/img/icon_64.png"></a>
+        <h1>Crypto M</h1>
+    </div>
+    <br>
+
+    <div align="left">
+
+
+        <table align="center">
+
+            <tr>
+                <td>
+                    Lockscreen enabled:
+                </td>
+                <td>
+                    {{ lockscreen_enabled }}
+                </td>
+                <td>
+                    {{ lockscreen_test_error }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button ng-click="createKey()">Create key</button>
+                </td>
+                <td>
+                    <input placeholder="Enter alias" type="text" ng-model="create_key_alias" size="20"/>
+                </td>
+                <td>
+                    {{ create_key_error }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button ng-click="deleteKey()">Delete key</button>
+                </td>
+                <td>
+                    <input placeholder="Enter alias" type="text" ng-model="delete_key_alias" size="20"/>
+                </td>
+                <td>
+                    {{ delete_key_error }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Password
+                </td>
+                <td>
+                    <input placeholder="Enter password" type="text" ng-model="password" size="20"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button ng-click="putKey()">Put key</button>
+                </td>
+                <td>
+                    <input placeholder="Enter alias" type="text" ng-model="put_key_alias" size="20"/>
+                </td>
+                <td>
+                    <input placeholder="Enter value" type="text" ng-model="put_key_value" size="20"/>
+                </td>
+                <td>
+                    {{ put_key_error }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button ng-click="getKey()">Get key</button>
+                </td>
+                <td>
+                    <input placeholder="Enter alias" type="text" ng-model="get_key_alias" size="20"/>
+                </td>
+                <td>
+                    {{ get_key_error }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button ng-click="getKeys()">Get keys</button>
+                </td>
+            </tr>
+            <tr ng-repeat="key in keys | orderBy: 'alias'" bgcolor="#deeff5">
+               <td>
+                   {{ key.alias }}
+               </td>
+            </tr>
+            <tr>
+                <td>
+                    JQuery version
+                </td>
+                <td>
+                    {{jquery_version}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    AngularJS version
+                </td>
+                <td>
+                    {{angular_version}}
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+
+</div>
+
+<br>
+<br>
+<br>
+
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center">
+    <p>
+        &copy;
+        <script>
+			var d = new Date();
+			document.write(d.getFullYear());
+		</script>
+        Nuvolect LLC -
+        <a href="https://nuvolect.com/securesuite_terms/" target="_blank">Terms</a>
+        -
+        <a href="https://nuvolect.com/privacy/" target="_blank">Privacy</a>
+        -
+        <a href="https://nuvolect.com/securesuite_help/" target="_blank">Help</a>
+    </p>
+</div>
+
+<script>
+
+var app = angular.module('myApp', []);
+app.controller('debugController', function($scope, $http, $parse) {
+
+  $http.get("/connector/?cmd=debug&test_id=test_lockscreen")
+    .then(function (response) {
+
+     $scope.lockscreen_enabled = response.data.result.lockscreen_enabled;
+     $scope.lockscreen_test_error = response.data.result.error;
+  });
+
+  $scope.createKey = function(){
+
+     $http.get("/connector/?cmd=debug&test_id=create_key&key_alias="+$scope.create_key_alias)
+       .then(function (response) {
+
+        $scope.create_key_error = response.data.result.error;
+        if( response.data.result.error.length == 0)
+            $scope.create_key_error = "Success";
+     });
+   };
+
+  $scope.deleteKey = function(){
+
+     $http.get("/connector/?cmd=debug&test_id=delete_key&key_alias="+$scope.delete_key_alias)
+       .then(function (response) {
+
+        $scope.delete_key_error = response.data.result.error;
+        if( response.data.result.error.length == 0)
+            $scope.delete_key_error = "Success";
+     });
+   };
+
+  $scope.password = "pass1word";
+
+  $scope.putKey = function(){
+
+     $http.get("/connector/?cmd=debug&test_id=put_key&key_alias="+$scope.put_key_alias
+         +"&value="+$scope.put_key_value+"&password="+$scope.password )
+       .then(function (response) {
+
+        $scope.put_key_error = response.data.result.error;
+        if( response.data.result.error.length == 0)
+            $scope.put_key_error = "Success";
+     });
+   };
+
+  $scope.getKey = function(){
+
+     $http.get("/connector/?cmd=debug&test_id=get_key&key_alias="+$scope.get_key_alias)
+       .then(function (response) {
+
+        $scope.get_key_value = response.data.result.key_value;
+
+        $scope.get_key_error = response.data.result.error;
+        if( response.data.result.error.length == 0)
+            $scope.get_key_error = "Success";
+     });
+   };
+
+  $scope.getKeys = function(){
+
+     $http.get("/connector/?cmd=debug&test_id=get_keys")
+       .then(function (response) {
+
+        $scope.keys = response.data.keys
+     });
+   };
+
+   $scope.jquery_version = jQuery.fn.jquery;
+   $scope.angular_version = angular.version.full;
+
+});
+
+</script>
+</body>
+</html>

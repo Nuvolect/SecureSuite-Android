@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lockScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/stainless"
+    android:tileMode="repeat"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/lockBanner"
+            android:layout_width="240dp"
+            android:layout_height="110dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/lock_banner"
+            android:padding="15dp"
+            android:text="System\nArmed"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/green"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/passwordEt"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:layout_gravity="center_horizontal"
+            android:hint="password"
+            android:inputType="textPassword"
+            android:onClick="onClickPassword"
+            />
+
+        <TextView
+            android:id="@+id/inputModeToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/black"
+            android:text="Switch to numeric keypad"
+            android:padding="15dp"
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:onClick="onClickModeToggle"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="15dp"
+            android:src="@drawable/yubikey_neo_on_phone"
+            />
+
+    </LinearLayout>
+
+</ScrollView>

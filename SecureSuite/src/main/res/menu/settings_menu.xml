@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="Refresh"
+        android:titleCondensed="RefreshSearch"
+        android:icon="@drawable/ic_menu_refresh"
+        android:showAsAction="collapseActionView|ifRoom" >
+    </item>
+    <item
+        android:id="@+id/menu_password_generator"
+        android:title="Password generator"
+        android:titleCondensed="Password generator">
+    </item>
+    <item
+        android:id="@+id/menu_pairing_mode"
+        android:title="Pairing mode"
+        android:titleCondensed="Pairing mode">
+    </item>
+    <item
+        android:id="@+id/menu_whats_new"
+        android:title="What\'s new"
+        android:titleCondensed="What\'s new">
+    </item>
+    <item
+        android:id="@+id/menu_help"
+        android:title="Help docs"
+        android:titleCondensed="Help docs">
+    </item>
+    <item
+        android:id="@+id/menu_donate"
+        android:title="Donation"
+        android:titleCondensed="Donation">
+    </item>
+    <item
+        android:id="@+id/menu_developer_feedback"
+        android:title="Developer feedback"
+        android:titleCondensed="Developer feedback">
+    </item>
+</menu>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="chocolate"      >#FF4E2E28</color>
+    <color name="black"          >#FF000000</color>
+    <color name="blacktrans"     >#88000000</color>
+    <color name="blue"           >#FF0000ff</color>
+    <color name="bluedark"       >#FF00008b</color>
+    <color name="bluelight"      >#FFadd8e6</color>
+    <color name="green"          >#FF00b300</color>
+    <color name="greentrans"     >#cc00b300</color>
+    <color name="greendark"      >#FF324C42</color>
+    <color name="greendarktrans" >#cc013220</color>
+    <color name="greenlight"     >#FF90ee90</color>
+    <color name="greenlighttrans">#cc90ee90</color>
+    <color name="grey"           >#FF808080</color>
+    <color name="greydark"       >#FF525252</color>
+    <color name="greydarktrans"  >#cc525252</color>
+    <color name="greylight"      >#FFd8d8d8</color>
+    <color name="greylighttrans" >#ccbebebe</color>
+    <color name="greytrans"      >#cc808080</color>
+    <color name="linen"          >#FFFAF0E6</color>
+    <color name="lightgrey"      >#FFbebebe</color>
+    <color name="offwhite"       >#FFF5F5F5</color>
+    <color name="navy"           >#FF000080</color>
+    <color name="orange"         >#FFffa500</color>
+    <color name="orangedark"     >#FFb36200</color>
+    <color name="purple"         >#FF800080</color>
+    <color name="purpledark"     >#FF4d004d</color>
+    <color name="red"            >#FFff0000</color>
+    <color name="reddark"        >#FF580000</color>
+    <color name="tan"            >#ffd2b48c</color>
+    <color name="tandark"        >#ff918151</color>
+    <color name="tandarktrans"   >#cc918151</color>
+    <color name="tanlight"       >#ffe8d8c3</color>
+    <color name="tanlighttrans"  >#cce8d8c3</color>
+    <color name="tantrans"       >#ccd2b48c</color>
+    <color name="teal"           >#ff008080</color>
+    <color name="white"          >#FFFFFFFF</color>
+    <color name="yellow"         >#FFFCCD00</color>
+    <color name="yellowtrans"    >#ccFCCD00</color>
+    <color name="transparent"    >#00000000</color>
+
+    <color name="quickcontact_list_divider">#ffcdcdcd</color>
+    <color name="quickcontact_list_background">#ffe2e2e2</color>
+    <color name="quickcontact_tab_indicator">#ffc6c6c6</color>
+    <color name="quickcontact_track_background">#fff5f5f5</color>
+    <color name="quickcontact_activity_background">#fff5f5f5</color>
+    <color name="quickcontact_name_detail_background">#66000000</color>
+
+    <!-- Color of the background of the contact detail and editor pages -->
+    <color name="background_primary">#f5f5f5</color>
+
+    <color name="background_social_updates">#ffeeeeee</color>
+
+    <!-- Color used for the letter in the A-Z section header -->
+    <color name="section_header_text_color">#363636</color>
+
+    <!-- Color of the text in the updates tab in the tab carousel on the contact detail page -->
+    <color name="detail_update_tab_text_color">#777777</color>
+
+    <!-- Color of the text of the tab carousel in the contact details  -->
+    <color name="detail_tab_carousel_tab_label_color">#EEEEEE</color>
+
+    <!-- Color of the background of the action bar -->
+    <color name="action_bar_background">#e6e6e6</color>
+
+    <!-- Color of the background of the action bar when highlighted (ie. pressed, focused) -->
+    <color name="action_bar_background_highlight">#cecece</color>
+
+    <!-- Color of the text for buttons in the action bar  -->
+    <color name="action_bar_button_text_color">#FFFFFF</color>
+
+    <!--  Color of the vertical stripe that goes on the left of a block quote inside a stream item -->
+    <color name="stream_item_stripe_color">#CCCCCC</color>
+
+</resources>

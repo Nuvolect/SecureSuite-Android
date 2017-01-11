@@ -1,0 +1,66 @@
+<html>
+
+<head>
+    <title>SecureSuite</title>
+
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/cs_home.css" rel="stylesheet">
+    <link href="/css/login.css" rel="stylesheet">
+</head>
+
+<body>
+<!-- Bootstrap core JavaScript -->
+<script src="/js/jquery-1.11.2.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/cs.js"></script>
+<script src="/js/notify.js"></script>
+<script>${notify_js}</script>
+
+<div class="container">
+    <br>
+
+    <div class="row" align="center">
+
+        <img src="/img/icon_64.png" style="padding:10px;"/>
+        <br>
+        <span style="font-size:18px; color:grey;">Sign in to SecureSuite</span>
+    </div>
+    <div class="card card-container">
+        <img id="profile-img" class="profile-img-card" src="${contact_photo}" />
+        <p id="profile-name" class="profile-name-card"></p>
+        <form class="form-signin" method="post">
+            <span id="reauth-email" class="reauth-email"></span>
+            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+            <button class="btn btn-lg btn-primary btn-block btn-signin"
+                    onclick="validateLogin('inputEmail','inputPassword','keepin')">Sign in</button>
+        </form><!-- /form -->
+        <a href="https://nuvolect.com/securesuite_help" target="_blank" class="forgot-password">
+            Need help?
+        </a>
+    </div><!-- /card-container -->
+
+    <br>
+    <br>
+    <br>
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center">
+        <p>
+            &copy;
+            <script>
+			var d = new Date();
+			document.write(d.getFullYear());
+		</script>
+            Nuvolect LLC -
+            <a href="https://nuvolect.com/securesuite_terms/" target="_blank">Terms</a>
+            -
+            <a href="https://nuvolect.com/privacy/" target="_blank">Privacy</a>
+            -
+            <a href="https://nuvolect.com/securesuite_help/" target="_blank">Help</a>
+        </p>
+    </div>
+
+</div><!-- /container -->
+
+</body>
+</html>

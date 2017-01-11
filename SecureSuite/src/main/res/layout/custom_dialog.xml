@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/showTipsLl"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minWidth="460dp"
+    android:background="@drawable/rounded_box" >
+
+    <TextView
+        android:id="@+id/titleCustomDialogTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Rate this app?"
+        android:textColor="@color/navy"
+        android:paddingLeft="5dp"
+        android:textStyle="bold"
+        android:layout_margin="5dp" />
+
+    <TextView
+        android:id="@+id/messageCustomDialogTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Help us become a 5 star app!"
+        android:textColor="@color/navy"
+        android:paddingLeft="5dp"
+        android:layout_margin="5dp" />
+
+    <CheckBox
+        android:id="@+id/dontAskAgainCb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Don't ask again."
+        android:textColor="@color/navy"
+        android:checked="false"
+        android:layout_margin="5dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/okCustomDialogButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:textColor="@color/navy"
+            android:textStyle="bold"
+            android:layout_margin="5dp" />
+
+        <Button
+            android:id="@+id/cancelCustomDialogButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="@color/navy"
+            android:textStyle="bold"
+            android:layout_margin="5dp" />
+
+    </LinearLayout>
+</LinearLayout>

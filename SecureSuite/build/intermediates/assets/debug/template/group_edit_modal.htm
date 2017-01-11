@@ -1,0 +1,36 @@
+<!-- Small modal -->
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#groupModal").modal('show');
+  });
+</script>
+<script src="/js/checkbox-x.js" type="text/javascript"></script>
+
+<div id="groupModal" class="modal fade" >
+    <div class="modal-dialog modal-sm" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h5 class="modal-title">Edit Groups</h5>
+            </div>
+            <div class="modal-body">
+                <ul class="list-unstyled" style="padding:5px 5px">
+                    <!-- $BeginBlock group_select -->
+                    <li onclick="groupCb('list_htm','${cb_group_id}')" >
+                        <input id="cb_${cb_group_id}" ${value_code} data-toggle="checkbox-x" data-size="md">
+                        <label class="cbx-label medium" for="cb_${cb_group_id}">${group_select_title}</label>
+                    </li>
+                    <!-- $EndBlock group_select -->
+                </ul>
+                <br>
+                <a href="javascript:void(0)" onclick="newGroupContacts('list_htm')" >New group</a>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"
+                        onclick="postSamePage('list_htm','link=group_edit_cancel')">Cancel</button>
+                <button type="button" class="btn btn-primary"
+                        onclick="post('list_htm','link=group_edit_apply')">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/editTextTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textCapSentences|textMultiLine"
+        		android:textAppearance="?android:attr/textAppearanceSmall"
+                android:padding="8dp" >
+
+                <requestFocus />
+            </EditText>
+
+            <Button
+                android:id="@+id/sendTextButton"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_menu_send"
+                android:onClick="onClickSendTextButton"
+                android:padding="8dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textLogTv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+        	android:textAppearance="?android:attr/textAppearanceSmall"
+            android:padding="8dp" />
+    </LinearLayout>
+
+</ScrollView>

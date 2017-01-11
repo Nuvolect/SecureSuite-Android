@@ -1,0 +1,179 @@
+package com.nuvolect.securesuite.util;//
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.widget.ImageView;
+import android.widget.TableRow;
+import android.widget.TextView;
+
+import com.nuvolect.securesuite.R;
+
+
+/**
+ * Show user a dialog allowing them to enable and disable their permissions.
+ */
+public class PermissionManager {
+
+    private static PermissionManager singleton = null;
+    private static Activity m_act;
+    private Dialog m_dialog = null;
+    private PermissionMgrCallbacks m_callbacks;
+
+    public static PermissionManager getInstance(Activity act){
+
+        m_act = act;
+
+        if( singleton == null){
+            singleton = new PermissionManager();
+        }
+        return singleton;
+    }
+    private PermissionManager() {
+    }
+
+    public String getSummary(){
+        String summary = "";
+        String separator = "";
+
+        if( PermissionUtil.canAccessReadContacts(m_act)){
+            summary = "Contacts";
+            separator = ", ";
+        }
+        if( PermissionUtil.canAccessCoarseLocation(m_act)){
+            summary += separator + "Location";
+            separator = ", ";
+        }
+        if( PermissionUtil.canAccessPhoneState(m_act)){
+            summary += separator + "Phone";
+            separator = ", ";
+        }
+        if( PermissionUtil.canReadExternalStorage(m_act)){
+            summary += separator + "Storage";
+            separator = ", ";
+        }
+
+        if( summary.isEmpty())
+            summary = "None";
+
+        return summary;
+    }
+
+    public interface PermissionMgrCallbacks {
+        public void dialogOnCancel();
+    }
+
+    public void showDialog(final PermissionMgrCallbacks callbacks){
+
+        m_dialog = new Dialog(m_act);
+        m_callbacks = callbacks;
+
+        LayoutInflater myInflater = (LayoutInflater) m_act.getSystemService(m_act.LAYOUT_INFLATER_SERVICE);
+        View view = myInflater.inflate(R.layout.permissions_manager, null);
+
+        m_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        m_dialog.setContentView(view);
+        m_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        m_dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                if( callbacks != null)
+                    callbacks.dialogOnCancel();
+            }
+        });
+
+        setOnClicks(view); // Configure onClick callbacks for each button
+
+        m_dialog.show();
+    }
+
+    private void setOnClicks(View view){
+
+        TextView tv = (TextView) view.findViewById(R.id.permissionContactsTv);
+        TableRow tr = (TableRow) view.findViewById(R.id.permissionContactsTr);
+        if( PermissionUtil.canAccessReadContacts(m_act)){
+            tv.setText("Enabled");
+            setClickListener( tr );
+        }else{
+            tv.setText("Disabled");
+            tr.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PermissionUtil.requestReadContacts(m_act,0);
+                }
+            });
+        }
+
+        tv = (TextView) view.findViewById(R.id.permissionStorageTv);
+        tr = (TableRow) view.findViewById(R.id.permissionStorageTr);
+        if( PermissionUtil.canReadWriteExternalStorage(m_act)){
+            tv.setText("Enabled");
+            setClickListener( tr );
+        }else{
+            tv.setText("Disabled");
+            tr.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PermissionUtil.requestReadWriteExternalStorage(m_act,0);
+                }
+            });
+        }
+
+        tv = (TextView) view.findViewById(R.id.permissionPhoneTv);
+        tr = (TableRow) view.findViewById(R.id.permissionPhoneTr);
+        if( PermissionUtil.canAccessPhoneState(m_act)){
+            tv.setText("Enabled");
+            setClickListener( tr );
+        }else{
+            tv.setText("Disabled");
+            tr.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PermissionUtil.requestReadPhoneState(m_act,0);
+                }
+            });
+        }
+
+        ((ImageView) view.findViewById(R.id.refreshPermissionDialogIv)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                m_dialog.cancel();
+                showDialog(m_callbacks);
+            }
+        });
+    }
+
+    private void setClickListener(TableRow tr) {
+
+        tr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PermissionUtil.showInstalledAppDetails(m_act, m_act.getString(R.string.app_signature));
+                m_dialog.cancel();
+            }
+        });
+    }
+
+    /**
+     * Called from onRequestPermissionsResult
+     */
+    public void refresh() {
+
+        if( m_dialog == null)
+                return ;
+
+        if( m_dialog.isShowing())
+            m_dialog.cancel();
+        showDialog(m_callbacks);
+    }
+}

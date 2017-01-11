@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout android:id="@+id/progressContainer"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:gravity="center">
+
+        <ProgressBar style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/loading"
+            android:paddingTop="4dip"
+            android:singleLine="true" />
+
+    </LinearLayout>
+
+    <LinearLayout android:id="@+id/listContainer"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="2dp"
+        android:paddingTop="2dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        >
+
+        <Spinner
+            android:id="@+id/accountSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <LinearLayout
+            android:id="@+id/group_all_contacts"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/all_contacts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="All in account"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingTop="6dp"
+                android:paddingBottom="0dp"
+                android:gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/all_contacts_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=" n People"
+                android:textColor="#888888"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:paddingTop="1dp"
+                android:paddingBottom="6dp"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/greylighttrans"/>
+
+        <LinearLayout
+            android:id="@+id/group_star_contacts"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/starred_contacts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Starred"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingTop="6dp"
+                android:paddingBottom="0dp"
+                android:gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/starred_contacts_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=" n People"
+                android:textColor="#888888"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:paddingTop="1dp"
+                android:paddingBottom="6dp"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/greylighttrans"/>
+
+        <ListView android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:drawSelectorOnTop="false" />
+
+        <TextView android:id="@+id/internalEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_edit_contact"
+        android:icon="@drawable/ic_menu_edit"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:title="@string/edit_title">
+    </item>
+    <item
+        android:id="@+id/menu_share_contact"
+        android:icon="@drawable/ic_menu_share"
+        android:showAsAction="ifRoom"
+        android:title="Share"
+        android:titleCondensed="Share">
+    </item>
+    <item
+        android:id="@+id/submenu_contact"
+        android:title="Contact&#58;">
+        <menu>
+            <item
+                android:id="@+id/menu_add_contact"
+                android:title="Add"
+                android:titleCondensed="Add">
+            </item>
+            <item
+                android:id="@+id/menu_delete_contact"
+                android:title="Delete"
+                android:titleCondensed="Delete">
+            </item>
+            <!--<item-->
+                <!--android:id="@+id/menu_merge_contact"-->
+                <!--android:title="Merge"-->
+                <!--android:titleCondensed="Merge">-->
+            <!--</item>-->
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menu_set_profile"
+        android:title="Set as profile"
+        android:titleCondensed="Set as profile">
+    </item>
+    <item
+        android:id="@+id/menu_settings"
+        android:title="Settings"
+        android:titleCondensed="Settings">
+    </item>
+    <item
+        android:id="@+id/menu_help"
+        android:title="Help"
+        android:titleCondensed="Help">
+    </item>
+
+</menu>

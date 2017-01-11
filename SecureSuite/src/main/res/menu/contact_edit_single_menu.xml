@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_edit_save"
+        android:icon="@drawable/ic_menu_save"
+        android:showAsAction="withText|always"
+        android:title="Save"
+        android:titleCondensed="Save" >
+    </item>
+    <item
+        android:id="@+id/menu_edit_discard"
+        android:icon="@drawable/ic_menu_revert"
+        android:showAsAction="ifRoom"
+        android:title="Discard"
+        android:titleCondensed="Discard" >
+    </item>
+    <item
+        android:id="@+id/menu_delete_contact"
+        android:icon="@drawable/ic_menu_delete"
+        android:showAsAction="ifRoom"
+        android:title="Delete contact"
+        android:titleCondensed="Delete contact">
+    </item>
+    <!--<item-->
+        <!--android:id="@+id/menu_merge_contact"-->
+        <!--android:title="Merge contact"-->
+        <!--android:titleCondensed="Merge contact">-->
+    <!--</item>-->
+    <item
+        android:id="@+id/menu_password_fields"
+        android:title="Show password fields"
+        android:titleCondensed="Show password fields">
+    </item>
+    <item
+        android:id="@+id/menu_password_generator"
+        android:title="Password generator"
+        android:titleCondensed="Password generator">
+    </item>
+    <item
+        android:id="@+id/menu_help"
+        android:title="Help"
+        android:titleCondensed="Help">
+    </item>
+
+</menu>

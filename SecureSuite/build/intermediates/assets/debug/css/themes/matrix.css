@@ -1,0 +1,65 @@
+body {
+	background: url(matrix-bg.png);
+	color: #ffffff;  /* white */
+}
+a {
+	color: #ffffff;
+}
+a:hover, a:active {
+	color: #ffffff;
+}
+.btn-transparent, .btn-transparent:hover, .btn-transparent:active {
+	color: #ffffff !important; /* menu(page select, account) dropdown color */
+}
+.dropdown-menu {
+	color: #333333; /** dark dark grey */
+}
+.input-group-btn .btn {
+	background-color: #00b300;/* green */
+	border-color: #00b300;
+}
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+    background-color: #00b300;
+}
+input, textarea {
+	background: #000000 !important; /* black */
+	border: 1px solid #00b300 !important;
+	color: #ffffff !important;
+}
+#side-nav {
+	padding-top: 15px;
+}
+#side-nav, #main-panel {
+	background: rgba(0, 0, 0, 0.5);
+	border: 1px solid #00b300;
+	box-shadow: 0 0 15px rgba(0, 179, 0, 0.8); /* box shadow color */
+	color: #ffffff;
+}
+#main-panel th, #main-panel td {
+	border-top: 1px solid #00b300;
+}
+.cursor-pointer:hover {
+    background: #00b300;/* main table item background color */
+}
+#contact-info td:nth-child(1) {
+	color: #90ee90 !important; /* bright green */
+}
+#contact-info td:nth-child(2) span {
+	color: #90ee90 !important;/* contact detail, item category */
+}
+#contact-info span.editText, #contact-info td:nth-child(2) .editText {
+	color: #ffffff !important; /* contact detail, body text when NOT focused */
+}
+#contact-info .panel {
+	background: none;
+	border-color: #00b300;
+}
+#contact-info .panel-heading {/* match line 18, Contact detail, Notes header bar */
+	background-color: #00b300; /* bright green */
+	border: none;
+	color: #ffffff;
+}
+.img-thumbnail {/* contact detail photo outline*/
+    background-color: #333333;
+    border: 1px solid #90ee90;
+}

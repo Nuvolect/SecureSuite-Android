@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/padding_5dp"
+    >
+
+    <ImageView
+        android:id="@+id/tileImageIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/dummy_content"
+        android:padding="0dp"
+        android:layout_margin="@dimen/padding_5dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/black_droid" >
+    </ImageView>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_margin="@dimen/padding_5dp"
+        >
+
+        <TextView
+            android:id="@+id/displayNameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+
+            android:text="@string/dummy_text"
+            android:textColor="@color/greydark"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold"
+            >
+        </TextView>
+        <TextView
+            android:id="@+id/contactInfoTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:singleLine="false"
+            android:scrollHorizontally="true"
+
+            android:text="@string/dummy_text"
+            android:textColor="@color/greydark"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            >
+        </TextView>
+
+    </LinearLayout>
+
+
+</LinearLayout>

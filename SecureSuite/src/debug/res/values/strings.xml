@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SecureSuite debug</string>
+    <string name="default_port">8002</string>g
+    <string name="default_ip_port">0.0.0.0:8002</string>g
+    <string name="app_signature">com.nuvolect.securesuite-debug</string>
+    <string name="verbose_debug">true</string>
+</resources>
