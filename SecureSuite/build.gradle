@@ -10,8 +10,8 @@ android {
         release {
             keyAlias "securesuite"
             storeFile file("/Users/mattkraus/Nuvolect_keystore/securesuite-keystore")
-            storePassword "mga.protect!"
-            keyPassword "mga.protect!"
+            storePassword "$storePassword"
+            keyPassword "$keyPassword"
         }
         debug {
         }
