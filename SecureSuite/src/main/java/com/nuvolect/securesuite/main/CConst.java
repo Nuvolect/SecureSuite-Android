@@ -36,6 +36,7 @@ public class CConst {
     public static final int RESPONSE_CODE_REGISTRATION_ERROR_209  = 209;
     public static final int RESPONSE_CODE_COMPANION_TEST_FAIL_210 = 210;
     public static final int RESPONSE_CODE_SELF_TEST_FAIL_211      = 211;
+    public static final int COPY_DB_RESULT_212                    = 212;
 
     public enum NavMenu {contacts, groups, passwords, server }
     public enum NavChoice {Contacts, Groups, Passwords }

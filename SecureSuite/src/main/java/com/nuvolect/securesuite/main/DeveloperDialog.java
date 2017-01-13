@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import com.nuvolect.securesuite.data.MigrateCrypSafeDB;
 import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.data.NameUtil;
 import com.nuvolect.securesuite.data.SqlCipher;
@@ -40,6 +41,7 @@ public class DeveloperDialog {
      * Developer menu: in menu order.  Replaces '_' with ' ' on menu.
      */
     private static enum DevMenu {
+        Migrate_CS_DB,
         Create_Key,
         Get_Key,
         Clear_Data_Close_App,
@@ -56,6 +58,7 @@ public class DeveloperDialog {
         Set_Default_Display_names,
         Test_RateThisApp,
         Test_MakeDonation,
+        Toggle_Verbose_LogCat,
     };
 
     public static void start(Activity act) {
@@ -189,6 +192,15 @@ public class DeveloperDialog {
                             case  Test_MakeDonation:{
 
                                 CustomDialog.makeDonation(m_act, true);
+                                break;
+                            }
+                            case Migrate_CS_DB:{
+                                MigrateCrypSafeDB.sendIntent(m_act);
+                                break;
+                            }
+                            case Toggle_Verbose_LogCat:{
+                                LogUtil.setVerbose( ! LogUtil.VERBOSE);
+                                Toast.makeText(m_act, "Verbose LogCat: "+LogUtil.VERBOSE, Toast.LENGTH_SHORT).show();
                                 break;
                             }
                             default:

@@ -2,20 +2,26 @@ apply plugin: 'com.android.application'
 
 def versionMajor = 1
 def versionMinor = 3
-def versionPatch = 2
+def versionPatch = 3
 def versionBuild = 1
+
+// Load keystore
+def keystorePropertiesFile = System.getProperty("user.home")+"/.gradle/keystore.properties"
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     signingConfigs {
         release {
-            keyAlias "securesuite"
-            storeFile file("/Users/mattkraus/Nuvolect_keystore/securesuite-keystore")
-            storePassword "$storePassword"
-            keyPassword "$keyPassword"
+            keyAlias keystoreProperties['SS_keyAlias']
+            storeFile file(keystoreProperties['SS_storeFile'])
+            storePassword keystoreProperties['SS_storePassword']
+            keyPassword keystoreProperties['SS_keyPassword']
         }
         debug {
         }
     }
+
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
 

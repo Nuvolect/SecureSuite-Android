@@ -54,7 +54,7 @@ public class SqlCipher {
     public static final int DATABASE_VERSION = 2;
     public static SQLiteDatabase detail_db;
     public static SQLiteDatabase account_db;
-    public static final String DETAIL_DB_NAME = "securesuite1_db";
+    public static final String DETAIL_DB_NAME = "detail_db";
     public static final String DETAIL_TABLE = "detail_table";
     public static int index_contact_id = 1;
 
@@ -82,7 +82,7 @@ public class SqlCipher {
      * Join the DATA and TITLE tables to get all of the groups of any one user in an account
      * </pre>
      */
-    public static final String ACCOUNT_DB_NAME     = "securesuite2_db";
+    public static final String ACCOUNT_DB_NAME     = "account_db";
     public static final String ACCOUNT_TABLE       = "account_table";
     public static final String GROUP_TITLE_TABLE   = "group_title_table";
     public static final String ACCOUNT_DATA_TABLE  = "account_data_table";

@@ -8,8 +8,8 @@ import java.io.StringWriter;
 
 public class LogUtil {
 
-    public static boolean VERBOSE = false;
-    public static boolean DEBUG = false;
+    public static boolean VERBOSE = true;// 1. Auto set for build varient. 2. Developer menu option
+    public static boolean DEBUG = true;
 
     public static String TAG = "SecureSuite";
 
@@ -91,7 +91,49 @@ public class LogUtil {
         if(LogUtil.VERBOSE)
             Log.v(LogUtil.TAG+":"+tag.toString(), log);
     }
+    public static void log(Class<?> clazz, String log) {
 
+        if(LogUtil.VERBOSE)
+            Log.v( TAG+":"+clazz.toString(), log);
+    }
+
+    /**
+     * Put exception in Android LogCat and logDB.
+     * @param ctx
+     * @param clazz
+     * @param e
+     */
+    public static void logException(Context ctx, Class<?> clazz, Exception e) {
+
+        e.printStackTrace(System.err);
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        log( clazz,  "ERROR Exception: "+sw.toString());
+    }
+    /**
+     * Put exception in Android LogCat and logDB.
+     * @param clazz
+     * @param e
+     */
+    public static void logException( Class<?> clazz, Exception e) {
+
+        e.printStackTrace(System.err);
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        log( clazz,  "ERROR Exception: "+sw.toString());
+    }
+    /**
+     * Put exception in Android LogCat and logDB.
+     * @param clazz
+     * @param e
+     */
+    public static void logException( Class<?> clazz, String note, Exception e) {
+
+        e.printStackTrace(System.err);
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        log( clazz,  "ERROR Exception: "+note+sw.toString());
+    }
     /**
      * Put exception in Android LogCat and logDB.
      * @param ctx

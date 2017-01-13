@@ -271,6 +271,13 @@ public class Util {
         }
     }
 
+    public static void writeFile(byte[] bytes, File file) throws IOException {
+
+        OutputStream out = new BufferedOutputStream( new FileOutputStream( file));
+        out.write( bytes);
+        out.close();
+    }
+
     public static String readFile( Context ctx, File file){
 
         String fileContents = "";

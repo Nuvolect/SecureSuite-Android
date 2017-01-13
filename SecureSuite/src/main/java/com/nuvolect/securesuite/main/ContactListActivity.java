@@ -50,6 +50,7 @@ import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.license.LicenseUtil;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
+import com.nuvolect.securesuite.data.MigrateCrypSafeDB;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.FileBrowserDbRestore;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -306,18 +307,21 @@ public class ContactListActivity extends Activity
         boolean isFirstTime = Persist.isStartingUp(m_ctx);
         if(isFirstTime){
 
-            // Import a default contact when starting first time
             String account = LicensePersist.getLicenseAccount(m_ctx);
             Cryp.setCurrentAccount( account);
             MyGroups.addBaseGroupsToNewAccount(m_ctx, account);
             Cryp.setCurrentGroup( MyGroups.getDefaultGroup(account));
 
             try {
-
+                // Import a default contact when starting first time
                 InputStream vcf = getResources().getAssets().open(CConst.APP_VCF);
                 ImportVcard.importVcf(m_ctx, vcf, Cryp.getCurrentGroup());
 
+                // Offer to copy an existing CrypSafe db
+                MigrateCrypSafeDB.sendIntent(m_act);//mkk
+
             } catch (IOException e) {
+                LogUtil.logException(ContactListActivity.class, e);
             }
 
             // First time, request phone management access
@@ -607,7 +611,7 @@ public class ContactListActivity extends Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        LogUtil.log("CLA.onActivityResult()");
+        LogUtil.log("CLA.onActivityResult() requestCode: "+requestCode);
 
         switch( requestCode ){
 
@@ -762,6 +766,20 @@ public class ContactListActivity extends Activity
                     PermissionUtil.requestReadContacts(m_act, CConst.REQUEST_READ_CONTACTS);
                 }else{
                     if(DEBUG) LogUtil.log("REQUEST_GET_ACCOUNTS logic error");
+                }
+                break;
+            }
+            case CConst.COPY_DB_RESULT_212:{
+
+                if( data == null)
+                    LogUtil.log( ContactListActivity.class, "onActivityResult: data null");
+                else{
+
+                    Bundle bundle = data.getExtras();
+
+                    LogUtil.log( ContactListActivity.class, "onActivityResult: "+ bundle.toString());
+
+                    MigrateCrypSafeDB.saveDB(bundle);
                 }
                 break;
             }
@@ -1372,3 +1390,5 @@ public class ContactListActivity extends Activity
     public void refreshGroupList() {
     }
 }
+
+
