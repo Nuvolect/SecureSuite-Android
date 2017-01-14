@@ -27,6 +27,8 @@ import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Passphrase;
 
+import static com.nuvolect.securesuite.util.Passphrase.getPasswordGenHistory;
+
 public class PasswordFragment extends DialogFragment {
 
     private static Activity m_act;
@@ -93,6 +95,8 @@ public class PasswordFragment extends DialogFragment {
         rootView.findViewById(R.id.checkBox4).setOnClickListener(onClickCheckBox);
         rootView.findViewById(R.id.checkBox5).setOnClickListener(onClickCheckBox);
         rootView.findViewById(R.id.pw_cancelFl).setOnClickListener(cancelButtonOnClick);
+        rootView.findViewById(R.id.clearPasswordListTv).setOnClickListener(onClickClearPasswordList);
+        rootView.findViewById(R.id.clearPasteBufferTv).setOnClickListener(onClickClearPasteBuffer);
 
         /**
          * When the listener is enabled, the fragment will return the password when
@@ -152,7 +156,7 @@ public class PasswordFragment extends DialogFragment {
 
     void createPasswordSpinner(View rootView) {
 
-        m_password_list = Passphrase.getPasswordGenHistory(m_act);
+        m_password_list = getPasswordGenHistory(m_act);
 
         // Create an ArrayAdapter for the history of passwords
         ArrayAdapter<String> history_adapter = new ArrayAdapter<String>(
@@ -276,12 +280,41 @@ public class PasswordFragment extends DialogFragment {
                     m_act.getSystemService(Context.CLIPBOARD_SERVICE);
 
             // Creates a new text clip to put on the clipboard
-            ClipData clip = ClipData.newPlainText("CrytpoSafe", password);
+            ClipData clip = ClipData.newPlainText("SecureSuite", password);
 
             // Set the clipboard's primary clip.
             clipboard.setPrimaryClip(clip);
 
             Toast.makeText(m_act, "Copied", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    TextView.OnClickListener onClickClearPasswordList = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            Passphrase.clearPasswordGenHistory(m_act);
+
+            // Clear in-memory list
+            createPasswordSpinner(v.getRootView());
+        }
+    };
+
+    TextView.OnClickListener onClickClearPasteBuffer = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            // Gets a handle to the clipboard service.
+            ClipboardManager clipboard = (ClipboardManager)
+                    m_act.getSystemService(Context.CLIPBOARD_SERVICE);
+
+            // Creates a new text clip to put on the clipboard
+            ClipData clip = ClipData.newPlainText("SecureSuite", "");
+
+            // Set the clipboard's primary clip.
+            clipboard.setPrimaryClip(clip);
+
+            Toast.makeText(m_act, "Paste buffer cleared", Toast.LENGTH_SHORT).show();
         }
     };
 

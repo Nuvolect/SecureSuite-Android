@@ -231,4 +231,16 @@ public class Passphrase {
     }
 
 
+    /**
+     * Clear the history of passwords and request data synchronization with companion device.
+     * @param ctx
+     */
+    public static void clearPasswordGenHistory(Context ctx) {
+
+        JSONArray jarray = new JSONArray();
+        SqlCipher.putCryp( PASSWORD_GEN_HISTORY, jarray.toString());
+
+        // Inform system to sync data
+        SqlIncSync.getInstance().crypSync(ctx, PASSWORD_GEN_HISTORY);
+    }
 }

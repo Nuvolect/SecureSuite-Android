@@ -24,11 +24,10 @@ import com.nuvolect.securesuite.util.FileBrowserImportVcf;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.PermissionUtil;
 import com.nuvolect.securesuite.util.Persist;
-import com.nuvolect.securesuite.util.Util;
 
 import net.sqlcipher.Cursor;
 
-import java.io.IOException;
+import static com.nuvolect.securesuite.data.BackupRestore.backupToStorage;
 
 public class SharedMenu extends Activity {
 
@@ -341,7 +340,7 @@ public class SharedMenu extends Activity {
             case R.id.menu_backup_to_storage:{
 
                 if( PermissionUtil.canWriteExternalStorage(m_act))
-                    backupToStorage();
+                    BackupRestore.backupToStorage( m_act);
                 else
                     PermissionUtil.requestWriteExternalStorage( m_act, REQUEST_ID_BACKUP_TO_STORAGE);
                 break;
@@ -385,19 +384,6 @@ public class SharedMenu extends Activity {
         return POST_CMD.NIL;
     }
 
-    private static void backupToStorage() {
-
-        try {
-            String basePath = Util.createTimeStampedBackupFolder( m_act);
-            BackupRestore.copyDbToStorage( basePath, SqlCipher.account_db);
-            BackupRestore.copyDbToStorage( basePath, SqlCipher.detail_db);
-            Toast.makeText( m_act, "Backup complete", Toast.LENGTH_SHORT).show();
-            Toast.makeText( m_act, basePath, Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText( m_act, "Backup FAILED", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -409,7 +395,7 @@ public class SharedMenu extends Activity {
 
                 if( grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    backupToStorage();
+                    backupToStorage( m_act);
                 }
                 break;
             }

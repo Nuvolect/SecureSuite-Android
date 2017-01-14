@@ -50,7 +50,6 @@ import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.license.LicenseUtil;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
-import com.nuvolect.securesuite.data.MigrateCrypSafeDB;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.FileBrowserDbRestore;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -316,9 +315,6 @@ public class ContactListActivity extends Activity
                 // Import a default contact when starting first time
                 InputStream vcf = getResources().getAssets().open(CConst.APP_VCF);
                 ImportVcard.importVcf(m_ctx, vcf, Cryp.getCurrentGroup());
-
-                // Offer to copy an existing CrypSafe db
-                MigrateCrypSafeDB.sendIntent(m_act);//mkk
 
             } catch (IOException e) {
                 LogUtil.logException(ContactListActivity.class, e);
@@ -769,20 +765,6 @@ public class ContactListActivity extends Activity
                 }
                 break;
             }
-            case CConst.COPY_DB_RESULT_212:{
-
-                if( data == null)
-                    LogUtil.log( ContactListActivity.class, "onActivityResult: data null");
-                else{
-
-                    Bundle bundle = data.getExtras();
-
-                    LogUtil.log( ContactListActivity.class, "onActivityResult: "+ bundle.toString());
-
-                    MigrateCrypSafeDB.saveDB(bundle);
-                }
-                break;
-            }
             case CConst.NO_ACTION:
                 break;
             default:
@@ -953,9 +935,17 @@ public class ContactListActivity extends Activity
                         a = BackupRestore.renameDbTemp(m_ctx, SqlCipher.ACCOUNT_DB_NAME);
                         b = BackupRestore.renameDbTemp(m_ctx, SqlCipher.DETAIL_DB_NAME);
 
-                        // Copy the database files to the app
-                        BackupRestore.copyDbToApp( m_ctx, mNewDbPath, SqlCipher.ACCOUNT_DB_NAME);
-                        BackupRestore.copyDbToApp( m_ctx, mNewDbPath, SqlCipher.DETAIL_DB_NAME);
+                        // Check if database is CrypSafe or SecureSuite app
+                        if( BackupRestore.testCrypSafeRestore(m_ctx, mNewDbPath)){
+
+                            // Copy CrypSafe database files to the app
+                            BackupRestore.copyCrypSafeDbToApp( m_ctx, mNewDbPath, "crypsafe1_db");
+                            BackupRestore.copyCrypSafeDbToApp( m_ctx, mNewDbPath, "crypsafe2_db");
+                        }else{
+                            // Copy the database files to the app
+                            BackupRestore.copyDbToApp( m_ctx, mNewDbPath, SqlCipher.ACCOUNT_DB_NAME);
+                            BackupRestore.copyDbToApp( m_ctx, mNewDbPath, SqlCipher.DETAIL_DB_NAME);
+                        }
 
                     } catch (IOException e) {
                         LogUtil.logException(m_ctx, LogType.RESTORE_DB, e);

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.os.Environment;
+import android.widget.Toast;
 
 import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -132,6 +134,28 @@ public class BackupRestore {
     }
 
     /**
+     * Copy both databases to storage.
+     * @param act
+     */
+    public static void backupToStorage(Activity act) {
+
+        try {
+            String basePath = Util.createTimeStampedBackupFolder( act);
+            BackupRestore.copyDbToStorage( basePath, SqlCipher.account_db);
+            BackupRestore.copyDbToStorage( basePath, SqlCipher.detail_db);
+            Toast.makeText( act, "Backup complete", Toast.LENGTH_SHORT).show();
+
+            // Remove non-essential internal path, just show from /sdcard...
+            String internalPath = Environment.getExternalStorageDirectory().getPath();
+            basePath = basePath.replaceFirst( internalPath, "");
+            Toast.makeText( act, basePath, Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText( act, "Backup FAILED", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
      * Rename the target database to a temporary name.  This way it can either be
      * restored or deleted
      * @param ctx
@@ -175,23 +199,23 @@ public class BackupRestore {
      * Copy a database from the public storage to the application database folder
      * @throws IOException
      */
-    public static void copyDbToApp(Context ctx, String restoreDbPath, String dbFileName)
+    public static void copyDbToApp(Context ctx, String sourceDbPath, String targetDbFilename)
             throws IOException {
 
         // Get the file and path to the database
-        File targetFile = ctx.getDatabasePath( dbFileName);
+        File targetFile = ctx.getDatabasePath(targetDbFilename);
         String outPathWithName = targetFile.getPath();
 
         //Open storage db as the input stream
-        String inPathWithName = restoreDbPath+"/"+dbFileName;
+        String inPathWithName = sourceDbPath +"/"+ targetDbFilename;
         File dbFile = new File(inPathWithName);
         FileInputStream fis = new FileInputStream(dbFile);
 
         //Open the target db as the output stream and delete it
         if( targetFile.delete())
-            LogUtil.log("file deleted: "+dbFileName);
+            LogUtil.log("file deleted: "+ targetDbFilename);
         else
-            LogUtil.log("ERROR, file NOT deleted: "+dbFileName);
+            LogUtil.log("ERROR, file NOT deleted: "+ targetDbFilename);
 
         OutputStream outputStream = new FileOutputStream(outPathWithName);
 
@@ -205,7 +229,58 @@ public class BackupRestore {
         outputStream.flush();
         outputStream.close();
         fis.close();
-        LogUtil.log("File restored: "+dbFileName);
+        LogUtil.log("File restored: "+ targetDbFilename);
+    }
+
+    /**
+     * Restore a database that was saved in CrypSafe
+     * TODO purge this method when upgrade period is over
+     * @param ctx
+     * @param sourceDbPath
+     * @param sourceDbFilename
+     * @throws IOException
+     */
+    public static boolean copyCrypSafeDbToApp(Context ctx, String sourceDbPath, String sourceDbFilename)
+            throws IOException {
+
+        // Get the file and path to the database
+        String targetDbFilename="";
+        if( sourceDbFilename.contentEquals("crypsafe1_db"))
+            targetDbFilename = "detail_db";
+        if( sourceDbFilename.contentEquals("crypsafe2_db"))
+            targetDbFilename = "account_db";
+        if( targetDbFilename.isEmpty())
+            return false;
+
+        File targetFile = ctx.getDatabasePath(targetDbFilename);
+        String outPathWithName = targetFile.getPath();
+
+        //Open storage db as the input stream
+        String inPathWithName = sourceDbPath +"/"+ sourceDbFilename;
+        File dbFile = new File(inPathWithName);
+        FileInputStream fis = new FileInputStream(dbFile);
+
+        //Open the target db as the output stream and delete it
+        if( targetFile.delete())
+            LogUtil.log("file deleted: "+ targetDbFilename);
+        else
+            LogUtil.log("ERROR, file NOT deleted: "+ targetDbFilename);
+
+        OutputStream outputStream = new FileOutputStream(outPathWithName);
+
+        //transfer bytes from the inputfile to the outputfile
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = fis.read(buffer))>0){
+            outputStream.write(buffer, 0, length);
+        }
+        //Close the streams
+        outputStream.flush();
+        outputStream.close();
+        fis.close();
+        LogUtil.log("File restored: "+ targetDbFilename);
+
+        return true;
     }
 
     public static void backupToEmail(Activity act){
@@ -248,5 +323,28 @@ public class BackupRestore {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+    }
+
+    /**
+     * Simple test for identifying a CrypSafe named database
+     * @param ctx
+     * @param mNewDbPath
+     * @return
+     */
+    public static boolean testCrypSafeRestore(Context ctx, String mNewDbPath) {
+
+        boolean found1 = false, found2=false;
+
+        File[] files = new File(mNewDbPath).listFiles();
+
+        for( File f : files){
+
+            if( f.getName().contentEquals("crypsafe1_db"))
+                found1 = true;
+            if( f.getName().contentEquals("crypsafe2_db"))
+                found2 = true;
+        }
+
+        return found1 && found2;
     }
 }

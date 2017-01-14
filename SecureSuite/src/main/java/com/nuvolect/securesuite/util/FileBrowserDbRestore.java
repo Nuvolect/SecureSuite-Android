@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import static com.nuvolect.securesuite.data.SqlCipher.DETAIL_DB_NAME;
+
 @SuppressWarnings("deprecation")
 public class FileBrowserDbRestore extends Activity {
 
@@ -226,9 +228,18 @@ public class FileBrowserDbRestore extends Activity {
                     if(DEBUG)LogUtil.log("Path selected: "+path);
 
                     File f1 = new File( path + "/" + SqlCipher.ACCOUNT_DB_NAME);
-                    File f2 = new File( path + "/" + SqlCipher.DETAIL_DB_NAME);
+                    File f2 = new File( path + "/" + DETAIL_DB_NAME);
 
-                    if( f1.exists() && f1.canRead() && f2.exists() && f2.canRead()){
+                    boolean validBackup = f1.exists() && f1.canRead() && f2.exists() && f2.canRead();
+
+                    if( ! validBackup) {
+                        f1 = new File(path + "/" + "crypsafe1_db");// TODO Remove after upgrade period
+                        f2 = new File(path + "/" + "crypsafe2_db");
+
+                        validBackup = f1.exists() && f1.canRead() && f2.exists() && f2.canRead();
+                    }
+
+                    if( validBackup ){
 
                         // Send action performed back to calling activity
                         Intent data = new Intent();
@@ -236,13 +247,14 @@ public class FileBrowserDbRestore extends Activity {
                         setResult(Activity.RESULT_OK, data);
                         finish();
                         return;
-                    }else{
+                    }
+                    else {
                         Toast.makeText(getApplicationContext(),
                                 "Error, invalid folder", Toast.LENGTH_LONG).show();
                         Toast.makeText(getApplicationContext(),
                                 "Two database files are required", Toast.LENGTH_LONG).show();
                         Toast.makeText(getApplicationContext(),
-                                SqlCipher.ACCOUNT_DB_NAME+" and "+SqlCipher.DETAIL_DB_NAME,
+                                SqlCipher.ACCOUNT_DB_NAME+" and "+ DETAIL_DB_NAME,
                                 Toast.LENGTH_LONG).show();
 
                         removeDialog(DIALOG_LOAD_FILE);
