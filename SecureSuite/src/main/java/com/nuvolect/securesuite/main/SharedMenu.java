@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -27,6 +28,8 @@ import com.nuvolect.securesuite.util.Persist;
 
 import net.sqlcipher.Cursor;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.nuvolect.securesuite.data.BackupRestore.backupToStorage;
 
 public class SharedMenu extends Activity {
@@ -209,7 +212,7 @@ public class SharedMenu extends Activity {
                 return POST_CMD.START_CONTACT_DETAIL;
             }
             case R.id.menu_share_contact:{//FIXME use app internal storage for file
-                if( PermissionUtil.canWriteExternalStorage(m_act))
+                if( hasPermission( WRITE_EXTERNAL_STORAGE))
                     ExportVcf.emailVcf(m_act, Persist.getCurrentContactId(m_act));
                 else
                     PermissionUtil.requestWriteExternalStorage(m_act,0);
@@ -269,7 +272,7 @@ public class SharedMenu extends Activity {
 
             case R.id.menu_import_vcard:{
 
-                if( PermissionUtil.canReadExternalStorage(m_act)){
+                if( hasPermission( READ_EXTERNAL_STORAGE)){
 
                     // Kickoff a browser activity here.
                     // When user selects file, onActivityResult called with the result.
@@ -277,7 +280,7 @@ public class SharedMenu extends Activity {
                     intent.setClass( m_act, FileBrowserImportVcf.class);
                     m_act.startActivityForResult(intent, CConst.BROWSE_IMPORT_VCF_ACTION);
                 }else
-                    PermissionUtil.requestReadExternalStorage(m_act,0);
+                    PermissionUtil.requestReadExternalStorage(m_act, CConst.REQUEST_EXTERNAL_STORAGE_IMPORT_VCARD);
                 break;
             }
             case R.id.menu_import_single_contact:{
@@ -293,7 +296,7 @@ public class SharedMenu extends Activity {
             }
             case R.id.menu_export_group:{
 
-                if( PermissionUtil.canWriteExternalStorage(m_act)){
+                if( hasPermission( WRITE_EXTERNAL_STORAGE)){
 
                     ExportVcf.exportGroupVcardAsync( m_act, m_group_id);
                     Toast.makeText(m_act, "Exporting...", Toast.LENGTH_LONG).show();
@@ -304,7 +307,7 @@ public class SharedMenu extends Activity {
             }
             case R.id.menu_export_account:{
 
-                if( PermissionUtil.canWriteExternalStorage(m_act)){
+                if( hasPermission( WRITE_EXTERNAL_STORAGE)){
                     ExportVcf.exportAccountVcardAsync(m_act, Cryp.getCurrentAccount());
                     Toast.makeText(m_act, "Exporting...", Toast.LENGTH_LONG).show();
                 }else{
@@ -314,7 +317,7 @@ public class SharedMenu extends Activity {
             }
             case R.id.menu_export_all:{
 
-                if( PermissionUtil.canWriteExternalStorage(m_act)){
+                if( hasPermission( WRITE_EXTERNAL_STORAGE)){
                     ExportVcf.exportAllVcardAsync(m_act);
                     Toast.makeText(m_act, "Exporting...", Toast.LENGTH_LONG).show();
                 }else{
@@ -325,12 +328,10 @@ public class SharedMenu extends Activity {
             case R.id.menu_cleanup:{
                 CleanupFragment f = CleanupFragment.newInstance(m_act);
                 f.startFragment();
-//                Intent i = new Intent(m_act, CleanupActivity.class);
-//                m_act.startActivity(i);
                 break;
             }
             case R.id.menu_backup_to_email:{
-                if( PermissionUtil.canWriteExternalStorage(m_act)){
+                if( hasPermission( WRITE_EXTERNAL_STORAGE)){
                     BackupRestore.backupToEmail(m_act);
                 }else{
                     PermissionUtil.requestWriteExternalStorage(m_act,0);
@@ -339,7 +340,7 @@ public class SharedMenu extends Activity {
             }
             case R.id.menu_backup_to_storage:{
 
-                if( PermissionUtil.canWriteExternalStorage(m_act))
+                if( hasPermission( WRITE_EXTERNAL_STORAGE))
                     BackupRestore.backupToStorage( m_act);
                 else
                     PermissionUtil.requestWriteExternalStorage( m_act, REQUEST_ID_BACKUP_TO_STORAGE);
@@ -384,6 +385,10 @@ public class SharedMenu extends Activity {
         return POST_CMD.NIL;
     }
 
+    private static boolean hasPermission(String perm) {
+        return(ContextCompat.checkSelfPermission( m_act, perm)==
+                PackageManager.PERMISSION_GRANTED);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -400,6 +405,13 @@ public class SharedMenu extends Activity {
                 break;
             }
             default:
+        }
+    }
+
+    public static void myOnRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        switch ( requestCode){
+
         }
     }
 }

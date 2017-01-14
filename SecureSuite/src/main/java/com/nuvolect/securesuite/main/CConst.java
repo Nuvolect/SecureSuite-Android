@@ -163,6 +163,7 @@ public class CConst {
     public static final int REQUEST_READ_CONTACTS             = 1900;
     public static final int REQUEST_READ_SINGLE_CONTACT       = 2000;
     public static final int REQUEST_GET_ACCOUNTS              = 2100;
+    public static final int REQUEST_EXTERNAL_STORAGE_IMPORT_VCARD = 2200;
 
     public static final String RESTORE_BACKUP_PATH            = "restore_backup_path";
     public static final String IMPORT_VCF_PATH                = "import_vcf_path";

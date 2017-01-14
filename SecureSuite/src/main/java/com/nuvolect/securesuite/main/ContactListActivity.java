@@ -17,6 +17,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -27,6 +28,9 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -67,6 +71,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+
+import static android.Manifest.permission.GET_ACCOUNTS;
+import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 /**
  * An activity representing a list of Contacts. This activity has different
@@ -455,7 +463,8 @@ public class ContactListActivity extends Activity
         else
             inflater.inflate(R.menu.contact_list_single_menu, menu);
 
-        if( LicenseManager.mIsWhitelistUser && DeveloperDialog.isEnabled()){
+        if( (LicenseManager.mIsWhitelistUser || Boolean.valueOf( m_act.getString(R.string.verbose_debug)))
+                && DeveloperDialog.isEnabled()){
 
             MenuItem menuItem = menu.findItem(R.id.menu_developer);
             menuItem.setVisible( true );
@@ -500,7 +509,7 @@ public class ContactListActivity extends Activity
             }
             case R.id.menu_restore_from_storage:{
 
-                if(PermissionUtil.canReadExternalStorage(m_act)){
+                if( hasPermission( READ_EXTERNAL_STORAGE)){
                     ConfirmRestoreDatabaseDialogFragment dialog = new ConfirmRestoreDatabaseDialogFragment();
                     dialog.show( getFragmentManager(), "ConfirmRestoreTag");
                 }else{
@@ -510,16 +519,17 @@ public class ContactListActivity extends Activity
             }
             case R.id.menu_import_account_contacts:{
 
-                if( PermissionUtil.canAccessReadContacts(m_act) &&
-                        PermissionUtil.canGetAccounts(m_act)){
-                    cloudImportDialog();
-                } else{
-                    if( ! PermissionUtil.canAccessReadContacts(m_act) ){
+                if( hasPermission( READ_CONTACTS) && hasPermission( GET_ACCOUNTS) ){
 
-                        PermissionUtil.requestReadContacts(m_act, CConst.REQUEST_READ_CONTACTS);
+                    cloudImportDialog();
+
+                } else{
+                    if( ! hasPermission( READ_CONTACTS) ){
+
+                        PermissionUtil.requestReadContacts(m_act, CConst.REQUEST_READ_CONTACTS);//mkk
                         break;
                     }
-                    if( ! PermissionUtil.canGetAccounts(m_act)){
+                    if( ! hasPermission( GET_ACCOUNTS )){
 
                         PermissionUtil.requestGetAccounts(m_act, CConst.REQUEST_GET_ACCOUNTS);
                         break;
@@ -657,7 +667,7 @@ public class ContactListActivity extends Activity
                         success = false;
                     else{
 
-                        if( ! PermissionUtil.canAccessReadContacts(m_act)){
+                        if( ! hasPermission( READ_CONTACTS)){
 
                             m_pendingImportSingleContactId = id;
                             PermissionUtil.requestReadContacts(m_act, CConst.REQUEST_READ_SINGLE_CONTACT);
@@ -737,13 +747,13 @@ public class ContactListActivity extends Activity
                     Toast.makeText(m_act, "Lock code change failed", Toast.LENGTH_SHORT).show();
                 break;
             }
-            case CConst.REQUEST_READ_CONTACTS: { // Import: Contacts and accounts permissions required
+            case CConst.REQUEST_READ_CONTACTS: { // Import: Contacts and accounts permissions required mkk
 
-                if( resultCode == RESULT_OK && PermissionUtil.canGetAccounts(m_act) ){
+                if( resultCode == RESULT_OK && hasPermission( GET_ACCOUNTS)){
 
                     cloudImportDialog();
 
-                }else if( ! PermissionUtil.canGetAccounts(m_act)){
+                }else if( ! hasPermission( GET_ACCOUNTS)){
 
                     PermissionUtil.requestGetAccounts(m_act, CConst.REQUEST_GET_ACCOUNTS);
                 }else{
@@ -751,13 +761,13 @@ public class ContactListActivity extends Activity
                 }
                 break;
             }
-            case CConst.REQUEST_GET_ACCOUNTS: { // Import: Contacts and accounts permissions required
+            case CConst.REQUEST_GET_ACCOUNTS: { // Import: Contacts and accounts permissions required mkk
 
-                if( resultCode == RESULT_OK && PermissionUtil.canAccessReadContacts(m_act) ){
+                if( resultCode == RESULT_OK && hasPermission( READ_CONTACTS)){
 
                     cloudImportDialog();
 
-                }else if( ! PermissionUtil.canAccessReadContacts(m_act)){
+                }else if( ! hasPermission( READ_CONTACTS)){
 
                     PermissionUtil.requestReadContacts(m_act, CConst.REQUEST_READ_CONTACTS);
                 }else{
@@ -773,6 +783,50 @@ public class ContactListActivity extends Activity
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    private boolean hasPermission(String perm) {
+        return(ContextCompat.checkSelfPermission(this, perm)==
+                PackageManager.PERMISSION_GRANTED);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {//mkk
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch ( requestCode){
+
+            case CConst.REQUEST_READ_CONTACTS :{
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    cloudImportDialog();
+
+                } else {
+
+                    Toast.makeText(m_act, "Sorry, read contacts permission required for import", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+            default:
+                SharedMenu.myOnRequestPermissionsResult( requestCode, permissions, grantResults);
+
+                LogUtil.log("CLA onRequestPermissionResult requestCode: "+requestCode);
+
+                for( int i = 0; i < permissions.length; i++)
+                    LogUtil.log("CLA onRequestPermissionResult: "+permissions[i]+"  "+grantResults[i]);
+
+        }
+    }
+
+
+    ActivityCompat.OnRequestPermissionsResultCallback onRequestPermissionsResultCallback = new ActivityCompat.OnRequestPermissionsResultCallback() {
+        @Override
+        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        }
+    };
 
     private class ImportVcardAsync extends AsyncTask<String, Integer, Long> {
 
@@ -1041,19 +1095,6 @@ public class ContactListActivity extends Activity
                     m_cloudImportProgressDialog = null;
                 }
                 m_act.recreate();
-
-                //FUTURE refresh fragments versus recreate()
-//                Handler mainHandler = new Handler(m_act.getMainLooper());
-//                mainHandler.post(new Runnable() {
-//
-//                    @Override
-//                    public void run() {
-//
-//                        if(DEBUG) LogUtil.log(" 6: startContactListFragment start");
-//                        startContactListFragment();
-//                        if(DEBUG) LogUtil.log(" 7: startContactListFragment end");
-//                    }
-//                });
                 break;
             }
             case REFRESH_USER_INTERFACE:{

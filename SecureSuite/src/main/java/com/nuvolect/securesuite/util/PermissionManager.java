@@ -3,8 +3,10 @@ package com.nuvolect.securesuite.util;//
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -13,6 +15,11 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.nuvolect.securesuite.R;
+
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_PHONE_STATE;
 
 
 /**
@@ -41,19 +48,19 @@ public class PermissionManager {
         String summary = "";
         String separator = "";
 
-        if( PermissionUtil.canAccessReadContacts(m_act)){
+        if( hasPermission( READ_CONTACTS )){
             summary = "Contacts";
             separator = ", ";
         }
-        if( PermissionUtil.canAccessCoarseLocation(m_act)){
+        if( hasPermission( ACCESS_COARSE_LOCATION)){
             summary += separator + "Location";
             separator = ", ";
         }
-        if( PermissionUtil.canAccessPhoneState(m_act)){
+        if( hasPermission( READ_PHONE_STATE)){
             summary += separator + "Phone";
             separator = ", ";
         }
-        if( PermissionUtil.canReadExternalStorage(m_act)){
+        if( hasPermission( READ_EXTERNAL_STORAGE)){
             summary += separator + "Storage";
             separator = ", ";
         }
@@ -62,6 +69,11 @@ public class PermissionManager {
             summary = "None";
 
         return summary;
+    }
+
+    private boolean hasPermission(String perm) {
+        return(ContextCompat.checkSelfPermission(m_act, perm)==
+                PackageManager.PERMISSION_GRANTED);
     }
 
     public interface PermissionMgrCallbacks {
@@ -97,7 +109,7 @@ public class PermissionManager {
 
         TextView tv = (TextView) view.findViewById(R.id.permissionContactsTv);
         TableRow tr = (TableRow) view.findViewById(R.id.permissionContactsTr);
-        if( PermissionUtil.canAccessReadContacts(m_act)){
+        if( hasPermission( READ_CONTACTS)){
             tv.setText("Enabled");
             setClickListener( tr );
         }else{
@@ -158,7 +170,7 @@ public class PermissionManager {
         tr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PermissionUtil.showInstalledAppDetails(m_act, m_act.getString(R.string.app_signature));
+                PermissionUtil.showInstalledAppDetails(m_act);
                 m_dialog.cancel();
             }
         });
