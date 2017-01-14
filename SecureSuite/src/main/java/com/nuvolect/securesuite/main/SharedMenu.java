@@ -1,9 +1,12 @@
 package com.nuvolect.securesuite.main;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
@@ -14,6 +17,7 @@ import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.data.BackupRestore;
 import com.nuvolect.securesuite.data.CleanupFragment;
 import com.nuvolect.securesuite.data.ExportVcf;
+import com.nuvolect.securesuite.data.ImportVcard;
 import com.nuvolect.securesuite.data.MergeGroup;
 import com.nuvolect.securesuite.data.MyContacts;
 import com.nuvolect.securesuite.data.MyGroups;
@@ -269,7 +273,6 @@ public class SharedMenu extends Activity {
                 GroupSendSms.startGroupSms(m_act);
                 break;
             }
-
             case R.id.menu_import_vcard:{
 
                 if( hasPermission( READ_EXTERNAL_STORAGE)){
@@ -408,10 +411,132 @@ public class SharedMenu extends Activity {
         }
     }
 
-    public static void myOnRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        public static void myOnRequestPermissionsResult(
+            Activity act, int requestCode, String[] permissions, int[] grantResults) {
 
         switch ( requestCode){
 
+            /**
+             * Service the result of a permission request
+             */
+            case CConst.REQUEST_EXTERNAL_STORAGE_IMPORT_VCARD:{
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // Kickoff a browser activity here.
+                    // When user selects file, onActivityResult called with the result.
+                    Intent intent = new Intent();
+                    intent.setClass( act, FileBrowserImportVcf.class);
+                    act.startActivityForResult(intent, CConst.BROWSE_IMPORT_VCF_ACTION);
+                } else {
+
+                    Toast.makeText(act, "Sorry, external storage permission required for import", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+            default:{
+
+                LogUtil.log("SharedMenuUtil requestCode: "+requestCode);
+
+                for( int i = 0; i < permissions.length; i++)
+                    LogUtil.log("SharedMenuUtil permissions: "+permissions[i]+"  "+grantResults[i]);
+
+            }
+        }
+    }
+
+    public static void myOnActivityResult(
+            Activity act, int requestCode, int resultCode, Intent data) {
+
+        if(DEBUG) LogUtil.log("SharedMenu myOnActivityResult requestCode: "+requestCode);
+
+        switch ( requestCode){
+
+            case CConst.BROWSE_IMPORT_VCF_ACTION:{
+
+                if ( resultCode == RESULT_OK) {
+
+                    Bundle activityResultBundle = data.getExtras();
+                    String path = activityResultBundle.getString(CConst.IMPORT_VCF_PATH);
+
+                    new ImportVcardAsync( ).execute(path);
+                }
+                break;
+            }
+
+        }
+    }
+
+    private static class ImportVcardAsync extends AsyncTask<String, Integer, Long> {
+
+        /** progress dialog to show user that the import is processing. */
+        private ProgressDialog m_importProgressDialog = null;
+
+        public ImportVcardAsync(){
+
+            m_importProgressDialog = new ProgressDialog(m_act);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            m_importProgressDialog.setMessage("Import starting...");
+            m_importProgressDialog.show();
+        }
+
+        @Override
+        protected Long doInBackground(String...paths) {
+
+            String path = paths[0];
+
+            ImportVcard.ImportProgressCallbacks callbacks = new ImportVcard.ImportProgressCallbacks() {
+                @Override
+                public void progressReport(int importProgress) {
+
+                    publishProgress( importProgress );
+                }
+            };
+
+            long contact_id = ImportVcard.importVcf(m_act, path, Cryp.getCurrentGroup(), callbacks);
+
+            return contact_id;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+
+            int vcardsImported = values[0];
+
+            if( m_importProgressDialog == null ) {
+                m_importProgressDialog = new ProgressDialog(m_act);
+                m_importProgressDialog.show();
+            }
+
+            if( m_importProgressDialog != null && m_importProgressDialog.isShowing())
+                m_importProgressDialog.setMessage("Import progress: " + vcardsImported);
+        }
+
+        @Override
+        protected void onPostExecute(Long contact_id) {
+
+            if( m_importProgressDialog!= null && m_importProgressDialog.isShowing())
+                m_importProgressDialog.dismiss();
+
+            if( contact_id > 0)
+                Toast.makeText(m_act, "Import complete", Toast.LENGTH_LONG).show();
+            else
+                Toast.makeText(m_act, "Import failed", Toast.LENGTH_LONG).show();
+
+            m_act.setProgressBarIndeterminateVisibility( false );
+
+            //TODO send message to refresh UI or specific fragments
+//            m_act.startContactListFragment();
+//            if( mTwoPane)
+//                startContactDetailFragment();
         }
     }
 }

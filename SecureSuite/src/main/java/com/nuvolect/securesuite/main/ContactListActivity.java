@@ -54,6 +54,7 @@ import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.license.LicenseUtil;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
+import com.nuvolect.securesuite.data.CrypSafeDB;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.FileBrowserDbRestore;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -323,6 +324,9 @@ public class ContactListActivity extends Activity
                 // Import a default contact when starting first time
                 InputStream vcf = getResources().getAssets().open(CConst.APP_VCF);
                 ImportVcard.importVcf(m_ctx, vcf, Cryp.getCurrentGroup());
+
+                // Offer to copy an existing CrypSafe db
+                CrypSafeDB.copy(m_act);//mkk
 
             } catch (IOException e) {
                 LogUtil.logException(ContactListActivity.class, e);
@@ -643,17 +647,6 @@ public class ContactListActivity extends Activity
                 }
                 break;
             }
-            case CConst.BROWSE_IMPORT_VCF_ACTION:{
-
-                if ( resultCode == RESULT_OK) {
-
-                    Bundle activityResultBundle = data.getExtras();
-                    String path = activityResultBundle.getString(CConst.IMPORT_VCF_PATH);
-
-                    new ImportVcardAsync( ).execute(path);
-                }
-                break;
-            }
             case CConst.CONTACT_PICKER_ACTION:{
 
                 if ( resultCode == RESULT_OK) {
@@ -778,7 +771,7 @@ public class ContactListActivity extends Activity
             case CConst.NO_ACTION:
                 break;
             default:
-                if(DEBUG) LogUtil.log("ERROR, CLA invalid requestCode: "+requestCode);
+                SharedMenu.myOnActivityResult(m_act, requestCode, resultCode, data);
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -810,16 +803,9 @@ public class ContactListActivity extends Activity
                 break;
             }
             default:
-                SharedMenu.myOnRequestPermissionsResult( requestCode, permissions, grantResults);
-
-                LogUtil.log("CLA onRequestPermissionResult requestCode: "+requestCode);
-
-                for( int i = 0; i < permissions.length; i++)
-                    LogUtil.log("CLA onRequestPermissionResult: "+permissions[i]+"  "+grantResults[i]);
-
+                SharedMenu.myOnRequestPermissionsResult( m_act, requestCode, permissions, grantResults);
         }
     }
-
 
     ActivityCompat.OnRequestPermissionsResultCallback onRequestPermissionsResultCallback = new ActivityCompat.OnRequestPermissionsResultCallback() {
         @Override
