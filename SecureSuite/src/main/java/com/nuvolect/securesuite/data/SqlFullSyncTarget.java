@@ -294,7 +294,7 @@ public class SqlFullSyncTarget {
      */
     private void sendFullSyncEnd(Context ctx) {
 
-        WorkerCommand.refreshUserInterface(ctx, CConst.CONTACTS);
+        WorkerCommand.refreshUserInterface(ctx, CConst.RECREATE);
 
         // Save status for display in the settings page
         SqlIncSync.getInstance().setIncomingUpdate();

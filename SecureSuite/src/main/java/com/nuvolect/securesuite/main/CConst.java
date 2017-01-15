@@ -43,6 +43,7 @@ public class CConst {
     /** for communicating between services and activities or web server to refresh */
     public static final String UI_TYPE_KEY          = "ui_type_key";
     public static final String CONTACTS             = "contacts";
+    public static final String RECREATE             = "recreate";
     public static final String PASSWORDS            = "passwords";
 
     public final static int LARGE_ICON              = R.drawable.app_high_res_icon;

@@ -19,7 +19,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,7 +53,6 @@ import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.license.LicenseUtil;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
-import com.nuvolect.securesuite.data.CrypSafeDB;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.FileBrowserDbRestore;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -76,6 +74,7 @@ import java.lang.ref.WeakReference;
 import static android.Manifest.permission.GET_ACCOUNTS;
 import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_PHONE_STATE;
 
 /**
  * An activity representing a list of Contacts. This activity has different
@@ -325,15 +324,13 @@ public class ContactListActivity extends Activity
                 InputStream vcf = getResources().getAssets().open(CConst.APP_VCF);
                 ImportVcard.importVcf(m_ctx, vcf, Cryp.getCurrentGroup());
 
-                // Offer to copy an existing CrypSafe db
-                CrypSafeDB.copy(m_act);//mkk
-
             } catch (IOException e) {
                 LogUtil.logException(ContactListActivity.class, e);
             }
 
             // First time, request phone management access
-            PermissionUtil.requestReadPhoneState(m_act, CConst.NO_ACTION);
+            if( ! hasPermission( READ_PHONE_STATE))
+                PermissionUtil.requestReadPhoneState(m_act, CConst.NO_ACTION);
         }
 
         // Support for action bar pull down menu
@@ -814,76 +811,6 @@ public class ContactListActivity extends Activity
         }
     };
 
-    private class ImportVcardAsync extends AsyncTask<String, Integer, Long> {
-
-        public ImportVcardAsync(){
-
-            m_importProgressDialog = new ProgressDialog(m_act);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            m_importProgressDialog.setMessage("Import starting...");
-            m_importProgressDialog.show();
-        }
-
-        @Override
-        protected Long doInBackground(String...paths) {
-
-            String path = paths[0];
-
-            ImportVcard.ImportProgressCallbacks callbacks = new ImportVcard.ImportProgressCallbacks() {
-                @Override
-                public void progressReport(int importProgress) {
-
-                    publishProgress( importProgress );
-                }
-            };
-
-            long contact_id = ImportVcard.importVcf(m_act, path, Cryp.getCurrentGroup(), callbacks);
-
-            return contact_id;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-
-            int vcardsImported = values[0];
-
-            if( m_importProgressDialog == null ) {
-                m_importProgressDialog = new ProgressDialog(m_act);
-                m_importProgressDialog.show();
-            }
-
-            if( m_importProgressDialog != null && m_importProgressDialog.isShowing())
-                m_importProgressDialog.setMessage("Import progress: " + vcardsImported);
-
-//            if( DEBUG )
-//                LogUtil.log("onProgressUpdate: "+vcardsImported);
-        }
-
-        @Override
-        protected void onPostExecute(Long contact_id) {
-
-            if( m_importProgressDialog!= null && m_importProgressDialog.isShowing())
-                m_importProgressDialog.dismiss();
-
-            if( contact_id > 0)
-                Toast.makeText(m_act, "Import complete", Toast.LENGTH_LONG).show();
-            else
-                Toast.makeText(m_act, "Import failed", Toast.LENGTH_LONG).show();
-
-            m_act.setProgressBarIndeterminateVisibility( false );
-
-            startContactListFragment();
-            if( mTwoPane)
-                startContactDetailFragment();
-        }
-    }
-
     public static class ConfirmRestoreDatabaseDialogFragment extends DialogFragment {
 
         public ConfirmRestoreDatabaseDialogFragment(){ }
@@ -1087,10 +1014,9 @@ public class ContactListActivity extends Activity
 
                 if(DEBUG) LogUtil.log(LogType.CLA,""+cmd+bundle);
 
-                if( bundle.getString(CConst.UI_TYPE_KEY).contentEquals(CConst.CONTACTS)){
+                if( bundle.getString(CConst.UI_TYPE_KEY).contentEquals(CConst.RECREATE)){
 
-                    m_act.recreate();//FUTURE refresh fragments
-//                    startContactListFragment();// produces error: Activity has been destroyed
+                    m_act.recreate();//FUTURE refresh specific fragments
                 }
             }
 

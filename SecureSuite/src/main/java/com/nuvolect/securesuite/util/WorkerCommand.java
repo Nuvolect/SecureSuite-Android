@@ -28,6 +28,12 @@ public class WorkerCommand {
         i.putExtra("command", WorkerService.WorkTask.INTERRUPT_PROCESSING_AND_STOP.ordinal());
         ctx.startService( i );
     }
+
+    /**
+     * Dispatch a message to each activity that is listening.
+     * @param ctx
+     * @param uiType Hint for what to refresh, CConst.CONTACTS
+     */
     public static void refreshUserInterface(Context ctx, String uiType){
 
         Intent i = new Intent( ctx, WorkerService.class);

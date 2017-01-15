@@ -175,7 +175,7 @@ public class SqlIncSyncTarget {
         // Save status for display in the settings page
         SqlIncSync.getInstance().setIncomingUpdate();
 
-        WorkerCommand.refreshUserInterface(ctx, CConst.CONTACTS);
+        WorkerCommand.refreshUserInterface(ctx, CConst.RECREATE);
 
         String url = WebUtil.getCompanionServerUrl(CConst.RESTFUL_HTM);
         Map<String, String> parameters = new HashMap<String, String>();

@@ -29,6 +29,7 @@ import com.nuvolect.securesuite.util.FileBrowserImportVcf;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.PermissionUtil;
 import com.nuvolect.securesuite.util.Persist;
+import com.nuvolect.securesuite.util.WorkerCommand;
 
 import net.sqlcipher.Cursor;
 
@@ -533,6 +534,7 @@ public class SharedMenu extends Activity {
 
             m_act.setProgressBarIndeterminateVisibility( false );
 
+            WorkerCommand.refreshUserInterface(m_act, CConst.RECREATE);
             //TODO send message to refresh UI or specific fragments
 //            m_act.startContactListFragment();
 //            if( mTwoPane)
