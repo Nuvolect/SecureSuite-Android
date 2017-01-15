@@ -104,12 +104,12 @@
         "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable-mdpi/bg_image_8.png"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable-mdpi/ic_menu_edit.png",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable-mdpi/ic_menu_edit.png"
-    },
-    {
         "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable-mdpi/btn_rating_star_off_normal.png",
         "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable-mdpi/btn_rating_star_off_normal.png"
+    },
+    {
+        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable-mdpi/ic_menu_edit.png",
+        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable-mdpi/ic_menu_edit.png"
     },
     {
         "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable-mdpi/btn_rating_star_on_normal.png",

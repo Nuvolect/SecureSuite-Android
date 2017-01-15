@@ -1,4 +1,4 @@
-#Wed Jan 04 12:22:57 EST 2017
+#Sun Jan 15 12:30:29 EST 2017
 base.0=/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_3316ce593f04ed4dab43894e0290ef785716018b
 renamed.1=classes2.dex
 renamed.0=classes.dex

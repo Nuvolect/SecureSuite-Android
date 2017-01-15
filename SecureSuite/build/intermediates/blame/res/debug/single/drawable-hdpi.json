@@ -112,12 +112,12 @@
         "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable-hdpi/directory_icon.png"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable-hdpi/ic_action_discard.png",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable-hdpi/ic_action_discard.png"
-    },
-    {
         "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable-hdpi/spinner_default_holo_dark.9.png",
         "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable-hdpi/spinner_default_holo_dark.9.png"
+    },
+    {
+        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable-hdpi/ic_action_discard.png",
+        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable-hdpi/ic_action_discard.png"
     },
     {
         "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable-hdpi/ic_menu_search.png",

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nuvolect.securesuite.debug"
-    android:versionCode="13201"
-    android:versionName="1.3.2-debug" >
+    android:versionCode="13301"
+    android:versionName="1.3.3-debug" >
 
     <uses-sdk
         android:minSdkVersion="14"
