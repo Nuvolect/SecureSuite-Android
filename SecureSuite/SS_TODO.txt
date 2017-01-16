@@ -1,23 +1,14 @@
 Release notes, this update
 
-Product Name Considerations
-===========================
-- Feedback from the NSF, the term "Cloud" leads the user to assume typical cloud capability
-yet the product has only a few cloud characterstics.
-+ CrypServe, as in CrypSafe
-+ Media Server
-+ WiFile, short, could work but does not sound secure
-+ WiFinder, short, but conflicts with several WiFi "search and find" type apps
-+ CrypFileServer, a play on CrypSafe
-
 SPRINT - most important tasks
-o TBD
-
-o Expand call log to show date
+o License manager decision tree
+o Permission management
+o Trial pages.github.com page
 
 BACKLOG
 o Redesign and simplify fragment organization: icon view, list view, groups
 o SMS Text Notification, http://stackoverflow.com/questions/848728/how-can-i-read-sms-messages-from-the-inbox-programmatically-in-android
+o Expand call log to show date
 
 
 CONTACT LIST
@@ -31,9 +22,11 @@ PROBLEMS
 BACKLOG - nice things to do
 o Delete uniqueId cookie on logout
 o Backup to LAN - check for companion, instruct when no companion
-o //FUTURE Use Bootstrap notifications
-o //FUTURE User defined background images
-o //FUTURE WiFi P2P http://developer.android.com/guide/topics/connectivity/wifip2p.html
+
+FUTURE
+o Use Bootstrap notifications
+o User defined background images
+o WiFi P2P http://developer.android.com/guide/topics/connectivity/wifip2p.html
 
 
 o When CS has 10,000 users, reactivate call for donation and rating
