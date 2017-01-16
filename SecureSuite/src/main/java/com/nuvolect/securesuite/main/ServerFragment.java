@@ -181,7 +181,10 @@ public class ServerFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
 
-            m_fragment.dismiss();
+            if( m_fragment != null && m_fragment.isCancelable()) {
+
+                m_fragment.dismiss();
+            }
         }
     };
 }
