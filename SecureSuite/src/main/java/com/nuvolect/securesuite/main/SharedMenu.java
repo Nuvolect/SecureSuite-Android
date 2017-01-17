@@ -314,7 +314,7 @@ public class SharedMenu extends Activity {
                     if( ! hasPermission( READ_CONTACTS) ){
 
                         PermissionUtil.requestReadContacts(m_act,
-                                CConst.IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS);//mkk
+                                CConst.IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS);
                         break;
                     }
                     if( ! hasPermission( GET_ACCOUNTS )){
@@ -619,7 +619,7 @@ public class SharedMenu extends Activity {
             m_act.setProgressBarIndeterminateVisibility( false );
 
             WorkerCommand.refreshUserInterface(m_act, CConst.RECREATE);
-            //TODO send message to refresh UI or specific fragments
+            //FUTURE send message to refresh UI or specific fragments
 //            m_act.startContactListFragment();
 //            if( mTwoPane)
 //                startContactDetailFragment();

@@ -406,7 +406,7 @@ public class GroupDetailActivity extends Activity
             }
             case REFRESH_USER_INTERFACE:{
 
-                LogUtil.log(LogType.GLA, ""+cmd+bundle);
+                LogUtil.log(LogType.GDA, ""+cmd+bundle);
 
                 if( bundle.getString(CConst.UI_TYPE_KEY).contentEquals(CConst.CONTACTS)){
 
@@ -441,7 +441,7 @@ public class GroupDetailActivity extends Activity
             // connected to it.
             try {
                 Bundle bundle = new Bundle();
-                bundle.putString(CConst.SUBSCRIBER, "GLA");
+                bundle.putString(CConst.SUBSCRIBER, "GDA");
                 Message msg = Message.obtain(null, WorkerService.MSG_REGISTER_CLIENT);
                 msg.replyTo = mMessenger;
                 msg.setData( bundle);

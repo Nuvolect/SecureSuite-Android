@@ -9,7 +9,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,7 +16,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -459,12 +457,8 @@ public class GroupListActivity extends Activity
         }
     }
 
-    private boolean hasPermission(String perm) {
-        return(ContextCompat.checkSelfPermission(this, perm)== PackageManager.PERMISSION_GRANTED);
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {//mkk
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch ( requestCode){
@@ -568,15 +562,16 @@ public class GroupListActivity extends Activity
             }
             case IMPORT_CLOUD_CONTACTS_COMPLETE:{
 
-                String importedAccount = CloudImportDialog.getFirstImportedAccount();//mkk
+                String importedAccount = CloudImportDialog.getFirstImportedAccount();
                 if( !importedAccount.isEmpty()){
 
+                    LogUtil.log("GLA _handleMessage importedAccount: "+importedAccount);
                     Cryp.setCurrentAccount( importedAccount);
                     int group = MyGroups.getDefaultGroup( importedAccount);
                     Cryp.setCurrentGroup( group);
                 }
 
-                CloudImportDialog.complete( m_act );
+                CloudImportDialog.complete( m_act);
                 break;
             }
             case REFRESH_USER_INTERFACE:{

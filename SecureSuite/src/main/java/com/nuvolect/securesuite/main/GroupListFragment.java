@@ -27,7 +27,7 @@ import net.sqlcipher.Cursor;
 
 public class GroupListFragment extends ListFragment{
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = LogUtil.DEBUG;
     /**
      * The current activated item position. Only used on tablets.
      */
@@ -36,7 +36,7 @@ public class GroupListFragment extends ListFragment{
     private GroupListCursorAdapter m_groupListCursorAdapter;
     public String m_groupTitleSelected="";
     private Cursor m_cursor = null;
-    private Spinner accountSpinner;
+    private Spinner m_accountSpinner;
     private String[] m_account_list = new String[] {};
     private String m_account="";
     private int m_account_spinner_position = -1;
@@ -87,7 +87,7 @@ public class GroupListFragment extends ListFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(DEBUG)LogUtil.log("GroupListFragment onCreate");
+        if(DEBUG)LogUtil.log("GLF onCreate");
 
         m_act = getActivity();
         m_wasPaused = false;
@@ -96,7 +96,7 @@ public class GroupListFragment extends ListFragment{
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if(DEBUG)LogUtil.log("GroupListFragment onDestroy");
+        if(DEBUG)LogUtil.log("GLF onDestroy");
 
         if( m_cursor != null && !m_cursor.isClosed())
             m_cursor.close();
@@ -107,7 +107,7 @@ public class GroupListFragment extends ListFragment{
     @Override
     public void onPause() {
         super.onPause();
-        if(DEBUG)LogUtil.log("GroupListFragment onPause");
+        if(DEBUG)LogUtil.log("GLF onPause");
 
         m_wasPaused = true;
     }
@@ -115,13 +115,14 @@ public class GroupListFragment extends ListFragment{
     @Override
     public void onResume() {
         super.onResume();
-        if(DEBUG)LogUtil.log("GroupListFragment onResume");
+        if(DEBUG)LogUtil.log("GLF onResume");
 
         if( m_wasPaused){
 
             updateAdapter();
             m_wasPaused = false;
         }
+        m_accountSpinner.setSelection( m_account_spinner_position);
     }
 
     @Override
@@ -133,7 +134,7 @@ public class GroupListFragment extends ListFragment{
         // Add the theme background outline and fill color behind fragment
         AppTheme.applyDrawableShape(m_act, rootView);
 
-        accountSpinner = (Spinner) rootView.findViewById(R.id.accountSpinner);
+        m_accountSpinner = (Spinner) rootView.findViewById(R.id.accountSpinner);
         ListView listView = (ListView) rootView.findViewById(android.R.id.list);
 
         updateAccount();
@@ -209,52 +210,47 @@ public class GroupListFragment extends ListFragment{
         if( m_account.isEmpty()){
 
             m_account = m_account_list[0];
-            m_account_spinner_position = 0;
             Cryp.setCurrentAccount( m_account);
-        }else{
-            // Not first time, set spinner to previous account
-            int i=0;
-            for( String a: m_account_list){
-                if( a.contains(m_account)) {
-                    m_account_spinner_position = i;
-                    break;
-                }
-                ++i;
-            }
         }
+        m_account_spinner_position = findPosition( m_account_list, m_account );
 
         ArrayAdapter<String> spinnerArrayAdapter;
         spinnerArrayAdapter = new ArrayAdapter<String>(
                 m_act, android.R.layout.simple_spinner_item, m_account_list);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        accountSpinner.setAdapter(spinnerArrayAdapter);
-        accountSpinner.setSelection(m_account_spinner_position, true);
+        m_accountSpinner.setAdapter(spinnerArrayAdapter);
+        m_accountSpinner.setSelection(m_account_spinner_position, true);
 
-        accountSpinner.setOnItemSelectedListener( new OnItemSelectedListener( ) {
+        m_accountSpinner.setOnItemSelectedListener(new OnItemSelectedListener( ) {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
-                if( position != m_account_spinner_position){
+                m_account_spinner_position = position;
+                m_account = m_account_list[ position];
+                Cryp.setCurrentAccount( m_account);
+                updateAdapter();
 
-                    if(DEBUG)
-                        LogUtil.log("selected: "+m_account_list[position]);
+                updateAllStarredCounts(m_act);
 
-                    m_account_spinner_position = position;
-                    m_account = m_account_list[ position];
-                    Cryp.setCurrentAccount( m_account);
-                    updateAdapter();
-
-                    updateAllStarredCounts(m_act);
-
-                    // Inform activity account was selected
-                    mCallbacks.onAccountSelected( m_account );
-                }
+                // Inform activity account was selected
+                mCallbacks.onAccountSelected( m_account );
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
+    }
+
+    private int findPosition(String[] list, String target) {
+
+        for( int i = 0; i < list.length; i++){
+
+            if( list[i].contentEquals(target)){
+                return i;
+            }
+        }
+        return 0;
     }
 
     public void updateAdapter(){
@@ -267,7 +263,7 @@ public class GroupListFragment extends ListFragment{
                     new_cursor,
                     0,  // flags, not using
                     R.layout.group_list_item_activated
-                    );
+            );
         }else{
             // Adapter in place, update the cursor, adapter will close old cursor
             m_groupListCursorAdapter.changeCursor( new_cursor);
@@ -314,7 +310,7 @@ public class GroupListFragment extends ListFragment{
         super.onListItemClick(listView, view, position, id);
 
         android.database.Cursor c = m_groupListCursorAdapter.getCursor();
-//        if(DEBUG) Util.dumpCursorDescription((Cursor) c, "GroupListFragment");
+//        if(DEBUG) Util.dumpCursorDescription((Cursor) c, "GLF");
         m_groupTitleSelected = c.getString(GTTab.title.ordinal());
 
         // Notify the active callbacks interface (the activity, if the

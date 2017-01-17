@@ -492,28 +492,6 @@ public class ContactListActivity extends Activity
                 }
                 return true;
             }
-//            case R.id.menu_import_account_contacts:{//mkk remove
-//
-//                if( hasPermission( READ_CONTACTS) && hasPermission( GET_ACCOUNTS) ){
-//
-//                    CloudImportDialog.openDialog( m_act);
-//
-//                } else{
-//                    if( ! hasPermission( READ_CONTACTS) ){
-//
-//                        PermissionUtil.requestReadContacts(m_act,
-//                                CConst.IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS);//mkk
-//                        break;
-//                    }
-//                    if( ! hasPermission( GET_ACCOUNTS )){
-//
-//                        PermissionUtil.requestGetAccounts(m_act,
-//                                CConst.IMPORT_ACCOUNT_CONTACTS_REQUEST_GET_ACCOUNTS);
-//                        break;
-//                    }
-//                }
-//                break;
-//            }
             default:
                 post_cmd = SharedMenu.processCmd( m_act, item, m_contact_id, postCmdCallbacks);
         }
@@ -682,7 +660,7 @@ public class ContactListActivity extends Activity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {//mkk
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch ( requestCode){
@@ -874,6 +852,15 @@ public class ContactListActivity extends Activity
          * A final message is sent when the import is complete.
          */
             case IMPORT_CLOUD_CONTACTS_COMPLETE:{
+
+                String importedAccount = CloudImportDialog.getFirstImportedAccount();
+                if( !importedAccount.isEmpty()){
+
+                    LogUtil.log("CLA _handleMessage importedAccount: "+importedAccount);
+                    Cryp.setCurrentAccount( importedAccount);
+                    int group = MyGroups.getDefaultGroup( importedAccount);
+                    Cryp.setCurrentGroup( group);
+                }
 
                 CloudImportDialog.complete( m_act);
                 //mkk switch to new account

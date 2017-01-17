@@ -103,13 +103,13 @@ public class GroupDetailFragment extends Fragment {
         mCountInGroup = MyGroups.getGroupCountPseudo(m_group_id);
         m_wasPaused = false;
 
-        if(DEBUG)LogUtil.log("GroupDetailFragment onCreate, m_group_id: "+m_group_id);
+        if(DEBUG)LogUtil.log("GDF onCreate, m_group_id: "+m_group_id);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if(DEBUG)LogUtil.log("GroupDetailFragment onPause, m_group_id: "+m_group_id);
+        if(DEBUG)LogUtil.log("GDF onPause, m_group_id: "+m_group_id);
 
         m_wasPaused = true;
     }
@@ -117,7 +117,7 @@ public class GroupDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(DEBUG)LogUtil.log("GroupDetailFragment onResume, m_group_id: "+m_group_id);
+        if(DEBUG)LogUtil.log("GDF onResume, m_group_id: "+m_group_id);
 
         if( m_wasPaused){
 
@@ -129,7 +129,7 @@ public class GroupDetailFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if(DEBUG)LogUtil.log("GroupDetailFragment onDestroy, m_group_id: "+m_group_id);
+        if(DEBUG)LogUtil.log("GDF onDestroy, m_group_id: "+m_group_id);
 
         if( m_cursor != null && !m_cursor.isClosed())
             m_cursor.close();
@@ -137,15 +137,15 @@ public class GroupDetailFragment extends Fragment {
         m_groupDetailCursorAdapter = null;
     }
 
-    /**
-     * Reassign to a new group and update cursor.
-     * @param selectGroup
-     */
-    public void notifyChanged( int selectGroup){
-
-        m_group_id = selectGroup;
-        m_groupDetailCursorAdapter.notifyDataSetChanged();
-    }
+//    /**
+//     * Reassign to a new group and update cursor.
+//     * @param selectGroup
+//     */
+//    public void notifyChanged( int selectGroup){
+//
+//        m_group_id = selectGroup;
+//        m_groupDetailCursorAdapter.notifyDataSetChanged();
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -217,7 +217,7 @@ public class GroupDetailFragment extends Fragment {
             Persist.setCurrentContactId(m_act, contact_id);
 
             if(DEBUG)
-                LogUtil.log("GroupDetailFragment.OnItemClickListener onClick: "+SqlCipher.get( contact_id, DTab.display_name));
+                LogUtil.log("GDF.OnItemClickListener onClick: "+SqlCipher.get( contact_id, DTab.display_name));
 
             mCallbacks.onContactSelected();
         }

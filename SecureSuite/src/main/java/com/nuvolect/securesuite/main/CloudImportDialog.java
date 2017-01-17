@@ -162,7 +162,8 @@ public class CloudImportDialog {
             m_cloudImportProgressDialog.dismiss();
             m_cloudImportProgressDialog = null;
         }
-        act.recreate();
+        if( act != null)
+            act.recreate();
     }
 
     public static void updateProgress(Activity act, Bundle bundle) {
