@@ -11,7 +11,7 @@ public class CConst {
     public static final String FOLDER_NAME                        = "/securesuite/";
     public static final String DEFAULT_ACCOUNT                    = "Default_account";
     public static final int PHOTO_ICON_MAX_EDGE                   = 192;
-//    public static final String DEFAULT_IP_PORT                    = "0.0.0.0:8000";
+    //    public static final String DEFAULT_IP_PORT                    = "0.0.0.0:8000";
 //    public static final int DEFAULT_PORT                          = 8000; // Different than other Nuvolect apps
     public static final String IP_PORT                            = "ip_port";
     public static final String PORT                               = "port";
@@ -152,19 +152,23 @@ public class CConst {
     public static final String CUSTOM_ACCOUNT                 = "custom_account";
     public static final String GROUP_ACCOUNT_TYPE             = "user_custom";
 
-    public static final int NO_ACTION                         = 1000;
-    public static final int BROWSE_RESTORE_FOLDER_ACTION      = 1100;
-    public static final int BROWSE_IMPORT_VCF_ACTION          = 1200;
-    public static final int BROWSE_IMPORT_PHOTO_ACTION        = 1300;
-    public static final int CHANGE_LOCK_CODE_ACTION           = 1400;
-    public static final int VALIDATE_LOCK_CODE_ACTION         = 1500;
-    public static final int CHANGE_LOCK_CODE_TEST_ACTION      = 1600;
-    public static final int VALIDATE_LOCK_CODE_TEST_ACTION    = 1700;
-    public static final int CONTACT_PICKER_ACTION             = 1800;
-    public static final int REQUEST_READ_CONTACTS             = 1900;
-    public static final int REQUEST_READ_SINGLE_CONTACT       = 2000;
-    public static final int REQUEST_GET_ACCOUNTS              = 2100;
-    public static final int REQUEST_EXTERNAL_STORAGE_IMPORT_VCARD = 2200;
+    public static final int
+            NO_ACTION                                         = 100,
+            BROWSE_RESTORE_FOLDER_ACTION                      = 110,
+            BROWSE_IMPORT_PHOTO_ACTION                        = 130,
+            CHANGE_LOCK_CODE_ACTION                           = 140,
+            VALIDATE_LOCK_CODE_ACTION                         = 150,
+            CHANGE_LOCK_CODE_TEST_ACTION                      = 160,
+            VALIDATE_LOCK_CODE_TEST_ACTION                    = 170,
+
+            IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS = 180,
+            IMPORT_ACCOUNT_CONTACTS_REQUEST_GET_ACCOUNTS = 200,
+
+            IMPORT_VCARD_REQUEST_EXTERNAL_STORAGE = 210,
+            IMPORT_VCARD_BROWSE_ACTION = 120,
+
+            IMPORT_SINGLE_CONTACT_REQUEST_READ                = 230,
+            IMPORT_SINGLE_CONTACT_PICKER                      = 220 ;
 
     public static final String RESTORE_BACKUP_PATH            = "restore_backup_path";
     public static final String IMPORT_VCF_PATH                = "import_vcf_path";

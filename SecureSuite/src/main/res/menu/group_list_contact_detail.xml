@@ -135,6 +135,11 @@
                 android:titleCondensed="Import single">
             </item>
             <item
+                android:id="@+id/menu_import_account_contacts"
+                android:title="Import account"
+                android:titleCondensed="Import account">
+            </item>
+            <item
                 android:id="@+id/menu_import_vcard"
                 android:title="Import vCard"
                 android:titleCondensed="Import vCard">

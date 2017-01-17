@@ -21,6 +21,7 @@ import com.nuvolect.securesuite.data.SqlCipher.GTTab;
 import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.LogUtil;
+import com.nuvolect.securesuite.util.Util;
 
 import net.sqlcipher.Cursor;
 
@@ -146,14 +147,14 @@ public class GroupListFragment extends ListFragment{
         all_contactsTv.setTextColor(h1_color);
         int nAllContacts = MyAccounts.getContactCount(m_account);
         TextView all_contacts_countTv = (TextView) rootView.findViewById(R.id.all_contacts_count);
-        all_contacts_countTv.setText(nAllContacts + " People");
+        all_contacts_countTv.setText(Util.plural(nAllContacts, "Contact"));
         all_contacts_countTv.setTextColor( h2_color);
 
         TextView starred_contactsTv = (TextView) rootView.findViewById(R.id.starred_contacts);
         starred_contactsTv.setTextColor(h1_color);
         int starContacts = MyAccounts.getStarredCount(m_account);
         TextView starred_contacts_countTv = (TextView) rootView.findViewById(R.id.starred_contacts_count);
-        starred_contacts_countTv.setText(starContacts + " People");
+        starred_contacts_countTv.setText(Util.plural(starContacts, "Contact"));
         starred_contacts_countTv.setTextColor( h2_color);
 
         LinearLayout group_all_contactsLL = (LinearLayout) rootView.findViewById(R.id.group_all_contacts);
@@ -174,14 +175,14 @@ public class GroupListFragment extends ListFragment{
         all_contactsTv.setTextColor(h1_color);
         int nAllContacts = MyAccounts.getContactCount(m_account);
         TextView all_contacts_countTv = (TextView) m_act.findViewById(R.id.all_contacts_count);
-        all_contacts_countTv.setText(nAllContacts + " People");
+        all_contacts_countTv.setText(Util.plural( nAllContacts, "Contact"));
         all_contacts_countTv.setTextColor( h2_color);
 
         TextView starred_contactsTv = (TextView) m_act.findViewById(R.id.starred_contacts);
         starred_contactsTv.setTextColor(h1_color);
         int starContacts = MyAccounts.getStarredCount(m_account);
         TextView starred_contacts_countTv = (TextView) m_act.findViewById(R.id.starred_contacts_count);
-        starred_contacts_countTv.setText(starContacts + " People");
+        starred_contacts_countTv.setText(Util.plural(starContacts, "Contact"));
         starred_contacts_countTv.setTextColor( h2_color);
 
         LinearLayout group_all_contactsLL = (LinearLayout) m_act.findViewById(R.id.group_all_contacts);

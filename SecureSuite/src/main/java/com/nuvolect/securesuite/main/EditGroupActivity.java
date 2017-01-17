@@ -20,7 +20,7 @@ import com.nuvolect.securesuite.util.LogUtil;
  */
 public class EditGroupActivity extends Activity{
 
-    private final boolean DEBUG = false;
+    private final boolean DEBUG = LogUtil.DEBUG;
     private Activity m_act;
     private int m_theme;
     private EditGroupFragment m_fragment;
@@ -61,17 +61,6 @@ public class EditGroupActivity extends Activity{
 
             m_fragment = startEditGroupFragment();
         }
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
     }
     @Override
     protected void onPause() {

@@ -13,6 +13,7 @@ import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.data.SqlCipher.GTTab;
 import com.nuvolect.securesuite.util.AppTheme;
+import com.nuvolect.securesuite.util.Util;
 
 public class GroupListCursorAdapter extends CursorAdapter {
 
@@ -63,10 +64,7 @@ public class GroupListCursorAdapter extends CursorAdapter {
         TextView countTv = (TextView) view.findViewById(R.id.count_in_group);
 
         int count = MyGroups.mGroupCount.get(group_id);
-        if( count == 1)
-            countTv.setText("1 person");
-        else
-            countTv.setText(MyGroups.mGroupCount.get(group_id)+" people");
+            countTv.setText(Util.plural(count,"Contact"));
         countTv.setTextColor( m_h2_color);
     }
 

@@ -486,4 +486,18 @@ public class Util {
             return false;
         }
     }
+
+    /**
+     * Return "1 Item" or "0 Items" or "23 Items".
+     * @param n
+     * @param item
+     * @return
+     */
+    public static String plural(int n, String item) {
+
+        if( n == 1)
+            return "1 " + item;
+        else
+            return n + " " + item + "s";
+    }
 }

@@ -9,12 +9,9 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -27,8 +24,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,8 +37,6 @@ import android.widget.Toast;
 
 import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.data.BackupRestore;
-import com.nuvolect.securesuite.data.ImportContacts;
-import com.nuvolect.securesuite.data.ImportUtil;
 import com.nuvolect.securesuite.data.ImportVcard;
 import com.nuvolect.securesuite.data.MyContacts;
 import com.nuvolect.securesuite.data.MyGroups;
@@ -62,7 +55,6 @@ import com.nuvolect.securesuite.util.PermissionUtil;
 import com.nuvolect.securesuite.util.Persist;
 import com.nuvolect.securesuite.util.UriUtil;
 import com.nuvolect.securesuite.util.Util;
-import com.nuvolect.securesuite.util.WorkerCommand;
 import com.nuvolect.securesuite.util.WorkerService;
 import com.nuvolect.securesuite.webserver.CrypServer;
 
@@ -71,8 +63,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
-import static android.Manifest.permission.GET_ACCOUNTS;
-import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.READ_PHONE_STATE;
 
@@ -101,9 +91,6 @@ public class ContactListActivity extends Activity
     private ContactListFragment m_clf_fragment;
     private static Activity m_act;
     private static Context m_ctx;
-
-    /** progress dialog to show user that the import is processing. */
-    private ProgressDialog m_importProgressDialog = null;
 
     private ArrayAdapter<CharSequence> adapter;
     private OnNavigationListener navigationListener;
@@ -213,7 +200,7 @@ public class ContactListActivity extends Activity
          * the import is completed.
          */
         if( Persist.getImportInProgress(m_act) > 0)//import_cloud
-            cloudImportProgressDialog();
+            CloudImportDialog.cloudImportProgressDialog( m_act);
 
 //        CustomDialog.rateThisApp(m_act, false);// testing == false
 //        CustomDialog.makeDonation(m_act, false);
@@ -240,16 +227,7 @@ public class ContactListActivity extends Activity
         super.onPause();
         if(DEBUG)LogUtil.log("ContactListActivity onPause");
 
-        if( m_cloudImportProgressDialog != null && m_cloudImportProgressDialog.isShowing()){
-
-            m_cloudImportProgressDialog.dismiss();
-        }
-
-        if( m_importProgressDialog != null && m_importProgressDialog.isShowing()){
-
-            m_importProgressDialog.dismiss();
-        }
-        m_importProgressDialog = null;
+        CloudImportDialog.dismissProgressDialog( m_act );
     }
 
     @Override
@@ -257,11 +235,7 @@ public class ContactListActivity extends Activity
         super.onDestroy();
         if(DEBUG)LogUtil.log("ContactListActivity onDestroy");
 
-        if( m_cloudImportProgressDialog != null && m_cloudImportProgressDialog.isShowing()){
-
-            m_cloudImportProgressDialog.dismiss();
-            m_cloudImportProgressDialog = null;
-        }
+        CloudImportDialog.dismissProgressDialog( m_act );
     }
 
     @Override
@@ -518,26 +492,28 @@ public class ContactListActivity extends Activity
                 }
                 return true;
             }
-            case R.id.menu_import_account_contacts:{
-
-                if( hasPermission( READ_CONTACTS) && hasPermission( GET_ACCOUNTS) ){
-
-                    cloudImportDialog();
-
-                } else{
-                    if( ! hasPermission( READ_CONTACTS) ){
-
-                        PermissionUtil.requestReadContacts(m_act, CConst.REQUEST_READ_CONTACTS);//mkk
-                        break;
-                    }
-                    if( ! hasPermission( GET_ACCOUNTS )){
-
-                        PermissionUtil.requestGetAccounts(m_act, CConst.REQUEST_GET_ACCOUNTS);
-                        break;
-                    }
-                }
-                break;
-            }
+//            case R.id.menu_import_account_contacts:{//mkk remove
+//
+//                if( hasPermission( READ_CONTACTS) && hasPermission( GET_ACCOUNTS) ){
+//
+//                    CloudImportDialog.openDialog( m_act);
+//
+//                } else{
+//                    if( ! hasPermission( READ_CONTACTS) ){
+//
+//                        PermissionUtil.requestReadContacts(m_act,
+//                                CConst.IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS);//mkk
+//                        break;
+//                    }
+//                    if( ! hasPermission( GET_ACCOUNTS )){
+//
+//                        PermissionUtil.requestGetAccounts(m_act,
+//                                CConst.IMPORT_ACCOUNT_CONTACTS_REQUEST_GET_ACCOUNTS);
+//                        break;
+//                    }
+//                }
+//                break;
+//            }
             default:
                 post_cmd = SharedMenu.processCmd( m_act, item, m_contact_id, postCmdCallbacks);
         }
@@ -614,7 +590,6 @@ public class ContactListActivity extends Activity
         }
     };
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -642,53 +617,6 @@ public class ContactListActivity extends Activity
                         LogUtil.log( LogType.CONTACT_EDIT, "image path is null");
                     }
                 }
-                break;
-            }
-            case CConst.CONTACT_PICKER_ACTION:{
-
-                if ( resultCode == RESULT_OK) {
-
-                    Uri result = data.getData();
-                    String id = result.getLastPathSegment();
-                    LogUtil.log("Cloud contact ID: "+id);
-                    boolean success = true;
-
-                    if( id == null || id.isEmpty())
-                        success = false;
-                    else{
-
-                        if( ! hasPermission( READ_CONTACTS)){
-
-                            m_pendingImportSingleContactId = id;
-                            PermissionUtil.requestReadContacts(m_act, CConst.REQUEST_READ_SINGLE_CONTACT);
-
-                            Toast.makeText(m_act, "Import contact after granting permission", Toast.LENGTH_SHORT).show();
-                            break;
-                        }
-
-                        long cloud_contact_id = Long.valueOf( id );
-                        success = ImportContacts.importSingleContact(m_act, cloud_contact_id);
-                    }
-                    if( ! success)
-                        Toast.makeText(m_act, "Contact import error", Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(m_act, "Contact imported", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            }
-            /**
-             * TODO read single contact callback not called after permission is granted, android bug?
-             */
-            case CConst.REQUEST_READ_SINGLE_CONTACT:{
-
-                boolean success = false;
-                if ( resultCode == RESULT_OK) {
-
-                    long cloud_contact_id = Long.valueOf( m_pendingImportSingleContactId );
-                    success = ImportContacts.importSingleContact(m_act, cloud_contact_id);
-                }
-                if( ! success)
-                    Toast.makeText(m_act, "Contact import error", Toast.LENGTH_SHORT).show();
                 break;
             }
             case CConst.BROWSE_RESTORE_FOLDER_ACTION:{
@@ -737,46 +665,20 @@ public class ContactListActivity extends Activity
                     Toast.makeText(m_act, "Lock code change failed", Toast.LENGTH_SHORT).show();
                 break;
             }
-            case CConst.REQUEST_READ_CONTACTS: { // Import: Contacts and accounts permissions required mkk
-
-                if( resultCode == RESULT_OK && hasPermission( GET_ACCOUNTS)){
-
-                    cloudImportDialog();
-
-                }else if( ! hasPermission( GET_ACCOUNTS)){
-
-                    PermissionUtil.requestGetAccounts(m_act, CConst.REQUEST_GET_ACCOUNTS);
-                }else{
-                    if(DEBUG) LogUtil.log("REQUEST_READ_CONTACTS logic error");
-                }
-                break;
-            }
-            case CConst.REQUEST_GET_ACCOUNTS: { // Import: Contacts and accounts permissions required mkk
-
-                if( resultCode == RESULT_OK && hasPermission( READ_CONTACTS)){
-
-                    cloudImportDialog();
-
-                }else if( ! hasPermission( READ_CONTACTS)){
-
-                    PermissionUtil.requestReadContacts(m_act, CConst.REQUEST_READ_CONTACTS);
-                }else{
-                    if(DEBUG) LogUtil.log("REQUEST_GET_ACCOUNTS logic error");
-                }
-                break;
-            }
             case CConst.NO_ACTION:
                 break;
             default:
-                SharedMenu.myOnActivityResult(m_act, requestCode, resultCode, data);
+                /**
+                 * Manage request in common class for all activities
+                 */
+                SharedMenu.sharedOnActivityResult(m_act, requestCode, resultCode, data);
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     private boolean hasPermission(String perm) {
-        return(ContextCompat.checkSelfPermission(this, perm)==
-                PackageManager.PERMISSION_GRANTED);
+        return(ContextCompat.checkSelfPermission(this, perm)== PackageManager.PERMISSION_GRANTED);
     }
 
     @Override
@@ -785,31 +687,10 @@ public class ContactListActivity extends Activity
 
         switch ( requestCode){
 
-            case CConst.REQUEST_READ_CONTACTS :{
-
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    cloudImportDialog();
-
-                } else {
-
-                    Toast.makeText(m_act, "Sorry, read contacts permission required for import", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            }
             default:
-                SharedMenu.myOnRequestPermissionsResult( m_act, requestCode, permissions, grantResults);
+                SharedMenu.sharedOnRequestPermissionsResult( m_act, requestCode, permissions, grantResults);
         }
     }
-
-    ActivityCompat.OnRequestPermissionsResultCallback onRequestPermissionsResultCallback = new ActivityCompat.OnRequestPermissionsResultCallback() {
-        @Override
-        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        }
-    };
 
     public static class ConfirmRestoreDatabaseDialogFragment extends DialogFragment {
 
@@ -986,11 +867,7 @@ public class ContactListActivity extends Activity
          */
             case IMPORT_CLOUD_CONTACTS_UPDATE:{//import_cloud
 
-                int progress = bundle.getInt(CConst.IMPORT_PROGRESS);
-
-                if( m_cloudImportProgressDialog != null &&
-                        m_cloudImportProgressDialog.isShowing())
-                    m_cloudImportProgressDialog.setProgress(progress);
+                CloudImportDialog.updateProgress( m_act, bundle);
                 break;
             }
         /*
@@ -998,16 +875,8 @@ public class ContactListActivity extends Activity
          */
             case IMPORT_CLOUD_CONTACTS_COMPLETE:{
 
-                Persist.setImportInProgress(m_act, 0);
-                Persist.setProgressBarActive( m_act, false );
-                m_act.setProgressBarIndeterminateVisibility( false );
-
-                if( m_cloudImportProgressDialog != null && m_cloudImportProgressDialog.isShowing()){
-
-                    m_cloudImportProgressDialog.dismiss();
-                    m_cloudImportProgressDialog = null;
-                }
-                m_act.recreate();
+                CloudImportDialog.complete( m_act);
+                //mkk switch to new account
                 break;
             }
             case REFRESH_USER_INTERFACE:{
@@ -1018,10 +887,12 @@ public class ContactListActivity extends Activity
 
                     m_act.recreate();//FUTURE refresh specific fragments
                 }
+                else
+                    if(DEBUG) LogUtil.log(LogType.CLA,"UI_TYPE_KEY no match: "+bundle.getString(CConst.UI_TYPE_KEY));
             }
 
             default:
-                if(DEBUG) LogUtil.log(LogType.CLA,"default: "+cmd+" "+bundle);
+                if(DEBUG) LogUtil.log(LogType.CLA,"_handleMessage default: "+cmd+" "+bundle);
                 break;
         }
     }
@@ -1104,130 +975,121 @@ public class ContactListActivity extends Activity
         }
     }
 
-    private static CharSequence[] importAccountList;
-    private static int[] importCountList;
-    private static boolean[] importSelectList;
-    private static AlertDialog importDialog;
-
-    private static void cloudImportDialog(){
-
-        String title = "Select accounts to import";
-
-        AlertDialog.Builder builder = new AlertDialog.Builder( m_act );
-        builder.setTitle(title);
-        builder.setIcon(CConst.SMALL_ICON);
-
-        Bundle bundle = ImportUtil.generateCloudSummary(m_ctx);
-
-        importAccountList = bundle.getCharSequenceArray("accountList");
-        importCountList = bundle.getIntArray("countList");
-
-        importSelectList = new boolean[ importAccountList.length ];
-
-        for( int i = 0; i< importAccountList.length; i++)
-            importSelectList[ i ] = false;
-
-        builder.setMultiChoiceItems( importAccountList, importSelectList, new OnMultiChoiceClickListener(){
-
-            @Override
-            public void onClick(DialogInterface arg0, int which, boolean arg2) {
-
-            }});
-
-        builder.setPositiveButton("Start import", new OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                if(DEBUG) LogUtil.log("Start cloud import... ");
-                int totalImport = 0;
-
-                for( int i=0; i< importAccountList.length; i++){
-
-                    // Remove trailing ", ### contacts"
-                    String[] parts = importAccountList[ i ].toString().split("\\n"); // String array, each element is text between dots
-                    importAccountList[ i ] = parts[ 0 ];
-
-                    // Get total contacts to import and save to Persist
-                    // # > 0 will indicate import is in progress
-                    if( importSelectList[i])
-                        totalImport += importCountList[i];
-                }
-                m_act.setProgressBarIndeterminateVisibility( true );
-                Persist.setProgressBarActive( m_act, true );
-                Persist.setImportInProgress( m_act, totalImport );
-                cloudImportProgressDialog();
-
-                WorkerCommand.importCloudContacts(m_act, importAccountList, importSelectList);
-            }});
-
-        builder.setNegativeButton("Cancel", new OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                m_act.setProgressBarIndeterminateVisibility( false );
-                Persist.setProgressBarActive( m_act, false );
-                importDialog.dismiss();
-            }});
-
-        importDialog = builder.create();
-        importDialog.show();
-
-    }
-    public static ProgressDialog m_cloudImportProgressDialog;
-    public static boolean m_userCanceledCloudImport;
-    public static int m_import_count;
-
-    /**
-     * Present a progress dialog with cloud import progress. This method may be called multiple times
-     * depending on lifecycle updates and it will either create or restore the dialog.
-     */
-    private static void cloudImportProgressDialog(){//import_cloud
-
-        String message =
-                "Encrypting contact data. You may migrate away from this app and encryption will continue in the background.";
-        m_act.setProgressBarIndeterminateVisibility( true );
-        Persist.setProgressBarActive( m_act, true );
-
-        m_import_count = Persist.getImportInProgress(m_ctx);
-
-        m_cloudImportProgressDialog = new ProgressDialog( m_act);
-        m_cloudImportProgressDialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL);
-        m_cloudImportProgressDialog.setTitle("Please wait...");
-        m_cloudImportProgressDialog.setIcon(CConst.SMALL_ICON);
-        m_cloudImportProgressDialog.setMessage(message);
-        m_cloudImportProgressDialog.setIndeterminate(false);
-        m_cloudImportProgressDialog.setCancelable(false);
-        m_cloudImportProgressDialog.setCanceledOnTouchOutside(false);
-        m_cloudImportProgressDialog.setMax( m_import_count + 2);// 2 extra for cleanup progress
-        m_cloudImportProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-                "Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                /* User clicked Cancel so do some stuff */
-                        m_act.setProgressBarIndeterminateVisibility( false );
-                        Persist.setProgressBarActive( m_act, false );
-                        Persist.setImportInProgress(m_act, 0);
-
-                        WorkerCommand.interruptProcessingAndStop(m_act);
-
-                        m_userCanceledCloudImport = true;
-                        m_cloudImportProgressDialog.dismiss();
-                        m_cloudImportProgressDialog = null;
-                    }
-                });
-        m_cloudImportProgressDialog.setProgress( 0);
-        m_cloudImportProgressDialog.show();
-
-        m_userCanceledCloudImport = false;
-    }
-
-    static void alert(String message, boolean cancelable) {
-        AlertDialog.Builder bld = new AlertDialog.Builder(m_act);
-        bld.setMessage(message);
-        bld.setCancelable(cancelable);
-        bld.setNeutralButton("OK", null);
-        if(DEBUG) LogUtil.log("Showing alert dialog: " + message);
-        bld.create().show();
-    }
+//    private static CharSequence[] importAccountList;
+//    private static int[] importCountList;
+//    private static boolean[] importSelectList;
+//    private static AlertDialog importDialog;
+//
+//    private static void cloudImportDialog(){
+//
+//        String title = "Select accounts to import";
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder( m_act );
+//        builder.setTitle(title);
+//        builder.setIcon(CConst.SMALL_ICON);
+//
+//        Bundle bundle = ImportUtil.generateCloudSummary(m_ctx);
+//
+//        importAccountList = bundle.getCharSequenceArray("accountList");
+//        importCountList = bundle.getIntArray("countList");
+//
+//        importSelectList = new boolean[ importAccountList.length ];
+//
+//        for( int i = 0; i< importAccountList.length; i++)
+//            importSelectList[ i ] = false;
+//
+//        builder.setMultiChoiceItems( importAccountList, importSelectList, new OnMultiChoiceClickListener(){
+//
+//            @Override
+//            public void onClick(DialogInterface arg0, int which, boolean arg2) {
+//
+//            }});
+//
+//        builder.setPositiveButton("Start import", new OnClickListener(){
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//                if(DEBUG) LogUtil.log("Start cloud import... ");
+//                int totalImport = 0;
+//
+//                for( int i=0; i< importAccountList.length; i++){
+//
+//                    // Remove trailing ", ### contacts"
+//                    String[] parts = importAccountList[ i ].toString().split("\\n"); // String array, each element is text between dots
+//                    importAccountList[ i ] = parts[ 0 ];
+//
+//                    // Get total contacts to import and save to Persist
+//                    // # > 0 will indicate import is in progress
+//                    if( importSelectList[i])
+//                        totalImport += importCountList[i];
+//                }
+//                m_act.setProgressBarIndeterminateVisibility( true );
+//                Persist.setProgressBarActive( m_act, true );
+//                Persist.setImportInProgress( m_act, totalImport );
+//                cloudImportProgressDialog();
+//
+//                WorkerCommand.importCloudContacts(m_act, importAccountList, importSelectList);
+//            }});
+//
+//        builder.setNegativeButton("Cancel", new OnClickListener(){
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                m_act.setProgressBarIndeterminateVisibility( false );
+//                Persist.setProgressBarActive( m_act, false );
+//                importDialog.dismiss();
+//            }});
+//
+//        importDialog = builder.create();
+//        importDialog.show();
+//
+//    }
+//    public static ProgressDialog m_cloudImportProgressDialog;
+//    public static boolean m_userCanceledCloudImport;
+//    public static int m_import_count;
+//
+//    /**
+//     * Present a progress dialog with cloud import progress. This method may be called multiple times
+//     * depending on lifecycle updates and it will either create or restore the dialog.
+//     */
+//    private static void cloudImportProgressDialog(){//import_cloud
+//
+//        String message =
+//                "Encrypting contact data. You may migrate away from this app and encryption will continue in the background.";
+//        m_act.setProgressBarIndeterminateVisibility( true );
+//        Persist.setProgressBarActive( m_act, true );
+//
+//        m_import_count = Persist.getImportInProgress(m_ctx);
+//
+//        m_cloudImportProgressDialog = new ProgressDialog( m_act);
+//        m_cloudImportProgressDialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL);
+//        m_cloudImportProgressDialog.setTitle("Please wait...");
+//        m_cloudImportProgressDialog.setIcon(CConst.SMALL_ICON);
+//        m_cloudImportProgressDialog.setMessage(message);
+//        m_cloudImportProgressDialog.setIndeterminate(false);
+//        m_cloudImportProgressDialog.setCancelable(false);
+//        m_cloudImportProgressDialog.setCanceledOnTouchOutside(false);
+//        m_cloudImportProgressDialog.setMax( m_import_count + 2);// 2 extra for cleanup progress
+//        m_cloudImportProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+//                "Cancel", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//
+//                /* User clicked Cancel so do some stuff */
+//                        m_act.setProgressBarIndeterminateVisibility( false );
+//                        Persist.setProgressBarActive( m_act, false );
+//                        Persist.setImportInProgress(m_act, 0);
+//
+//                        WorkerCommand.interruptProcessingAndStop(m_act);
+//
+//                        m_userCanceledCloudImport = true;
+//                        m_cloudImportProgressDialog.dismiss();
+//                        m_cloudImportProgressDialog = null;
+//                    }
+//                });
+//        m_cloudImportProgressDialog.setProgress( 0);
+//        m_cloudImportProgressDialog.show();
+//
+//        m_userCanceledCloudImport = false;
+//    }
 
     /**
      * Callback method from {@link ContactListFragment.Callbacks} indicating that
@@ -1333,5 +1195,3 @@ public class ContactListActivity extends Activity
     public void refreshGroupList() {
     }
 }
-
-

@@ -20,6 +20,7 @@ import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Persist;
+import com.nuvolect.securesuite.util.Util;
 
 import net.sqlcipher.Cursor;
 
@@ -203,10 +204,7 @@ public class GroupDetailFragment extends Fragment {
         m_groupTitleTv.setText( MyGroups.getGroupTitlePseudo(m_group_id));
         mCountInGroup = new_cursor.getCount();
 
-        if( mCountInGroup == 1)
-            m_groupCount.setText("1 person");
-        else
-            m_groupCount.setText(mCountInGroup + " people");
+        m_groupCount.setText(Util.plural(mCountInGroup, "Contact"));
         // Save the cursor so it can be closed in onDestroy
         m_cursor = new_cursor;
     }

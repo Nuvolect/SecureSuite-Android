@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -21,8 +20,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.nuvolect.securesuite.R;
-import com.nuvolect.securesuite.data.ImportContacts;
-import com.nuvolect.securesuite.data.ImportVcard;
 import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
@@ -45,7 +42,7 @@ import java.lang.ref.WeakReference;
  * a {@link ContactDetailFragment}.
  */
 public class GroupDetailActivity extends Activity
-implements GroupDetailFragment.Callbacks, ContactDetailFragment.Callbacks {
+        implements GroupDetailFragment.Callbacks, ContactDetailFragment.Callbacks {
 
     private final boolean DEBUG = false;
     private static Activity m_act;
@@ -161,13 +158,13 @@ implements GroupDetailFragment.Callbacks, ContactDetailFragment.Callbacks {
 
         switch (item.getItemId()) {
 
-        case android.R.id.home:
-            m_act.finish();// Go to the previous activity on the stack
-            return true;
+            case android.R.id.home:
+                m_act.finish();// Go to the previous activity on the stack
+                return true;
 
-        default:
-            post_cmd = SharedMenu.processCmd( m_act, item, m_group_id, postCmdCallbacks);
-            LogUtil.log("GroupDetailActivity onOptionsItemSelected default: "+item.toString());
+            default:
+                post_cmd = SharedMenu.processCmd( m_act, item, m_group_id, postCmdCallbacks);
+                LogUtil.log("GroupDetailActivity onOptionsItemSelected default: "+item.toString());
         }
         doPostCommand( post_cmd);
 
@@ -219,19 +216,19 @@ implements GroupDetailFragment.Callbacks, ContactDetailFragment.Callbacks {
 
             switch( post_cmd){
 
-            case ACT_RECREATE:
-                m_act.recreate();
-                break;
-            case REFRESH_LEFT_DEFAULT_RIGHT:
+                case ACT_RECREATE:
+                    m_act.recreate();
+                    break;
+                case REFRESH_LEFT_DEFAULT_RIGHT:
 
-                startGroupDetailFragment( m_group_id);
-                break;
-            case START_CONTACT_EDIT:
-                startContactEditFragment( Persist.getCurrentContactId(m_act));
-                break;
-            case NIL:
-            case DONE:
-            default:
+                    startGroupDetailFragment( m_group_id);
+                    break;
+                case START_CONTACT_EDIT:
+                    startContactEditFragment( Persist.getCurrentContactId(m_act));
+                    break;
+                case NIL:
+                case DONE:
+                default:
             }
         }
     };
@@ -242,126 +239,128 @@ implements GroupDetailFragment.Callbacks, ContactDetailFragment.Callbacks {
 
         switch( requestCode ){
 
-        case CConst.BROWSE_IMPORT_PHOTO_ACTION:{
+            case CConst.BROWSE_IMPORT_PHOTO_ACTION:{
 
-            if ( resultCode == RESULT_OK && data != null && data.getData() != null) {
+                if ( resultCode == RESULT_OK && data != null && data.getData() != null) {
 
-                Uri _uri = data.getData();
-                String path = UriUtil.getPathFromUri(m_act, _uri);
+                    Uri _uri = data.getData();
+                    String path = UriUtil.getPathFromUri(m_act, _uri);
 
-                boolean fileExists = path != null && new File(path).exists();
-                boolean isFile = path != null && new File(path).isFile();
-                boolean goodToGo = fileExists && isFile;
+                    boolean fileExists = path != null && new File(path).exists();
+                    boolean isFile = path != null && new File(path).isFile();
+                    boolean goodToGo = fileExists && isFile;
 
-                if( goodToGo ){
+                    if( goodToGo ){
 
-                    ContactEditFragment fragment = (ContactEditFragment) getFragmentManager().findFragmentByTag(CConst.CONTACT_EDIT_FRAGMENT_TAG);
-                    fragment.readPhoto( path );
-                }else {
-                    Toast.makeText(m_act, "Image import failed", Toast.LENGTH_SHORT).show();
-                    LogUtil.log( LogType.CONTACT_EDIT, "image path is null");
-                }
-            }
-            break;
-        }
-        case CConst.BROWSE_IMPORT_VCF_ACTION:{
-
-            if ( resultCode == RESULT_OK) {
-
-                Bundle activityResultBundle = data.getExtras();
-                String path = activityResultBundle.getString(CConst.IMPORT_VCF_PATH);
-
-                new ImportVcardAsync( ).execute(path);
-            }
-            break;
-        }
-            case CConst.CONTACT_PICKER_ACTION:{
-
-                if ( resultCode == RESULT_OK) {
-
-                    Uri result = data.getData();
-                    String id = result.getLastPathSegment();
-                    LogUtil.log("Cloud contact ID: " + id);
-                    boolean success = true;
-
-                    if( id == null || id.isEmpty())
-                        success = false;
-                    else{
-
-                        long cloud_contact_id = Long.valueOf( id );
-                        success = ImportContacts.importSingleContact(m_act, cloud_contact_id);
+                        ContactEditFragment fragment = (ContactEditFragment) getFragmentManager().findFragmentByTag(CConst.CONTACT_EDIT_FRAGMENT_TAG);
+                        fragment.readPhoto( path );
+                    }else {
+                        Toast.makeText(m_act, "Image import failed", Toast.LENGTH_SHORT).show();
+                        LogUtil.log( LogType.CONTACT_EDIT, "image path is null");
                     }
-                    if( ! success)
-                        Toast.makeText(m_act, "Contact import error", Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
-        default:
-            LogUtil.log("ERROR, GDA invalid requestCode: "+requestCode);
-            break;
+//            case CConst.IMPORT_VCARD_BROWSE_ACTION:{
+//
+//                if ( resultCode == RESULT_OK) {
+//
+//                    Bundle activityResultBundle = data.getExtras();
+//                    String path = activityResultBundle.getString(CConst.IMPORT_VCF_PATH);
+//
+//                    new ImportVcardAsync( ).execute(path);
+//                }
+//                break;
+//            }
+//            case CConst.IMPORT_SINGLE_CONTACT_PICKER:{
+//
+//                if ( resultCode == RESULT_OK) {
+//
+//                    Uri result = data.getData();
+//                    String id = result.getLastPathSegment();
+//                    LogUtil.log("Cloud contact ID: " + id);
+//                    boolean success = true;
+//
+//                    if( id == null || id.isEmpty())
+//                        success = false;
+//                    else{
+//
+//                        long cloud_contact_id = Long.valueOf( id );
+//                        success = ImportContacts.importSingleContact(m_act, cloud_contact_id);
+//                    }
+//                    if( ! success)
+//                        Toast.makeText(m_act, "Contact import error", Toast.LENGTH_SHORT).show();
+//                }
+//                break;
+//            }
+            default:
+                /**
+                 * Manage request in common class for all activities
+                 */
+                SharedMenu.sharedOnActivityResult(m_act, requestCode, resultCode, data);
         }
     }
 
-    private class ImportVcardAsync extends AsyncTask<String, Integer, Long>
-    {
-        public ImportVcardAsync(){
-
-            m_importProgressDialog = new ProgressDialog(m_act);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            m_importProgressDialog.setMessage("Import starting...");
-            m_importProgressDialog.show();
-        }
-        @Override
-        protected Long doInBackground(String...paths) {
-
-            String path = paths[0];
-            ImportVcard.ImportProgressCallbacks callbacks = new ImportVcard.ImportProgressCallbacks() {
-                @Override
-                public void progressReport(int importProgress) {
-
-                    publishProgress( importProgress );
-                }
-            };
-            long contact_id = ImportVcard.importVcf(m_act, path, m_group_id, callbacks);
-
-            return contact_id;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-
-            int vcardsImported = values[0];
-
-            if( m_importProgressDialog == null ) {
-                m_importProgressDialog = new ProgressDialog(m_act);
-                m_importProgressDialog.show();
-            }
-
-            if( m_importProgressDialog != null && m_importProgressDialog.isShowing())
-                m_importProgressDialog.setMessage("Import progress: " + vcardsImported);
-        }
-
-        @Override
-        protected void onPostExecute(Long contact_id) {
-
-            if( m_importProgressDialog!= null && m_importProgressDialog.isShowing())
-                m_importProgressDialog.dismiss();
-
-            if( contact_id > 0)
-                Toast.makeText(m_act, "Import complete", Toast.LENGTH_LONG).show();
-            else
-                Toast.makeText(m_act, "Import failed", Toast.LENGTH_LONG).show();
-            m_act.setProgressBarIndeterminateVisibility( false );
-
-            startGroupDetailFragment( m_group_id);
-        }
-    }
+//    private class ImportVcardAsync extends AsyncTask<String, Integer, Long>
+//    {
+//        public ImportVcardAsync(){
+//
+//            m_importProgressDialog = new ProgressDialog(m_act);
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            m_importProgressDialog.setMessage("Import starting...");
+//            m_importProgressDialog.show();
+//        }
+//        @Override
+//        protected Long doInBackground(String...paths) {
+//
+//            String path = paths[0];
+//            ImportVcard.ImportProgressCallbacks callbacks = new ImportVcard.ImportProgressCallbacks() {
+//                @Override
+//                public void progressReport(int importProgress) {
+//
+//                    publishProgress( importProgress );
+//                }
+//            };
+//            long contact_id = ImportVcard.importVcf(m_act, path, m_group_id, callbacks);
+//
+//            return contact_id;
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Integer... values) {
+//            super.onProgressUpdate(values);
+//
+//            int vcardsImported = values[0];
+//
+//            if( m_importProgressDialog == null ) {
+//                m_importProgressDialog = new ProgressDialog(m_act);
+//                m_importProgressDialog.show();
+//            }
+//
+//            if( m_importProgressDialog != null && m_importProgressDialog.isShowing())
+//                m_importProgressDialog.setMessage("Import progress: " + vcardsImported);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Long contact_id) {
+//
+//            if( m_importProgressDialog!= null && m_importProgressDialog.isShowing())
+//                m_importProgressDialog.dismiss();
+//
+//            if( contact_id > 0)
+//                Toast.makeText(m_act, "Import complete", Toast.LENGTH_LONG).show();
+//            else
+//                Toast.makeText(m_act, "Import failed", Toast.LENGTH_LONG).show();
+//            m_act.setProgressBarIndeterminateVisibility( false );
+//
+//            startGroupDetailFragment( m_group_id);
+//        }
+//    }
     /**
      * Handler of incoming messages from service.
      */

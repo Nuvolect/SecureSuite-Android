@@ -17,6 +17,7 @@ import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.data.BackupRestore;
 import com.nuvolect.securesuite.data.CleanupFragment;
 import com.nuvolect.securesuite.data.ExportVcf;
+import com.nuvolect.securesuite.data.ImportContacts;
 import com.nuvolect.securesuite.data.ImportVcard;
 import com.nuvolect.securesuite.data.MergeGroup;
 import com.nuvolect.securesuite.data.MyContacts;
@@ -33,6 +34,8 @@ import com.nuvolect.securesuite.util.WorkerCommand;
 
 import net.sqlcipher.Cursor;
 
+import static android.Manifest.permission.GET_ACCOUNTS;
+import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.nuvolect.securesuite.data.BackupRestore.backupToStorage;
@@ -282,20 +285,45 @@ public class SharedMenu extends Activity {
                     // When user selects file, onActivityResult called with the result.
                     Intent intent = new Intent();
                     intent.setClass( m_act, FileBrowserImportVcf.class);
-                    m_act.startActivityForResult(intent, CConst.BROWSE_IMPORT_VCF_ACTION);
+                    m_act.startActivityForResult(intent, CConst.IMPORT_VCARD_BROWSE_ACTION);
                 }else
-                    PermissionUtil.requestReadExternalStorage(m_act, CConst.REQUEST_EXTERNAL_STORAGE_IMPORT_VCARD);
+                    PermissionUtil.requestReadExternalStorage(m_act, CConst.IMPORT_VCARD_REQUEST_EXTERNAL_STORAGE);
                 break;
             }
             case R.id.menu_import_single_contact:{
 
-                /**
-                 * Launch the contact picker intent.
-                 * Results returned in onActivityResult()
-                 */
-                Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
-                        ContactsContract.Contacts.CONTENT_URI);
-                m_act.startActivityForResult( contactPickerIntent, CConst.CONTACT_PICKER_ACTION);
+                if( hasPermission( READ_CONTACTS)) {
+                    /**
+                     * Launch the contact picker intent.
+                     * Results returned in onActivityResult()
+                     */
+                    Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
+                            ContactsContract.Contacts.CONTENT_URI);
+                    m_act.startActivityForResult(contactPickerIntent, CConst.IMPORT_SINGLE_CONTACT_PICKER);
+                }else
+                    PermissionUtil.requestReadExternalStorage(m_act, CConst.IMPORT_SINGLE_CONTACT_REQUEST_READ);
+                break;
+            }
+            case R.id.menu_import_account_contacts:{
+
+                if( hasPermission( READ_CONTACTS) && hasPermission( GET_ACCOUNTS) ){
+
+                    CloudImportDialog.openDialog( m_act);
+
+                } else{
+                    if( ! hasPermission( READ_CONTACTS) ){
+
+                        PermissionUtil.requestReadContacts(m_act,
+                                CConst.IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS);//mkk
+                        break;
+                    }
+                    if( ! hasPermission( GET_ACCOUNTS )){
+
+                        PermissionUtil.requestGetAccounts(m_act,
+                                CConst.IMPORT_ACCOUNT_CONTACTS_REQUEST_GET_ACCOUNTS);
+                        break;
+                    }
+                }
                 break;
             }
             case R.id.menu_export_group:{
@@ -382,6 +410,11 @@ public class SharedMenu extends Activity {
                 m_act.startActivity(i);
                 break;
             }
+            case R.id.menu_developer:{
+
+                DeveloperDialog.start(m_act);
+                break;
+            }
             default:
                 if(DEBUG && m_item != null)
                     LogUtil.log("SharedMenu.default: "+m_item.getTitle());
@@ -412,7 +445,7 @@ public class SharedMenu extends Activity {
         }
     }
 
-        public static void myOnRequestPermissionsResult(
+        public static void sharedOnRequestPermissionsResult(
             Activity act, int requestCode, String[] permissions, int[] grantResults) {
 
         switch ( requestCode){
@@ -420,7 +453,7 @@ public class SharedMenu extends Activity {
             /**
              * Service the result of a permission request
              */
-            case CConst.REQUEST_EXTERNAL_STORAGE_IMPORT_VCARD:{
+            case CConst.IMPORT_VCARD_REQUEST_EXTERNAL_STORAGE:{
 
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
@@ -430,16 +463,40 @@ public class SharedMenu extends Activity {
                     // When user selects file, onActivityResult called with the result.
                     Intent intent = new Intent();
                     intent.setClass( act, FileBrowserImportVcf.class);
-                    act.startActivityForResult(intent, CConst.BROWSE_IMPORT_VCF_ACTION);
+                    act.startActivityForResult(intent, CConst.IMPORT_VCARD_BROWSE_ACTION);
                 } else {
 
                     Toast.makeText(act, "Sorry, external storage permission required for import", Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
+            case CConst.IMPORT_SINGLE_CONTACT_REQUEST_READ:{
+                /**
+                 * Launch the contact picker intent.
+                 * Results returned in onActivityResult()
+                 */
+                Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
+                        ContactsContract.Contacts.CONTENT_URI);
+                m_act.startActivityForResult(contactPickerIntent, CConst.IMPORT_SINGLE_CONTACT_PICKER);
+                break;
+            }
+            case CConst.IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS:{
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    CloudImportDialog.openDialog( act );
+
+                } else {
+
+                    Toast.makeText(m_act, "Sorry, read contacts permission required for import", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
             default:{
 
-                LogUtil.log("SharedMenuUtil requestCode: "+requestCode);
+                LogUtil.log("SharedMenuUtil UNMANAGED/ERROR requestCode: "+requestCode);
 
                 for( int i = 0; i < permissions.length; i++)
                     LogUtil.log("SharedMenuUtil permissions: "+permissions[i]+"  "+grantResults[i]);
@@ -448,14 +505,14 @@ public class SharedMenu extends Activity {
         }
     }
 
-    public static void myOnActivityResult(
+    public static void sharedOnActivityResult(
             Activity act, int requestCode, int resultCode, Intent data) {
 
         if(DEBUG) LogUtil.log("SharedMenu myOnActivityResult requestCode: "+requestCode);
 
         switch ( requestCode){
 
-            case CConst.BROWSE_IMPORT_VCF_ACTION:{
+            case CConst.IMPORT_VCARD_BROWSE_ACTION:{
 
                 if ( resultCode == RESULT_OK) {
 
@@ -466,9 +523,36 @@ public class SharedMenu extends Activity {
                 }
                 break;
             }
+            case CConst.IMPORT_SINGLE_CONTACT_PICKER:{
 
+                if ( resultCode == RESULT_OK) {
+
+                    Uri result = data.getData();
+                    String id = result.getLastPathSegment();
+                    LogUtil.log("Cloud contact ID: "+id);
+                    boolean success = true;
+
+                    if( id == null || id.isEmpty())
+                        success = false;
+                    else{
+
+                        long cloud_contact_id = Long.valueOf( id );
+                        success = ImportContacts.importSingleContact( m_act, cloud_contact_id);
+                    }
+                    if( ! success)
+                        Toast.makeText(m_act, "Contact import error", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(m_act, "Contact imported", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+            default:{
+
+                LogUtil.log("sharedOnActivityResult UNMANAGED/ERROR requestCode: "+requestCode);
+            }
         }
     }
+
 
     private static class ImportVcardAsync extends AsyncTask<String, Integer, Long> {
 

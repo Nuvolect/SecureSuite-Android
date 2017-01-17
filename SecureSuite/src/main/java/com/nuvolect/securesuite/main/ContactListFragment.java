@@ -22,6 +22,7 @@ import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Persist;
 import com.nuvolect.securesuite.util.StringUtil;
+import com.nuvolect.securesuite.util.Util;
 
 import net.sqlcipher.Cursor;
 
@@ -400,10 +401,7 @@ public class ContactListFragment extends ListFragment {
 
             // Update the contact count in the header
             int count = m_cursor.getCount();
-            if( count == 1)
-                contactCountTv.setText("1 person");
-            else
-                contactCountTv.setText( count+" people");
+                contactCountTv.setText(Util.plural(count,"Contact"));
             int h2_color = AppTheme.getThemeColor( m_act, R.attr.h2_color);
             contactCountTv.setTextColor( h2_color);
         }
