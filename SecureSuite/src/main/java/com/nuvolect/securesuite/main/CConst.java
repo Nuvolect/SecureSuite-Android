@@ -161,11 +161,13 @@ public class CConst {
             CHANGE_LOCK_CODE_TEST_ACTION                      = 160,
             VALIDATE_LOCK_CODE_TEST_ACTION                    = 170,
 
-            IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS = 180,
-            IMPORT_ACCOUNT_CONTACTS_REQUEST_GET_ACCOUNTS = 200,
+            CALLER_ID_REQUEST_READ_PHONE_STATE                = 180,
 
-            IMPORT_VCARD_REQUEST_EXTERNAL_STORAGE = 210,
-            IMPORT_VCARD_BROWSE_ACTION = 120,
+            IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS     = 190,
+            IMPORT_ACCOUNT_CONTACTS_REQUEST_GET_ACCOUNTS      = 200,
+
+            IMPORT_VCARD_REQUEST_EXTERNAL_STORAGE             = 210,
+            IMPORT_VCARD_BROWSE_ACTION                        = 120,
 
             IMPORT_SINGLE_CONTACT_REQUEST_READ                = 230,
             IMPORT_SINGLE_CONTACT_PICKER                      = 220 ;

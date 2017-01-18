@@ -41,7 +41,7 @@ public class SqlIncSyncSource {
     }
 
     /**
-     * FIXME, while syncing a user may try to import more data.  Manage the process to be seamless.
+     * FUTURE, while syncing a user may try to import more data.  Manage the process to be seamless.
      *
      * A test fails when 128 contacts have been imported and while they sync a second batch
      * of 128 is imported.

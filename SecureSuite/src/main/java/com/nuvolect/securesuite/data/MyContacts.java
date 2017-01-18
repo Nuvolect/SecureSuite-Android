@@ -100,5 +100,30 @@ public class MyContacts {
 
         return SqlCipher.getFirstContactID( account);
     }
+
+    /**
+     * Identify contacts given id range and testing that the contact
+     * is not in the trash.
+     * @param contact_id
+     * @return
+     */
+    public static boolean invalidContact(long contact_id) {
+
+        if( contact_id <= 0 || MyGroups.isInTrash( contact_id))
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * Identify contacts given id range and testing that the contact
+     * is not in the trash.
+     * @param contact_id
+     * @return
+     */
+    public static boolean validContact(long contact_id) {
+
+        return ! invalidContact( contact_id);
+    }
 }
 

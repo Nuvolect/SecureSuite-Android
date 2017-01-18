@@ -803,12 +803,12 @@ public class MyGroups {
                 "%" + search + "%"
         };
 
-        LogUtil.log("=============================================         query: "+query);
-        LogUtil.log("============================================= selectionArgs: "+selectionArgs[0]+", '"+selectionArgs[1]+"'");
+//        LogUtil.log("query: "+query);
+//        LogUtil.log("selectionArgs: "+selectionArgs[0]+", '"+selectionArgs[1]+"'");
 
         Cursor c = account_db.rawQuery(query, selectionArgs);
 
-        LogUtil.log("=============================================         count: " + c.getCount());
+//        LogUtil.log("count: " + c.getCount());
 
         return c;
     }
@@ -1059,7 +1059,7 @@ public class MyGroups {
     public static String getGroupTitles(long contact_id) {
 
         /**
-         * TODO fixme, hack to solve spurious crash problem
+         * TODO hack to solve spurious crash problem
          */
         if( mGroupTitle == null)
             initGroupMemory();

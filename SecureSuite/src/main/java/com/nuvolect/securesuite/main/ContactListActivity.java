@@ -38,7 +38,6 @@ import android.widget.Toast;
 import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.data.BackupRestore;
 import com.nuvolect.securesuite.data.ImportVcard;
-import com.nuvolect.securesuite.data.MyContacts;
 import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.license.LicenseManager;
@@ -186,7 +185,6 @@ public class ContactListActivity extends Activity
         mTwoPane = findViewById(R.id.contact_detail_container) != null;
 
 //         Restore navigation to the persisted state
-//        if( Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
         if( actionBar != null)
             actionBar.setSelectedNavigationItem( Persist.getNavChoice(m_act));
 
@@ -304,7 +302,7 @@ public class ContactListActivity extends Activity
 
             // First time, request phone management access
             if( ! hasPermission( READ_PHONE_STATE))
-                PermissionUtil.requestReadPhoneState(m_act, CConst.NO_ACTION);
+                PermissionUtil.requestReadPhoneState(m_act, CConst.CALLER_ID_REQUEST_READ_PHONE_STATE);
         }
 
         // Support for action bar pull down menu
@@ -431,29 +429,24 @@ public class ContactListActivity extends Activity
             Fragment editFrag = getFragmentManager().findFragmentByTag(CConst.CONTACT_EDIT_FRAGMENT_TAG);
             if( editFrag != null && editFrag.isVisible()){
                 inflater.inflate(R.menu.contact_list_contact_edit, menu);
+                LogUtil.log("=============CLA.onOptionsMenu: contact_list_contact_edit");//mkk
             }
-            else
+            else{
+
                 inflater.inflate(R.menu.contact_list_contact_detail, menu);
+                LogUtil.log("=============CLA.onOptionsMenu: contact_list_contact_detail");//mkk
+            }
         }
-        else
+        else{
+
             inflater.inflate(R.menu.contact_list_single_menu, menu);
+            LogUtil.log("=============CLA.onOptionsMenu: contact_list_single_menu");//mkk
+        }
 
         if( (LicenseManager.mIsWhitelistUser || Boolean.valueOf( m_act.getString(R.string.verbose_debug)))
                 && DeveloperDialog.isEnabled()){
 
-            MenuItem menuItem = menu.findItem(R.id.menu_developer);
-            menuItem.setVisible( true );
-        }
-
-        /**
-         * When there are no contacts, hide contact related commands.
-         */
-        if( m_contact_id <= 0){
-
-            Util.hideMenu( menu, R.id.menu_shared_search);
-            Util.hideMenu( menu, R.id.menu_edit_contact);
-            Util.hideMenu( menu, R.id.menu_share_contact);
-            Util.hideMenu( menu, R.id.submenu_contact);
+            Util.showMenu( menu, R.id.menu_developer );
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -469,23 +462,6 @@ public class ContactListActivity extends Activity
             case android.R.id.home:{
 
                 if(DEBUG) LogUtil.log("CLA.onOptionItemSelect home button");
-                break;
-            }
-            case R.id.menu_delete_contact:{
-            /*
-             * Delete this contact and setup for display of the next contact.
-             */
-                if( m_contact_id <= 0){
-                    Toast.makeText( m_act, "Select a contact to delete", Toast.LENGTH_SHORT).show();
-                    break;
-                }
-
-                // Get ID of next contact after the contact to be deleted
-                long next_contact_id = m_clf_fragment.getContactAfter(m_contact_id);
-                boolean success = MyGroups.trashContact(m_act, Cryp.getCurrentAccount(), m_contact_id);
-                if(DEBUG && ! success) LogUtil.log("Database error, CLA, menu_delete_contact: "+m_contact_id);
-                m_contact_id = MyContacts.setValidId(m_ctx, next_contact_id);
-                post_cmd = SharedMenu.POST_CMD.REFRESH_LEFT_DEFAULT_RIGHT;
                 break;
             }
             case R.id.menu_restore_from_storage:{
@@ -519,6 +495,7 @@ public class ContactListActivity extends Activity
                 break;
             case REFRESH_LEFT_DEFAULT_RIGHT:
                 startContactListFragment();
+                invalidateOptionsMenu();
                 if( mTwoPane)
                     startContactDetailFragment();
                 break;
@@ -862,7 +839,7 @@ public class ContactListActivity extends Activity
                 String importedAccount = CloudImportDialog.getFirstImportedAccount();
                 if( !importedAccount.isEmpty()){
 
-                    LogUtil.log("====================CLA _handleMessage importedAccount: "+importedAccount);//mkk
+                    LogUtil.log("CLA _handleMessage importedAccount: "+importedAccount);//mkk
                     Cryp.setCurrentAccount( importedAccount);
                     int group = MyGroups.getDefaultGroup( importedAccount);
                     Cryp.setCurrentGroup( group);

@@ -64,7 +64,7 @@ public class CustomDialog {
     /**
      * Call as part of the daily use cycle and interact with use
      * as dictated by the the rate* parameters.
-     *FIXME, the cancel button sometimes fails
+     *FUTURE, the cancel button sometimes fails
      * @param act
      * @param testDialogNoMetrics
      */
@@ -135,7 +135,7 @@ public class CustomDialog {
     /**
      * Call as part of the daily use cycle and interact with use
      * as dictated by the the donate* parameters.
-     *FIXME, the cancel button sometimes fails
+     *FUTURE, the cancel button sometimes fails
      * @param act
      * @param testDialogNoMetrics
      */

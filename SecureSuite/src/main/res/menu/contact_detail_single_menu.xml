@@ -36,6 +36,7 @@
         </menu>
     </item>
     <item
+        android:visible="false"
         android:id="@+id/menu_set_profile"
         android:title="Set as profile"
         android:titleCondensed="Set as profile">

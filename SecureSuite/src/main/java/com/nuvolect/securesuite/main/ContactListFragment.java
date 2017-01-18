@@ -123,7 +123,7 @@ public class ContactListFragment extends ListFragment {
          * Restore from crypt persist search, group and account
          */
         m_account = Cryp.getCurrentAccount();
-        LogUtil.log("===================CLF onResume m_account: "+m_account);
+        LogUtil.log("CLF onResume m_account: "+m_account);
         m_group_id = Cryp.getCurrentGroup();
         if(DEBUG)LogUtil.log("CLF onResume: group_id: "+m_group_id);
 
@@ -181,7 +181,7 @@ public class ContactListFragment extends ListFragment {
      */
     private void updateAccountSpinner(){
 
-        LogUtil.log("====================CLF updateAccountSpinner: " + m_account);
+        LogUtil.log("CLF updateAccountSpinner: " + m_account);
 
         // Load current set of accounts
         m_account_list = MyAccounts.getAccounts();
@@ -205,7 +205,7 @@ public class ContactListFragment extends ListFragment {
                 m_act, android.R.layout.simple_spinner_item, m_account_list);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         accountSpinner.setAdapter(spinnerArrayAdapter);
-        LogUtil.log("======================CLF setSelection: " +m_account_spinner_position);
+        LogUtil.log("CLF setSelection: " +m_account_spinner_position);
         accountSpinner.setSelection(m_account_spinner_position, true);
 
         accountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -232,7 +232,7 @@ public class ContactListFragment extends ListFragment {
                 long candidate_id = MyGroups.getFirstContactInCursor(m_cursor);
 
                 if( DEBUG)
-                    LogUtil.log("++++++++++++++++++++CLF account onItemSelected first_contact: " +
+                    LogUtil.log("CLF account onItemSelected first_contact: " +
                         SqlCipher.contactInfo(candidate_id));
 
                 mCallbacks.onAccountSelected( m_account, candidate_id);

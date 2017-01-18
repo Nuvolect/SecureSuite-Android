@@ -39,6 +39,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.nuvolect.securesuite.data.BackupRestore.backupToStorage;
+import static com.nuvolect.securesuite.data.MyContacts.invalidContact;
 
 public class SharedMenu extends Activity {
 
@@ -159,6 +160,11 @@ public class SharedMenu extends Activity {
                     @Override
                     public void onContactSelected(long contact_id) {
 
+                        if( invalidContact( contact_id)){
+                            Toast.makeText(m_act, "Invalid contact",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
                         LogUtil.log("SharedMenu.shared_search id selected: " + contact_id);
                         Persist.setCurrentContactId(m_act, contact_id);
                         if (m_post_cmd_callbacks == null) {
@@ -181,7 +187,7 @@ public class SharedMenu extends Activity {
                 return POST_CMD.START_CONTACT_EDIT;
             }
             case R.id.menu_delete_contact:{
-                if( m_contact_id <= 0){
+                if( invalidContact( m_contact_id)){
                     Toast.makeText( m_act, "Select a contact to delete", Toast.LENGTH_SHORT).show();
                     return POST_CMD.DONE;
                 }
@@ -213,17 +219,26 @@ public class SharedMenu extends Activity {
                 }
             }
             case R.id.menu_edit_contact:{
-                return POST_CMD.START_CONTACT_EDIT;
+                if( invalidContact( m_contact_id)){
+                    Toast.makeText(m_act, "Invalid contact",Toast.LENGTH_SHORT).show();
+                    return POST_CMD.NIL;
+                }
+                else
+                    return POST_CMD.START_CONTACT_EDIT;
             }
             case R.id.menu_edit_save:
             case R.id.menu_edit_discard:{
                 return POST_CMD.START_CONTACT_DETAIL;
             }
             case R.id.menu_share_contact:{//FIXME use app internal storage for file
-                if( hasPermission( WRITE_EXTERNAL_STORAGE))
+                if( invalidContact( m_contact_id)){
+                    Toast.makeText(m_act, "Invalid contact",Toast.LENGTH_SHORT).show();
+                    return POST_CMD.NIL;
+                }
+                if( hasPermission( WRITE_EXTERNAL_STORAGE))//FIXME permissions
                     ExportVcf.emailVcf(m_act, Persist.getCurrentContactId(m_act));
                 else
-                    PermissionUtil.requestWriteExternalStorage(m_act,0);
+                    PermissionUtil.requestWriteExternalStorage(m_act,0);// FIXME permissions
                 return POST_CMD.NIL;
             }
             case R.id.menu_set_profile:
@@ -494,6 +509,19 @@ public class SharedMenu extends Activity {
                 }
                 break;
             }
+            case CConst.CALLER_ID_REQUEST_READ_PHONE_STATE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // Do nothing
+//                    Toast.makeText(m_act, "Caller identification enabled", Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    Toast.makeText(m_act, "Calls will not be identified without Read Phone State", Toast.LENGTH_SHORT).show();
+                }
+                break;
             default:{
 
                 LogUtil.log("SharedMenuUtil UNMANAGED/ERROR requestCode: "+requestCode);

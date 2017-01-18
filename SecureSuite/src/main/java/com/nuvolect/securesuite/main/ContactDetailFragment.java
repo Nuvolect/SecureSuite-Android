@@ -183,7 +183,7 @@ public class ContactDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         m_contact_id = MyContacts.getCurrrentContactId( m_act);
-        if(DEBUG)LogUtil.log("+++++++++++++++++++++++++CDF onCreateView: "+SqlCipher.contactInfo(m_contact_id));
+        if(DEBUG)LogUtil.log("CDF onCreateView: "+SqlCipher.contactInfo(m_contact_id));
 
         View rootView=null;
         TableLayout table;

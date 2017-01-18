@@ -514,4 +514,15 @@ public class Util {
         if( menuItem != null && menuItem.isVisible())
             menuItem.setVisible( false );
     }
+    /**
+     * Set the visibility of a menu item.
+     * @param menu
+     * @param item
+     */
+    public static void showMenu(Menu menu, int item) {
+
+        MenuItem menuItem = menu.findItem(item);
+        if( menuItem != null && menuItem.isVisible())
+            menuItem.setVisible( true );
+    }
 }

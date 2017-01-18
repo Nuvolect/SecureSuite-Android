@@ -151,7 +151,7 @@ public class MyAccounts {
          * @param contact_id
          * @return
          */
-        public static String getAccount(long contact_id) {//mkk
+        public static String getAccount(long contact_id) {
 
             if( contact_id <= 0)
                     return "";
