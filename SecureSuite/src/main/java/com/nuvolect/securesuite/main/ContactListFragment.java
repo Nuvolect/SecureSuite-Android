@@ -110,7 +110,7 @@ public class ContactListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(DEBUG)LogUtil.log("ContactListFragment onCreate");
+        if(DEBUG)LogUtil.log("CLF onCreate");
         m_act = getActivity();
 
         SqlCipher.getInstance(getActivity().getApplicationContext());
@@ -123,14 +123,16 @@ public class ContactListFragment extends ListFragment {
          * Restore from crypt persist search, group and account
          */
         m_account = Cryp.getCurrentAccount();
+        LogUtil.log("===================CLF onResume m_account: "+m_account);
         m_group_id = Cryp.getCurrentGroup();
-        if(DEBUG)LogUtil.log("ContactListFragment onResume: group_id: "+m_group_id);
+        if(DEBUG)LogUtil.log("CLF onResume: group_id: "+m_group_id);
 
         Cursor newCursor = updateCursor();
         updateAdapter(newCursor);
         getListView().setOnItemLongClickListener(m_onItemLongClickListener);
 
         accountSpinner = (Spinner) m_act.findViewById(R.id.accountSpinner);
+        LogUtil.log("CLF onResume m_account_spinner_position: "+m_account_spinner_position);
         updateAccountSpinner();
         groupSpinner = (Spinner) m_act.findViewById(R.id.groupSpinner);
         updateGroupSpinner();
@@ -139,19 +141,19 @@ public class ContactListFragment extends ListFragment {
     @Override
     public void onPause() {
         super.onPause();
-        if(DEBUG)LogUtil.log("ContactListFragment onPause");
+        if(DEBUG)LogUtil.log("CLF onPause");
 
         /**
-         * Persist search, group and account
+         * Persist group and account
          */
-        Cryp.setCurrentAccount(m_account);
-        Cryp.setCurrentGroup(m_group_id);
+//        Cryp.setCurrentGroup(m_group_id);//mkk
+//        Cryp.setCurrentAccount(m_account);
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if(DEBUG)LogUtil.log("ContactListFragment onDestroy");
+        if(DEBUG)LogUtil.log("CLF onDestroy");
 
         if( m_cursor != null && !m_cursor.isClosed())
             m_cursor.close();
@@ -179,6 +181,8 @@ public class ContactListFragment extends ListFragment {
      */
     private void updateAccountSpinner(){
 
+        LogUtil.log("====================CLF updateAccountSpinner: " + m_account);
+
         // Load current set of accounts
         m_account_list = MyAccounts.getAccounts();
         if( m_account_list.length == 0)
@@ -193,14 +197,7 @@ public class ContactListFragment extends ListFragment {
             m_group_id = Cryp.getCurrentGroup();
         }else{
             // Not first time, set spinner to current account
-            int i=0;
-            for( String a: m_account_list){
-                if( a.contains(m_account)) {
-                    m_account_spinner_position = i;
-                    break;
-                }
-                ++i;
-            }
+            m_account_spinner_position = findPosition( m_account_list, m_account);
         }
 
         ArrayAdapter<String> spinnerArrayAdapter;
@@ -208,40 +205,54 @@ public class ContactListFragment extends ListFragment {
                 m_act, android.R.layout.simple_spinner_item, m_account_list);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         accountSpinner.setAdapter(spinnerArrayAdapter);
+        LogUtil.log("======================CLF setSelection: " +m_account_spinner_position);
         accountSpinner.setSelection(m_account_spinner_position, true);
 
         accountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
-                if (position != m_account_spinner_position) {
+                if (DEBUG)
+                    LogUtil.log("CLF account onItemSelected: " + m_account_list[position]);
 
-                    if (DEBUG)
-                        LogUtil.log("account selected: " + m_account_list[position]);
+                m_account_spinner_position = position;
+                m_account = m_account_list[position];
+                Cryp.setCurrentAccount(m_account);
+                m_group_id = Cryp.getCurrentGroup();
 
-                    m_account_spinner_position = position;
-                    m_account = m_account_list[position];
-                    Cryp.setCurrentAccount(m_account);
-                    m_group_id = Cryp.getCurrentGroup();
+                LogUtil.log(LogUtil.LogType.CLF, "Account Spinner- Account, Group Id, Group: "
+                        + m_account + ", " + m_group_id + ", " + MyGroups.mGroupTitle.get(m_group_id));
 
-                    LogUtil.log(LogUtil.LogType.CLF, "Account Spinner- Account, Group Id, Group: "
-                            + m_account + ", " + m_group_id + ", " + MyGroups.mGroupTitle.get(m_group_id));
-
-                    updateGroupSpinner();
-                    m_cursor = updateCursor();
+                updateGroupSpinner();
+                m_cursor = updateCursor();
 //                    Util.dumpCursorDescription("account spinner",m_cursor);
-                    m_listCursorAdapter.changeCursor(m_cursor);
+                m_listCursorAdapter.changeCursor(m_cursor);
 
-                    // Inform activity account was selected
-                    long first_contact_id = MyGroups.getFirstContactInCursor(m_cursor);
-                    mCallbacks.onAccountSelected(m_account, first_contact_id);
-                }
+                // Inform activity account was selected
+                long candidate_id = MyGroups.getFirstContactInCursor(m_cursor);
+
+                if( DEBUG)
+                    LogUtil.log("++++++++++++++++++++CLF account onItemSelected first_contact: " +
+                        SqlCipher.contactInfo(candidate_id));
+
+                mCallbacks.onAccountSelected( m_account, candidate_id);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
+    }
+
+    private int findPosition(String[] list, String target) {
+
+        for( int i = 0; i < list.length; i++){
+
+            if( list[i].contentEquals(target)){
+                return i;
+            }
+        }
+        return 0;
     }
     /**
      * Manage the group for the list view.  Load persisted group and set as default
@@ -358,7 +369,7 @@ public class ContactListFragment extends ListFragment {
                 c = MyAccounts.getAccountStarredCursor(m_account, "");
             else {
                 if (m_group_id == 0)
-                    LogUtil.log("ContactListFragment updateCursor, ERROR m_group_id == 0");
+                    LogUtil.log("CLF updateCursor, ERROR m_group_id == 0");
                 else{
 
                     c = MyGroups.getGroupContactsCursor(m_group_id, "");
@@ -386,13 +397,13 @@ public class ContactListFragment extends ListFragment {
                     0,  // flags, not using
                     R.layout.contact_list_item_activated);
             setListAdapter( m_listCursorAdapter);
-            if(DEBUG)LogUtil.log("ContactListFragment updateAdapter, adapter created");
+            if(DEBUG)LogUtil.log("CLF updateAdapter, adapter created");
         }else{
 
             // Only update the cursor
             m_listCursorAdapter.changeCursor(new_cursor);
             m_listCursorAdapter.notifyDataSetChanged();
-            if(DEBUG)LogUtil.log("ContactListFragment updateAdapter, adapter updated");
+            if(DEBUG)LogUtil.log("CLF updateAdapter, adapter updated");
         }
         // Save the cursor so it can be closed in onDestroy
         m_cursor = new_cursor;
@@ -401,7 +412,7 @@ public class ContactListFragment extends ListFragment {
 
             // Update the contact count in the header
             int count = m_cursor.getCount();
-                contactCountTv.setText(Util.plural(count,"Contact"));
+            contactCountTv.setText(Util.plural(count,"Contact"));
             int h2_color = AppTheme.getThemeColor( m_act, R.attr.h2_color);
             contactCountTv.setTextColor( h2_color);
         }

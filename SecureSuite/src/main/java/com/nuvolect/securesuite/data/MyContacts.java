@@ -71,5 +71,34 @@ public class MyContacts {
 
         return SqlCipher.validContactId( contact_id);
     }
+
+    /**
+     * Get the current contact ID and validate it against the current account.
+     * Provide a default contact ID that always matches the current account.
+     *
+     * @param ctx
+     * @return
+     */
+    public static long getCurrrentContactId(Context ctx) {
+
+        long contact_id = Persist.getCurrentContactId( ctx);
+        String account = MyAccounts.getAccount( contact_id);
+        return getCurrrentContactId( ctx, account);
+    }
+
+    public static long getCurrrentContactId(Context ctx, String account) {
+
+        long contact_id = Persist.getCurrentContactId( ctx);
+        String current_account = Cryp.getCurrentAccount();
+        if( account.contentEquals( current_account))
+            return contact_id;
+        else
+            return getFirstContact( ctx, account);
+    }
+
+    private static long getFirstContact(Context ctx, String account) {
+
+        return SqlCipher.getFirstContactID( account);
+    }
 }
 

@@ -859,13 +859,12 @@ public class MyGroups {
         if( c == null)
             return -1;
 
-        int columnIndex = c.getColumnIndex(ADTab.contact_id.toString());
-
         if( c.getCount() <= 0)
             return -1;
 
         int position = c.getPosition();
 
+        int columnIndex = c.getColumnIndex(ADTab.contact_id.toString());
         c.moveToFirst();
         long contact_id = c.getLong(columnIndex);
 

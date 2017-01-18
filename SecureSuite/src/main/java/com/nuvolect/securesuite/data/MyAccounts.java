@@ -1,16 +1,10 @@
 package com.nuvolect.securesuite.data;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 
 import com.nuvolect.securesuite.data.SqlCipher.ATab;
 import com.nuvolect.securesuite.data.SqlCipher.GTTab;
-import com.nuvolect.securesuite.license.LicensePersist;
-import com.nuvolect.securesuite.main.CConst;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.DatabaseUtils;
@@ -18,8 +12,6 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.regex.Pattern;
 
 public class MyAccounts {
 
@@ -32,52 +24,52 @@ public class MyAccounts {
 
     private static Activity m_act;
 
-    public static void setMasterAccount(Activity act) {
-
-        m_act = act;
-
-        final List<String> stringMenu = new ArrayList<String>();
-
-        Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", Pattern.CASE_INSENSITIVE);
-
-        Account[] myAccounts = AccountManager.get(m_act).getAccounts();
-
-        for (Account myAccount : myAccounts) {
-
-            if (myAccount.type.contentEquals("com.google") && EMAIL_PATTERN.matcher(myAccount.name).matches()){
-
-                stringMenu.add(myAccount.name.toLowerCase(Locale.US));
-            }
-        }
-
-        if( stringMenu.size() == 1){
-
-            // There is only one account, so use it
-            LicensePersist.setLicenseAccount(m_act, stringMenu.get(0));
-            m_act.recreate();
-            return;
-        }
-
-        final CharSequence[] items = stringMenu.toArray(new CharSequence[stringMenu.size()]);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(m_act);
-        builder.setTitle(
-                "Greetings! Please select an account to host your license")
-                .setCancelable(false)
-                .setIcon(CConst.SMALL_ICON)
-                .setItems( items, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        String myAccount = stringMenu.get(which);
-                        LicensePersist.setLicenseAccount(m_act, myAccount);
-
-                        m_act.recreate();
-                    }
-                });
-
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
+//    public static void setMasterAccount(Activity act) {
+//
+//        m_act = act;
+//
+//        final List<String> stringMenu = new ArrayList<String>();
+//
+//        Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", Pattern.CASE_INSENSITIVE);
+//
+//        Account[] myAccounts = AccountManager.get(m_act).getAccounts();
+//
+//        for (Account myAccount : myAccounts) {
+//
+//            if (myAccount.type.contentEquals("com.google") && EMAIL_PATTERN.matcher(myAccount.name).matches()){
+//
+//                stringMenu.add(myAccount.name.toLowerCase(Locale.US));
+//            }
+//        }
+//
+//        if( stringMenu.size() == 1){
+//
+//            // There is only one account, so use it
+//            LicensePersist.setLicenseAccount(m_act, stringMenu.get(0));
+//            m_act.recreate();
+//            return;
+//        }
+//
+//        final CharSequence[] items = stringMenu.toArray(new CharSequence[stringMenu.size()]);
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(m_act);
+//        builder.setTitle(
+//                "Greetings! Please select an account to host your license")
+//                .setCancelable(false)
+//                .setIcon(CConst.SMALL_ICON)
+//                .setItems( items, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                        String myAccount = stringMenu.get(which);
+//                        LicensePersist.setLicenseAccount(m_act, myAccount);
+//
+//                        m_act.recreate();
+//                    }
+//                });
+//
+//        AlertDialog alert = builder.create();
+//        alert.show();
+//    }
 
         /**
          * Return a cursor for all contact records in an account.
@@ -153,12 +145,16 @@ public class MyAccounts {
         }
 
         /**
-         * Return the account of a contact_id.  Throw an exception
-         * if something other than a single contact records is found.
+         * Return the account of a contact_id.
+         * Return an empty string if the contact_id is -1, meaning no contacts.
+         * Throw an exception if something other than a single contact records is found.
          * @param contact_id
          * @return
          */
-        public static String getAccount(long contact_id) {
+        public static String getAccount(long contact_id) {//mkk
+
+            if( contact_id <= 0)
+                    return "";
 
             String[] projection = { ATab.account_name.toString() };
             String where = ATab.contact_id+"=?";
@@ -169,11 +165,16 @@ public class MyAccounts {
             String account = "";
 
             int count = c.getCount();
-            if( count == 1)
+            if( count == 1){
+
+                c.moveToNext();
                 account = c.getString( 0 );// only item in projection
+            }
             else{
                 throw new RuntimeException("getAccount, get should only find one record");
             }
+
+            c.close();
 
             return account;
         }

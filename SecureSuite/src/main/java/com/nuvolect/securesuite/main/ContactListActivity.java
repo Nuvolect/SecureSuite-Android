@@ -445,6 +445,17 @@ public class ContactListActivity extends Activity
             menuItem.setVisible( true );
         }
 
+        /**
+         * When there are no contacts, hide contact related commands.
+         */
+        if( m_contact_id <= 0){
+
+            Util.hideMenu( menu, R.id.menu_shared_search);
+            Util.hideMenu( menu, R.id.menu_edit_contact);
+            Util.hideMenu( menu, R.id.menu_share_contact);
+            Util.hideMenu( menu, R.id.submenu_contact);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -455,11 +466,6 @@ public class ContactListActivity extends Activity
 
         switch (item.getItemId()) { // Handle presses on the action bar items
 
-            case R.id.menu_developer:{
-
-                DeveloperDialog.start(m_act);
-                break;
-            }
             case android.R.id.home:{
 
                 if(DEBUG) LogUtil.log("CLA.onOptionItemSelect home button");
@@ -856,7 +862,7 @@ public class ContactListActivity extends Activity
                 String importedAccount = CloudImportDialog.getFirstImportedAccount();
                 if( !importedAccount.isEmpty()){
 
-                    LogUtil.log("CLA _handleMessage importedAccount: "+importedAccount);
+                    LogUtil.log("====================CLA _handleMessage importedAccount: "+importedAccount);//mkk
                     Cryp.setCurrentAccount( importedAccount);
                     int group = MyGroups.getDefaultGroup( importedAccount);
                     Cryp.setCurrentGroup( group);
@@ -875,7 +881,7 @@ public class ContactListActivity extends Activity
                     m_act.recreate();//FUTURE refresh specific fragments
                 }
                 else
-                    if(DEBUG) LogUtil.log(LogType.CLA,"UI_TYPE_KEY no match: "+bundle.getString(CConst.UI_TYPE_KEY));
+                if(DEBUG) LogUtil.log(LogType.CLA,"UI_TYPE_KEY no match: "+bundle.getString(CConst.UI_TYPE_KEY));
             }
 
             default:
@@ -962,122 +968,6 @@ public class ContactListActivity extends Activity
         }
     }
 
-//    private static CharSequence[] importAccountList;
-//    private static int[] importCountList;
-//    private static boolean[] importSelectList;
-//    private static AlertDialog importDialog;
-//
-//    private static void cloudImportDialog(){
-//
-//        String title = "Select accounts to import";
-//
-//        AlertDialog.Builder builder = new AlertDialog.Builder( m_act );
-//        builder.setTitle(title);
-//        builder.setIcon(CConst.SMALL_ICON);
-//
-//        Bundle bundle = ImportUtil.generateCloudSummary(m_ctx);
-//
-//        importAccountList = bundle.getCharSequenceArray("accountList");
-//        importCountList = bundle.getIntArray("countList");
-//
-//        importSelectList = new boolean[ importAccountList.length ];
-//
-//        for( int i = 0; i< importAccountList.length; i++)
-//            importSelectList[ i ] = false;
-//
-//        builder.setMultiChoiceItems( importAccountList, importSelectList, new OnMultiChoiceClickListener(){
-//
-//            @Override
-//            public void onClick(DialogInterface arg0, int which, boolean arg2) {
-//
-//            }});
-//
-//        builder.setPositiveButton("Start import", new OnClickListener(){
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//
-//                if(DEBUG) LogUtil.log("Start cloud import... ");
-//                int totalImport = 0;
-//
-//                for( int i=0; i< importAccountList.length; i++){
-//
-//                    // Remove trailing ", ### contacts"
-//                    String[] parts = importAccountList[ i ].toString().split("\\n"); // String array, each element is text between dots
-//                    importAccountList[ i ] = parts[ 0 ];
-//
-//                    // Get total contacts to import and save to Persist
-//                    // # > 0 will indicate import is in progress
-//                    if( importSelectList[i])
-//                        totalImport += importCountList[i];
-//                }
-//                m_act.setProgressBarIndeterminateVisibility( true );
-//                Persist.setProgressBarActive( m_act, true );
-//                Persist.setImportInProgress( m_act, totalImport );
-//                cloudImportProgressDialog();
-//
-//                WorkerCommand.importCloudContacts(m_act, importAccountList, importSelectList);
-//            }});
-//
-//        builder.setNegativeButton("Cancel", new OnClickListener(){
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                m_act.setProgressBarIndeterminateVisibility( false );
-//                Persist.setProgressBarActive( m_act, false );
-//                importDialog.dismiss();
-//            }});
-//
-//        importDialog = builder.create();
-//        importDialog.show();
-//
-//    }
-//    public static ProgressDialog m_cloudImportProgressDialog;
-//    public static boolean m_userCanceledCloudImport;
-//    public static int m_import_count;
-//
-//    /**
-//     * Present a progress dialog with cloud import progress. This method may be called multiple times
-//     * depending on lifecycle updates and it will either create or restore the dialog.
-//     */
-//    private static void cloudImportProgressDialog(){//import_cloud
-//
-//        String message =
-//                "Encrypting contact data. You may migrate away from this app and encryption will continue in the background.";
-//        m_act.setProgressBarIndeterminateVisibility( true );
-//        Persist.setProgressBarActive( m_act, true );
-//
-//        m_import_count = Persist.getImportInProgress(m_ctx);
-//
-//        m_cloudImportProgressDialog = new ProgressDialog( m_act);
-//        m_cloudImportProgressDialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL);
-//        m_cloudImportProgressDialog.setTitle("Please wait...");
-//        m_cloudImportProgressDialog.setIcon(CConst.SMALL_ICON);
-//        m_cloudImportProgressDialog.setMessage(message);
-//        m_cloudImportProgressDialog.setIndeterminate(false);
-//        m_cloudImportProgressDialog.setCancelable(false);
-//        m_cloudImportProgressDialog.setCanceledOnTouchOutside(false);
-//        m_cloudImportProgressDialog.setMax( m_import_count + 2);// 2 extra for cleanup progress
-//        m_cloudImportProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-//                "Cancel", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int whichButton) {
-//
-//                /* User clicked Cancel so do some stuff */
-//                        m_act.setProgressBarIndeterminateVisibility( false );
-//                        Persist.setProgressBarActive( m_act, false );
-//                        Persist.setImportInProgress(m_act, 0);
-//
-//                        WorkerCommand.interruptProcessingAndStop(m_act);
-//
-//                        m_userCanceledCloudImport = true;
-//                        m_cloudImportProgressDialog.dismiss();
-//                        m_cloudImportProgressDialog = null;
-//                    }
-//                });
-//        m_cloudImportProgressDialog.setProgress( 0);
-//        m_cloudImportProgressDialog.show();
-//
-//        m_userCanceledCloudImport = false;
-//    }
-
     /**
      * Callback method from {@link ContactListFragment.Callbacks} indicating that
      * the item with the given ID was selected.
@@ -1092,7 +982,7 @@ public class ContactListActivity extends Activity
     @Override
     public void onAccountSelected(String account, long first_contact_id) {
 
-        if( mTwoPane && first_contact_id > 0){
+        if( mTwoPane){
 
             m_contact_id = first_contact_id;
             Persist.setCurrentContactId(m_ctx, first_contact_id);
@@ -1127,10 +1017,10 @@ public class ContactListActivity extends Activity
     private void startContactDetailFragment() {
 
         if( mTwoPane ){
-            ContactDetailFragment frag = new ContactDetailFragment();
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace( R.id.contact_detail_container, frag, CConst.CONTACT_DETAIL_FRAGMENT_TAG);
-            ft.commit();
+                ContactDetailFragment frag = new ContactDetailFragment();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace( R.id.contact_detail_container, frag, CConst.CONTACT_DETAIL_FRAGMENT_TAG);
+                ft.commit();
         }else{
 
             Intent i = new Intent(getApplicationContext(), ContactDetailActivity.class);

@@ -15,6 +15,8 @@ import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -499,5 +501,17 @@ public class Util {
             return "1 " + item;
         else
             return n + " " + item + "s";
+    }
+
+    /**
+     * Set the visibility of a menu item.
+     * @param menu
+     * @param item
+     */
+    public static void hideMenu(Menu menu, int item) {
+
+        MenuItem menuItem = menu.findItem(item);
+        if( menuItem != null && menuItem.isVisible())
+            menuItem.setVisible( false );
     }
 }

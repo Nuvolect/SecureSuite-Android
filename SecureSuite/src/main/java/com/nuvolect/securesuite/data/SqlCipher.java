@@ -700,13 +700,20 @@ public class SqlCipher {
         return contact_id;
     }
 
+    /**
+     * Basic diagnostic info: contact name, id and account,
+     * otherwise the contactId if invalid.
+     * @param contact_id
+     * @return
+     */
     public static synchronized String contactInfo( long contact_id){
 
         if( contact_id <= 0)
             return "contact_id is "+contact_id;
 
         String displayName = SqlCipher.get(contact_id, ATab.display_name);
-        return displayName+", "+contact_id;
+        String account = SqlCipher.get(contact_id, ATab.account_name);
+        return displayName+", "+contact_id+", "+account;
     }
 
     /**<pre>
@@ -914,9 +921,9 @@ public class SqlCipher {
      */
     public static synchronized String get(long contact_id, DTab dbEnum) {
 
-        if( contact_id == 0){
+        if( contact_id <= 0){
 
-            if(DEBUG) LogUtil.log("contact_id 0");
+            if(DEBUG) LogUtil.log("SqlCipher ERROR get contact_id: :"+contact_id);
             return "";
         }
 
@@ -1356,7 +1363,7 @@ public class SqlCipher {
 
     /**
      * Return the id of the first contact if there is one, otherwise return -1 indicating there
-     * are no contacts.
+     * are no contacts. The ID may be in any account.
      * @return
      */
     public static synchronized long getFirstContactID() {
@@ -1962,6 +1969,38 @@ public class SqlCipher {
         c.close();
         return contactIds;
     }
+
+    /**
+     * Return first contact id in an account.
+     * Return 0 if no valid contact ID is found.
+     * @param account
+     * @return long contact id
+     */
+    static long getFirstContactID(String account) {
+
+        long contactId = 0;
+        String[] projection = {ATab.contact_id.toString()};
+        String where = null;
+        String[] args = null;
+
+        if( account != null && ! account.isEmpty()){
+
+            where = ATab.account_name+"=?";
+            args = new String[]{ account };
+        }
+        else
+            return 0;
+
+        Cursor c = account_db.query( ACCOUNT_TABLE, projection, where, args, null, null, null);
+
+        if( c.moveToNext()){
+
+            contactId = c.getLong( 0 );
+        }
+
+        c.close();
+        return contactId;
+    }
     /**
      * Return a cursor for all contact records including all accounts.
      * Projection is just contact_id.
@@ -2100,25 +2139,31 @@ public class SqlCipher {
      */
     public static synchronized String getCryp(String key){
 
-        if( key == null || key.isEmpty())
-            return "";
+        try {
+            if( key == null || key.isEmpty())
+                return "";
 
-        String where = ACTab.key+"=?";
-        String[] args = new String[]{ key };
+            String where = ACTab.key+"=?";
+            String[] args = new String[]{ key };
 
-        Cursor c = account_db.query(ACCOUNT_CRYP_TABLE, null, where, args, null, null, null);
-        c.moveToFirst();
+            Cursor c = account_db.query(ACCOUNT_CRYP_TABLE, null, where, args, null, null, null);
+            c.moveToFirst();
 
-        String value = "";
-        if( c.getCount() == 1){
-            value = c.getString( 2 );
-        }else
-        if( c.getCount() > 1){
+            String value = "";
+            if( c.getCount() == 1){
+                value = c.getString( 2 );
+            }else
+            if( c.getCount() > 1){
+                c.close();
+                throw new RuntimeException("get should only find zero or one record");
+            }
             c.close();
-            throw new RuntimeException("get should only find zero or one record");
+            return value;
+
+        } catch (Exception e) {
+            LogUtil.logException(SqlCipher.class, e);
         }
-        c.close();
-        return value;
+        return "";
     }
 
     /**

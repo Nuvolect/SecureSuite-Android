@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nuvolect.securesuite.R;
+import com.nuvolect.securesuite.data.MyContacts;
 import com.nuvolect.securesuite.data.NameUtil;
 import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.data.SqlCipher;
@@ -95,7 +96,7 @@ public class ContactDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(DEBUG)LogUtil.log("ContactDetailFragment onCreate");
+        if(DEBUG)LogUtil.log("CDF onCreate");
 
         m_act = getActivity();
 
@@ -162,27 +163,27 @@ public class ContactDetailFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if(DEBUG)LogUtil.log("ContactDetailFragment onPause");
+        if(DEBUG)LogUtil.log("CDF onPause");
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if(DEBUG)LogUtil.log("ContactDetailFragment onResume: "+SqlCipher.contactInfo(m_contact_id));
+        if(DEBUG)LogUtil.log("CDF onResume: "+SqlCipher.contactInfo(m_contact_id));
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if(DEBUG)LogUtil.log("ContactDetailFragment onDestroy");
+        if(DEBUG)LogUtil.log("CDF onDestroy");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        m_contact_id = Persist.getCurrentContactId(m_act);
-        if(DEBUG)LogUtil.log("ContactDetailFragment onCreateView: "+SqlCipher.contactInfo(m_contact_id));
+        m_contact_id = MyContacts.getCurrrentContactId( m_act);
+        if(DEBUG)LogUtil.log("+++++++++++++++++++++++++CDF onCreateView: "+SqlCipher.contactInfo(m_contact_id));
 
         View rootView=null;
         TableLayout table;
@@ -335,8 +336,12 @@ public class ContactDetailFragment extends Fragment {
             String groupList = MyGroups.getGroupTitles( m_contact_id);
             addTextRow( groupList, table, false);
         }
-        else
-            m_contact_id = -1;
+        else{
+            rootView = inflater.inflate(R.layout.contact_detail_fragment_empty, container, false);
+
+            // Add the theme background outline and fill color behind fragment
+            AppTheme.applyDrawableShape( getActivity(), rootView);
+        }
 
         return rootView;
     }
