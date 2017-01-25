@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
-import com.nuvolect.securesuite.data.MyAccounts;
 import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.Cryp;
@@ -51,7 +50,9 @@ public class LoginHtm {
 
             // Show contact photo if they have one
             long contact_id = Persist.getProfileId(m_ctx);
-            String encodedImage = SqlCipher.get(contact_id, SqlCipher.DTab.photo);
+            String encodedImage = "";
+            if( contact_id > 0)
+                encodedImage = SqlCipher.get(contact_id, SqlCipher.DTab.photo);
             if( encodedImage.isEmpty())
                 t.setVariable("contact_photo", "/img/contact_picture_large.png");
             else{
@@ -108,23 +109,16 @@ public class LoginHtm {
 
                 case NIL:
                     break;
-                case email:// Ignore for now, pick up when parsing password
+                case email:// No longer used, can be used to support multi-user authentication
                     break;
                 case password:
                     boolean passwordValid = false;
-                    boolean emailValid = false;
-
-                    String email = params.get("email");
                     String password = value;
 
-                    for( String account : MyAccounts.getAccounts()){
-                        if( account.contentEquals(email))
-                            emailValid = true;
-                    }
                     if( password.contentEquals(Cryp.getLockCode(m_ctx)))
                         passwordValid = true;
 
-                    if ( passwordValid && emailValid ){
+                        if ( passwordValid ){
 
                         CrypServer.put(uniqueId, "currentPage", CrypServer.URI_ENUM.list_htm.toString());
                         LogUtil.log(LogUtil.LogType.LOGIN_HTM, "login approved");
@@ -133,7 +127,7 @@ public class LoginHtm {
                     }
                     else{
                         CrypServer.notify(uniqueId, "Account or password invalid","warn");
-                        LogUtil.log(LogUtil.LogType.LOGIN_HTM, "login rejected: " + email + ", " + password);
+                        LogUtil.log(LogUtil.LogType.LOGIN_HTM, "login rejected: " + password);
                         String status = "Login failed " + TimeUtil.friendlyTimeMDYM(System.currentTimeMillis());
                         Cryp.put(CConst.LAST_LOGIN_STATUS, status);
                     }

@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.util.WorkerCommand;
 import com.nuvolect.securesuite.webserver.CrypServer;
 import com.nuvolect.securesuite.webserver.WebService;
@@ -20,6 +21,9 @@ import com.nuvolect.securesuite.webserver.WebUtil;
 public class BootReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(final Context ctx, Intent intent) {
+
+		// Initialize SQL Cipher database
+		SqlCipher.getInstance(ctx);
 
 		if(CrypServer.isServerEnabled()){
 

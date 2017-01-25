@@ -4,7 +4,7 @@
     <title>SecureSuite</title>
 
     <link href="/css/bootstrap.css" rel="stylesheet">
-    <link href="/css/cs_home.css" rel="stylesheet">
+    <link href="/css/ss_home.css" rel="stylesheet">
     <link href="/css/login.css" rel="stylesheet">
 </head>
 
@@ -12,7 +12,7 @@
 <!-- Bootstrap core JavaScript -->
 <script src="/js/jquery-1.11.2.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
-<script src="/js/cs.js"></script>
+<script src="/js/ss.js"></script>
 <script src="/js/notify.js"></script>
 <script>${notify_js}</script>
 
@@ -29,16 +29,14 @@
         <img id="profile-img" class="profile-img-card" src="${contact_photo}" />
         <p id="profile-name" class="profile-name-card"></p>
         <form class="form-signin" method="post">
-            <span id="reauth-email" class="reauth-email"></span>
-            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required autofocus>
             <button class="btn btn-lg btn-primary btn-block btn-signin"
-                    onclick="validateLogin('inputEmail','inputPassword','keepin')">Sign in</button>
-        </form><!-- /form -->
+                    onclick="validateLogin('inputPassword','keepin')">Sign in</button>
+        </form>
         <a href="https://nuvolect.com/securesuite_help" target="_blank" class="forgot-password">
             Need help?
         </a>
-    </div><!-- /card-container -->
+    </div>
 
     <br>
     <br>
@@ -60,7 +58,7 @@
         </p>
     </div>
 
-</div><!-- /container -->
+</div>
 
 </body>
 </html>

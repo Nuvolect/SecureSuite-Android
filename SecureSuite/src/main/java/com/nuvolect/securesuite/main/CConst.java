@@ -9,6 +9,7 @@ import com.nuvolect.securesuite.data.SqlCipher.KvTab;
 public class CConst {
 
     public static final String FOLDER_NAME                        = "/securesuite/";
+    public static final String TEMP_FOLDER                        = "/temp/";
     public static final String DEFAULT_ACCOUNT                    = "Default_account";
     public static final int PHOTO_ICON_MAX_EDGE                   = 192;
     //    public static final String DEFAULT_IP_PORT                    = "0.0.0.0:8000";
@@ -36,6 +37,7 @@ public class CConst {
     public static final int RESPONSE_CODE_REGISTRATION_ERROR_209  = 209;
     public static final int RESPONSE_CODE_COMPANION_TEST_FAIL_210 = 210;
     public static final int RESPONSE_CODE_SELF_TEST_FAIL_211      = 211;
+    public static final int RESPONSE_CODE_SHARE_VCF               = 212;
 
     public enum NavMenu {contacts, groups, passwords, server }
     public enum NavChoice {Contacts, Groups, Passwords }
@@ -64,7 +66,7 @@ public class CConst {
     public static final String CRYP_SYNC            = "cryp_sync";
     public static final String DATES                = DTab.date.toString();
     public static final String DISPLAY_NAME         = DTab.display_name.toString();
-    public static final String DTAB                 = "dtab";
+    public static final String EMBEDDED_USER                      = "embedded_user";
     public static final String EMAIL                = DTab.email.toString();
     public static final String FIX_ERRORS           = "fix_errors";
     public static final String GENERATE_HTML        = "generate_html";
@@ -92,7 +94,6 @@ public class CConst {
     public static final String PAYLOAD              = "payload";
     public static final String PERMISSION_MANAGER   = "permission_manager";
     public static final String PHONE                = DTab.phone.toString();
-    public static final String PHONETIC             = "phonetic";
     public static final String PHONETIC_FAMILY      = KvTab.phonetic_family.toString();
     public static final String PHONETIC_GIVEN       = KvTab.phonetic_given.toString();
     public static final String PHONETIC_MIDDLE      = KvTab.phonetic_middle.toString();
@@ -107,14 +108,11 @@ public class CConst {
     public static final String TOTAL                = "total";
     public static final String UNIQUE_ID                          = "unique_id";
     public static final String UPDATES              = "updates";
-    public static final String VALUE                = "value";
     public static final String VERSION              = ATab.version.toString();
     public static final String WEBSITE              = DTab.website.toString();
 
     public static final String TRUE = "true";
     public static final String FALSE = "false";
-    public static final String YES = "yes";
-    public static final String NO = "no";
     public static final String STARRED_1 = "1";
     public static final String STARRED_0 = "0";
     public static final String CUSTOM = "CUSTOM";

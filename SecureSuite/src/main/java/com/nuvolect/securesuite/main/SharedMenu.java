@@ -30,6 +30,7 @@ import com.nuvolect.securesuite.util.FileBrowserImportVcf;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.PermissionUtil;
 import com.nuvolect.securesuite.util.Persist;
+import com.nuvolect.securesuite.util.Util;
 import com.nuvolect.securesuite.util.WorkerCommand;
 
 import net.sqlcipher.Cursor;
@@ -235,10 +236,7 @@ public class SharedMenu extends Activity {
                     Toast.makeText(m_act, "Invalid contact",Toast.LENGTH_SHORT).show();
                     return POST_CMD.NIL;
                 }
-                if( hasPermission( WRITE_EXTERNAL_STORAGE))//FIXME permissions
-                    ExportVcf.emailVcf(m_act, Persist.getCurrentContactId(m_act));
-                else
-                    PermissionUtil.requestWriteExternalStorage(m_act,0);// FIXME permissions
+                ExportVcf.emailVcf(m_act, Persist.getCurrentContactId(m_act));
                 return POST_CMD.NIL;
             }
             case R.id.menu_set_profile:
@@ -572,6 +570,12 @@ public class SharedMenu extends Activity {
                     else
                         Toast.makeText(m_act, "Contact imported", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            }
+            case CConst.RESPONSE_CODE_SHARE_VCF:{
+
+                LogUtil.log("SharedMenu sharedOnActivityResult SHARE_VCF delete ");
+                Util.cleanupTempFolder(act);
                 break;
             }
             default:{

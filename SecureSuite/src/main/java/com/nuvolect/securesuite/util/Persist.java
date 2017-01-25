@@ -10,7 +10,7 @@ import java.util.Locale;
 
 public class Persist {
 
-    private static final String PERSIST_NAME           = "cs_persist";
+    private static final String PERSIST_NAME           = "ss_persist";
 
     // Persist keys
     private static final String ACCOUNT_NAME           = "account_name";

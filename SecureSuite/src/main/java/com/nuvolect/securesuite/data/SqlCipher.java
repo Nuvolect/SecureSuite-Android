@@ -119,6 +119,11 @@ public class SqlCipher {
         m_ctx = applicationContext;
     }
 
+    /**
+     * Initialize SQL Cipher database
+     * @param context
+     * @return
+     */
     public static synchronized SqlCipher getInstance(Context context) {
 
         if( sInstance == null) {

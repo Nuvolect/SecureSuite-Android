@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.widget.Toast;
 
@@ -49,31 +50,37 @@ public class ExportVcf {
     public static void emailVcf( Activity act, long contact_id){
 
         String messageTitle = "vCard for ";
-        String messageBody = "\n\n\nContact from SecureSuite, a secure contact manager";
+        String messageBody = "\n\n\nContact from SecureSuite, a secure contacts manager";
 
         try {
-            String basePath = Util.createTimeStampedBackupFolder( act);
-
             String displayName = SqlCipher.get(contact_id, ATab.display_name);
             String fileName = displayName.replaceAll("\\W+", "");
             if( fileName.isEmpty())
                 fileName = "contact";
             fileName = fileName + ".vcf";
 
-            File f1 = new File( basePath + "/" + fileName);
-            writeContactVcard(contact_id, f1);
+            new File( act.getFilesDir() +CConst.TEMP_FOLDER).mkdirs();
+            File vcf_file = new File( act.getFilesDir() + CConst.TEMP_FOLDER + fileName);
+
+            writeContactVcard(contact_id, vcf_file);
+
+            Uri uri = FileProvider.getUriForFile( act, "com.nuvolect.securesuite.files", vcf_file);
+//            act.grantUriPermission( act.getPackageName(), uri, act.MODE_PRIVATE);
 
             //convert from paths to Android friendly Parcelable Uri's
             ArrayList<Uri> uris = new ArrayList<Uri>();
-            uris.add( Uri.fromFile( f1 ));
+            uris.add( uri);
 
             Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, messageTitle+ displayName);
             intent.putExtra(Intent.EXTRA_TEXT, messageBody);
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.putExtra("path", vcf_file.getAbsolutePath());
 
             intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-            act.startActivity(Intent.createChooser(intent, "Share with..."));
+            act.startActivityForResult(Intent.createChooser(intent, "Share with..."),
+                    CConst.RESPONSE_CODE_SHARE_VCF);
 
         } catch (Exception e) {
             LogUtil.logException(act, LogType.EXPORT_VCF, e);

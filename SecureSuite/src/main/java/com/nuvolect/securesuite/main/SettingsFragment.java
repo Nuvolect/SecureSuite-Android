@@ -391,10 +391,10 @@ public class SettingsFragment extends PreferenceFragment
 
         if (preference.getKey().contentEquals(LicensePersist.APP_LICENSE)) {
 
-            String url = "http://www.nuvolect.com/donate/#securesuite";
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
-            startActivity(i);
+//            String url = "http://www.nuvolect.com/donate/#securesuite";
+//            Intent i = new Intent(Intent.ACTION_VIEW);
+//            i.setData(Uri.parse(url));
+//            startActivity(i);
         }
         if( preference.getKey().contentEquals(CConst.PERMISSION_MANAGER)){
 

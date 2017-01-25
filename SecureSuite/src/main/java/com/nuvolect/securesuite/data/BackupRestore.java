@@ -27,7 +27,6 @@ import java.util.ArrayList;
 
 public class BackupRestore {
 
-//    private static final boolean DEBUG = false;
     static SQLiteDatabase account_db = SqlCipher.account_db;
     static SQLiteDatabase detail_db = SqlCipher.detail_db;
     static String ACCOUNT_TABLE = SqlCipher.ACCOUNT_TABLE;
@@ -214,8 +213,6 @@ public class BackupRestore {
         //Open the target db as the output stream and delete it
         if( targetFile.delete())
             LogUtil.log("file deleted: "+ targetDbFilename);
-        else
-            LogUtil.log("ERROR, file NOT deleted: "+ targetDbFilename);
 
         OutputStream outputStream = new FileOutputStream(outPathWithName);
 

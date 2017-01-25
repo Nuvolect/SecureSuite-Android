@@ -105,7 +105,7 @@ else
   reloadPage();
 }
 
-function validateLogin( emailId, passwordId, keepInId ){
+function validateLogin( passwordId, keepInId ){
 
 var xmlhttp;
 if (window.XMLHttpRequest)
@@ -117,12 +117,11 @@ else
         xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
   }
 
-  var kv1 = "email="+ document.getElementById( emailId ).value;
-  var kv2 = "password="+ document.getElementById( passwordId ).value;
+  var kv1 = "password="+ document.getElementById( passwordId ).value;
 
   xmlhttp.open("POST", "", false); // Fails when set to true
   xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-  xmlhttp.send( kv1 + "&" + kv2 );
+  xmlhttp.send( kv1 );
 
   reloadPage();
 }
@@ -462,31 +461,31 @@ $(function() {
 		postSamePage(baseUrl, 'spacing=' + spacing);
 	});
 
-	// autocomplete search - ***** future feature
-	$('#search_field').autocomplete({
-      	minLength: 3,
-      	source: 'json.php',
-      	focus: function(event, ui) {
-        	$('#search_field').val(ui.item.name);
-        	return false;
-      	},
-      	select: function(event, ui) {
-      	    // set the value of the search box the name that was selected
-        	$('#search_field').val(ui.item.name);
-        	// do something with the value returned (ie: redirect to that user's details)
-        	//postSamePage('details.htm', 'id=' + ui.item.id);
-			return false;
-      	}
-    })
-    .autocomplete('instance')._renderItem = function(ul, item) {
-      	var re = new RegExp('(' + this.term + ')', 'gi');
-		var template = '<strong>$1</strong>';
-		var html = item.name.replace(re, template);
-
-		return $('<li>')
-        	.append('<a>' + html + '</a>')
-        	.appendTo(ul);
-    };
+//	// autocomplete search - ***** future feature
+//	$('#search_field').autocomplete({
+//      	minLength: 3,
+//      	source: 'json.php',
+//      	focus: function(event, ui) {
+//        	$('#search_field').val(ui.item.name);
+//        	return false;
+//      	},
+//      	select: function(event, ui) {
+//      	    // set the value of the search box the name that was selected
+//        	$('#search_field').val(ui.item.name);
+//        	// do something with the value returned (ie: redirect to that user's details)
+//        	//postSamePage('details.htm', 'id=' + ui.item.id);
+//			return false;
+//      	}
+//    })
+//    .autocomplete('instance')._renderItem = function(ul, item) {
+//      	var re = new RegExp('(' + this.term + ')', 'gi');
+//		var template = '<strong>$1</strong>';
+//		var html = item.name.replace(re, template);
+//
+//		return $('<li>')
+//        	.append('<a>' + html + '</a>')
+//        	.appendTo(ul);
+//    };
 
     // clear the search box when the x is clicked
 	$('#clear-search').click(function() {

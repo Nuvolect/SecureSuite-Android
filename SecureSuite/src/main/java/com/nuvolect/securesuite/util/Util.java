@@ -522,7 +522,23 @@ public class Util {
     public static void showMenu(Menu menu, int item) {
 
         MenuItem menuItem = menu.findItem(item);
-        if( menuItem != null && menuItem.isVisible())
+        if( menuItem != null && ! menuItem.isVisible())
             menuItem.setVisible( true );
+    }
+
+    /**
+     * Delete all files in the apps private TEMP directory.
+     * @param act
+     */
+    public static void cleanupTempFolder(Activity act) {
+
+        File dir = new File( act.getFilesDir() +CConst.TEMP_FOLDER);
+        dir.mkdirs();
+
+        File[] files = dir.listFiles();
+        for( File f : files){
+
+            f.deleteOnExit();
+        }
     }
 }
