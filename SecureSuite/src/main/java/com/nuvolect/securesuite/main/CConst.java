@@ -100,6 +100,7 @@ public class CConst {
     public static final String PHONETIC_MIDDLE      = KvTab.phonetic_middle.toString();
     public static final String PHOTO                = DTab.photo.toString();
     public static final String PREMIUM_FEATURE      = "premium_feature";
+    public static final String QUERY_PARAMETER_STRINGS  = "queryParameterStrings";
     public static final String RELATION             = DTab.relation.toString();
     public static final String RESPONSE_CODE        = "response_code";
     public static final String SEC_TOK              = "sec_tok";
@@ -107,8 +108,9 @@ public class CConst {
     public static final String SUBSCRIBER           = "subscriber";
     public static final String TITLE                = KvTab.title.toString();
     public static final String TOTAL                = "total";
-    public static final String UNIQUE_ID                          = "unique_id";
+    public static final String UNIQUE_ID            = "unique_id";
     public static final String UPDATES              = "updates";
+    public static final String URI                  = "uri";
     public static final String VERSION              = ATab.version.toString();
     public static final String WEBSITE              = DTab.website.toString();
 
