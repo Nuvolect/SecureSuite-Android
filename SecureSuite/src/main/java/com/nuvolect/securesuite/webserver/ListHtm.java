@@ -73,6 +73,9 @@ public class ListHtm {
         term,           // Search parameter //TODO, define term
         spacing,        // Page element spacing: comfortable, cozy, compact
 
+        uri,                    // Full uri for routing
+        queryParameterStrings,  // Raw parameters
+
         // Specific to this page
         cb_group,       // Group ID is the value
         cb_state,       // Group state is the value
@@ -683,6 +686,9 @@ public class ListHtm {
                     SettingsActivity.setTheme(m_ctx, value);
                     break;
                 }
+                case uri:
+                case queryParameterStrings:
+                    break;
             }
 
             switch (link_enum) {

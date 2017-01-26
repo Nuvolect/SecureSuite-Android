@@ -77,6 +77,9 @@ public class DetailHtm {
         term,           // Search parameter //TODO, define term
         spacing,        // Page element spacing: comfortable, cozy, compact
 
+        uri,                    // Full uri for routing
+        queryParameterStrings,  // Raw parameters
+
         // Specific to this page
         add,            // Add a field, value is the field, index will hold multi-field index
         cb_group_id,    // Value is the group_id of selected checkbox
@@ -654,6 +657,9 @@ public class DetailHtm {
                     SettingsActivity.setTheme(m_ctx, value);
                     break;
                 }
+                case uri:
+                case queryParameterStrings:
+                    break;
             }
 
             switch (link_enum){

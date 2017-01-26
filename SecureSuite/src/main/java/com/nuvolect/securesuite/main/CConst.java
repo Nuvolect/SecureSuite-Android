@@ -91,6 +91,7 @@ public class CConst {
     public static final String NOTIFY_INCOMING_CALL = "notify_incoming_call";
     public static final String OK                   = "ok";
     public static final String ORGANIZATION         = KvTab.organization.toString();
+    public static final String PASSWORD             = "password";
     public static final String PAYLOAD              = "payload";
     public static final String PERMISSION_MANAGER   = "permission_manager";
     public static final String PHONE                = DTab.phone.toString();

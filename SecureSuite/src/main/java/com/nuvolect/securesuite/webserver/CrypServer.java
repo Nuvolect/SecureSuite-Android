@@ -37,12 +37,12 @@ import static com.nuvolect.securesuite.util.LogUtil.logException;
  *
  * SECURITY AND AUTHENTICATION
  *
- * Three technqiues are employed
+ * Three techniques are employed
  * 1. https self-signed certificate
  * 2. State/response: login allows minimal css, js files, others blocked
  * 3. Security token in header
  *
- * Each session uses a uniqueId to control security. Each session is authenticated indpendently.
+ * Each session uses a uniqueId to control security. Each session is authenticated independently.
  *
  * </pre>
  */
@@ -71,7 +71,7 @@ public class CrypServer extends NanoHTTPD {
     public static String password_modal_apply_filename = "password_modal_apply_filled.htm";
     public static String group_edit_modal_filename = "group_edit_modal_filled.htm";
 
-    static Context m_ctx;
+    private static Context m_ctx;
 
     /**
      * Common mime types for dynamic content
@@ -183,6 +183,8 @@ public class CrypServer extends NanoHTTPD {
         Method method = session.getMethod();
         Map<String, String> params = session.getParms();
         String uri = session.getUri();
+        params.put("uri", uri);
+        params.put("queryParameterStrings", session.getQueryParameterString());
 
         log(LogUtil.LogType.CRYP_SERVER, method + " '" + uri + "' " + params.toString());
 
@@ -259,7 +261,8 @@ public class CrypServer extends NanoHTTPD {
 
                     return new Response(HTTP_OK, MIME_HTML, is);
 
-                } else {
+                }
+                else {
 
                     if (uri.endsWith(".htm") || uri.endsWith(".html")) {
 

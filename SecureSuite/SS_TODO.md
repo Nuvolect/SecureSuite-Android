@@ -4,12 +4,13 @@ SPRINT - most important tasks
 o License type, make decision tree
 o Complete permission management
 o Trial pages.github.com page
+o Update SecureSuite.vcf to reference securesuite.org
 
 BACKLOG
 o Redesign and simplify fragment organization: icon view, list view, groups
 o SMS Text Notification, http://stackoverflow.com/questions/848728/how-can-i-read-sms-messages-from-the-inbox-programmatically-in-android
 o Expand call log to show date
-
+o Update depreciated: android.net.conn.CONNECTIVITY_CHANGE
 
 Web App
 o Edit photo

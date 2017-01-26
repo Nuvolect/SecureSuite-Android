@@ -8,7 +8,7 @@ import java.io.StringWriter;
 
 public class LogUtil {
 
-    public static boolean VERBOSE = true;// 1. Auto set for build varient. 2. Developer menu option
+    public static boolean VERBOSE = true;// 1. Auto set for build variant. 2. Developer menu option
     public static boolean DEBUG = true;
 
     public static String TAG = "SecureSuite";
