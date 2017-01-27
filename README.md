@@ -27,7 +27,8 @@ If you're interested in a life of peace and tranquility, stick with the standard
 
 ## Contributing Code  
 
-Instructions on how to setup your development environment and build Signal can be found in <BUILDING.md>.
+Instructions on how to setup your development environment and build Signal can be found in 
+[BUILDING.md]({{site.baseurl}}/Folder/BUILDING.html).
 
 If you're new to the SecureSuite codebase, we recommend going through our issues and picking out a simple bug to fix 
 (check the "easy" label in our issues) in order to get yourself familiar. 
