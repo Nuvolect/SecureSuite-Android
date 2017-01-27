@@ -9,7 +9,9 @@ in an Internet cloud.
 Your private information is always with you, encrypted in your pocket and nowhere else.
 
 The current stable release is on Google Play
-<a href='https://play.google.com/store/apps/details?id=com.nuvolect.securesuite&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+<a href='https://play.google.com/store/apps/details?id=com.nuvolect.securesuite&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+<img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' 
+width="172" height="60" /></a>
 
 ## Contributing Bug Reports
 We use GitHub for bug tracking. Please search the existing issues for your bug and create a new one if the issue is not yet tracked.
