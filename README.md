@@ -19,8 +19,10 @@ We use GitHub for bug tracking. Please search the existing issues for your bug a
 
 ##Joining the Beta  
 
-Want to live life on the bleeding edge and help out with testing?  
+Want to live life on the bleeding edge and help out with testing?
+
 You can subscribe to SecureSuite Android Beta releases here: <https://play.google.com/apps/testing/com.nuvolect.securesuite>.  
+
 If you're interested in a life of peace and tranquility, stick with the standard releases.  
 
 ## Contributing Code  
