@@ -430,18 +430,18 @@ public class ContactListActivity extends Activity
             Fragment editFrag = getFragmentManager().findFragmentByTag(CConst.CONTACT_EDIT_FRAGMENT_TAG);
             if( editFrag != null && editFrag.isVisible()){
                 inflater.inflate(R.menu.contact_list_contact_edit, menu);
-                LogUtil.log("=============CLA.onOptionsMenu: contact_list_contact_edit");//mkk
+                LogUtil.log("=============CLA.onOptionsMenu: contact_list_contact_edit");
             }
             else{
 
                 inflater.inflate(R.menu.contact_list_contact_detail, menu);
-                LogUtil.log("=============CLA.onOptionsMenu: contact_list_contact_detail");//mkk
+                LogUtil.log("=============CLA.onOptionsMenu: contact_list_contact_detail");
             }
         }
         else{
 
             inflater.inflate(R.menu.contact_list_single_menu, menu);
-            LogUtil.log("=============CLA.onOptionsMenu: contact_list_single_menu");//mkk
+            LogUtil.log("=============CLA.onOptionsMenu: contact_list_single_menu");
         }
 
         if( (LicenseManager.mIsWhitelistUser || Boolean.valueOf( m_act.getString(R.string.verbose_debug)))
@@ -839,7 +839,7 @@ public class ContactListActivity extends Activity
                 String mainAccountImported = CloudImportDialog.getMainAccountImported();
                 if( !mainAccountImported.isEmpty()){
 
-                    LogUtil.log("CLA _handleMessage importedAccount: "+mainAccountImported);//mkk
+                    LogUtil.log("CLA _handleMessage importedAccount: "+mainAccountImported);
                     Cryp.setCurrentAccount( mainAccountImported);
                     int group = MyGroups.getDefaultGroup( mainAccountImported);
                     Cryp.setCurrentGroup( group);
@@ -848,7 +848,6 @@ public class ContactListActivity extends Activity
                 }
 
                 CloudImportDialog.complete( m_act);
-                //mkk switch to new account
                 break;
             }
             case REFRESH_USER_INTERFACE:{

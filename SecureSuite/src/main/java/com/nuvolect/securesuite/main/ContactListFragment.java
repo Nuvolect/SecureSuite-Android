@@ -143,11 +143,6 @@ public class ContactListFragment extends ListFragment {
         super.onPause();
         if(DEBUG)LogUtil.log("CLF onPause");
 
-        /**
-         * Persist group and account
-         */
-//        Cryp.setCurrentGroup(m_group_id);//mkk
-//        Cryp.setCurrentAccount(m_account);
     }
 
     @Override
