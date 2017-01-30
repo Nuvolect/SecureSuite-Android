@@ -1,10 +1,21 @@
 Release notes, this update
 
 SPRINT - most important tasks
-o License type, make decision tree
 o Complete permission management
-o Trial pages.github.com page
 o Update SecureSuite.vcf to reference securesuite.org
+o Update securesuite.org master
+o Update securesuite.org gh-pages
+
+o Rename teamnuvolec to Nuvolect (first rename personal Nuvolect user)
+o Rename repository to SecureSuite-Android
+
+
+GitHub and website high level design
+
+nuvolect.com, Digital Ocean, source assembla.com
+Nuvolect / SecureSuite-Android, GitHub gh-pages, securesuite.org
+Nuvolect / SecureSuite-Android, GitHub master
+
 
 BACKLOG
 o Redesign and simplify fragment organization: icon view, list view, groups

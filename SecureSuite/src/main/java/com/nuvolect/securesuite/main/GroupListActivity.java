@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.data.MyAccounts;
+import com.nuvolect.securesuite.data.MyContacts;
 import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.license.LicenseManager;
@@ -562,13 +563,15 @@ public class GroupListActivity extends Activity
             }
             case IMPORT_CLOUD_CONTACTS_COMPLETE:{
 
-                String importedAccount = CloudImportDialog.getFirstImportedAccount();
-                if( !importedAccount.isEmpty()){
+                String mainAccountImported = CloudImportDialog.getMainAccountImported();
+                if( !mainAccountImported.isEmpty()){
 
-                    LogUtil.log("GLA _handleMessage importedAccount: "+importedAccount);
-                    Cryp.setCurrentAccount( importedAccount);
-                    int group = MyGroups.getDefaultGroup( importedAccount);
+                    LogUtil.log("GLA _handleMessage importedAccount: "+mainAccountImported);
+                    Cryp.setCurrentAccount( mainAccountImported);
+                    int group = MyGroups.getDefaultGroup( mainAccountImported);
                     Cryp.setCurrentGroup( group);
+                    long contactId = MyContacts.getFirstContactInGroup( group);
+                    Cryp.setCurrentContact( m_act, contactId);
                 }
 
                 CloudImportDialog.complete( m_act);

@@ -5,6 +5,8 @@ import android.content.Context;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.Persist;
 
+import static com.nuvolect.securesuite.data.MyGroups.getContacts;
+
 public class MyContacts {
 
     /**
@@ -39,7 +41,7 @@ public class MyContacts {
         if( ! SqlCipher.validContactId( contact_id)){
 
             int group = Cryp.getCurrentGroup();
-            long[] contacts = MyGroups.getContacts(group);
+            long[] contacts = getContacts(group);
             if( contacts.length > 0)
                 contact_id = contacts[ 0 ];
             else
@@ -55,7 +57,7 @@ public class MyContacts {
         if( ! SqlCipher.validContactId( contact_id)){
 
             int group = Cryp.getCurrentGroup();
-            long[] contacts = MyGroups.getContacts(group);
+            long[] contacts = getContacts(group);
             if( contacts.length > 0)
                 contact_id = contacts[ 0 ];
             else
@@ -99,6 +101,15 @@ public class MyContacts {
     private static long getFirstContact(Context ctx, String account) {
 
         return SqlCipher.getFirstContactID( account);
+    }
+
+    public static long getFirstContactInGroup(int group_id){
+
+        long[] contacts = MyGroups.getContacts(group_id);
+        if( contacts.length > 0)
+            return contacts[0];
+        else
+            return 0;
     }
 
     /**

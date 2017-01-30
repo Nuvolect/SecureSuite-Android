@@ -116,7 +116,7 @@ public class RestfulHtm {
 //////////////////////////////////////////////////////////////////////////////////////
 
         /**
-         * Communication test.  Bounch data back and forth to exercise communications.
+         * Communication test.  Bounce data back and forth to exercise communications.
          */
         ping_test,
         pong_test,

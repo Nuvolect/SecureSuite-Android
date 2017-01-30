@@ -16,10 +16,11 @@ import com.nuvolect.securesuite.util.WorkerCommand;
 
 public class CloudImportDialog {
 
-    private static CharSequence[] importAccountList;
-    private static int[] importCountList;
-    private static boolean[] importSelectList;
-    private static AlertDialog importDialog;
+    private static CharSequence[] m_importAccountList;
+    private static int[] m_importCountList;
+    private static boolean[] m_importSelectList;
+    private static String m_mainAccountImported;
+    private static AlertDialog m_importDialog;
 
     /** progress dialog to show user that the import is processing. */
     private static ProgressDialog m_importProgressDialog = null;
@@ -35,15 +36,16 @@ public class CloudImportDialog {
 
         Bundle bundle = ImportUtil.generateCloudSummary( act);
 
-        importAccountList = bundle.getCharSequenceArray("accountList");
-        importCountList = bundle.getIntArray("countList");
+        m_importAccountList = bundle.getCharSequenceArray("accountList");
+        m_importCountList = bundle.getIntArray("countList");
+        m_mainAccountImported = "";
 
-        importSelectList = new boolean[ importAccountList.length ];
+        m_importSelectList = new boolean[ m_importAccountList.length ];
 
-        for( int i = 0; i< importAccountList.length; i++)
-            importSelectList[ i ] = false;
+        for(int i = 0; i< m_importAccountList.length; i++)
+            m_importSelectList[ i ] = false;
 
-        builder.setMultiChoiceItems( importAccountList, importSelectList,
+        builder.setMultiChoiceItems(m_importAccountList, m_importSelectList,
                 new DialogInterface.OnMultiChoiceClickListener(){
 
                     @Override
@@ -57,24 +59,37 @@ public class CloudImportDialog {
 
                 LogUtil.log("Start cloud import... ");
                 int totalImport = 0;
+                int mainAccountCount = 0;
 
-                for( int i=0; i< importAccountList.length; i++){
+                for(int i = 0; i< m_importAccountList.length; i++){
 
                     // Remove trailing ", ### contacts"
-                    String[] parts = importAccountList[ i ].toString().split("\\n"); // String array, each element is text between dots
-                    importAccountList[ i ] = parts[ 0 ];
+                    String[] parts = m_importAccountList[ i ].toString().split("\\n"); // String array, each element is text between dots
+                    m_importAccountList[ i ] = parts[ 0 ];
 
                     // Get total contacts to import and save to Persist
                     // # > 0 will indicate import is in progress
-                    if( importSelectList[i])
-                        totalImport += importCountList[i];
+                    if( m_importSelectList[i]) {
+                        totalImport += m_importCountList[i];
+
+                        /**
+                         * Save the main account, as determined by the account with the most
+                         * contacts imported. This will be the account displayed to the user
+                         * when import is complete.
+                         */
+                        if( m_importCountList[i] > mainAccountCount){
+
+                            mainAccountCount = m_importCountList[i];
+                            m_mainAccountImported = m_importAccountList[i].toString();
+                        }
+                    }
                 }
                 act.setProgressBarIndeterminateVisibility( true );
                 Persist.setProgressBarActive( act, true );
                 Persist.setImportInProgress( act, totalImport );
                 cloudImportProgressDialog( act );
 
-                WorkerCommand.importCloudContacts(act, importAccountList, importSelectList);
+                WorkerCommand.importCloudContacts(act, m_importAccountList, m_importSelectList);
             }});
 
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
@@ -82,11 +97,11 @@ public class CloudImportDialog {
             public void onClick(DialogInterface dialog, int which) {
                 act.setProgressBarIndeterminateVisibility( false );
                 Persist.setProgressBarActive( act, false );
-                importDialog.dismiss();
+                m_importDialog.dismiss();
             }});
 
-        importDialog = builder.create();
-        importDialog.show();
+        m_importDialog = builder.create();
+        m_importDialog.show();
 
     }
     public static ProgressDialog m_cloudImportProgressDialog;
@@ -175,11 +190,12 @@ public class CloudImportDialog {
             m_cloudImportProgressDialog.setProgress(progress);
     }
 
-    public static String getFirstImportedAccount() {
+    /**
+     * Return the account that had the most contacts imported.
+     * @return
+     */
+    public static String getMainAccountImported() {
 
-        if( importAccountList!= null && importAccountList.length>0)
-            return importAccountList[0].toString();
-        else
-            return "";
+        return m_mainAccountImported;
     }
 }

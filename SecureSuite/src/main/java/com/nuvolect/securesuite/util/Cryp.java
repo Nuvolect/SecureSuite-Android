@@ -183,4 +183,8 @@ public class Cryp {
         return get( CConst.LOCK_CODE );
     }
 
+    public static void setCurrentContact(Context ctx, long contactId) {
+
+        Persist.setCurrentContactId( ctx, contactId);
+    }
 }
