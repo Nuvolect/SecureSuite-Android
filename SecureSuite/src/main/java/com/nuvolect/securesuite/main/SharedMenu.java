@@ -231,7 +231,7 @@ public class SharedMenu extends Activity {
             case R.id.menu_edit_discard:{
                 return POST_CMD.START_CONTACT_DETAIL;
             }
-            case R.id.menu_share_contact:{//FIXME use app internal storage for file
+            case R.id.menu_share_contact:{
                 if( invalidContact( m_contact_id)){
                     Toast.makeText(m_act, "Invalid contact",Toast.LENGTH_SHORT).show();
                     return POST_CMD.NIL;
@@ -522,7 +522,7 @@ public class SharedMenu extends Activity {
                 break;
             default:{
 
-                LogUtil.log("SharedMenuUtil UNMANAGED/ERROR requestCode: "+requestCode);
+                LogUtil.log("SharedMenu sharedOnRequestPermissionResult UNMANAGED/ERROR requestCode: "+requestCode);
 
                 for( int i = 0; i < permissions.length; i++)
                     LogUtil.log("SharedMenuUtil permissions: "+permissions[i]+"  "+grantResults[i]);

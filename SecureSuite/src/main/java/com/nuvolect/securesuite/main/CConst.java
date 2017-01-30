@@ -154,24 +154,26 @@ public class CConst {
     public static final String GROUP_ACCOUNT_TYPE             = "user_custom";
 
     public static final int
-            NO_ACTION                                         = 100,
-            BROWSE_RESTORE_FOLDER_ACTION                      = 110,
-            BROWSE_IMPORT_PHOTO_ACTION                        = 130,
-            CHANGE_LOCK_CODE_ACTION                           = 140,
-            VALIDATE_LOCK_CODE_ACTION                         = 150,
-            CHANGE_LOCK_CODE_TEST_ACTION                      = 160,
-            VALIDATE_LOCK_CODE_TEST_ACTION                    = 170,
+            NO_ACTION                                         = 10,
+            BROWSE_RESTORE_FOLDER_ACTION                      = 11,
+            BROWSE_IMPORT_PHOTO_ACTION                        = 12,
+            CHANGE_LOCK_CODE_ACTION                           = 13,
+            VALIDATE_LOCK_CODE_ACTION                         = 14,
+            CHANGE_LOCK_CODE_TEST_ACTION                      = 15,
+            VALIDATE_LOCK_CODE_TEST_ACTION                    = 16,
 
-            CALLER_ID_REQUEST_READ_PHONE_STATE                = 180,
+            CALLER_ID_REQUEST_READ_PHONE_STATE                = 17,
 
-            IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS     = 190,
-            IMPORT_ACCOUNT_CONTACTS_REQUEST_GET_ACCOUNTS      = 200,
+            IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS     = 18,
+            IMPORT_ACCOUNT_CONTACTS_REQUEST_GET_ACCOUNTS      = 19,
 
-            IMPORT_VCARD_REQUEST_EXTERNAL_STORAGE             = 210,
-            IMPORT_VCARD_BROWSE_ACTION                        = 120,
+            IMPORT_VCARD_REQUEST_EXTERNAL_STORAGE             = 20,
+            IMPORT_VCARD_BROWSE_ACTION                        = 21,
 
-            IMPORT_SINGLE_CONTACT_REQUEST_READ                = 230,
-            IMPORT_SINGLE_CONTACT_PICKER                      = 220 ;
+            IMPORT_SINGLE_CONTACT_REQUEST_READ                = 22,
+            IMPORT_SINGLE_CONTACT_PICKER                      = 23,
+
+            RESTORE_CONTACTS_DATABASE                         = 24;
 
     public static final String RESTORE_BACKUP_PATH            = "restore_backup_path";
     public static final String IMPORT_VCF_PATH                = "import_vcf_path";

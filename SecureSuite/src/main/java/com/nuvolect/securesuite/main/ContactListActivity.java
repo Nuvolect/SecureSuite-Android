@@ -471,7 +471,7 @@ public class ContactListActivity extends Activity
                     ConfirmRestoreDatabaseDialogFragment dialog = new ConfirmRestoreDatabaseDialogFragment();
                     dialog.show( getFragmentManager(), "ConfirmRestoreTag");
                 }else{
-                    PermissionUtil.requestReadExternalStorage(m_act, CConst.NO_ACTION);
+                    PermissionUtil.requestReadExternalStorage(m_act, CConst.RESTORE_CONTACTS_DATABASE);
                 }
                 return true;
             }
@@ -647,6 +647,12 @@ public class ContactListActivity extends Activity
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch ( requestCode){
+
+            case CConst.RESTORE_CONTACTS_DATABASE:{
+
+                ConfirmRestoreDatabaseDialogFragment dialog = new ConfirmRestoreDatabaseDialogFragment();
+                dialog.show( getFragmentManager(), "ConfirmRestoreTag");
+            }
 
             default:
                 SharedMenu.sharedOnRequestPermissionsResult( m_act, requestCode, permissions, grantResults);
