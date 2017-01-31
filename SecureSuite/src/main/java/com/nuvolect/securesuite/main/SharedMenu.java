@@ -26,6 +26,7 @@ import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.data.SqlFullSyncSource;
 import com.nuvolect.securesuite.license.AppSpecific;
 import com.nuvolect.securesuite.util.Cryp;
+import com.nuvolect.securesuite.util.DialogUtil;
 import com.nuvolect.securesuite.util.FileBrowserImportVcf;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.PermissionUtil;

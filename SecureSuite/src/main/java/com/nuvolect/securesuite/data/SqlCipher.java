@@ -1823,6 +1823,8 @@ public class SqlCipher {
 
         for( long id : contactIds){
 
+            if( id == 1163)
+                LogUtil.log("got 1163");
             try {
                 String kvString = get( id, DTab.kv);
                 JSONObject kvJobj = new JSONObject( kvString);
@@ -1842,12 +1844,14 @@ public class SqlCipher {
                 }
 
             } catch (JSONException e) {
-                e.printStackTrace();
-                return -1;
+                LogUtil.logException(SqlCipher.class, e);
+                success = false;
+                break;
             }
         }
         if( success )
             account_db.setTransactionSuccessful();
+
         account_db.endTransaction();
 
         return success? contactCount : -1;
@@ -2100,7 +2104,7 @@ public class SqlCipher {
 
     /**
      * Save a key/value pair to the database.  Both are string.
-     * A int value with thenumber of rows updated is returned with success == 1.
+     * A int value with the number of rows updated is returned with success == 1.
      * @param key
      * @param value
      * @return
@@ -2113,6 +2117,11 @@ public class SqlCipher {
         ContentValues cv = new ContentValues();
         cv.put( ACTab.key.toString(), key);
         cv.put( ACTab.value.toString(), value);
+
+        if( account_db.inTransaction()){
+
+            account_db.endTransaction();
+        }
 
         account_db.beginTransaction();
         int rows = account_db.update( ACCOUNT_CRYP_TABLE, cv, where, args);
@@ -2274,6 +2283,7 @@ public class SqlCipher {
      * 2. Confirm group_id > 0, not -2, -1 or 0
      * 3. Confirm user is in the group a single time, not zero or multiple times in the same group
      * 4. Confirm group has a single title record
+     * 5. Confirm
      * //FUTURE Check for unused/rogue group records.
      * //FUTURE Check for unused/rogue group title records
      //FUTURE cleanup any rogue group data records: records not associated with any contacts
@@ -2338,6 +2348,25 @@ public class SqlCipher {
             }
             else
                 ++successCount;
+
+            /**
+             * 5. Confirm that detail table key value items are valid JSON mkk
+             */
+            boolean jsonTest = true;
+            try {
+                String kvString = get( contact_id, DTab.kv);
+                JSONObject kvJobj = new JSONObject( kvString);
+            } catch (JSONException e) {
+                logError(ctx, LogType.SQLCIPHER, "Invalid JSON DTab.kv for ID: "+contact_id);
+                jsonTest = false;
+            } catch ( RuntimeException e){
+                logError(ctx, LogType.SQLCIPHER, "RuntimeException test 5. for ID: "+contact_id);
+                ++failCount;
+            }
+            if( jsonTest)
+                ++successCount;
+            else
+                ++failCount;
 
             // See if the user is part of any groups
             int[] groups = MyGroups.getGroups( contact_id);

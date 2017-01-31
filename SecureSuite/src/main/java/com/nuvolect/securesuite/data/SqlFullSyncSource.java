@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.nuvolect.securesuite.main.App;
 import com.nuvolect.securesuite.main.CConst;
-import com.nuvolect.securesuite.main.DialogUtil;
+import com.nuvolect.securesuite.util.DialogUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.WorkerCommand;
 import com.nuvolect.securesuite.webserver.Comm;

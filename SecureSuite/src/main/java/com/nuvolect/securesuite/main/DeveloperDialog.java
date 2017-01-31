@@ -14,6 +14,7 @@ import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.data.SqlSyncTest;
 import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.util.CustomDialog;
+import com.nuvolect.securesuite.util.DialogUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Persist;
 import com.nuvolect.securesuite.util.WorkerCommand;

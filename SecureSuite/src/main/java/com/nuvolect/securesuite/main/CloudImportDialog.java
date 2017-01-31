@@ -168,8 +168,11 @@ public class CloudImportDialog {
 
     public static void complete(Activity act) {
 
-        Persist.setImportInProgress(act, 0);
-        Persist.setProgressBarActive(act, false );
+        if( act != null){
+            Persist.setImportInProgress(act, 0);
+            Persist.setProgressBarActive(act, false );
+        }
+
         act.setProgressBarIndeterminateVisibility( false );
 
         if( m_cloudImportProgressDialog != null && m_cloudImportProgressDialog.isShowing()){

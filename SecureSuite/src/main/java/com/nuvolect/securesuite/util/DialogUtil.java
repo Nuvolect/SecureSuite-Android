@@ -1,4 +1,4 @@
-package com.nuvolect.securesuite.main;//
+package com.nuvolect.securesuite.util;//
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,7 +11,8 @@ import android.widget.Toast;
 
 import com.nuvolect.securesuite.data.MyContacts;
 import com.nuvolect.securesuite.data.MyGroups;
-import com.nuvolect.securesuite.util.Cryp;
+import com.nuvolect.securesuite.main.CConst;
+import com.nuvolect.securesuite.main.SharedMenu;
 
 /** Collection of ui Dialogs */
 public class DialogUtil {
@@ -114,6 +115,43 @@ public class DialogUtil {
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 dialog_alert.cancel();
+            }
+        });
+        dialog_alert = builder.create();
+        dialog_alert.show();
+    }
+
+    /** Multi-line dialog with a title, message, dismiss button and second button*/
+    public static void twoButtonMlDialog(
+            Activity act, String title, String message,
+            String secondButtonTitle, final DialogUtilCallbacks callbacks) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(act);
+
+        TextView tw =new TextView(act);
+        tw.setMaxLines(10);
+        tw.setPadding( 13, 13, 13, 13);
+        tw.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        tw.setSingleLine(false);
+        tw.setText(message);
+        builder.setView(tw);
+
+        builder.setTitle(title);
+        builder.setIcon(CConst.SMALL_ICON);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton( secondButtonTitle, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                dialog_alert.cancel();
+                callbacks.confirmed( true);
+            }
+        });
+        builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                dialog_alert.cancel();
+                callbacks.confirmed( false);
             }
         });
         dialog_alert = builder.create();

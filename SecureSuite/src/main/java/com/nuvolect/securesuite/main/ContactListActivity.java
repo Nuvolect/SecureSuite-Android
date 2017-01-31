@@ -844,10 +844,18 @@ public class ContactListActivity extends Activity
          */
             case IMPORT_CLOUD_CONTACTS_COMPLETE:{
 
+                // Hack to avoid an unsolved database issue
+//                CloudImportDialog.complete( m_act );
+//                Util.restartApplication( m_act);
+                /**
+                 * Importing an account a second time sometimes hangs on account_db.beginTransaction();
+                 * Yet when checked, the database is not in a transaction.
+                 */
                 String mainAccountImported = CloudImportDialog.getMainAccountImported();
                 if( !mainAccountImported.isEmpty()){
 
                     LogUtil.log("CLA _handleMessage importedAccount: "+mainAccountImported);
+                    // next line hangs
                     Cryp.setCurrentAccount( mainAccountImported);
                     int group = MyGroups.getDefaultGroup( mainAccountImported);
                     Cryp.setCurrentGroup( group);
@@ -855,7 +863,8 @@ public class ContactListActivity extends Activity
                     Cryp.setCurrentContact( m_act, contactId);
                 }
 
-                CloudImportDialog.complete( m_act);
+                CloudImportDialog.complete( m_act );
+
                 break;
             }
             case REFRESH_USER_INTERFACE:{

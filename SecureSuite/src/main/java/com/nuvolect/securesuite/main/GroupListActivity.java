@@ -710,10 +710,9 @@ public class GroupListActivity extends Activity
             Cryp.setCurrentAccount( newAccount);
             Persist.setCurrentAccountType( m_act, CConst.CUSTOM_ACCOUNT);
 
-            // Add minimum set of groups and
+            // Add minimum set of groups
             MyGroups.addBaseGroupsToNewAccount(m_act, newAccount);
 
-//            startGroupListFragment();
             m_act.finish();
             m_act.startActivity(m_act.getIntent());
         }

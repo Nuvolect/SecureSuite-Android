@@ -1,7 +1,9 @@
 # SecureSuite High Level Design
 
 The app is the combination of a fairly standard Android app and a web app that shares an encrypted 
-database and common set of utilities.
+database and common set of utilities. Long running tasks are executed in either the WorkerService 
+or in the WebService.  The application database and WebService is started each time the Android
+device boots.
 
 ## Activity and fragment design
 
@@ -22,6 +24,10 @@ but never both. The contacts list view is the default startup activity.
 ## Password generation and management
 
 ## User authentication and YubiKey Neo
+
+## SQLCipher Database
+
+## WorkerService and WebService
 
 ## Long running tasks and internal messaging
 

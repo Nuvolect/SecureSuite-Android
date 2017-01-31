@@ -40,6 +40,7 @@ import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.DeviceInfo;
+import com.nuvolect.securesuite.util.DialogUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Passphrase;
 import com.nuvolect.securesuite.util.PermissionManager;
