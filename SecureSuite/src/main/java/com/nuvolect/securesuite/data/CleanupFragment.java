@@ -440,9 +440,9 @@ public class CleanupFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
 
-        // Request a window wihtout the title
+        // Request a window without a title
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return dialog;

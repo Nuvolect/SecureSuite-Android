@@ -121,11 +121,6 @@ public class CustomDialog {
                     else
                         putInt(m_act, dialogPrefix+DONT_ASK, 1);
 
-//                    Analytics.send(m_act,
-//                            Analytics.DIALOG + Analytics.RATE_THIS_APP,
-//                            Analytics.DONT_ASK_AGAIN,
-//                            Analytics.COUNT, 1);
-
                     cancelDialog();
                 }
             });
@@ -166,11 +161,6 @@ public class CustomDialog {
                     i.setData(Uri.parse(url));
                     m_act.startActivity(i);
 
-//                    Analytics.send(m_act,
-//                            Analytics.DIALOG + Analytics.MAKE_DONATION,
-//                            Analytics.MAKE_DONATION,
-//                            Analytics.COUNT, 1);
-
                     cancelDialog();
                 }
 
@@ -186,11 +176,6 @@ public class CustomDialog {
                         if( testDialogNoMetrics )
                             Toast.makeText(m_act, "cancel button", Toast.LENGTH_SHORT).show();
 
-//                        Analytics.send(m_act,
-//                                Analytics.DIALOG + Analytics.MAKE_DONATION,
-//                                Analytics.CANCEL,
-//                                Analytics.COUNT, 1);
-
                         cancelDialog();
 
                         cancelAlreadyCalled = true;
@@ -204,11 +189,6 @@ public class CustomDialog {
                         Toast.makeText(m_act, "don't ask again", Toast.LENGTH_SHORT).show();
                     else
                         putInt(m_act, dialogPrefix+DONT_ASK, 1);
-
-//                    Analytics.send(m_act,
-//                            Analytics.DIALOG + Analytics.MAKE_DONATION,
-//                            Analytics.DONT_ASK_AGAIN,
-//                            Analytics.COUNT, 1);
 
                     cancelDialog();
                 }

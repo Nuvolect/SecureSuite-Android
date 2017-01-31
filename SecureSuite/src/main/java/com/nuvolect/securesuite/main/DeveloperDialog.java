@@ -42,8 +42,6 @@ public class DeveloperDialog {
      */
     private static enum DevMenu {
         Toggle_Verbose_LogCat,
-        Create_Key,
-        Get_Key,
         Clear_Data_Close_App,
         Temporary_Disable_Developer_Menu,
         Dump_Group_Title_Table,
@@ -82,14 +80,6 @@ public class DeveloperDialog {
 
                         switch( menuItem){
 
-                            case Create_Key:{
-
-                                break;
-                            }
-                            case Get_Key:{
-
-                                break;
-                            }
                             case Start_Incremental_Sync:
 
                                 WorkerCommand.queStartIncSync(m_act);

@@ -88,26 +88,6 @@ public class FileBrowserDbRestore extends Activity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-//        Analytics.start(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-//        Analytics.stop(this);
-    }
-
     class MyComparator implements Comparator<String> {
         public int compare(String strA, String strB) {
           return strA.compareToIgnoreCase(strB);

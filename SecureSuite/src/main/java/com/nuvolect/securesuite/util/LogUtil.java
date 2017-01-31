@@ -15,7 +15,6 @@ public class LogUtil {
 
     public enum LogType { NIL,
         ACA_UTIL,
-        ANALYTICS,
         BETTER_CRYPTO,
         BOOT_RECEIVER,
         CALL_RECEIVER,
@@ -32,6 +31,7 @@ public class LogUtil {
         DEVELOPER_DIALOG,
         EDIT_GROUP,
         EXPORT_VCF,
+        GDA,
         GLA,
         GROUP_COMMS,
         IMPORT_VCF,
@@ -53,6 +53,7 @@ public class LogUtil {
         RESTORE_DB,
         SECURE,
         SEND_SMS,
+        SERVE,
         SETTINGS,
         SETTINGS_ACTIVITY,
         SQLCIPHER,
@@ -61,6 +62,7 @@ public class LogUtil {
         SQL_INC_SYNC_SRC,
         SQL_INC_SYNC_TARGET,
         SQL_SYNC_TEST,
+        USER_MANAGER,
         UTIL,
         VOLLEY,
         WEB_SERVER,
@@ -68,7 +70,7 @@ public class LogUtil {
         WEB_UTIL,
         WHATS_NEW,
         WIFI_BROADCAST_RECEIVER,
-        WORKER, SERVE, GDA, USER_MANAGER,
+        WORKER,
         }
 
     public static void setVerbose(boolean verbose){

@@ -31,7 +31,5 @@ public class Whitelist {
 	{
         add("bfdcdf9d4013bd90"); // Matt's nexus 9
 		add("c1e933593df14675"); // Matt's nexus 5
-		add("f87effdfee3d8a8a"); // Mom 4.2.2 in genymotion
 	}};
-
 }

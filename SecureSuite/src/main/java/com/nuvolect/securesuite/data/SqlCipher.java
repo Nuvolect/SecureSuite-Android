@@ -1823,8 +1823,6 @@ public class SqlCipher {
 
         for( long id : contactIds){
 
-            if( id == 1163)
-                LogUtil.log("got 1163");
             try {
                 String kvString = get( id, DTab.kv);
                 JSONObject kvJobj = new JSONObject( kvString);
@@ -2283,12 +2281,11 @@ public class SqlCipher {
      * 2. Confirm group_id > 0, not -2, -1 or 0
      * 3. Confirm user is in the group a single time, not zero or multiple times in the same group
      * 4. Confirm group has a single title record
-     * 5. Confirm
+     * 5. Confirm detail table key value items are valid JSON
      * //FUTURE Check for unused/rogue group records.
      * //FUTURE Check for unused/rogue group title records
      //FUTURE cleanup any rogue group data records: records not associated with any contacts
      //FUTURE cleanup any rogue group title records: records with no associated group data, not My Contacts, not Trash
-     .
      * @param ctx
      * @return
      */
@@ -2350,7 +2347,7 @@ public class SqlCipher {
                 ++successCount;
 
             /**
-             * 5. Confirm that detail table key value items are valid JSON mkk
+             * 5. Confirm that detail table key value items are valid JSON
              */
             boolean jsonTest = true;
             try {

@@ -86,26 +86,6 @@ public class FileBrowserImportVcf extends Activity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-//        Analytics.start(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-//        Analytics.stop(this);
-    }
-
     private void loadFileList() {
         try {
             path.mkdirs();
