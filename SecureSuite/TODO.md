@@ -5,6 +5,7 @@ o Complete permission management
 o Update SecureSuite.vcf to reference securesuite.org
 o Update securesuite.org master
 o Update securesuite.org gh-pages
+o Review copyright and apply to source code
 
 o Rename teamnuvolec to Nuvolect (first rename personal Nuvolect user)
 o Rename repository to SecureSuite-Android

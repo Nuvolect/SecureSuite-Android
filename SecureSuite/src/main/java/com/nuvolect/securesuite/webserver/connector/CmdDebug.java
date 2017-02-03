@@ -2,7 +2,7 @@ package com.nuvolect.securesuite.webserver.connector;//
 
 import android.content.Context;
 
-import com.nuvolect.securesuite.util.CryptoM;
+import com.nuvolect.securesuite.util.KeystoreUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 
 import org.json.JSONArray;
@@ -35,10 +35,11 @@ public class CmdDebug {
 
     enum TEST_ID {
         create_key,
-        get_key,
-//        generate_key,
+        decrypt,
+        delete_key,
+        encrypt,
         get_keys,
-        test_lockscreen, delete_key, put_key,
+        lockscreen_test,
     }
 
     public static ByteArrayInputStream go(Context ctx, Map<String, String> params) {
@@ -65,41 +66,41 @@ public class CmdDebug {
 
                     case create_key:{
 
-                        JSONObject result = CryptoM.createKey( m_ctx, params.get("key_alias"));
+                        JSONObject result = KeystoreUtil.createKey( m_ctx, params.get("key_alias"));
                         wrapper.put("result",result);
                         break;
                     }
                     case delete_key:{
 
-                        JSONObject result = CryptoM.deleteKey( m_ctx, params.get("key_alias"));
+                        JSONObject result = KeystoreUtil.deleteKey( m_ctx, params.get("key_alias"));
                         wrapper.put("result",result);
                         break;
                     }
-                    case put_key:{
+                    case encrypt:{
 
-                        char[] password = params.get("password").toCharArray();
-                        String value = params.get("value");
                         String key_alias = params.get("key_alias");
-                        JSONObject result = CryptoM.putKey( m_ctx, key_alias, password, value);
+                        String clear_text = params.get("cleartext");
+                        JSONObject result = KeystoreUtil.encrypt( key_alias, clear_text);
                         wrapper.put("result",result);
                         break;
                     }
-                    case get_key:{
+                    case decrypt:{
 
-                        char[] password = params.get("password").toCharArray();
-                        JSONObject result = CryptoM.getKey( m_ctx, params.get("key_alias"), password);
+                        String key_alias = params.get("key_alias");
+                        String cipher_text_b64 = params.get("ciphertext");
+                        JSONObject result = KeystoreUtil.decrypt( key_alias, cipher_text_b64);
                         wrapper.put("result",result);
                         break;
                     }
                     case get_keys:{
 
-                        JSONArray result = CryptoM.getKeys();
+                        JSONArray result = KeystoreUtil.getKeys();
                         wrapper.put("keys",result);
                         break;
                     }
-                    case test_lockscreen:{
+                    case lockscreen_test:{
 
-                        JSONObject result = CryptoM.testLockScreenEnabled( m_ctx);
+                        JSONObject result = KeystoreUtil.testAndroidLockscreenEnabled( m_ctx);
                         wrapper.put("result",result);
                         break;
                     }
