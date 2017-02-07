@@ -18,14 +18,14 @@ table.card {
 }
 
 tr {
-  vertical-align: baseline;
-}
+   vertical-align: baseline;
+ }
 
-table {
-  border-collapse: separate;
-  border-spacing: 10px 0;
-}
+ table {
+   border-collapse: separate;
+   border-spacing: 10px 0;
+ }
 
-td {
-  padding: 10px 0;
-}
+ td {
+   padding: 10px 0;
+ }

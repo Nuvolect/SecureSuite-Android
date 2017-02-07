@@ -66,7 +66,7 @@ public class CmdDebug {
             try {
                 test_id = TEST_ID.valueOf(params.get("test_id"));
             } catch (IllegalArgumentException e) {
-                error = "Error, invalid command: "+params.get("cmd");
+                error = "Error, invalid command: "+params.get("test_id");
             }
             long timeStart = System.currentTimeMillis();
 
