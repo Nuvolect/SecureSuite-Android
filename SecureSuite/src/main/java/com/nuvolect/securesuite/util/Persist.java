@@ -43,7 +43,7 @@ public class Persist {
     }
     public static String getEncryptedPassphrase(Context ctx){
         final SharedPreferences pref = ctx.getSharedPreferences( PERSIST_NAME, Context.MODE_PRIVATE);
-        return pref.getString(PASSPHRASE, CConst.DEFAULT_PASSPHRASE);
+        return pref.getString(PASSPHRASE, CConst.NO_PASSPHRASE);
     }
 
     public static void setNavChoice(Context ctx, int navMenuPosition, String navMenuTitle) {

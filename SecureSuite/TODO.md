@@ -9,6 +9,7 @@ o Review copyright and apply to source code
 
 o Rename teamnuvolec to Nuvolect (first rename personal Nuvolect user)
 o Rename repository to SecureSuite-Android
+o Test security of RESTFul services
 
 
 GitHub and website high level design

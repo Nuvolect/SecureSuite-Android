@@ -67,7 +67,7 @@ public class KeystoreUtil {
             result.put(LOCKSCREEN_TEST,lockscreenEnabled);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            LogUtil.logException( KeystoreUtil.class, e);
         }
         return result;
     }
@@ -106,19 +106,12 @@ public class KeystoreUtil {
                 KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry( key_alias, null);
                 privateKeyEntryString = privateKeyEntry.toString();
 
-            } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+            } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException |
+                    UnrecoverableEntryException | KeyStoreException | CertificateException |
+                    IOException | NoSuchProviderException  e) {
+
                 error = e.getMessage();
-                LogUtil.logException(ctx, LogUtil.LogType.ACA_UTIL, e);
-            } catch (UnrecoverableEntryException e) {
-                e.printStackTrace();
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (CertificateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (NoSuchProviderException e) {
-                e.printStackTrace();
+                LogUtil.logException( KeystoreUtil.class, e);
             }
 
         try {
@@ -146,7 +139,7 @@ public class KeystoreUtil {
                 KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry( key_alias, null);
                 RSAPublicKey publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
 
-//                Cipher rsaCipher = Cipher.getInstance( CIPHER_ALGORITHM, "AndroidOpenSSL");
+//                Cipher rsaCipher = Cipher.getInstance( CIPHER_ALGORITHM, "AndroidOpenSSL"); //AndroidOpenSSL is deprecated
                 Cipher rsaCipher = Cipher.getInstance( CIPHER_ALGORITHM );
                 rsaCipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
@@ -165,7 +158,7 @@ public class KeystoreUtil {
         } catch ( Exception e) {
 
             error = e.getCause().toString();
-            LogUtil.logException(LogUtil.LogType.ACA_UTIL, e);
+            LogUtil.logException( KeystoreUtil.class, e);
         }
 
         try {
@@ -174,7 +167,7 @@ public class KeystoreUtil {
             result.put("error", error);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            LogUtil.logException( KeystoreUtil.class, e);
         }
 
         return result;
@@ -221,7 +214,7 @@ public class KeystoreUtil {
         } catch ( Exception e) {
 
             error = e.getMessage();
-            LogUtil.logException(LogUtil.LogType.ACA_UTIL, e);
+            LogUtil.logException( KeystoreUtil.class, e);
         }
 
         try {
@@ -231,7 +224,7 @@ public class KeystoreUtil {
             result.put("error", error);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            LogUtil.logException( KeystoreUtil.class, e);
         }
 
         return result;
@@ -258,8 +251,7 @@ public class KeystoreUtil {
                 | NoSuchAlgorithmException | IOException e) {
 
             error = e.getCause().toString();
-            LogUtil.logException(ctx, LogUtil.LogType.ACA_UTIL, e);
-            e.printStackTrace();
+            LogUtil.logException( KeystoreUtil.class, e);
         }
 
         try {
@@ -294,27 +286,50 @@ public class KeystoreUtil {
                 KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry( key_alias, null);
 
                 String s = privateKeyEntry.getCertificate().toString();
-//                s.replace("\n","<br>");
 
                 obj.put("certificate", s);
 
                 keys.put( obj );
             }
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException |
+                IOException | JSONException | UnrecoverableEntryException e) {
 
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableEntryException e) {
-            e.printStackTrace();
+            LogUtil.logException(KeystoreUtil.class, e);
         }
 
         return keys;
+    }
+
+    /**
+     * Create a public/private key if it does not already exist.
+     * @param ctx
+     * @param keyAlias
+     * @return boolean: true if the key is created.
+     */
+    public static boolean createKeyNotExists(Context ctx, String keyAlias) {
+
+        KeyStore ks = null;
+        boolean keyCreated = false;
+        try {
+
+            ks = KeyStore.getInstance(KEYSTORE_PROVIDER_ANDROID_KEYSTORE);
+            ks.load(null);
+            if( ks.containsAlias( keyAlias))
+                return false;
+
+            /**
+             * Key does not exist.
+             * Create the key.
+             */
+            JSONObject jsonObject = createKey( ctx, keyAlias);
+            keyCreated = jsonObject.getString( "success").contentEquals( "true");
+
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException |
+                IOException | JSONException e) {
+
+            LogUtil.logException(KeystoreUtil.class, e);
+        }
+
+        return keyCreated;
     }
 }

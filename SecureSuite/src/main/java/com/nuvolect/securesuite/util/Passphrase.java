@@ -4,9 +4,6 @@ import android.content.Context;
 
 import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.data.SqlIncSync;
-import com.nuvolect.securesuite.license.LicensePersist;
-import com.nuvolect.securesuite.license.LicenseUtil;
-import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.LogUtil.LogType;
 
 import org.json.JSONArray;
@@ -25,7 +22,6 @@ public class Passphrase {
     public static final String PASSWORD_TARGET      = "password_target";
     public static final String PASSWORD_LENGTH      = "password_length";
     public static final String PASSWORD_GEN_MODE    = "password_gen_mode";
-
 
     public static String generateRandomString(int length, int mode) {
 
@@ -53,56 +49,6 @@ public class Passphrase {
             buffer.append(characters.charAt((int) index));
         }
         return buffer.toString();
-    }
-
-    /** Decrypt the passphrase and return it as a string */
-    public static String getDbPassphrase(Context ctx) {
-
-        String clearPassphrase = "";
-        String account = LicensePersist.getLicenseAccount(ctx);
-        String cryptPassphrase = Persist.getEncryptedPassphrase(ctx);
-
-        if( cryptPassphrase.equals(CConst.DEFAULT_PASSPHRASE)){
-
-            // First time, create a random passcode, encrypt and save it
-            clearPassphrase = generateRandomString( 32, HEX);
-            boolean success = setDbPassphrase(ctx, clearPassphrase);
-
-            assert success;
-
-            return clearPassphrase;
-        }
-        try {
-
-            /**
-             * Create a 32 hex char key
-             */
-            String md5Key = LicenseUtil.md5( CConst.RANDOM_EDGE+account);
-            clearPassphrase = BetterCrypto.decrypt( md5Key, cryptPassphrase);// has cryp patch
-
-        } catch (Exception e) {
-            LogUtil.logException(ctx, LogType.CRYPT, e);
-        }
-        return clearPassphrase;
-    }
-
-    /** Encrypt the passphrase and save it to persist */
-    public static boolean setDbPassphrase(Context ctx, String passphrase){
-
-        boolean success = true;
-        String account = LicensePersist.getLicenseAccount(ctx);
-        try {
-
-            String md5Key = LicenseUtil.md5( CConst.RANDOM_EDGE+account);
-            String cryptPassphrase = BetterCrypto.encrypt( md5Key, passphrase);
-            Persist.setEncryptedPassphrase(ctx, cryptPassphrase);
-
-        } catch (Exception e) {
-            LogUtil.logException(ctx, LogType.CRYPT, e);
-            success = false;
-        }
-
-        return success;
     }
 
     /**
@@ -174,13 +120,13 @@ public class Passphrase {
         try {
             jarray = new JSONArray( historyString);
 
-        password_list = new String[ jarray.length()];
+            password_list = new String[ jarray.length()];
 
-        // Copy the JSON into the string array, most recent at [0]
-        for( int i = 0, j = jarray.length()-1; i < jarray.length(); i++){
+            // Copy the JSON into the string array, most recent at [0]
+            for( int i = 0, j = jarray.length()-1; i < jarray.length(); i++){
 
-            password_list[i] = jarray.getString( j-- );
-        }
+                password_list[i] = jarray.getString( j-- );
+            }
 
         } catch (JSONException e) {
             LogUtil.logException(ctx, LogType.PASSWORD, e);

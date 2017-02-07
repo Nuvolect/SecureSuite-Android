@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.nuvolect.securesuite.main.CConst;
-import com.nuvolect.securesuite.util.BetterCrypto;
+import com.nuvolect.securesuite.util.SymmetricCrypto;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.JsonUtil;
 import com.nuvolect.securesuite.util.TimeUtil;
@@ -50,7 +50,7 @@ public class LicensePersist {
 
     public static void setLicenseAccount(Context ctx, String accountName){
         final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME,  Context.MODE_PRIVATE);
-        String cryptAccount = BetterCrypto.encrypt(ctx, accountName);
+        String cryptAccount = SymmetricCrypto.encrypt(ctx, accountName);
         pref.edit().putString(LICENSE_ACCOUNT_NAME, cryptAccount).commit();
     }
 
@@ -63,7 +63,7 @@ public class LicensePersist {
         if( cryptAccount.isEmpty())
             return CConst.DEFAULT_ACCOUNT;
         else{
-            String clearText = BetterCrypto.decrypt(ctx, cryptAccount);
+            String clearText = SymmetricCrypto.decrypt(ctx, cryptAccount);
 
             return clearText;
         }

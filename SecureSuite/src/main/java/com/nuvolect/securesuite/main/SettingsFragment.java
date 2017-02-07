@@ -39,10 +39,10 @@ import com.nuvolect.securesuite.license.AppSpecific;
 import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
+import com.nuvolect.securesuite.util.DbPassphrase;
 import com.nuvolect.securesuite.util.DeviceInfo;
 import com.nuvolect.securesuite.util.DialogUtil;
 import com.nuvolect.securesuite.util.LogUtil;
-import com.nuvolect.securesuite.util.Passphrase;
 import com.nuvolect.securesuite.util.PermissionManager;
 import com.nuvolect.securesuite.util.PermissionUtil;
 import com.nuvolect.securesuite.util.Util;
@@ -503,7 +503,7 @@ public class SettingsFragment extends PreferenceFragment
             builder.setMessage("Copy your current passphrase, or enter a new passphrase");
 
             m_passphraseEt = new EditText(m_act);
-            String cleartextPassphrase = Passphrase.getDbPassphrase(m_act);
+            String cleartextPassphrase = DbPassphrase.getDbPassphrase(m_act);
             m_passphraseEt.setText(cleartextPassphrase);
             builder.setView(m_passphraseEt);
 

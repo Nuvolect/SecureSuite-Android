@@ -12,9 +12,6 @@ public class CConst {
     public static final String TEMP_FOLDER                        = "/temp/";
     public static final String DEFAULT_ACCOUNT                    = "Default_account";
     public static final int PHOTO_ICON_MAX_EDGE                   = 192;
-    //    public static final String DEFAULT_IP_PORT                    = "0.0.0.0:8000";
-//    public static final int DEFAULT_PORT                          = 8000; // Different than other Nuvolect apps
-    public static final String IP_PORT                            = "ip_port";
     public static final String PORT                               = "port";
     public static final String COMPANION_IP_PORT                  = "companion_ip_port";//Match settings.xml
     public static final int IP_TEST_TIMEOUT_MS                    = 8000;// Time for testing for companion device IP
@@ -50,8 +47,6 @@ public class CConst {
 
     public final static int LARGE_ICON              = R.drawable.app_high_res_icon;
     public final static int SMALL_ICON              = R.drawable.icon_64;
-    public static final String _ID                  = "_id";
-    public static final String ACCOUNT_CRYP         = "account_cryp";
     public static final String ACCOUNT_DATA         = "account_data";
     public static final String ACCOUNT_ID           = "account_id";
     public static final String ACCOUNT_NAME         = ATab.account_name.toString();
@@ -66,7 +61,6 @@ public class CConst {
     public static final String CRYP_SYNC            = "cryp_sync";
     public static final String DATES                = DTab.date.toString();
     public static final String DISPLAY_NAME         = DTab.display_name.toString();
-    public static final String EMBEDDED_USER                      = "embedded_user";
     public static final String EMAIL                = DTab.email.toString();
     public static final String FIX_ERRORS           = "fix_errors";
     public static final String GENERATE_HTML        = "generate_html";
@@ -81,6 +75,8 @@ public class CConst {
     public static final String LAST_LOGIN_STATUS    = "last_login_status";
     public static final String LAST_OUTGOING_UPDATE = "last_incoming_update";
     public static final String MD5_PAYLOAD          = "md5_payload";
+    public static final String MEMBERS              = "members";
+    public static final String MEMBERS_DELETED      = "members_deleted";
     public static final String NAME_FIRST           = KvTab.name_first.toString();
     public static final String NAME_LAST            = KvTab.name_last.toString();
     public static final String NAME_MIDDLE          = KvTab.name_middle.toString();
@@ -89,6 +85,7 @@ public class CConst {
     public static final String NICKNAME             = KvTab.nickname.toString();
     public static final String NOTE                 = KvTab.note.toString();
     public static final String NOTIFY_INCOMING_CALL = "notify_incoming_call";
+    public static final String NO_PASSPHRASE        = "no-passphrase";
     public static final String OK                   = "ok";
     public static final String ORGANIZATION         = KvTab.organization.toString();
     public static final String PASSWORD             = "password";
@@ -99,7 +96,6 @@ public class CConst {
     public static final String PHONETIC_GIVEN       = KvTab.phonetic_given.toString();
     public static final String PHONETIC_MIDDLE      = KvTab.phonetic_middle.toString();
     public static final String PHOTO                = DTab.photo.toString();
-    public static final String PREMIUM_FEATURE      = "premium_feature";
     public static final String QUERY_PARAMETER_STRINGS  = "queryParameterStrings";
     public static final String RELATION             = DTab.relation.toString();
     public static final String RESPONSE_CODE        = "response_code";
@@ -113,6 +109,8 @@ public class CConst {
     public static final String URI                  = "uri";
     public static final String VERSION              = ATab.version.toString();
     public static final String WEBSITE              = DTab.website.toString();
+    public static final String _ID                  = "_id";
+
 
     public static final String TRUE = "true";
     public static final String FALSE = "false";
@@ -129,9 +127,6 @@ public class CConst {
     public static final String RELATION_TYPES[] = {"ASSISTANT","BROTHER","CHILD", "DOMESTIC PARTNER","FATHER","FRIEND","MANAGER","MOTHER","PARENT","PARTNER","REFERRED BY","RELATIVE","SISTER","SPOUSE","CUSTOM"};
     public static final String WEBSITE_TYPES[] = {"WORK","HOME","OTHER", "CUSTOM"};
 
-    public static final int CONTACT_LIST_LOADER = 1;
-    public static final int CONTACT_DETAIL_LOADER = 2;
-    public static final int CONTACT_EDIT_LOADER = 3;
     public static final String ACCOUNT = "account";
     public static final String SEARCH = "search";
     public static final String GROUP_ID = "group_id";
@@ -194,10 +189,6 @@ public class CConst {
     public static final String RANDOM_EDGE                    = "h0!U9#Wfnx";
     public static final String THEME_SETTINGS                 = "theme_settings";
 
-    public static final String DEFAULT_PASSPHRASE             = "WhenAllElseFails";
-    public static final String MEMBERS                        = "members";
-    public static final String MEMBERS_DELETED                = "members_deleted";
-
     public static final String IMPORT_PROGRESS                = "import_progress";
     public static final String IMPORT_ACCOUNT_LIST            = "import_account_list";
     public static final String IMPORT_SELECT_LIST             = "import_select_list";
@@ -205,7 +196,6 @@ public class CConst {
     public static final String COMMS_SELECT_MOBILE            = "mobile";
     public static final String COMMS_SELECT_EMAIL             = "email";
 
-    public static final String PASSPHRASE                     = "passphrase";
     public static final String LOCK_CODE                      = "lock_code";
     public static final String LOCK_INPUT_MODE                = "lock_input_mode";
     public static final String LOCK_INPUT_MODE_KEYBOARD       = "lock_input_mode_keyboard";
@@ -217,7 +207,6 @@ public class CConst {
     public static final String RECORDS                        = "records";
 
     public static final String RESTFUL_HTM                    = "restful_htm";
-    public static final String YUBIKEY                        = "yubikey";
     public static final String YUBIKEY_SERIAL1                = "yubikey_serial1";
     public static final String YUBIKEY_SERIAL2                = "yubikey_serial2";
 

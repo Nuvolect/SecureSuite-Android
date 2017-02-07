@@ -47,10 +47,10 @@ import com.nuvolect.securesuite.license.LicenseUtil;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.Cryp;
+import com.nuvolect.securesuite.util.DbPassphrase;
 import com.nuvolect.securesuite.util.FileBrowserDbRestore;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.LogUtil.LogType;
-import com.nuvolect.securesuite.util.Passphrase;
 import com.nuvolect.securesuite.util.PermissionUtil;
 import com.nuvolect.securesuite.util.Persist;
 import com.nuvolect.securesuite.util.UriUtil;
@@ -774,7 +774,7 @@ public class ContactListActivity extends Activity
                         LogUtil.log("Restore backup success");
 
                         //Save the passphrase, cleanup old database, inform user and restart
-                        Passphrase.setDbPassphrase(m_ctx, mNewDbPassphrase);
+                        DbPassphrase.setDbPassphrase(m_ctx, mNewDbPassphrase);
                         BackupRestore.deleteDbTemp(m_ctx, a);
                         BackupRestore.deleteDbTemp(m_ctx, b);
                         Toast.makeText(m_act, "Restore successful", Toast.LENGTH_LONG).show();

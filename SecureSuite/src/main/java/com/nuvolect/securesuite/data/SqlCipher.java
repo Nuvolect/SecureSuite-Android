@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.Cryp;
+import com.nuvolect.securesuite.util.DbPassphrase;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.LogUtil.LogType;
 import com.nuvolect.securesuite.util.Passphrase;
@@ -150,7 +151,8 @@ public class SqlCipher {
             account_databaseFile.delete();
         }
 
-        String passphrase = Passphrase.getDbPassphrase(m_ctx);
+        DbPassphrase.createDbKeystore( m_ctx);
+        String passphrase = DbPassphrase.getDbPassphrase(m_ctx);
         try {
             detail_db = SQLiteDatabase.openOrCreateDatabase(detail_databaseFile, passphrase, null);
             account_db = SQLiteDatabase.openOrCreateDatabase(account_databaseFile, passphrase, null);
@@ -253,7 +255,7 @@ public class SqlCipher {
 
         boolean success = true;
         try {
-            String oldKey = Passphrase.getDbPassphrase(m_ctx);
+            String oldKey = DbPassphrase.getDbPassphrase(m_ctx);
 
             String sql = "PRAGMA key ='"+oldKey+"'";
             account_db.execSQL( sql );
@@ -274,7 +276,7 @@ public class SqlCipher {
         }
 
         if( success)
-            Passphrase.setDbPassphrase(m_ctx, newKey);
+            DbPassphrase.setDbPassphrase(m_ctx, newKey);
 
         return success;
     }
