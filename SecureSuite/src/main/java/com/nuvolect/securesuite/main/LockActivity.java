@@ -106,7 +106,7 @@ public class LockActivity extends Activity {
                 message("No lock code", "Nothing to validate", MESSAGE_CMD.FINISH);
             }else{
                 mCurrentState = STATE.VALIDATE;
-                message("System Armed", "", MESSAGE_CMD.NIL);
+                message("System Secure", "", MESSAGE_CMD.NIL);
             }
         }
         else
@@ -471,7 +471,7 @@ public class LockActivity extends Activity {
 
     /**
      * Set the display message for short amount of time. A timer is set and
-     * when it expires the message is restored to "System Armed".
+     * when it expires the message is restored to "System Secure".
      * @param line1
      * @param line2
      * @param commandWhenDone

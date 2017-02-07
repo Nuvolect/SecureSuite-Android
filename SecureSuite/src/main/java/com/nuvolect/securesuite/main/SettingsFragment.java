@@ -107,7 +107,7 @@ public class SettingsFragment extends PreferenceFragment
         String lockMsg = "Lock disabled\nSystem disarmed";
 
         if (LockActivity.lockCodePresent(m_act))
-            lockMsg = "Lock enabled\nSystem armed";
+            lockMsg = "Lock enabled\nSystem secure";
         else
             lockMsg = "Lock disabled";
 
