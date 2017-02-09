@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.webserver;//
 
 
@@ -37,12 +48,12 @@ import static com.nuvolect.securesuite.util.LogUtil.logException;
  *
  * SECURITY AND AUTHENTICATION
  *
- * Three technqiues are employed
+ * Three techniques are employed
  * 1. https self-signed certificate
  * 2. State/response: login allows minimal css, js files, others blocked
  * 3. Security token in header
  *
- * Each session uses a uniqueId to control security. Each session is authenticated indpendently.
+ * Each session uses a uniqueId to control security. Each session is authenticated independently.
  *
  * </pre>
  */
@@ -71,7 +82,7 @@ public class CrypServer extends NanoHTTPD {
     public static String password_modal_apply_filename = "password_modal_apply_filled.htm";
     public static String group_edit_modal_filename = "group_edit_modal_filled.htm";
 
-    static Context m_ctx;
+    private static Context m_ctx;
 
     /**
      * Common mime types for dynamic content
@@ -183,6 +194,8 @@ public class CrypServer extends NanoHTTPD {
         Method method = session.getMethod();
         Map<String, String> params = session.getParms();
         String uri = session.getUri();
+        params.put("uri", uri);
+        params.put("queryParameterStrings", session.getQueryParameterString());
 
         log(LogUtil.LogType.CRYP_SERVER, method + " '" + uri + "' " + params.toString());
 
@@ -259,7 +272,8 @@ public class CrypServer extends NanoHTTPD {
 
                     return new Response(HTTP_OK, MIME_HTML, is);
 
-                } else {
+                }
+                else {
 
                     if (uri.endsWith(".htm") || uri.endsWith(".html")) {
 

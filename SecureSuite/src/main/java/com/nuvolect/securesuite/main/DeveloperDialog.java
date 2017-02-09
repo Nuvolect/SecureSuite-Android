@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.main;//
 
 import android.app.Activity;
@@ -14,6 +25,7 @@ import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.data.SqlSyncTest;
 import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.util.CustomDialog;
+import com.nuvolect.securesuite.util.DialogUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Persist;
 import com.nuvolect.securesuite.util.WorkerCommand;
@@ -41,8 +53,6 @@ public class DeveloperDialog {
      */
     private static enum DevMenu {
         Toggle_Verbose_LogCat,
-        Create_Key,
-        Get_Key,
         Clear_Data_Close_App,
         Temporary_Disable_Developer_Menu,
         Dump_Group_Title_Table,
@@ -81,14 +91,6 @@ public class DeveloperDialog {
 
                         switch( menuItem){
 
-                            case Create_Key:{
-
-                                break;
-                            }
-                            case Get_Key:{
-
-                                break;
-                            }
                             case Start_Incremental_Sync:
 
                                 WorkerCommand.queStartIncSync(m_act);

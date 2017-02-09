@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.main;
 
 import android.app.Activity;
@@ -95,7 +106,7 @@ public class LockActivity extends Activity {
                 message("No lock code", "Nothing to validate", MESSAGE_CMD.FINISH);
             }else{
                 mCurrentState = STATE.VALIDATE;
-                message("System Armed", "", MESSAGE_CMD.NIL);
+                message("System Secure", "", MESSAGE_CMD.NIL);
             }
         }
         else
@@ -460,7 +471,7 @@ public class LockActivity extends Activity {
 
     /**
      * Set the display message for short amount of time. A timer is set and
-     * when it expires the message is restored to "System Armed".
+     * when it expires the message is restored to "System Secure".
      * @param line1
      * @param line2
      * @param commandWhenDone

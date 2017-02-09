@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.util;//
 
 import android.app.Activity;
@@ -64,7 +75,7 @@ public class CustomDialog {
     /**
      * Call as part of the daily use cycle and interact with use
      * as dictated by the the rate* parameters.
-     *FIXME, the cancel button sometimes fails
+     *FUTURE, the cancel button sometimes fails
      * @param act
      * @param testDialogNoMetrics
      */
@@ -121,11 +132,6 @@ public class CustomDialog {
                     else
                         putInt(m_act, dialogPrefix+DONT_ASK, 1);
 
-//                    Analytics.send(m_act,
-//                            Analytics.DIALOG + Analytics.RATE_THIS_APP,
-//                            Analytics.DONT_ASK_AGAIN,
-//                            Analytics.COUNT, 1);
-
                     cancelDialog();
                 }
             });
@@ -135,7 +141,7 @@ public class CustomDialog {
     /**
      * Call as part of the daily use cycle and interact with use
      * as dictated by the the donate* parameters.
-     *FIXME, the cancel button sometimes fails
+     *FUTURE, the cancel button sometimes fails
      * @param act
      * @param testDialogNoMetrics
      */
@@ -166,11 +172,6 @@ public class CustomDialog {
                     i.setData(Uri.parse(url));
                     m_act.startActivity(i);
 
-//                    Analytics.send(m_act,
-//                            Analytics.DIALOG + Analytics.MAKE_DONATION,
-//                            Analytics.MAKE_DONATION,
-//                            Analytics.COUNT, 1);
-
                     cancelDialog();
                 }
 
@@ -186,11 +187,6 @@ public class CustomDialog {
                         if( testDialogNoMetrics )
                             Toast.makeText(m_act, "cancel button", Toast.LENGTH_SHORT).show();
 
-//                        Analytics.send(m_act,
-//                                Analytics.DIALOG + Analytics.MAKE_DONATION,
-//                                Analytics.CANCEL,
-//                                Analytics.COUNT, 1);
-
                         cancelDialog();
 
                         cancelAlreadyCalled = true;
@@ -204,11 +200,6 @@ public class CustomDialog {
                         Toast.makeText(m_act, "don't ask again", Toast.LENGTH_SHORT).show();
                     else
                         putInt(m_act, dialogPrefix+DONT_ASK, 1);
-
-//                    Analytics.send(m_act,
-//                            Analytics.DIALOG + Analytics.MAKE_DONATION,
-//                            Analytics.DONT_ASK_AGAIN,
-//                            Analytics.COUNT, 1);
 
                     cancelDialog();
                 }

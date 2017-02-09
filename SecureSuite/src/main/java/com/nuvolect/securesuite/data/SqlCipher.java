@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.data;
 
 import android.content.ContentValues;
@@ -6,6 +17,7 @@ import android.widget.Toast;
 
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.Cryp;
+import com.nuvolect.securesuite.util.DbPassphrase;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.LogUtil.LogType;
 import com.nuvolect.securesuite.util.Passphrase;
@@ -119,6 +131,11 @@ public class SqlCipher {
         m_ctx = applicationContext;
     }
 
+    /**
+     * Initialize SQL Cipher database
+     * @param context
+     * @return
+     */
     public static synchronized SqlCipher getInstance(Context context) {
 
         if( sInstance == null) {
@@ -145,7 +162,8 @@ public class SqlCipher {
             account_databaseFile.delete();
         }
 
-        String passphrase = Passphrase.getDbPassphrase(m_ctx);
+        DbPassphrase.createDbKeystore( m_ctx);
+        String passphrase = DbPassphrase.getDbPassphrase(m_ctx);
         try {
             detail_db = SQLiteDatabase.openOrCreateDatabase(detail_databaseFile, passphrase, null);
             account_db = SQLiteDatabase.openOrCreateDatabase(account_databaseFile, passphrase, null);
@@ -248,7 +266,7 @@ public class SqlCipher {
 
         boolean success = true;
         try {
-            String oldKey = Passphrase.getDbPassphrase(m_ctx);
+            String oldKey = DbPassphrase.getDbPassphrase(m_ctx);
 
             String sql = "PRAGMA key ='"+oldKey+"'";
             account_db.execSQL( sql );
@@ -269,7 +287,7 @@ public class SqlCipher {
         }
 
         if( success)
-            Passphrase.setDbPassphrase(m_ctx, newKey);
+            DbPassphrase.setDbPassphrase(m_ctx, newKey);
 
         return success;
     }
@@ -700,13 +718,20 @@ public class SqlCipher {
         return contact_id;
     }
 
+    /**
+     * Basic diagnostic info: contact name, id and account,
+     * otherwise the contactId if invalid.
+     * @param contact_id
+     * @return
+     */
     public static synchronized String contactInfo( long contact_id){
 
         if( contact_id <= 0)
             return "contact_id is "+contact_id;
 
         String displayName = SqlCipher.get(contact_id, ATab.display_name);
-        return displayName+", "+contact_id;
+        String account = SqlCipher.get(contact_id, ATab.account_name);
+        return displayName+", "+contact_id+", "+account;
     }
 
     /**<pre>
@@ -914,9 +939,9 @@ public class SqlCipher {
      */
     public static synchronized String get(long contact_id, DTab dbEnum) {
 
-        if( contact_id == 0){
+        if( contact_id <= 0){
 
-            if(DEBUG) LogUtil.log("contact_id 0");
+            if(DEBUG) LogUtil.log("SqlCipher ERROR get contact_id: :"+contact_id);
             return "";
         }
 
@@ -1356,7 +1381,7 @@ public class SqlCipher {
 
     /**
      * Return the id of the first contact if there is one, otherwise return -1 indicating there
-     * are no contacts.
+     * are no contacts. The ID may be in any account.
      * @return
      */
     public static synchronized long getFirstContactID() {
@@ -1830,12 +1855,14 @@ public class SqlCipher {
                 }
 
             } catch (JSONException e) {
-                e.printStackTrace();
-                return -1;
+                LogUtil.logException(SqlCipher.class, e);
+                success = false;
+                break;
             }
         }
         if( success )
             account_db.setTransactionSuccessful();
+
         account_db.endTransaction();
 
         return success? contactCount : -1;
@@ -1962,6 +1989,38 @@ public class SqlCipher {
         c.close();
         return contactIds;
     }
+
+    /**
+     * Return first contact id in an account.
+     * Return 0 if no valid contact ID is found.
+     * @param account
+     * @return long contact id
+     */
+    static long getFirstContactID(String account) {
+
+        long contactId = 0;
+        String[] projection = {ATab.contact_id.toString()};
+        String where = null;
+        String[] args = null;
+
+        if( account != null && ! account.isEmpty()){
+
+            where = ATab.account_name+"=?";
+            args = new String[]{ account };
+        }
+        else
+            return 0;
+
+        Cursor c = account_db.query( ACCOUNT_TABLE, projection, where, args, null, null, null);
+
+        if( c.moveToNext()){
+
+            contactId = c.getLong( 0 );
+        }
+
+        c.close();
+        return contactId;
+    }
     /**
      * Return a cursor for all contact records including all accounts.
      * Projection is just contact_id.
@@ -2056,7 +2115,7 @@ public class SqlCipher {
 
     /**
      * Save a key/value pair to the database.  Both are string.
-     * A int value with thenumber of rows updated is returned with success == 1.
+     * A int value with the number of rows updated is returned with success == 1.
      * @param key
      * @param value
      * @return
@@ -2069,6 +2128,11 @@ public class SqlCipher {
         ContentValues cv = new ContentValues();
         cv.put( ACTab.key.toString(), key);
         cv.put( ACTab.value.toString(), value);
+
+        if( account_db.inTransaction()){
+
+            account_db.endTransaction();
+        }
 
         account_db.beginTransaction();
         int rows = account_db.update( ACCOUNT_CRYP_TABLE, cv, where, args);
@@ -2100,25 +2164,31 @@ public class SqlCipher {
      */
     public static synchronized String getCryp(String key){
 
-        if( key == null || key.isEmpty())
-            return "";
+        try {
+            if( key == null || key.isEmpty())
+                return "";
 
-        String where = ACTab.key+"=?";
-        String[] args = new String[]{ key };
+            String where = ACTab.key+"=?";
+            String[] args = new String[]{ key };
 
-        Cursor c = account_db.query(ACCOUNT_CRYP_TABLE, null, where, args, null, null, null);
-        c.moveToFirst();
+            Cursor c = account_db.query(ACCOUNT_CRYP_TABLE, null, where, args, null, null, null);
+            c.moveToFirst();
 
-        String value = "";
-        if( c.getCount() == 1){
-            value = c.getString( 2 );
-        }else
-        if( c.getCount() > 1){
+            String value = "";
+            if( c.getCount() == 1){
+                value = c.getString( 2 );
+            }else
+            if( c.getCount() > 1){
+                c.close();
+                throw new RuntimeException("get should only find zero or one record");
+            }
             c.close();
-            throw new RuntimeException("get should only find zero or one record");
+            return value;
+
+        } catch (Exception e) {
+            LogUtil.logException(SqlCipher.class, e);
         }
-        c.close();
-        return value;
+        return "";
     }
 
     /**
@@ -2224,11 +2294,11 @@ public class SqlCipher {
      * 2. Confirm group_id > 0, not -2, -1 or 0
      * 3. Confirm user is in the group a single time, not zero or multiple times in the same group
      * 4. Confirm group has a single title record
+     * 5. Confirm detail table key value items are valid JSON
      * //FUTURE Check for unused/rogue group records.
      * //FUTURE Check for unused/rogue group title records
      //FUTURE cleanup any rogue group data records: records not associated with any contacts
      //FUTURE cleanup any rogue group title records: records with no associated group data, not My Contacts, not Trash
-     .
      * @param ctx
      * @return
      */
@@ -2288,6 +2358,25 @@ public class SqlCipher {
             }
             else
                 ++successCount;
+
+            /**
+             * 5. Confirm that detail table key value items are valid JSON
+             */
+            boolean jsonTest = true;
+            try {
+                String kvString = get( contact_id, DTab.kv);
+                JSONObject kvJobj = new JSONObject( kvString);
+            } catch (JSONException e) {
+                logError(ctx, LogType.SQLCIPHER, "Invalid JSON DTab.kv for ID: "+contact_id);
+                jsonTest = false;
+            } catch ( RuntimeException e){
+                logError(ctx, LogType.SQLCIPHER, "RuntimeException test 5. for ID: "+contact_id);
+                ++failCount;
+            }
+            if( jsonTest)
+                ++successCount;
+            else
+                ++failCount;
 
             // See if the user is part of any groups
             int[] groups = MyGroups.getGroups( contact_id);

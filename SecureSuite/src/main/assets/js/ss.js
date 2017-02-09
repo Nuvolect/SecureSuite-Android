@@ -105,7 +105,7 @@ else
   reloadPage();
 }
 
-function validateLogin( emailId, passwordId, keepInId ){
+function validateLogin( passwordId, keepInId ){
 
 var xmlhttp;
 if (window.XMLHttpRequest)
@@ -117,12 +117,11 @@ else
         xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
   }
 
-  var kv1 = "email="+ document.getElementById( emailId ).value;
-  var kv2 = "password="+ document.getElementById( passwordId ).value;
+  var kv1 = "password="+ document.getElementById( passwordId ).value;
 
   xmlhttp.open("POST", "", false); // Fails when set to true
   xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-  xmlhttp.send( kv1 + "&" + kv2 );
+  xmlhttp.send( kv1 );
 
   reloadPage();
 }

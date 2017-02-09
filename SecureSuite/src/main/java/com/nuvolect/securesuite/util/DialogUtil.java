@@ -1,4 +1,15 @@
-package com.nuvolect.securesuite.main;//
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package com.nuvolect.securesuite.util;//
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,7 +22,8 @@ import android.widget.Toast;
 
 import com.nuvolect.securesuite.data.MyContacts;
 import com.nuvolect.securesuite.data.MyGroups;
-import com.nuvolect.securesuite.util.Cryp;
+import com.nuvolect.securesuite.main.CConst;
+import com.nuvolect.securesuite.main.SharedMenu;
 
 /** Collection of ui Dialogs */
 public class DialogUtil {
@@ -114,6 +126,43 @@ public class DialogUtil {
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 dialog_alert.cancel();
+            }
+        });
+        dialog_alert = builder.create();
+        dialog_alert.show();
+    }
+
+    /** Multi-line dialog with a title, message, dismiss button and second button*/
+    public static void twoButtonMlDialog(
+            Activity act, String title, String message,
+            String secondButtonTitle, final DialogUtilCallbacks callbacks) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(act);
+
+        TextView tw =new TextView(act);
+        tw.setMaxLines(10);
+        tw.setPadding( 13, 13, 13, 13);
+        tw.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        tw.setSingleLine(false);
+        tw.setText(message);
+        builder.setView(tw);
+
+        builder.setTitle(title);
+        builder.setIcon(CConst.SMALL_ICON);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton( secondButtonTitle, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                dialog_alert.cancel();
+                callbacks.confirmed( true);
+            }
+        });
+        builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                dialog_alert.cancel();
+                callbacks.confirmed( false);
             }
         });
         dialog_alert = builder.create();

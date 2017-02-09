@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.util;
 
 import android.annotation.SuppressLint;
@@ -15,6 +26,8 @@ import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -484,6 +497,59 @@ public class Util {
         } else {
             LogUtil.log(LogUtil.LogType.UTIL, "Internet Connection Not Present");
             return false;
+        }
+    }
+
+    /**
+     * Return "1 Item" or "0 Items" or "23 Items".
+     * @param n
+     * @param item
+     * @return
+     */
+    public static String plural(int n, String item) {
+
+        if( n == 1)
+            return "1 " + item;
+        else
+            return n + " " + item + "s";
+    }
+
+    /**
+     * Set the visibility of a menu item.
+     * @param menu
+     * @param item
+     */
+    public static void hideMenu(Menu menu, int item) {
+
+        MenuItem menuItem = menu.findItem(item);
+        if( menuItem != null && menuItem.isVisible())
+            menuItem.setVisible( false );
+    }
+    /**
+     * Set the visibility of a menu item.
+     * @param menu
+     * @param item
+     */
+    public static void showMenu(Menu menu, int item) {
+
+        MenuItem menuItem = menu.findItem(item);
+        if( menuItem != null && ! menuItem.isVisible())
+            menuItem.setVisible( true );
+    }
+
+    /**
+     * Delete all files in the apps private TEMP directory.
+     * @param act
+     */
+    public static void cleanupTempFolder(Activity act) {
+
+        File dir = new File( act.getFilesDir() +CConst.TEMP_FOLDER);
+        dir.mkdirs();
+
+        File[] files = dir.listFiles();
+        for( File f : files){
+
+            f.deleteOnExit();
         }
     }
 }

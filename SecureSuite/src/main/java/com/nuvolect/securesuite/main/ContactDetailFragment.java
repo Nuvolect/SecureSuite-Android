@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.main;
 
 import android.annotation.SuppressLint;
@@ -31,6 +42,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nuvolect.securesuite.R;
+import com.nuvolect.securesuite.data.MyContacts;
 import com.nuvolect.securesuite.data.NameUtil;
 import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.data.SqlCipher;
@@ -95,7 +107,7 @@ public class ContactDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(DEBUG)LogUtil.log("ContactDetailFragment onCreate");
+        if(DEBUG)LogUtil.log("CDF onCreate");
 
         m_act = getActivity();
 
@@ -162,27 +174,27 @@ public class ContactDetailFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if(DEBUG)LogUtil.log("ContactDetailFragment onPause");
+        if(DEBUG)LogUtil.log("CDF onPause");
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if(DEBUG)LogUtil.log("ContactDetailFragment onResume: "+SqlCipher.contactInfo(m_contact_id));
+        if(DEBUG)LogUtil.log("CDF onResume: "+SqlCipher.contactInfo(m_contact_id));
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if(DEBUG)LogUtil.log("ContactDetailFragment onDestroy");
+        if(DEBUG)LogUtil.log("CDF onDestroy");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        m_contact_id = Persist.getCurrentContactId(m_act);
-        if(DEBUG)LogUtil.log("ContactDetailFragment onCreateView: "+SqlCipher.contactInfo(m_contact_id));
+        m_contact_id = MyContacts.getCurrrentContactId( m_act);
+        if(DEBUG)LogUtil.log("CDF onCreateView: "+SqlCipher.contactInfo(m_contact_id));
 
         View rootView=null;
         TableLayout table;
@@ -335,8 +347,12 @@ public class ContactDetailFragment extends Fragment {
             String groupList = MyGroups.getGroupTitles( m_contact_id);
             addTextRow( groupList, table, false);
         }
-        else
-            m_contact_id = -1;
+        else{
+            rootView = inflater.inflate(R.layout.contact_detail_fragment_empty, container, false);
+
+            // Add the theme background outline and fill color behind fragment
+            AppTheme.applyDrawableShape( getActivity(), rootView);
+        }
 
         return rootView;
     }

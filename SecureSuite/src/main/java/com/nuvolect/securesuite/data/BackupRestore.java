@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.data;
 
 import android.app.Activity;
@@ -27,7 +38,6 @@ import java.util.ArrayList;
 
 public class BackupRestore {
 
-//    private static final boolean DEBUG = false;
     static SQLiteDatabase account_db = SqlCipher.account_db;
     static SQLiteDatabase detail_db = SqlCipher.detail_db;
     static String ACCOUNT_TABLE = SqlCipher.ACCOUNT_TABLE;
@@ -214,8 +224,6 @@ public class BackupRestore {
         //Open the target db as the output stream and delete it
         if( targetFile.delete())
             LogUtil.log("file deleted: "+ targetDbFilename);
-        else
-            LogUtil.log("ERROR, file NOT deleted: "+ targetDbFilename);
 
         OutputStream outputStream = new FileOutputStream(outPathWithName);
 

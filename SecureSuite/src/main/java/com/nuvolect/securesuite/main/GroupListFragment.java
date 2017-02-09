@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.main;
 
 import android.app.Activity;
@@ -21,12 +32,13 @@ import com.nuvolect.securesuite.data.SqlCipher.GTTab;
 import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.LogUtil;
+import com.nuvolect.securesuite.util.Util;
 
 import net.sqlcipher.Cursor;
 
 public class GroupListFragment extends ListFragment{
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = LogUtil.DEBUG;
     /**
      * The current activated item position. Only used on tablets.
      */
@@ -35,7 +47,7 @@ public class GroupListFragment extends ListFragment{
     private GroupListCursorAdapter m_groupListCursorAdapter;
     public String m_groupTitleSelected="";
     private Cursor m_cursor = null;
-    private Spinner accountSpinner;
+    private Spinner m_accountSpinner;
     private String[] m_account_list = new String[] {};
     private String m_account="";
     private int m_account_spinner_position = -1;
@@ -86,7 +98,7 @@ public class GroupListFragment extends ListFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(DEBUG)LogUtil.log("GroupListFragment onCreate");
+        if(DEBUG)LogUtil.log("GLF onCreate");
 
         m_act = getActivity();
         m_wasPaused = false;
@@ -95,7 +107,7 @@ public class GroupListFragment extends ListFragment{
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if(DEBUG)LogUtil.log("GroupListFragment onDestroy");
+        if(DEBUG)LogUtil.log("GLF onDestroy");
 
         if( m_cursor != null && !m_cursor.isClosed())
             m_cursor.close();
@@ -106,7 +118,7 @@ public class GroupListFragment extends ListFragment{
     @Override
     public void onPause() {
         super.onPause();
-        if(DEBUG)LogUtil.log("GroupListFragment onPause");
+        if(DEBUG)LogUtil.log("GLF onPause");
 
         m_wasPaused = true;
     }
@@ -114,13 +126,14 @@ public class GroupListFragment extends ListFragment{
     @Override
     public void onResume() {
         super.onResume();
-        if(DEBUG)LogUtil.log("GroupListFragment onResume");
+        if(DEBUG)LogUtil.log("GLF onResume");
 
         if( m_wasPaused){
 
             updateAdapter();
             m_wasPaused = false;
         }
+        m_accountSpinner.setSelection( m_account_spinner_position);
     }
 
     @Override
@@ -132,7 +145,7 @@ public class GroupListFragment extends ListFragment{
         // Add the theme background outline and fill color behind fragment
         AppTheme.applyDrawableShape(m_act, rootView);
 
-        accountSpinner = (Spinner) rootView.findViewById(R.id.accountSpinner);
+        m_accountSpinner = (Spinner) rootView.findViewById(R.id.accountSpinner);
         ListView listView = (ListView) rootView.findViewById(android.R.id.list);
 
         updateAccount();
@@ -146,14 +159,14 @@ public class GroupListFragment extends ListFragment{
         all_contactsTv.setTextColor(h1_color);
         int nAllContacts = MyAccounts.getContactCount(m_account);
         TextView all_contacts_countTv = (TextView) rootView.findViewById(R.id.all_contacts_count);
-        all_contacts_countTv.setText(nAllContacts + " People");
+        all_contacts_countTv.setText(Util.plural(nAllContacts, "Contact"));
         all_contacts_countTv.setTextColor( h2_color);
 
         TextView starred_contactsTv = (TextView) rootView.findViewById(R.id.starred_contacts);
         starred_contactsTv.setTextColor(h1_color);
         int starContacts = MyAccounts.getStarredCount(m_account);
         TextView starred_contacts_countTv = (TextView) rootView.findViewById(R.id.starred_contacts_count);
-        starred_contacts_countTv.setText(starContacts + " People");
+        starred_contacts_countTv.setText(Util.plural(starContacts, "Contact"));
         starred_contacts_countTv.setTextColor( h2_color);
 
         LinearLayout group_all_contactsLL = (LinearLayout) rootView.findViewById(R.id.group_all_contacts);
@@ -174,14 +187,14 @@ public class GroupListFragment extends ListFragment{
         all_contactsTv.setTextColor(h1_color);
         int nAllContacts = MyAccounts.getContactCount(m_account);
         TextView all_contacts_countTv = (TextView) m_act.findViewById(R.id.all_contacts_count);
-        all_contacts_countTv.setText(nAllContacts + " People");
+        all_contacts_countTv.setText(Util.plural( nAllContacts, "Contact"));
         all_contacts_countTv.setTextColor( h2_color);
 
         TextView starred_contactsTv = (TextView) m_act.findViewById(R.id.starred_contacts);
         starred_contactsTv.setTextColor(h1_color);
         int starContacts = MyAccounts.getStarredCount(m_account);
         TextView starred_contacts_countTv = (TextView) m_act.findViewById(R.id.starred_contacts_count);
-        starred_contacts_countTv.setText(starContacts + " People");
+        starred_contacts_countTv.setText(Util.plural(starContacts, "Contact"));
         starred_contacts_countTv.setTextColor( h2_color);
 
         LinearLayout group_all_contactsLL = (LinearLayout) m_act.findViewById(R.id.group_all_contacts);
@@ -208,52 +221,47 @@ public class GroupListFragment extends ListFragment{
         if( m_account.isEmpty()){
 
             m_account = m_account_list[0];
-            m_account_spinner_position = 0;
             Cryp.setCurrentAccount( m_account);
-        }else{
-            // Not first time, set spinner to previous account
-            int i=0;
-            for( String a: m_account_list){
-                if( a.contains(m_account)) {
-                    m_account_spinner_position = i;
-                    break;
-                }
-                ++i;
-            }
         }
+        m_account_spinner_position = findPosition( m_account_list, m_account );
 
         ArrayAdapter<String> spinnerArrayAdapter;
         spinnerArrayAdapter = new ArrayAdapter<String>(
                 m_act, android.R.layout.simple_spinner_item, m_account_list);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        accountSpinner.setAdapter(spinnerArrayAdapter);
-        accountSpinner.setSelection(m_account_spinner_position, true);
+        m_accountSpinner.setAdapter(spinnerArrayAdapter);
+        m_accountSpinner.setSelection(m_account_spinner_position, true);
 
-        accountSpinner.setOnItemSelectedListener( new OnItemSelectedListener( ) {
+        m_accountSpinner.setOnItemSelectedListener(new OnItemSelectedListener( ) {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
-                if( position != m_account_spinner_position){
+                m_account_spinner_position = position;
+                m_account = m_account_list[ position];
+                Cryp.setCurrentAccount( m_account);
+                updateAdapter();
 
-                    if(DEBUG)
-                        LogUtil.log("selected: "+m_account_list[position]);
+                updateAllStarredCounts(m_act);
 
-                    m_account_spinner_position = position;
-                    m_account = m_account_list[ position];
-                    Cryp.setCurrentAccount( m_account);
-                    updateAdapter();
-
-                    updateAllStarredCounts(m_act);
-
-                    // Inform activity account was selected
-                    mCallbacks.onAccountSelected( m_account );
-                }
+                // Inform activity account was selected
+                mCallbacks.onAccountSelected( m_account );
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
+    }
+
+    private int findPosition(String[] list, String target) {
+
+        for( int i = 0; i < list.length; i++){
+
+            if( list[i].contentEquals(target)){
+                return i;
+            }
+        }
+        return 0;
     }
 
     public void updateAdapter(){
@@ -266,7 +274,7 @@ public class GroupListFragment extends ListFragment{
                     new_cursor,
                     0,  // flags, not using
                     R.layout.group_list_item_activated
-                    );
+            );
         }else{
             // Adapter in place, update the cursor, adapter will close old cursor
             m_groupListCursorAdapter.changeCursor( new_cursor);
@@ -313,7 +321,7 @@ public class GroupListFragment extends ListFragment{
         super.onListItemClick(listView, view, position, id);
 
         android.database.Cursor c = m_groupListCursorAdapter.getCursor();
-//        if(DEBUG) Util.dumpCursorDescription((Cursor) c, "GroupListFragment");
+//        if(DEBUG) Util.dumpCursorDescription((Cursor) c, "GLF");
         m_groupTitleSelected = c.getString(GTTab.title.ordinal());
 
         // Notify the active callbacks interface (the activity, if the

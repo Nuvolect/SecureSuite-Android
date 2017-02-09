@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.data;//
 
 import android.app.Activity;
@@ -20,14 +31,17 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.nuvolect.securesuite.R;
-import com.nuvolect.securesuite.main.DialogUtil;
 import com.nuvolect.securesuite.main.SettingsActivity;
 import com.nuvolect.securesuite.util.AppTheme;
+import com.nuvolect.securesuite.util.DialogUtil;
 import com.nuvolect.securesuite.util.JsonUtil;
+import com.nuvolect.securesuite.util.LogUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Various methods to cleanup and maintain the database.
@@ -74,6 +88,7 @@ public class CleanupFragment extends DialogFragment {
         m_rootView.findViewById(R.id.formatNumbersTr).setOnClickListener(onClickFormatNumbers);
         m_rootView.findViewById(R.id.removeEmptyGroupsTr).setOnClickListener(onClickRemoveEmptyGroups);
         m_rootView.findViewById(R.id.removeStarredInAndroidGroupsTr).setOnClickListener(onClickRemoveStarredInAndroidGroups);
+        m_rootView.findViewById(R.id.inspectRepairDbTr).setOnClickListener(onClickInspectRepairDb);
         m_rootView.findViewById(R.id.cancelFl).setOnClickListener(cancelButtonOnClick);
 
         return m_rootView;
@@ -236,8 +251,6 @@ public class CleanupFragment extends DialogFragment {
             }
 
         }.execute();
-
-
     }
 
     TextView.OnClickListener onClickRemoveEmptyGroups = new View.OnClickListener(){
@@ -284,12 +297,163 @@ public class CleanupFragment extends DialogFragment {
                     });
         }
     };
+    TextView.OnClickListener onClickInspectRepairDb = new View.OnClickListener(){
+
+        @Override
+        public void onClick(View view) {
+
+            inspectDb();
+        }
+    };
+
+    private void inspectDb() {
+
+        final ArrayList<Long> errorIds = new ArrayList<>();
+
+        new AsyncTask<Void, Integer, String>() {
+
+            ProgressDialog progressDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                progressDialog = new ProgressDialog(m_act);
+                progressDialog.setMessage("Inspecting...");
+                progressDialog.setIndeterminate(false);
+                progressDialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL);
+                progressDialog.setCancelable(true);
+                progressDialog.setMax(SqlCipher.getDbSize());
+                progressDialog.setProgress(0);
+                progressDialog.show();
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+
+                StringBuilder log = new StringBuilder();
+                String nl = System.getProperty("line.separator");
+
+                long [] contactIds = SqlCipher.getContactIds( null );
+
+                int valid = 0;
+                int invalid = 0;
+                int progress = 0;
+
+                for( long contactId : contactIds){
+
+                    String display_name = "";
+
+                    boolean jsonSuccess = true, exceptionSuccess = true;
+                    try {
+                        display_name = SqlCipher.get( contactId, SqlCipher.ATab.display_name);
+                        String kvString = SqlCipher.get( contactId, SqlCipher.DTab.kv);
+                        JSONObject kvJobj = new JSONObject( kvString);
+                    } catch (JSONException e) {
+                        LogUtil.log(LogUtil.LogType.SQLCIPHER, "Invalid JSON DTab.kv for ID: "+contactId);
+                        jsonSuccess = false;
+                    } catch ( RuntimeException e){
+                        LogUtil.log(LogUtil.LogType.SQLCIPHER, "RuntimeException for ID: "+contactId);
+                        exceptionSuccess = false;
+                        ++invalid;
+                    }
+                    if(jsonSuccess)
+                        ++valid;
+                    else
+                        ++invalid;
+
+                    if( ! jsonSuccess || ! exceptionSuccess){
+
+                        errorIds.add( contactId);
+                        log.append("Error: " + display_name + nl);
+                    }
+
+                    publishProgress( ++progress);
+                }
+
+                String repairNotice = (invalid == 0 ? "":
+                        nl+"If you choose Repair, there may be data loss");
+                log.append( repairNotice);
+
+                return " Contacts: "+contactIds.length + nl
+                        +" Valid: "+valid + nl
+                        +" Invalid: "+invalid + nl
+                        + nl
+                        +log;
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+
+                progressDialog.setProgress( values[0]);
+            }
+
+            @Override
+            protected void onPostExecute(String summary) {
+                super.onPostExecute(summary);
+
+                progressDialog.cancel();
+                DialogUtil.twoButtonMlDialog(
+                        m_act, "Inspection Summary", summary,
+                        "Repair", new DialogUtil.DialogUtilCallbacks() {
+                            @Override
+                            public void confirmed(boolean repairConfirmed) {
+
+                                if( repairConfirmed ){
+
+                                    String s = repairDb( errorIds)?"Repair successful":"Repair failed";
+                                        Toast.makeText(m_act, s ,Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+
+        }.execute();
+    }
+
+    /**
+     * Given a list of error contact IDs, generate new contacts and
+     * populate each with the display_name and all contact name fields.
+     * @param error_contact_ids
+     */
+    private boolean repairDb(ArrayList<Long> error_contact_ids) {
+
+        try {
+            for( long contact_id : error_contact_ids){
+
+                long new_contact_id = SqlCipher.createEmptyContact(m_act, 0);
+
+                /**
+                 * Get the display name from the corrupt contact id and
+                 * use it to create a new contact.  Assumes the name is not corrupt.
+                 */
+                String display_name = SqlCipher.get(contact_id, SqlCipher.ATab.display_name);
+                NameUtil.parseFullNameToKv(new_contact_id, display_name);
+                NameUtil.setNamesFromKv(new_contact_id);
+
+                int[]  groups = MyGroups.getGroups(contact_id);
+
+                for( int group : groups){
+
+                    MyGroups.addGroupMembership( m_act, new_contact_id, group, true);
+                    MyGroups.mGroupCount.put(group, 1+ MyGroups.mGroupCount.get(group));
+                }
+                SqlCipher.deleteContact( m_act, contact_id, true);
+            }
+        } catch (Exception e) {
+            LogUtil.logException( CleanupFragment.class, e);
+            return false;
+        }
+        return true;
+    }
+
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
 
-        // Request a window wihtout the title
+        // Request a window without a title
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return dialog;

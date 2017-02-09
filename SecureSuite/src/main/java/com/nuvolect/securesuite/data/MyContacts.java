@@ -1,9 +1,22 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.data;
 
 import android.content.Context;
 
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.Persist;
+
+import static com.nuvolect.securesuite.data.MyGroups.getContacts;
 
 public class MyContacts {
 
@@ -39,7 +52,7 @@ public class MyContacts {
         if( ! SqlCipher.validContactId( contact_id)){
 
             int group = Cryp.getCurrentGroup();
-            long[] contacts = MyGroups.getContacts(group);
+            long[] contacts = getContacts(group);
             if( contacts.length > 0)
                 contact_id = contacts[ 0 ];
             else
@@ -55,7 +68,7 @@ public class MyContacts {
         if( ! SqlCipher.validContactId( contact_id)){
 
             int group = Cryp.getCurrentGroup();
-            long[] contacts = MyGroups.getContacts(group);
+            long[] contacts = getContacts(group);
             if( contacts.length > 0)
                 contact_id = contacts[ 0 ];
             else
@@ -70,6 +83,69 @@ public class MyContacts {
     public static boolean contactExists(long contact_id) {
 
         return SqlCipher.validContactId( contact_id);
+    }
+
+    /**
+     * Get the current contact ID and validate it against the current account.
+     * Provide a default contact ID that always matches the current account.
+     *
+     * @param ctx
+     * @return
+     */
+    public static long getCurrrentContactId(Context ctx) {
+
+        long contact_id = Persist.getCurrentContactId( ctx);
+        String account = MyAccounts.getAccount( contact_id);
+        return getCurrrentContactId( ctx, account);
+    }
+
+    public static long getCurrrentContactId(Context ctx, String account) {
+
+        long contact_id = Persist.getCurrentContactId( ctx);
+        String current_account = Cryp.getCurrentAccount();
+        if( account.contentEquals( current_account))
+            return contact_id;
+        else
+            return getFirstContact( ctx, account);
+    }
+
+    private static long getFirstContact(Context ctx, String account) {
+
+        return SqlCipher.getFirstContactID( account);
+    }
+
+    public static long getFirstContactInGroup(int group_id){
+
+        long[] contacts = MyGroups.getContacts(group_id);
+        if( contacts.length > 0)
+            return contacts[0];
+        else
+            return 0;
+    }
+
+    /**
+     * Identify contacts given id range and testing that the contact
+     * is not in the trash.
+     * @param contact_id
+     * @return
+     */
+    public static boolean invalidContact(long contact_id) {
+
+        if( contact_id <= 0 || MyGroups.isInTrash( contact_id))
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * Identify contacts given id range and testing that the contact
+     * is not in the trash.
+     * @param contact_id
+     * @return
+     */
+    public static boolean validContact(long contact_id) {
+
+        return ! invalidContact( contact_id);
     }
 }
 

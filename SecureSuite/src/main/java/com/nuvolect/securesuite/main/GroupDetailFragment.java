@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.main;
 
 import android.app.Activity;
@@ -20,6 +31,7 @@ import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Persist;
+import com.nuvolect.securesuite.util.Util;
 
 import net.sqlcipher.Cursor;
 
@@ -102,13 +114,13 @@ public class GroupDetailFragment extends Fragment {
         mCountInGroup = MyGroups.getGroupCountPseudo(m_group_id);
         m_wasPaused = false;
 
-        if(DEBUG)LogUtil.log("GroupDetailFragment onCreate, m_group_id: "+m_group_id);
+        if(DEBUG)LogUtil.log("GDF onCreate, m_group_id: "+m_group_id);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if(DEBUG)LogUtil.log("GroupDetailFragment onPause, m_group_id: "+m_group_id);
+        if(DEBUG)LogUtil.log("GDF onPause, m_group_id: "+m_group_id);
 
         m_wasPaused = true;
     }
@@ -116,7 +128,7 @@ public class GroupDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(DEBUG)LogUtil.log("GroupDetailFragment onResume, m_group_id: "+m_group_id);
+        if(DEBUG)LogUtil.log("GDF onResume, m_group_id: "+m_group_id);
 
         if( m_wasPaused){
 
@@ -128,7 +140,7 @@ public class GroupDetailFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if(DEBUG)LogUtil.log("GroupDetailFragment onDestroy, m_group_id: "+m_group_id);
+        if(DEBUG)LogUtil.log("GDF onDestroy, m_group_id: "+m_group_id);
 
         if( m_cursor != null && !m_cursor.isClosed())
             m_cursor.close();
@@ -136,15 +148,15 @@ public class GroupDetailFragment extends Fragment {
         m_groupDetailCursorAdapter = null;
     }
 
-    /**
-     * Reassign to a new group and update cursor.
-     * @param selectGroup
-     */
-    public void notifyChanged( int selectGroup){
-
-        m_group_id = selectGroup;
-        m_groupDetailCursorAdapter.notifyDataSetChanged();
-    }
+//    /**
+//     * Reassign to a new group and update cursor.
+//     * @param selectGroup
+//     */
+//    public void notifyChanged( int selectGroup){
+//
+//        m_group_id = selectGroup;
+//        m_groupDetailCursorAdapter.notifyDataSetChanged();
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -203,10 +215,7 @@ public class GroupDetailFragment extends Fragment {
         m_groupTitleTv.setText( MyGroups.getGroupTitlePseudo(m_group_id));
         mCountInGroup = new_cursor.getCount();
 
-        if( mCountInGroup == 1)
-            m_groupCount.setText("1 person");
-        else
-            m_groupCount.setText(mCountInGroup + " people");
+        m_groupCount.setText(Util.plural(mCountInGroup, "Contact"));
         // Save the cursor so it can be closed in onDestroy
         m_cursor = new_cursor;
     }
@@ -219,7 +228,7 @@ public class GroupDetailFragment extends Fragment {
             Persist.setCurrentContactId(m_act, contact_id);
 
             if(DEBUG)
-                LogUtil.log("GroupDetailFragment.OnItemClickListener onClick: "+SqlCipher.get( contact_id, DTab.display_name));
+                LogUtil.log("GDF.OnItemClickListener onClick: "+SqlCipher.get( contact_id, DTab.display_name));
 
             mCallbacks.onContactSelected();
         }

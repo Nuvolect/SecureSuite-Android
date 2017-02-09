@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.webserver;//
 
 import android.content.Context;
@@ -32,6 +43,8 @@ public class RestfulHtm {
             CConst.GROUP_ID,
             CConst.MD5_PAYLOAD,
             CConst.PAYLOAD,
+            CConst.URI,
+            CConst.QUERY_PARAMETER_STRINGS,
     };
     private static boolean isParameterKey(String key) {
 
@@ -114,10 +127,16 @@ public class RestfulHtm {
 //////////////////////////////////////////////////////////////////////////////////////
 
         /**
-         * Communication test.  Bounch data back and forth to exercise communications.
+         * Communication test.  Bounce data back and forth to exercise communications.
          */
         ping_test,
         pong_test,
+
+        /**
+         * Basic parameters for routing and speciality query
+         */
+        uri,                    // Full uri for routing
+        queryParameterStrings,  // Raw parameters
     }
 
     public static void init(Context ctx){
@@ -177,6 +196,8 @@ public class RestfulHtm {
         for (Map.Entry<String, String> entry : params.entrySet()) {
             key = entry.getKey();
             value = entry.getValue();
+            if( value == null)
+                value = "";
 
             if( LogUtil.DEBUG){
                 String str = value.length() > 30 ? value.substring(0, 30) : value;
@@ -292,7 +313,7 @@ public class RestfulHtm {
                     SqlFullSyncSource.getInstance().fullSyncEnd(m_ctx);
                     return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
                 }
-//////////////////////////////////////////////////////////////////////////////////////
+
                 case tgt_inc_sync_source_manifest:{
 
                     JSONObject response = SqlIncSyncTarget.getInstance().inspectSourceManifest(value);
@@ -334,7 +355,7 @@ public class RestfulHtm {
                     SqlIncSyncSource.getInstance().incSyncEnd(m_ctx);
                     return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
                 }
-//////////////////////////////////////////////////////////////////////////////////////
+
                 case ping_test:{
 
                     String md5_payload = params.get(CConst.MD5_PAYLOAD);
@@ -359,6 +380,11 @@ public class RestfulHtm {
                             .checkResult("pong", numberOfTests, md5_payload, encodedPayload);
                     return response.toString();
                 }
+
+                // Ignore
+                case uri:
+                case queryParameterStrings:
+                    break;
 
                 default:
             }

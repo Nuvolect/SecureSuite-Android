@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.data;
 
 import android.content.ContentResolver;
@@ -182,8 +193,6 @@ public class ImportContacts {
         int account_name_column_index =        c.getColumnIndex( RawContacts.ACCOUNT_NAME);
         int account_type_column_index =        c.getColumnIndex( RawContacts.ACCOUNT_TYPE);
         int contact_id_column_index =          c.getColumnIndex( RawContacts.CONTACT_ID);
-        //        int deleted_column_index =   c.getColumnIndex( RawContacts.DELETED);
-//        int is_user_profile_column_index =     c.getColumnIndex( RawContacts.RAW_CONTACT_IS_USER_PROFILE);
         int display_name_column_index =        c.getColumnIndex( RawContacts.DISPLAY_NAME_PRIMARY);
         int display_name_source_column_index = c.getColumnIndex( RawContacts.DISPLAY_NAME_SOURCE);
         int starred_column_index =             c.getColumnIndex( RawContacts.STARRED);
@@ -203,11 +212,6 @@ public class ImportContacts {
             int display_name_source = c.getInt( display_name_source_column_index);
             String starred =       c.getString( starred_column_index);
             int cloud_version =       c.getInt( version_column_index);
-
-//            if( 1 == c.getInt( is_user_profile_column_index )){
-//
-//                LogUtil.log("user profile: "+display_name);
-//            }
 
             long contact_id = SqlCipher.testIdTestVersion( account_name, cloud_c_id, cloud_version);
 
@@ -249,7 +253,7 @@ public class ImportContacts {
          */
         SqlCipher.updateATabFirstLastName();
 
-        //FUTURE fix photo import, Arron Hutchison has a photo that does not get imported
+        //FUTURE fix photo import, some contacts have a photo that does not get imported
 
         return importCount;
     }
@@ -369,15 +373,6 @@ public class ImportContacts {
             nicknameCursor.close();
             kv.put(CConst.NICKNAME, nickname==null?"":nickname);
 
-            /**
-             * //FUTURE AAron Hutchison has an icon in the Google Contacts web app, yet InputStream input is null
-             * The Android Contacts also does not display the icon.
-             * Other contacts have contact images that download fine.
-             * CS seems to operate just like the ANdroid Contacts app in other cases.
-             */
-//            if( display_name.contains("Aaron"))
-//                LogUtil.log("Found Aaron");
-
             /*
              * Import the contact photo
              */
@@ -463,9 +458,6 @@ public class ImportContacts {
                     ContactsContract.Data.MIMETYPE+"=? AND "+ContactsContract.Data.CONTACT_ID+" =?",  // selection
                     new String[]{ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE, cloud_c_id+""}, null
             );
-
-//            if( display_name.contains("Clemens"))
-//                LogUtil.log("Found Clemens");
 
             int group_id_index = groupCursor.getColumnIndex( ContactsContract.Data.DATA1);
 
@@ -732,7 +724,6 @@ public class ImportContacts {
         );
 
         int group_id_column_index =      groupCursor.getColumnIndex( ContactsContract.Groups._ID);
-//        int system_id_column_index =     groupCursor.getColumnIndex( ContactsContract.Groups.SYSTEM_ID);
         int title_column_index =         groupCursor.getColumnIndex( ContactsContract.Groups.TITLE);
         int deleted_column_index =       groupCursor.getColumnIndex( ContactsContract.Groups.DELETED);
         int account_name_column_index =  groupCursor.getColumnIndex( ContactsContract.Groups.ACCOUNT_NAME);

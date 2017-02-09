@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.util;
 
 import android.content.Context;
@@ -8,14 +19,13 @@ import java.io.StringWriter;
 
 public class LogUtil {
 
-    public static boolean VERBOSE = true;// 1. Auto set for build varient. 2. Developer menu option
+    public static boolean VERBOSE = true;// 1. Auto set for build variant. 2. Developer menu option
     public static boolean DEBUG = true;
 
     public static String TAG = "SecureSuite";
 
     public enum LogType { NIL,
         ACA_UTIL,
-        ANALYTICS,
         BETTER_CRYPTO,
         BOOT_RECEIVER,
         CALL_RECEIVER,
@@ -32,6 +42,7 @@ public class LogUtil {
         DEVELOPER_DIALOG,
         EDIT_GROUP,
         EXPORT_VCF,
+        GDA,
         GLA,
         GROUP_COMMS,
         IMPORT_VCF,
@@ -53,6 +64,7 @@ public class LogUtil {
         RESTORE_DB,
         SECURE,
         SEND_SMS,
+        SERVE,
         SETTINGS,
         SETTINGS_ACTIVITY,
         SQLCIPHER,
@@ -61,6 +73,7 @@ public class LogUtil {
         SQL_INC_SYNC_SRC,
         SQL_INC_SYNC_TARGET,
         SQL_SYNC_TEST,
+        USER_MANAGER,
         UTIL,
         VOLLEY,
         WEB_SERVER,
@@ -68,7 +81,7 @@ public class LogUtil {
         WEB_UTIL,
         WHATS_NEW,
         WIFI_BROADCAST_RECEIVER,
-        WORKER, SERVE,
+        WORKER,
         }
 
     public static void setVerbose(boolean verbose){

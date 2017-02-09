@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <instant-run
-    abi="arm64-v8a,armeabi-v7a,armeabi"
-    api-level="24"
-    density="420dpi"
+    abi="x86"
+    api-level="25"
+    density="xhdpi"
     format="8"
     plugin-version="2.2.3"
-    timestamp="331927338594934"
+    timestamp="88329117821844"
     token="5585110475943198807"
     verifier="FULL_BUILD_REQUESTED" >
 
     <task
         name="javac"
-        duration="1267" />
+        duration="1689" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="951" />
+        duration="1144" />
     <task
         name="verifier"
-        duration="192" />
+        duration="164" />
 
     <artifact
         location="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/outputs/apk/SecureSuite-debug.apk"
         type="MAIN" />
 
     <build
-        timestamp="331927338594934"
+        timestamp="88329117821844"
         verifier="FULL_BUILD_REQUESTED" >
         <artifact
             location="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/outputs/apk/SecureSuite-debug.apk"

@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.webserver;//
 
 import android.content.Context;
@@ -76,6 +87,9 @@ public class DetailHtm {
         theme,          // Value is user selected theme
         term,           // Search parameter //TODO, define term
         spacing,        // Page element spacing: comfortable, cozy, compact
+
+        uri,                    // Full uri for routing
+        queryParameterStrings,  // Raw parameters
 
         // Specific to this page
         add,            // Add a field, value is the field, index will hold multi-field index
@@ -654,6 +668,9 @@ public class DetailHtm {
                     SettingsActivity.setTheme(m_ctx, value);
                     break;
                 }
+                case uri:
+                case queryParameterStrings:
+                    break;
             }
 
             switch (link_enum){

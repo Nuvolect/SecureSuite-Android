@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.main;
 
 import android.app.Activity;
@@ -39,9 +50,10 @@ import com.nuvolect.securesuite.license.AppSpecific;
 import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
+import com.nuvolect.securesuite.util.DbPassphrase;
 import com.nuvolect.securesuite.util.DeviceInfo;
+import com.nuvolect.securesuite.util.DialogUtil;
 import com.nuvolect.securesuite.util.LogUtil;
-import com.nuvolect.securesuite.util.Passphrase;
 import com.nuvolect.securesuite.util.PermissionManager;
 import com.nuvolect.securesuite.util.PermissionUtil;
 import com.nuvolect.securesuite.util.Util;
@@ -95,7 +107,7 @@ public class SettingsFragment extends PreferenceFragment
         String lockMsg = "Lock disabled\nSystem disarmed";
 
         if (LockActivity.lockCodePresent(m_act))
-            lockMsg = "Lock enabled\nSystem armed";
+            lockMsg = "Lock enabled\nSystem secure";
         else
             lockMsg = "Lock disabled";
 
@@ -391,10 +403,10 @@ public class SettingsFragment extends PreferenceFragment
 
         if (preference.getKey().contentEquals(LicensePersist.APP_LICENSE)) {
 
-            String url = "http://www.nuvolect.com/donate/#securesuite";
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
-            startActivity(i);
+//            String url = "http://www.nuvolect.com/donate/#securesuite";
+//            Intent i = new Intent(Intent.ACTION_VIEW);
+//            i.setData(Uri.parse(url));
+//            startActivity(i);
         }
         if( preference.getKey().contentEquals(CConst.PERMISSION_MANAGER)){
 
@@ -502,7 +514,7 @@ public class SettingsFragment extends PreferenceFragment
             builder.setMessage("Copy your current passphrase, or enter a new passphrase");
 
             m_passphraseEt = new EditText(m_act);
-            String cleartextPassphrase = Passphrase.getDbPassphrase(m_act);
+            String cleartextPassphrase = DbPassphrase.getDbPassphrase(m_act);
             m_passphraseEt.setText(cleartextPassphrase);
             builder.setView(m_passphraseEt);
 

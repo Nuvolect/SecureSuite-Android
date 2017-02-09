@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.main;
 
 import android.app.ActionBar;
@@ -10,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -25,9 +35,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.nuvolect.securesuite.R;
-import com.nuvolect.securesuite.data.ImportContacts;
-import com.nuvolect.securesuite.data.ImportVcard;
 import com.nuvolect.securesuite.data.MyAccounts;
+import com.nuvolect.securesuite.data.MyContacts;
 import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.license.LicenseManager;
@@ -57,7 +66,7 @@ public class GroupListActivity extends Activity
         DialogConfirm.Callbacks,
         DialogAccount.Callbacks {
 
-    private final boolean DEBUG = false;
+    private final boolean DEBUG = LogUtil.DEBUG;
     private boolean mIsBound;
     private Messenger mService = null;
     /**
@@ -83,7 +92,7 @@ public class GroupListActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(DEBUG)LogUtil.log("GroupListActivity onCreate");
+        if(DEBUG)LogUtil.log("GLA onCreate");
 
         m_act = this;
         mTwoPane = false;
@@ -101,7 +110,7 @@ public class GroupListActivity extends Activity
         SqlCipher.getInstance(m_act);
         m_group_id = Cryp.getCurrentGroup();
 
-        if( m_group_id == 0){
+        if( m_group_id == 0 || m_selected_account == null){
             m_selected_account = Cryp.getCurrentAccount();
             if( m_selected_account.isEmpty()){
 
@@ -125,7 +134,7 @@ public class GroupListActivity extends Activity
             @Override
             public boolean onNavigationItemSelected(int position, long id) {
 
-                if(DEBUG)LogUtil.log("GroupListActivity NavigationItemSelected: "+ navItems[position]);
+                if(DEBUG)LogUtil.log("GLA NavigationItemSelected: "+ navItems[position]);
 
                 // Do stuff when navigation item is selected
                 switch( CConst.NavMenu.values()[ position ]){
@@ -238,14 +247,14 @@ public class GroupListActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
-        if(DEBUG)LogUtil.log("GroupListActivity onPause");
+        if(DEBUG)LogUtil.log("GLA onPause");
 
         doUnbindService();
     }
     @Override
     protected void onResume() {
         super.onResume();
-        if(DEBUG)LogUtil.log("GroupListActivity onResume");
+        if(DEBUG)LogUtil.log("GLA onResume");
 
         setProgressBarIndeterminateVisibility(
                 Persist.getProgressBarActive( m_act ));
@@ -264,7 +273,7 @@ public class GroupListActivity extends Activity
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if(DEBUG)LogUtil.log("GroupListActivity onDestroy");
+        if(DEBUG)LogUtil.log("GLA onDestroy");
     }
 
     @Override
@@ -305,7 +314,8 @@ public class GroupListActivity extends Activity
         else
             m_inflater.inflate(R.menu.group_list_single_menu, menu);
 
-        if( LicenseManager.mIsWhitelistUser && DeveloperDialog.isEnabled()){
+        if( (LicenseManager.mIsWhitelistUser || Boolean.valueOf( m_act.getString(R.string.verbose_debug)))
+                && DeveloperDialog.isEnabled()){
 
             MenuItem menuItem = menu.findItem(R.id.menu_developer);
             menuItem.setVisible( true );
@@ -321,11 +331,6 @@ public class GroupListActivity extends Activity
 
         switch (item.getItemId()) { // Handle presses on the action bar items
 
-            case R.id.menu_developer:{
-
-                DeveloperDialog.start(m_act);
-                break;
-            }
             case R.id.menu_add_account:{ // search ADD_ACCOUNT
 
                 DialogInput frag = DialogInput.newInstance( "Account name or email?",
@@ -349,7 +354,7 @@ public class GroupListActivity extends Activity
                 }
                 else
                     post_cmd = SharedMenu.processCmd( m_act, item, m_group_id, postCmdCallbacks);
-                LogUtil.log("GroupListActivity onOptionsItemSelected default: "+item.toString());
+                LogUtil.log("GLA onOptionsItemSelected default: "+item.toString());
         }
         doPostCommand( post_cmd);
 
@@ -455,102 +460,23 @@ public class GroupListActivity extends Activity
                 }
                 break;
             }
-            case CConst.BROWSE_IMPORT_VCF_ACTION:{
-
-                if ( resultCode == RESULT_OK) {
-
-                    Bundle activityResultBundle = data.getExtras();
-                    String path = activityResultBundle.getString(CConst.IMPORT_VCF_PATH);
-
-                    new ImportVcardAsync( ).execute(path);
-
-                }
-                break;
-            }
-            case CConst.CONTACT_PICKER_ACTION:{
-
-                if ( resultCode == RESULT_OK) {
-
-                    Uri result = data.getData();
-                    String id = result.getLastPathSegment();
-                    LogUtil.log("Cloud contact ID: " + id);
-                    boolean success = true;
-
-                    if( id == null || id.isEmpty())
-                        success = false;
-                    else{
-
-                        long cloud_contact_id = Long.valueOf( id );
-                        success = ImportContacts.importSingleContact(m_act, cloud_contact_id);
-                    }
-                    if( ! success)
-                        Toast.makeText(m_act, "Contact import error", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            }
             default:
-                LogUtil.log("ERROR, GLA invalid requestCode: "+requestCode);
+                /**
+                 * Manage request in common class for all activities
+                 */
+                SharedMenu.sharedOnActivityResult(m_act, requestCode, resultCode, data);
                 break;
         }
     }
 
-    private class ImportVcardAsync extends AsyncTask<String, Integer, Long>
-    {
-        public ImportVcardAsync(){
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-            m_importProgressDialog = new ProgressDialog(m_act);
-        }
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        switch ( requestCode){
 
-            m_importProgressDialog.setMessage("Import starting...");
-            m_importProgressDialog.show();
-        }
-        @Override
-        protected Long doInBackground(String...paths) {
-
-            String path = paths[0];
-            ImportVcard.ImportProgressCallbacks callbacks = new ImportVcard.ImportProgressCallbacks() {
-                @Override
-                public void progressReport(int importProgress) {
-
-                    publishProgress( importProgress );
-                }
-            };
-            long contact_id = ImportVcard.importVcf(m_act, path, m_group_id, callbacks);
-
-            return contact_id;
-        }
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-
-            int vcardsImported = values[0];
-
-            if( m_importProgressDialog == null ) {
-                m_importProgressDialog = new ProgressDialog(m_act);
-                m_importProgressDialog.show();
-            }
-
-            if( m_importProgressDialog != null && m_importProgressDialog.isShowing())
-                m_importProgressDialog.setMessage("Import progress: " + vcardsImported);
-        }
-        @Override
-        protected void onPostExecute(Long contact_id) {
-
-            if( m_importProgressDialog!= null && m_importProgressDialog.isShowing())
-                m_importProgressDialog.dismiss();
-
-            if( contact_id > 0)
-                Toast.makeText(m_act, "Import complete", Toast.LENGTH_LONG).show();
-            else
-                Toast.makeText(m_act, "Import failed", Toast.LENGTH_LONG).show();
-            m_act.setProgressBarIndeterminateVisibility( false );
-
-            startGroupListFragment();
-            if( mTwoPane)
-                startGroupDetailFragment( m_group_id);
+            default:
+                SharedMenu.sharedOnRequestPermissionsResult( m_act, requestCode, permissions, grantResults);
         }
     }
 
@@ -638,23 +564,45 @@ public class GroupListActivity extends Activity
 
         switch (cmd) {
 
+        /*
+         * Messages are sent from the server for each contact imported.
+         */
+            case IMPORT_CLOUD_CONTACTS_UPDATE:{//import_cloud
+
+                CloudImportDialog.updateProgress( m_act, bundle);
+                break;
+            }
             case IMPORT_CLOUD_CONTACTS_COMPLETE:{
 
-                m_act.recreate();
+                String mainAccountImported = CloudImportDialog.getMainAccountImported();
+                if( !mainAccountImported.isEmpty()){
+
+                    LogUtil.log("GLA _handleMessage importedAccount: "+mainAccountImported);
+                    Cryp.setCurrentAccount( mainAccountImported);
+                    int group = MyGroups.getDefaultGroup( mainAccountImported);
+                    Cryp.setCurrentGroup( group);
+                    long contactId = MyContacts.getFirstContactInGroup( group);
+                    Cryp.setCurrentContact( m_act, contactId);
+                }
+
+                CloudImportDialog.complete( m_act);
                 break;
             }
             case REFRESH_USER_INTERFACE:{
 
                 LogUtil.log(LogType.GLA, ""+cmd+bundle);
 
-                if( bundle.getString(CConst.UI_TYPE_KEY).contentEquals(CConst.CONTACTS)){
+                if( bundle.getString(CConst.UI_TYPE_KEY).contentEquals(CConst.RECREATE)){
 
                     MyGroups.loadGroupMemory();
                     m_act.recreate();//FUTURE refresh fragments
                 }
+                else
+                if(DEBUG) LogUtil.log(LogType.GLA,"UI_TYPE_KEY no match: "+bundle.getString(CConst.UI_TYPE_KEY));
             }
 
             default:
+                if(DEBUG) LogUtil.log(LogType.GLA,"_handleMessage default: "+cmd+" "+bundle);
                 break;
         }
     }
@@ -773,10 +721,9 @@ public class GroupListActivity extends Activity
             Cryp.setCurrentAccount( newAccount);
             Persist.setCurrentAccountType( m_act, CConst.CUSTOM_ACCOUNT);
 
-            // Add minimum set of groups and
+            // Add minimum set of groups
             MyGroups.addBaseGroupsToNewAccount(m_act, newAccount);
 
-//            startGroupListFragment();
             m_act.finish();
             m_act.startActivity(m_act.getIntent());
         }

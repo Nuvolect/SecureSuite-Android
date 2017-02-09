@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--
+  ~ Copyright (c) 2017. Nuvolect LLC
+  ~
+  ~ This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  -->
+
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <ListPreference
             android:key="theme_settings"
-            android:title="SecureSuite theme"
+            android:title="Theme"
             android:summary="Pick your theme"
             android:entries="@array/app_themes"
             android:entryValues="@array/theme_settings"
@@ -11,27 +22,22 @@
             />
     <Preference
         android:key="lock_code"
-        android:title="SecureSuite entry lock"
+        android:title="App Entry Lock"
         android:summary="Lock keypad disabled"
-        />
-    <Preference
-        android:key="permission_manager"
-        android:title="Permission Manager"
-        android:summary=""
         />
     <EditTextPreference
         android:key="port_number"
-        android:title="My SecureSuite port number"
+        android:title="Web App Port Number"
         android:summary="Change the default port number used by the embedded web server."
         />
     <Preference
         android:key="ip_address"
-        android:title="My SecureSuite IP"
-        android:summary="When enabled, the SecureSuite web app can be found at this IP address on your local area network."
+        android:title="Web App IP Address"
+        android:summary="When enabled, the web app can be found at this IP address on your local area network."
         />
     <Preference
         android:key="companion_ip_port"
-        android:title="Companion SecureSuite IP"
+        android:title="Companion Device IP Address"
         android:summary="When enabled, use a companion device on your local area network for backup."
         />
     <CheckBoxPreference
@@ -43,7 +49,7 @@
     <Preference
         android:key="database_passphrase"
         android:title="Manage database passphrase"
-        android:summary="The SecureSuite passphrase is used to protect your contacts and restore a backup. Keep a copy in a safe place."
+        android:summary="The passphrase is used to protect your contacts and restore a backup. Keep a copy in a safe place."
         />
     <CheckBoxPreference
         android:key="international_notation"
@@ -58,13 +64,18 @@
         android:summary="Country Code"
         />
     <Preference
+        android:key="permission_manager"
+        android:title="Permission Manager"
+        android:summary=""
+        />
+    <Preference
         android:key="app_license"
         android:title="SecureSuite license"
         android:summary="See details of your application license"
         />
     <Preference
         android:key="open_source_license"
-        android:title="Software license information"
+        android:title="Software License Information"
         android:summary="Information about software licenses used in this app"
         />
     <Preference

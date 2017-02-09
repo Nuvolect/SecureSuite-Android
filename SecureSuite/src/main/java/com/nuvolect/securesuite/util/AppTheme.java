@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.nuvolect.securesuite.util;
 
 import android.annotation.TargetApi;
@@ -19,11 +30,11 @@ import com.nuvolect.securesuite.main.SettingsActivity;
 
 /**
  * Utility for managing the current theme.  Note the theme is either an int
- * from '1' to 'n' or it is an R.style int. For web app use enums CS_THEMES apply.
+ * from '1' to 'n' or it is an R.style int. For web app use enums SS_THEMES.
  */
 public class AppTheme {
 
-    public enum CS_THEMES { nil, // 0
+    public enum SS_THEMES { nil, // 0
         grey_squares, // 1
         blue_wheat, // 2
         earth_hex,  // 3
@@ -271,7 +282,7 @@ public class AppTheme {
      */
     public static int getThemeNumber(String themeString){
 
-        AppTheme.CS_THEMES theme = AppTheme.CS_THEMES.valueOf(themeString);
+        SS_THEMES theme = SS_THEMES.valueOf(themeString);
 
         return theme.ordinal();
     }
@@ -285,14 +296,14 @@ public class AppTheme {
 
         int intTheme = SettingsActivity.getThemeNumber(ctx);
 
-        AppTheme.CS_THEMES theme = AppTheme.CS_THEMES.values()[intTheme];
+        SS_THEMES theme = SS_THEMES.values()[intTheme];
 
         return theme.toString();
     }
 
     public static String getThemeName(Context ctx, int intTheme) {
 
-        AppTheme.CS_THEMES theme = AppTheme.CS_THEMES.values()[intTheme];
+        SS_THEMES theme = SS_THEMES.values()[intTheme];
 
         return theme.toString();
     }
