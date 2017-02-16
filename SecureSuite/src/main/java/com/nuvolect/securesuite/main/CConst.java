@@ -48,7 +48,6 @@ public class CConst {
     public static final int RESPONSE_CODE_SHARE_VCF               = 212;
 
     public enum NavMenu {contacts, groups, passwords, server }
-    public enum NavChoice {Contacts, Groups, Passwords }
 
     /** for communicating between services and activities or web server to refresh */
     public static final String UI_TYPE_KEY          = "ui_type_key";

@@ -57,6 +57,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 //FUTURE scroll down long list, when long press delete, do not reset to top of list
+//TODO class description
 public class GroupListActivity extends Activity
         implements GroupListFragment.Callbacks,
         ContactDetailFragment.Callbacks,
@@ -163,6 +164,17 @@ public class GroupListActivity extends Activity
                          */
                         actionBar.setSelectedNavigationItem( Persist.getNavChoice(m_act));
                         PasswordFragment f = PasswordFragment.newInstance(m_act);
+                        f.start();
+                        break;
+                    }
+                    case server:{
+
+                        /**
+                         * Restore the spinner such that the Password is never persisted
+                         * and never shows.
+                         */
+                        actionBar.setSelectedNavigationItem( Persist.getNavChoice(m_act));
+                        ServerFragment f = ServerFragment.newInstance(m_act);
                         f.start();
                         break;
                     }
