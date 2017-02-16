@@ -569,7 +569,7 @@ public class SettingsFragment extends PreferenceFragment
                             }
                             String s1 = "Your SecureSuite passphrase is attached.\n\n"
                                     + "Your passphrase is necessary in the event you need to restore a database or you replace your phone.\n\n";
-                            String s2 = "Visit http://nuvolect.com/securesuite_help for additional support information.\n\n"
+                            String s2 = "Visit http://securesuite.org for additional support information.\n\n"
                                     + "SecureSuite version: " + version + "\n\n";
 
                             String userMessage = s1 + "UserPassphrase: " + passphrase + "\n\n" + s2;
