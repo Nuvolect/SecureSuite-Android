@@ -31,12 +31,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.FileNameMap;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import static com.nuvolect.securesuite.util.LogUtil.DEBUG;
@@ -120,10 +117,14 @@ public class CrypServer extends NanoHTTPD {
         m_default_account = Cryp.getCurrentAccount();
         m_default_group_id = String.valueOf(MyGroups.getDefaultGroup(m_default_account));
 
-        m_sec_tok = "";  // Configure security token
-        getSecTok();
         /**
-         * All access to this IP is blocked unless it is the companion device
+         * Configure the security token. The token is generated on first use and
+         * cached in a member variable.
+         */
+        m_sec_tok = "";
+        getSecTok(); // Configure security token and set member variable.
+        /**
+         * All RESTful access to this IP is blocked unless it is the companion device.
          */
         WebUtil.NullHostNameVerifier.getInstance().setHostVerifierEnabled(true);
 
@@ -240,23 +241,7 @@ public class CrypServer extends NanoHTTPD {
                 } else if (uri.contentEquals("/")) {
                     mCurrentPage = URI_ENUM.valueOf(CrypServer.get(uniqueId, "currentPage"));
 
-                } else if (uri.endsWith("/mnt/sdcard")) {
-
-                    File request = new File(uri);
-                    is = new FileInputStream(request);
-                    FileNameMap fileNameMap = URLConnection.getFileNameMap();
-                    String mimeType = fileNameMap.getContentTypeFor(uri);
-
-                    Response streamResponse = new Response(HTTP_OK, mimeType, is);
-                    Random rnd = new Random();
-                    String etag = Integer.toHexString(rnd.nextInt());
-                    streamResponse.addHeader("ETag", etag);
-                    streamResponse.addHeader("Connection", "Keep-alive");
-                    return streamResponse;
-
-                }
-                else if (uri.startsWith("/connector") &&
-                        params.containsKey("cmd")) {
+                } else if (uri.startsWith("/connector") && params.containsKey("cmd")) {
 
                     Map<String, String> files = new HashMap<String, String>();
                     try {
@@ -275,7 +260,7 @@ public class CrypServer extends NanoHTTPD {
                 }
                 else {
 
-                    if (uri.endsWith(".htm") || uri.endsWith(".html")) {
+                    if ( mCurrentPage != URI_ENUM.login_htm && (uri.endsWith(".htm") || uri.endsWith(".html"))) {
 
                         if( uri.startsWith("/files"))
                             is = m_ctx.openFileInput(uri.substring(7));// filename starts at 7
@@ -338,7 +323,7 @@ public class CrypServer extends NanoHTTPD {
                 if( ! uri.contentEquals("/")){
 
                     if( uri.startsWith("/") && uri.endsWith("_htm"))
-                        uri = uri.substring(1);  // Removing leading '/' if CS template page
+                        uri = uri.substring(1);  // Removing leading '/' if template page
                     mCurrentPage = URI_ENUM.valueOf(uri);
                 }
 
