@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental/mergeDebugResources/merged.dir/values-large-v4/values-large-v4.xml",
+        "outputFile": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental/mergeDebugResources/merged.dir/values-large-v4/values-large-v4.xml",
         "map": [
             {
                 "to": {
@@ -11,13 +11,13 @@
                     "endOffset": 148
                 },
                 "from": {
-                    "file": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/values-large/refs.xml",
+                    "file": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/values-large/refs.xml",
                     "position": {
-                        "startLine": 9,
+                        "startLine": 28,
                         "startColumn": 4,
-                        "startOffset": 275,
+                        "startOffset": 1133,
                         "endColumn": 97,
-                        "endOffset": 368
+                        "endOffset": 1226
                     }
                 }
             },
@@ -30,13 +30,13 @@
                     "endOffset": 242
                 },
                 "from": {
-                    "file": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/values-large/refs.xml",
+                    "file": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/values-large/refs.xml",
                     "position": {
-                        "startLine": 10,
+                        "startLine": 29,
                         "startColumn": 4,
-                        "startOffset": 373,
+                        "startOffset": 1231,
                         "endColumn": 93,
-                        "endOffset": 462
+                        "endOffset": 1320
                     }
                 }
             }

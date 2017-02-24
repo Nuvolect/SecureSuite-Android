@@ -1,138 +1,138 @@
 [
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/crypsafe_small_icon.png",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/crypsafe_small_icon.png"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_2_shape.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_2_shape.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_3_shape.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_3_shape.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_9_shape.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_9_shape.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_8.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_8.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/lock_banner.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/lock_banner.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_6_shape.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_6_shape.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_6.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_6.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/action_bar_item_focused.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/action_bar_item_focused.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_5_shape.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_5_shape.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_7.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_7.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_10.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_10.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_2_shape.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_2_shape.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/stainless.jpg",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/stainless.jpg"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/border.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/border.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_4.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_4.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/ab_dropdown_navigation_item_background.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/ab_dropdown_navigation_item_background.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_1.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_1.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_1.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_1.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_9.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_9.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/yubikey_neo_on_phone.jpg",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/yubikey_neo_on_phone.jpg"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/ab_dropdown_navigation_item_background.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/ab_dropdown_navigation_item_background.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_4.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_4.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_8_shape.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_8_shape.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_5_shape.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_5_shape.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/ab_dropdown_navigation_item_background_pressed.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/ab_dropdown_navigation_item_background_pressed.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/lock_keypad.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/lock_keypad.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/border.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/border.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_9_shape.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_9_shape.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/rounded_box.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/rounded_box.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/lock_banner.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/lock_banner.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_8.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_8.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/lock_button.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/lock_button.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_4_shape.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_4_shape.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_8_shape.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_8_shape.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_5.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_5.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_10.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_10.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_2.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_2.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_9.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_9.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/icon_64.png",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/icon_64.png"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_1_shape.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_1_shape.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_7_shape.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_7_shape.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/icon_64.png",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/icon_64.png"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/ab_dropdown_navigation_item_background_focused.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/ab_dropdown_navigation_item_background_focused.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/ab_dropdown_navigation_item_background_focused.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/ab_dropdown_navigation_item_background_focused.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_10_shape.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_10_shape.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_4_shape.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_4_shape.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/action_bar_item_pressed.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/action_bar_item_pressed.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/stainless.jpg",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/stainless.jpg"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_3_shape.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_3_shape.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/action_bar_item_pressed.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/action_bar_item_pressed.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_1_shape.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_1_shape.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_3.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_3.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/action_bar_item_focused.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/action_bar_item_focused.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_6.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_6.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/lock_keypad.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/lock_keypad.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/ab_dropdown_navigation_item_background_pressed.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/ab_dropdown_navigation_item_background_pressed.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_3.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_3.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_7_shape.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_7_shape.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_7.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_7.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_10_shape.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_10_shape.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/lock_button.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/lock_button.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/rounded_box.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/rounded_box.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_6_shape.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_6_shape.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_5.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_5.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/yubikey_neo_on_phone.jpg",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/yubikey_neo_on_phone.jpg"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/app_theme_2.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/app_theme_2.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/drawable/crypsafe_small_icon.png",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/drawable/crypsafe_small_icon.png"
     }
 ]

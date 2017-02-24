@@ -1,50 +1,50 @@
 [
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/contact_list_contact_edit.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/contact_list_contact_edit.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/contact_edit_single_menu.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/contact_edit_single_menu.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/group_list_contact_edit.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/group_list_contact_edit.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/group_list_single_menu.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/group_list_single_menu.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/settings_menu.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/settings_menu.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/group_list_contact_edit.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/group_list_contact_edit.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/contact_edit_single_menu.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/contact_edit_single_menu.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/contact_list_single_menu.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/contact_list_single_menu.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/contact_detail_single_menu.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/contact_detail_single_menu.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/group_detail_single_menu.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/group_detail_single_menu.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/group_list_group_detail.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/group_list_group_detail.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/edit_group_menu.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/edit_group_menu.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/group_list_contact_detail.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/group_list_contact_detail.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/contact_list_contact_detail.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/contact_list_contact_detail.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/group_list_single_menu.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/group_list_single_menu.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/contact_detail_single_menu.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/contact_detail_single_menu.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/contact_list_contact_detail.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/contact_list_contact_detail.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/settings_menu.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/settings_menu.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/edit_group_menu.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/edit_group_menu.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/group_list_contact_detail.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/group_list_contact_detail.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/contact_list_single_menu.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/contact_list_single_menu.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/group_list_group_detail.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/group_list_group_detail.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/group_detail_single_menu.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/menu/group_detail_single_menu.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/menu/contact_list_contact_edit.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/menu/contact_list_contact_edit.xml"
     }
 ]

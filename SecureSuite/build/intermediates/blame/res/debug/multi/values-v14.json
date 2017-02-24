@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v14/values-v14.xml",
+        "outputFile": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v14/values-v14.xml",
         "map": [
             {
                 "to": {
@@ -12,14 +12,14 @@
                     "endOffset": 208
                 },
                 "from": {
-                    "file": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/values-v14/styles.xml",
+                    "file": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/values-v14/styles.xml",
                     "position": {
-                        "startLine": 7,
+                        "startLine": 26,
                         "startColumn": 4,
-                        "startOffset": 220,
-                        "endLine": 9,
+                        "startOffset": 1078,
+                        "endLine": 28,
                         "endColumn": 12,
-                        "endOffset": 373
+                        "endOffset": 1231
                     }
                 }
             },
@@ -33,14 +33,14 @@
                     "endOffset": 439
                 },
                 "from": {
-                    "file": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/values-v14/styles.xml",
+                    "file": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/values-v14/styles.xml",
                     "position": {
-                        "startLine": 11,
+                        "startLine": 30,
                         "startColumn": 4,
-                        "startOffset": 379,
-                        "endLine": 13,
+                        "startOffset": 1237,
+                        "endLine": 32,
                         "endColumn": 12,
-                        "endOffset": 605
+                        "endOffset": 1463
                     }
                 }
             }

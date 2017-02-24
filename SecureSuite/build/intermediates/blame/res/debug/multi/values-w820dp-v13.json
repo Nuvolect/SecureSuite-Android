@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental/mergeDebugResources/merged.dir/values-w820dp-v13/values-w820dp-v13.xml",
+        "outputFile": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental/mergeDebugResources/merged.dir/values-w820dp-v13/values-w820dp-v13.xml",
         "map": [
             {
                 "to": {
@@ -11,13 +11,13 @@
                     "endOffset": 108
                 },
                 "from": {
-                    "file": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/values-w820dp/dimens.xml",
+                    "file": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/values-w820dp/dimens.xml",
                     "position": {
-                        "startLine": 7,
+                        "startLine": 26,
                         "startColumn": 4,
-                        "startOffset": 305,
+                        "startOffset": 1163,
                         "endColumn": 57,
-                        "endOffset": 358
+                        "endOffset": 1216
                     }
                 }
             }

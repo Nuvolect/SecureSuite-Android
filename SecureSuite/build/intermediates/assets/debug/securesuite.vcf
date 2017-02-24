@@ -2,9 +2,10 @@ BEGIN:VCARD
 VERSION:3.0
 FN:SecureSuite Getting-Started
 N:SecureSuite Getting-Started;;;;
-URL:https://nuvolect.com/securesuite
+URL:https://securesuite.org
 URL:https://play.google.com/store/apps/details?id=securesuite
-URL:https://nuvolect.com/securesuite_help/#introduction
+URL:https://github.com/Nuvolect/SecureSuite-Android/wiki
+URL:https://github.com/Nuvolect/SecureSuite-Android/wiki/Getting-Started
 PHOTO;ENCODING=b;TYPE=png:iVBORw0KGgoAAAANSUhEUgAAAMAAAAC/CAYAAACoqNMTAAAAB
  HNCSVQICAgIfAhkiAAAIABJREFUeJztnXmcXFWV+L/n3vdeVfWWzh4ISUACoqgggkJwcBhkRFx
  YHAIq6LggI4o/N37O+NMx6uioMyODyDiIgoIbm+AggqMioCDIIrthCUsI2ddeqqvqvXvP749Xn
@@ -201,8 +202,8 @@ PHOTO;ENCODING=b;TYPE=png:iVBORw0KGgoAAAANSUhEUgAAAMAAAAC/CAYAAACoqNMTAAAAB
  ocYAAlDdheI4o0gqqqCouKrPzuTemZJxArqNcYIoihCkg5PU7skNVQAnCVGcCo4BFfVgERVPKK
  unCMGYjGoR2IBp0Is4FVwxvqKCs4Yygh67H7xzy4+JX9jwx5gixYtWrRo0aJFixYtWrRo8ZfI/
  wfWWDRWANNLoAAAAABJRU5ErkJggg==
-NOTE;LANGUAGE=en-us:Getting started:\n\nFollow the "Introduction" link in t
- his contact.\n\nSetup a companion device as a real-time mirror and backup.
+NOTE;LANGUAGE=en-us:Getting started:\n\nFollow the "getting started" link in t
+ his contact.
  \n\nHave a great day!\n
 ORG:;
 TITLE:

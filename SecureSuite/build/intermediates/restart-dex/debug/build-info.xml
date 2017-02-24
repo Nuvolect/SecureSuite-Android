@@ -2,35 +2,35 @@
 <instant-run
     abi="x86"
     api-level="25"
-    density="xhdpi"
+    density="420dpi"
     format="8"
     plugin-version="2.2.3"
-    timestamp="88329117821844"
-    token="5585110475943198807"
+    timestamp="259092870543540"
+    token="-5400644150965774115"
     verifier="FULL_BUILD_REQUESTED" >
 
     <task
         name="javac"
-        duration="1689" />
+        duration="4316" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="1144" />
+        duration="1988" />
     <task
         name="verifier"
-        duration="164" />
+        duration="192" />
 
     <artifact
-        location="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/outputs/apk/SecureSuite-debug.apk"
+        location="/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/outputs/apk/SecureSuite-debug.apk"
         type="MAIN" />
 
     <build
-        timestamp="88329117821844"
+        timestamp="259092870543540"
         verifier="FULL_BUILD_REQUESTED" >
         <artifact
-            location="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/outputs/apk/SecureSuite-debug.apk"
+            location="/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/outputs/apk/SecureSuite-debug.apk"
             type="MAIN" />
     </build>
 

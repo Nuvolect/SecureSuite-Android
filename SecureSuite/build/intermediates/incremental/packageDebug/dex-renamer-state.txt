@@ -1,7 +1,7 @@
-#Sun Jan 15 12:30:29 EST 2017
-base.0=/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_3316ce593f04ed4dab43894e0290ef785716018b
+#Fri Feb 24 14:09:21 EST 2017
+base.0=/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_04e7db88a04aa8bd7968be1222b09f83033a7673
 renamed.1=classes2.dex
 renamed.0=classes.dex
-file.1=/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_d2929da6a02ef68022c363bec2f7decd0ee34ba0/classes.dex
-base.1=/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_d2929da6a02ef68022c363bec2f7decd0ee34ba0
-file.0=/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_3316ce593f04ed4dab43894e0290ef785716018b/classes.dex
+file.1=/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_1182ced4be2f0ea8725c9a727b33110ec3c56684/classes.dex
+base.1=/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_1182ced4be2f0ea8725c9a727b33110ec3c56684
+file.0=/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_04e7db88a04aa8bd7968be1222b09f83033a7673/classes.dex

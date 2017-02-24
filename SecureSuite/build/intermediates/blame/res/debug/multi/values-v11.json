@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v11/values-v11.xml",
+        "outputFile": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v11/values-v11.xml",
         "map": [
             {
                 "to": {
@@ -12,14 +12,14 @@
                     "endOffset": 194
                 },
                 "from": {
-                    "file": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/values-v11/styles.xml",
+                    "file": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/values-v11/styles.xml",
                     "position": {
-                        "startLine": 6,
+                        "startLine": 25,
                         "startColumn": 4,
-                        "startOffset": 177,
-                        "endLine": 8,
+                        "startOffset": 1035,
+                        "endLine": 27,
                         "endColumn": 12,
-                        "endOffset": 316
+                        "endOffset": 1174
                     }
                 }
             }

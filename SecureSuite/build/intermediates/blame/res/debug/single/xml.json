@@ -1,10 +1,14 @@
 [
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/xml/settings.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/xml/settings.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/xml/searchable.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/xml/searchable.xml"
     },
     {
-        "merged": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/xml/searchable.xml",
-        "source": "/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/src/main/res/xml/searchable.xml"
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/xml/settings.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/xml/settings.xml"
+    },
+    {
+        "merged": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/build/intermediates/res/merged/debug/xml/fileprovider.xml",
+        "source": "/Users/Matt/AndroidStudioProjects/SecureSuite/SecureSuite/src/main/res/xml/fileprovider.xml"
     }
 ]
