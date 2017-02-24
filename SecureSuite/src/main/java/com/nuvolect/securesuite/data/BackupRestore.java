@@ -304,7 +304,7 @@ public class BackupRestore {
                     +"2) Start SecureSuite and select menu, Backup/restore, Restore from storage\n"
                     +"3) Select the folder from step 1 and select Restore\n"
                     +"4) Enter the passphrase for this backup\n\n"
-                    +"Visit http://nuvolect.com/securesuite_help for additional support information.\n\n"
+                    +"Visit http://securesuite.org for additional support information.\n\n"
                     +"SecureSuite version: "+version+"\n\n";
 
             try {

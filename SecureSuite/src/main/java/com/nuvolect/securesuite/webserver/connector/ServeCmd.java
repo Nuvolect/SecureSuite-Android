@@ -9,7 +9,7 @@
  *
  */
 
-package com.nuvolect.securesuite.webserver.connector;//
+package com.nuvolect.securesuite.webserver.connector;
 
 import android.content.Context;
 
@@ -18,8 +18,10 @@ import com.nuvolect.securesuite.util.LogUtil;
 import java.io.InputStream;
 import java.util.Map;
 
-//TODO create class description
-//
+/**
+ * Dispatch to serve RESTful services. Currently only a few app commands are managed.
+ * This class will be expanded to serve the full set of elFinder commands.
+ */
 public class ServeCmd {
 
     private static boolean DEBUG = LogUtil.DEBUG;
@@ -53,14 +55,10 @@ public class ServeCmd {
         ping,      // simple ping, returns the time
         zipdl,     // zip and download files
 
-        // Image-swipe commands
-        image_query,//TODO remove
-
         // App commands
         debug,     // debugging commands
         login,
         logout,
-        pentest,   // penetration testing
         test,      // run a test
     }
 

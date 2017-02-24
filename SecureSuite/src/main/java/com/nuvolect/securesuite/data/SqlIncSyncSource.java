@@ -130,7 +130,6 @@ public class SqlIncSyncSource {
         String jsonString = new Gson().toJson(syncIncManifest);
         LogUtil.log(SQL_INC_SYNC_SRC, "startIncSyncSource starting, manifest report: \n"+syncIncManifest.report());
         LogUtil.log(SQL_INC_SYNC_SRC, "startIncSyncSource starting, jsonString: \n"+jsonString);
-//        m_continue_sync = true;
 
         String url = WebUtil.getCompanionServerUrl(CConst.RESTFUL_HTM);
         Map<String, String> parameters = new HashMap<String, String>();
@@ -149,7 +148,6 @@ public class SqlIncSyncSource {
             @Override
             public void fail(String error) {
 
-//                CrypServer.notify(uniqueId, "Co-device not found. Is WiFi enabled?", "warn");
                 LogUtil.log(SQL_INC_SYNC_SRC, RestfulHtm.COMM_KEYS.tgt_inc_sync_source_manifest + " error: " + error);
                 setSyncInProgress( false );
             }

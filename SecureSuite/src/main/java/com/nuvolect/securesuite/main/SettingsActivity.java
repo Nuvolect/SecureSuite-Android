@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.nuvolect.securesuite.R;
+import com.nuvolect.securesuite.license.AppSpecific;
 import com.nuvolect.securesuite.nfc.NfcSession;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
@@ -107,9 +108,8 @@ public class SettingsActivity extends Activity {
                 break;
             }
             case R.id.menu_help:{
-                String url = "http://www.nuvolect.com/securesuite_help";
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
+                i.setData(Uri.parse(AppSpecific.APP_WIKI_URL));
                 startActivity(i);
                 break;
             }

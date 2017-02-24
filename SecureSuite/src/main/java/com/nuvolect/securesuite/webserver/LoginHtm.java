@@ -108,7 +108,7 @@ public class LoginHtm {
                 Cryp.put(CConst.LAST_LOGIN_STATUS, status);
             }
             else{
-                CrypServer.notify(uniqueId, "Account or password invalid","warn");
+                CrypServer.notify(uniqueId, "Password invalid","warn");
                 LogUtil.log(LogUtil.LogType.LOGIN_HTM, "login rejected: " + password);
                 String status = "Login failed " + TimeUtil.friendlyTimeMDYM(System.currentTimeMillis());
                 Cryp.put(CConst.LAST_LOGIN_STATUS, status);
