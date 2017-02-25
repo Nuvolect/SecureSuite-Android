@@ -4,6 +4,6 @@
 .gradle
 /.idea/libraries
 /.idea/workspace.xml
-/build
 /captures
 /local.properties
+/SecureSuite/build/
