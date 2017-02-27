@@ -134,7 +134,7 @@ public class LockActivity extends Activity {
                 message("Enter current code", "", MESSAGE_CMD.NIL);
             }
         }
-        //TODO manage nfc code
+
         else
         if( NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())){
 

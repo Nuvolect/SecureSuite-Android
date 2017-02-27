@@ -85,7 +85,18 @@ public class SqlSyncTest {
         m_continueTest = false;
     }
 
-    //TODO complete ping pong test.  Show running data rate, success and failure.  Is it a pocket test or between two clients?
+    /**
+     * Test the network performance between this device and a companion device.
+     * CONCEPT:
+     * A package is constructed of minimal size and sent to the companion device.
+     * The companion tests the package for integrity and if successful, creates a larger package and sends it back.
+     * The process is continued until communications fail.
+     *
+     * TODO complete ping pong test.  Show running data rate, success and failure.
+     *
+     * @param ctx
+     * @return
+     */
     public JSONObject ping_test(final Context ctx) {
 
         managePayloadSize();

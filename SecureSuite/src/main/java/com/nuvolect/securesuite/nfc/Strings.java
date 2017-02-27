@@ -24,8 +24,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 
-//TODO create class description
-//
+/**
+ * NFC string utilities.
+ */
 public class Strings {
 
     public static String fromUTF8ByteArray(byte[] bytes)

@@ -678,7 +678,7 @@ public class ContactListActivity extends Activity
         }
     }
 
-    //TODO move to ShareDialog.java, integrated with ShareMenu and activity callbacks
+    //FUTURE move to ShareDialog.java, integrated with ShareMenu and activity callbacks
     public static class ConfirmRestoreDatabaseDialogFragment extends DialogFragment {
 
         public ConfirmRestoreDatabaseDialogFragment(){ }
@@ -714,7 +714,7 @@ public class ContactListActivity extends Activity
         }
     }
 
-    //TODO move to ShareDialog.java, integrated with ShareMenu and activity callbacks
+    //FUTURE move to ShareDialog.java, integrated with ShareMenu and activity callbacks
     public static class RestoreDatabaseDialogFragment extends DialogFragment {
 
         private EditText m_passphraseEt;

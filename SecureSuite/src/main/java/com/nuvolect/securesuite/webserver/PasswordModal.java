@@ -43,9 +43,9 @@ public class PasswordModal {
      * Passphrase.getPasswordLength
      * Passphrase.getPasswordGenHistory
      * </pre>
-     * //WEBAPP purge password model file when logging out or session expire
-     * //WEBAPP display message when no advanced options are selected
-     * //WEBAPP don't generate a password when no options are selected
+     * //TODO purge password model file when logging out or session expire
+     * //TODO display message when no advanced options are selected
+     * //TODO don't generate a password when no options are selected
      */
     public static void buildPasswordModal(Context ctx, boolean displayUsePasswordButton) {
 

@@ -18,9 +18,6 @@
  */
 
 package com.nuvolect.securesuite.util;
-//
-//TODO create class description
-//
 
 import android.content.Context;
 

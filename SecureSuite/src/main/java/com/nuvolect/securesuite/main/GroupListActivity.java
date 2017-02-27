@@ -65,7 +65,10 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 //FUTURE scroll down long list, when long press delete, do not reset to top of list
-//TODO class description
+
+/**
+ * Activity for group centric list display, vs. contact centric list display.
+ */
 public class GroupListActivity extends Activity
         implements GroupListFragment.Callbacks,
         ContactDetailFragment.Callbacks,

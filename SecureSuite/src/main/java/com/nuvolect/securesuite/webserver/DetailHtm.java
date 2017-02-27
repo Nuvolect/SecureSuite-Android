@@ -85,7 +85,7 @@ public class DetailHtm {
      * List of the main keys to associate with a key value pair.  This is typically a button or
      * a menu item versus a more simple link.
      */
-    enum KEYS {NIL,
+    private enum KEYS {NIL,
         // Common to all pages
         account,        // Account menu select, value is account email
         group_id,       // Value is the group_id
@@ -93,7 +93,6 @@ public class DetailHtm {
         link,           // Second level enum, Typically an html link, value is the link source
         search,         // Search string, value is the string
         theme,          // Value is user selected theme
-        term,           // Search parameter //TODO, define term
         spacing,        // Page element spacing: comfortable, cozy, compact
 
         uri,                    // Full uri for routing
@@ -159,7 +158,7 @@ public class DetailHtm {
         settings,
         sort_first,
         sort_last,
-        contact_photo,     //WEBAPP implement edit/change of contact photo
+        contact_photo,     //TODO implement edit/change of contact photo
     }
 
     public static void init(Context ctx){

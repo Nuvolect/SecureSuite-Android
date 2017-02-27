@@ -189,7 +189,6 @@ public class DialogUtil {
         AlertDialog.Builder builder = new AlertDialog.Builder(act);
         builder.setTitle(title);
         builder.setMessage(Html.fromHtml(message));
-//        builder.setIcon(CConst.SMALL_ICON);// Too much space on phones//TODO make conditional icon?
         builder.setCancelable(true);
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

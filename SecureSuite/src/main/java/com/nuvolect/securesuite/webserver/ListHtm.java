@@ -57,8 +57,8 @@ import static com.nuvolect.securesuite.util.LogUtil.log;
  */
 public class ListHtm {
 
-    //WEBAPP settings option for different background
-    //WEBAPP settings Comfortable, cozy and compact
+    //TODO settings option for different background
+    //TODO settings Comfortable, cozy and compact
     private static Context m_ctx;
 
     private static ArrayList<Long> mSelectId;
@@ -81,7 +81,7 @@ public class ListHtm {
      * List of the main keys to associate with a key value pair.  This is typically a button or
      * a menu item versus a more simple link.
      */
-    enum KEYS {NIL,
+    private enum KEYS {NIL,
         // Common to all pages
         account,        // Account menu select, value is account email
         group_id,       // Value is the group_id
@@ -89,7 +89,6 @@ public class ListHtm {
         link,           // Second level enum, Typically an html link, value is the link source
         search,         // Search string, value is the string
         theme,          // Value is user selected theme
-        term,           // Search parameter //TODO, define term
         spacing,        // Page element spacing: comfortable, cozy, compact
 
         uri,                    // Full uri for routing
@@ -221,7 +220,7 @@ public class ListHtm {
             /**
              * Restore persisted data until it is replaced by user action.
              */
-            t.setVariable("mSearch", m_search);//WEBAPP search as you type, update pull-down dynamic
+            t.setVariable("mSearch", m_search);//TODO search as you type, update pull-down dynamic
 
             String account_ellipse = StringUtil.ellipsize(m_account, 25);
             t.setVariable("account_ellipse", account_ellipse);
@@ -274,7 +273,7 @@ public class ListHtm {
                 t.addBlock("group_item");
             }
 
-            ///WEBAPP search display name and common kv across all contacts in account
+            ///TODO search display name and common kv across all contacts in account
             /**
              * Get a cursor that is specific to the current account/group selected.
              * This is used to get the id, star and display name.
@@ -740,7 +739,7 @@ public class ListHtm {
                     m_start_index = 0; // display from first contact
                     CrypServer.put(uniqueId, "start_index", m_start_index);
                     break;
-                case empty_trash://WEBAPP add confirmation dialog to empty trash
+                case empty_trash://TODO add confirmation dialog to empty trash
                     /**
                      * Delete all contacts in the account that are part of the group Trash
                      */

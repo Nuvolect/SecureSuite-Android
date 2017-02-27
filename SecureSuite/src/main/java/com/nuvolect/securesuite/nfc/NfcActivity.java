@@ -40,8 +40,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-//TODO create class description
-//
+/**
+ * NFC activity utilities
+ */
 public class NfcActivity extends Activity {
 
     protected boolean mPw1ValidForMultipleSignatures;
@@ -120,10 +121,6 @@ public class NfcActivity extends Activity {
                 LogUtil.log(LogUtil.LogType.NFC_ACTIVITY, "getTnf(): "+ndefRecord.getTnf() );
 
                 if( ndefRecord.getTnf() == NdefRecord.TNF_WELL_KNOWN){
-
-//  is empty                   byte[] id = ndefRecord.getId();
-                    // https://my.yubico.com/neo/cccccceiijtkgtukkijdctjtgghggghbkfkenerllngk
-                    //                                       niljijfcnfdbjeduvuthuugnvuuvgrnh
 
                     byte[] payload = ndefRecord.getPayload();
 
@@ -358,31 +355,11 @@ public class NfcActivity extends Activity {
                 +"\nmNfcUserId:       "+mNfcUserId
                 ;
         LogUtil.log(LogUtil.LogType.NFC_ACTIVITY, data);
-
-//        try {
-//            CachedPublicKeyRing ring = new ProviderHelper(this).getCachedPublicKeyRing(
-//                    KeyRings.buildUnifiedKeyRingsFindBySubkeyUri(subKeyId));
-//            long masterKeyId = ring.getMasterKeyId();
-//
-//            Intent intent = new Intent(this, ViewKeyActivity.class);
-//            intent.setData(KeyRings.buildGenericKeyRingUri(masterKeyId));
-//            intent.putExtra(ViewKeyActivity.EXTRA_NFC_AID, mNfcAid);
-//            intent.putExtra(ViewKeyActivity.EXTRA_NFC_USER_ID, mNfcUserId);
-//            intent.putExtra(ViewKeyActivity.EXTRA_NFC_FINGERPRINTS, mNfcFingerprints);
-//            startActivity(intent);
-//        } catch (PgpKeyNotFoundException e) {
-//            Intent intent = new Intent(this, CreateKeyActivity.class);
-//            intent.putExtra(CreateKeyActivity.EXTRA_NFC_AID, mNfcAid);
-//            intent.putExtra(CreateKeyActivity.EXTRA_NFC_USER_ID, mNfcUserId);
-//            intent.putExtra(CreateKeyActivity.EXTRA_NFC_FINGERPRINTS, mNfcFingerprints);
-//            startActivity(intent);
-//        }
     }
     /**
      * Override to use something different than Notify (UI thread)
      */
     protected void onNfcError(String error) {
-//        Notify.create(this, error, Style.WARN).show();
 
         Toast.makeText(this, error, Toast.LENGTH_LONG).show();
         LogUtil.log(LogUtil.LogType.NFC_ACTIVITY, error);

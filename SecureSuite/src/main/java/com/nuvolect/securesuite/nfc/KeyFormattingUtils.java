@@ -21,8 +21,9 @@ package com.nuvolect.securesuite.nfc;//
 
 import java.nio.ByteBuffer;
 
-//TODO create class description
-//
+/**
+ * NFC key utilities
+ */
 public class KeyFormattingUtils {
 
     public static long getKeyIdFromFingerprint(byte[] fingerprint) {

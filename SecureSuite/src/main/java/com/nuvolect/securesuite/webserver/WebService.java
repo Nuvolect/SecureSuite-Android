@@ -72,7 +72,7 @@ public class WebService extends Service {
     private static OkHttpClient okHttpClient = null;
 
     private static String keyFile = "/assets/keystore.bks";
-    private static char[] passPhrase = "27@NDMQu0cLY".toCharArray();//FIXME obscure or remove passphrase
+    private static char[] passPhrase = "27@NDMQu0cLY".toCharArray();//FIXME manage in Android Keystore or find alternative approach
 
     @Override
     public void onCreate() {

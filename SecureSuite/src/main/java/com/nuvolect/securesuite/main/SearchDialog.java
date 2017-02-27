@@ -162,7 +162,7 @@ public class SearchDialog {
     }
     private static void updateAdaptor() {
 
-        //TODO mirror search from Web app.  App uses DTab, web app uses ATab
+        //FUTURE mirror search the same way the Web app does, use ATab vs DTab
         Cursor new_cursor;
         if( m_search.length() < 1)
             new_cursor = SqlCipher.getSearchDTabCursor("oSoX0gxX_unmatchable_string");

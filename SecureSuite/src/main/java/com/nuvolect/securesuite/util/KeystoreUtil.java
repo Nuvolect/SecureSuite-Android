@@ -18,9 +18,6 @@
  */
 
 package com.nuvolect.securesuite.util;
-//
-//TODO create class description
-//
 
 import android.content.Context;
 import android.security.KeyPairGeneratorSpec;
@@ -55,6 +52,9 @@ import javax.crypto.CipherOutputStream;
 import javax.security.auth.x500.X500Principal;
 
 
+/**
+ * Android keystore utilities
+ */
 public class KeystoreUtil {
 
     private static final String CIPHER_ALGORITHM = "RSA/ECB/PKCS1Padding";

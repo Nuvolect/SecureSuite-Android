@@ -271,7 +271,7 @@ public class MyGroups {
          * Patch to fix null pointer exception.
          * Either static memory is loaded before the database is initialized,
          * or for some reason the database is not initialized.
-         * FIXME identify why account_db is null
+         * FUTURE identify why account_db is null
          */
         if( account_db == null){
             account_db = SqlCipher.account_db;

@@ -1042,10 +1042,6 @@ public class SettingsFragment extends PreferenceFragment
             Intent intent = m_act.getIntent();
             m_act.finish();
             m_act.startActivity(intent);
-        } else if (key.equals(CConst.DATABASE_PASSPHRASE)) {
-
-            //TODO finish or remove
         }
     }
-
 }

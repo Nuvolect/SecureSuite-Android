@@ -22,8 +22,9 @@ package com.nuvolect.securesuite.nfc;
 import java.io.IOException;
 import java.io.OutputStream;
 
-//TODO create class description
-//
+/**
+ * Utilities for hex encoding.
+ */
 public class HexEncoder implements Encoder {
 
     protected final byte[] encodingTable =
