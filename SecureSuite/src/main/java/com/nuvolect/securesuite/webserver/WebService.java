@@ -71,8 +71,12 @@ public class WebService extends Service {
     private static SSLContext sslContext;
     private static OkHttpClient okHttpClient = null;
 
+    /**
+     * Keystore is valid for 25 years from 4/21/16, expiring April 21, 2041
+     * The passPhrase is used to confirm the validity of the keystore
+     */
     private static String keyFile = "/assets/keystore.bks";
-    private static char[] passPhrase = "27@NDMQu0cLY".toCharArray();//FIXME manage in Android Keystore or find alternative approach
+    private static char[] passPhrase = "27@NDMQu0cLY".toCharArray();
 
     @Override
     public void onCreate() {
