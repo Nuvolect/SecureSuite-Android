@@ -33,9 +33,10 @@ Data in Motion
 Vulnerabilities  
 ---------------  
 
-1. Math.random() can be predicted, it is used to create the initial database password.  
+1. Math.random() can be more random, it is used to create the initial database password.  
 2. Certain memory locations hold sensitive information.  
 3. Brute force database passphrase, app entry passphrase, YubiKey, or network https encryption.
+4. The password modal is stored in app private data.
 
 
 Security Improvements  
