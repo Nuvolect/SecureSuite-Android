@@ -478,7 +478,7 @@ public class SharedMenu extends Activity {
         }
     }
 
-        public static void sharedOnRequestPermissionsResult(
+    public static void sharedOnRequestPermissionsResult(
             Activity act, int requestCode, String[] permissions, int[] grantResults) {
 
         switch ( requestCode){

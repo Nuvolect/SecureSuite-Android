@@ -56,6 +56,11 @@
     	\nNo modifications are made to this library.
     	\nLicense: http://creativecommons.org/licenses/by/3.0/
     	\n
+    	\nMiniTemplator
+    	\nMiniTemplator is a compact template engine for HTML files written by Christian d'Heureuse, Inventec Informatik AG, Zurich, Switzerland.
+    	\nNo modifications are made to this library.
+    	\nLicense: https://www.gnu.org/licenses/lgpl.html/
+    	\n
 		\nCOMMONS CODEC
     	\nThe Apache Commons Codec package contains simple encoder and decoders for various formats such as Base64 and Hexadecimal. In addition to these widely used encoders and decoders, the codec package also maintains a collection of phonetic encoding utilities.
     	\nNo modifications are made to this library.
