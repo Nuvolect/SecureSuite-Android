@@ -28,6 +28,7 @@ import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.widget.Toast;
 
+import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.data.SqlCipher.ATab;
 import com.nuvolect.securesuite.data.SqlCipher.DTab;
 import com.nuvolect.securesuite.data.SqlCipher.KvTab;
@@ -69,7 +70,7 @@ public class ExportVcf {
     public static void emailVcf( Activity act, long contact_id){
 
         String messageTitle = "vCard for ";
-        String messageBody = "\n\n\nContact from SecureSuite, a secure contacts manager";
+        String messageBody = "\n\n\nContact from SecureSuite, a secure contact manager";
 
         try {
             String displayName = SqlCipher.get(contact_id, ATab.display_name);
@@ -78,13 +79,20 @@ public class ExportVcf {
                 fileName = "contact";
             fileName = fileName + ".vcf";
 
-            new File( act.getFilesDir() +CConst.TEMP_FOLDER).mkdirs();
-            File vcf_file = new File( act.getFilesDir() + CConst.TEMP_FOLDER + fileName);
+            new File( act.getFilesDir() +CConst.SHARE_FOLDER).mkdirs();
+            File vcf_file = new File( act.getFilesDir() + CConst.SHARE_FOLDER + fileName);
 
             writeContactVcard(contact_id, vcf_file);
 
-            Uri uri = FileProvider.getUriForFile( act, "com.nuvolect.securesuite.files", vcf_file);
-//            act.grantUriPermission( act.getPackageName(), uri, act.MODE_PRIVATE);
+            // Must match "authorities" in Manifest provider definition
+            String authorities = act.getResources().getString(R.string.app_authorities)+".provider";
+
+            Uri uri = null;
+            try {
+                uri = FileProvider.getUriForFile( act, authorities, vcf_file);
+            } catch (IllegalArgumentException e) {
+                LogUtil.logException(act, LogType.EXPORT_VCF, e);
+            }
 
             //convert from paths to Android friendly Parcelable Uri's
             ArrayList<Uri> uris = new ArrayList<Uri>();

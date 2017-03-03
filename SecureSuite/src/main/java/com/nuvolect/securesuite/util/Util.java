@@ -551,7 +551,7 @@ public class Util {
      */
     public static void cleanupTempFolder(Activity act) {
 
-        File dir = new File( act.getFilesDir() +CConst.TEMP_FOLDER);
+        File dir = new File( act.getFilesDir() +CConst.SHARE_FOLDER);
         dir.mkdirs();
 
         File[] files = dir.listFiles();

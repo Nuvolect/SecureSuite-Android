@@ -384,7 +384,9 @@ public class LockActivity extends Activity {
                 mLockcode1 = "";
                 message("Enter lock code", msg, MESSAGE_CMD.NIL);
 
-                if( lockCode.contentEquals(mConfirmCode)){
+                // Test if a non-empty lock code matches.
+                // Don't match an empty code. If the lock is disabled, this activity is never called.
+                if( lockCode.contentEquals(mConfirmCode) && ! mConfirmCode.isEmpty()){
 
                     setResult(RESULT_OK);
                     lockDisabled = true;
@@ -549,6 +551,11 @@ public class LockActivity extends Activity {
         finish();
     }
 
+    /**
+     * Test if the device is locked by either passphrase or YubiKEY.
+     * @param ctx
+     * @return
+     */
     public static boolean lockCodePresent(Context ctx){
 
         if( ! Cryp.getLockCode(ctx).isEmpty() ||

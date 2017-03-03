@@ -28,7 +28,7 @@ import com.nuvolect.securesuite.data.SqlCipher.KvTab;
 public class CConst {
 
     public static final String FOLDER_NAME                        = "/securesuite/";
-    public static final String TEMP_FOLDER                        = "/temp/";
+    public static final String SHARE_FOLDER                       = "/share/";
     public static final String DEFAULT_ACCOUNT                    = "Default_account";
     public static final int PHOTO_ICON_MAX_EDGE                   = 192;
     public static final String PORT                               = "port";

@@ -414,44 +414,14 @@ public class CrypServer extends NanoHTTPD {
                 File file = new File( m_ctx.getFilesDir()+"/export.vcf");
                 is = new FileInputStream(file);
 
-//                BufferedInputStream bis = new BufferedInputStream(fis);
-
                 long fileLength = file.length();
                 log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file length: "+fileLength);
 
-                //String mimeType = "text/vcard";
-//                String mimeType = "application/vnd.android.package-archive";
-//                String mimeType = "application/octet-stream";
-
-// Candidate correct response
                 Response response = new Response(HTTP_OK, MIME_VCARD, is);
-//                Response response = new Response(HTTP_OK, "application/vnd.android.package-archive", is);
-//                Random rnd = new Random();
-//                String etag = Integer.toHexString(rnd.nextInt());
-//                response.addHeader("ETag", etag);
                 response.addHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
                 response.addHeader("Pragma","no-cache");
                 response.addHeader("Cache-Control","no-cache, no-store, max-age=0, must-revalidate");
                 response.addHeader("X-Content-Type-Options","nosniff");
-
-//                response.setData( is );
-//                response.setChunkedTransfer( true );
-
-//                response.addHeader("Content-Transfer-Encoding","Binary");
-//                response.addHeader("Content-Disposition","attachment; filename=\""+fileName+"\"");
-
-//                Response response = new Response(Response.Status.OK, mimeType, "just a little text");
-
-//                response.addHeader("Content-Description","File Transfer");
-//                response.addHeader("Pragma","public");
-//                response.addHeader("Expires","0");
-//                response.addHeader("Cache-Control","must-revalidate, post-check=0, pre-check=0");
-//                response.addHeader("Accept-Ranges","bytes");
-
-// server already does this
-//                response.addHeader("Connection", "Keep-alive");
-//                response.addHeader("Content-type", mimeType);
-//                response.addHeader("content-length", "" + file.length());
 
                 return response;
 

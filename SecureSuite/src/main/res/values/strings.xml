@@ -24,6 +24,7 @@
     <string name="default_port">8000</string>
     <string name="default_ip_port">0.0.0.0:8000</string>g
     <string name="app_signature">com.nuvolect.securesuite</string>
+    <string name="app_authorities">com.nuvolect.securesuite</string>
     <string name="verbose_debug">false</string>
 
     <string name="action_settings">Settings</string>

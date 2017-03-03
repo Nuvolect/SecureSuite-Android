@@ -160,7 +160,7 @@ public class ServerFragment extends DialogFragment {
             });
         }
 
-        if (LockActivity.lockCodePresent(m_act))
+        if ( ! Cryp.getLockCode(m_act).isEmpty())
             m_lockStatusTv.setText("Password secured");
         else
             m_lockStatusTv.setText("NOT password secured");
