@@ -44,7 +44,7 @@ public class Whitelist {
 			return "";
 	}
 
-	/** Build the set of whitelist emails, all must be lower case */
+	/** Build the set of whitelist devices documented with user email */
 	private static Set<String> developers = new HashSet<String>() {
 		private static final long serialVersionUID = 1L;
 	{
