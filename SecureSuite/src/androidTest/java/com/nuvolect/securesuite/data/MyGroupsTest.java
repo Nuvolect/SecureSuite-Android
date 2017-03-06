@@ -36,16 +36,17 @@ import static org.junit.Assert.assertThat;
 
 
 /**
- * Groups utility class tests.
+ * {@link MyGroups} utility class tests.
+ * Also tests {@link SqlCipher} database delete and creation.
  */
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class MyGroupsTest {
 
-    String mTestGroupTitle;
-    String mTestAccount;
-    String mTestAccountType;
-    int mTestGroupId;
+    String testGroupTitle;
+    String testAccount;
+    String testAccountType;
+    int testGroupId;
 
     private SqlCipher mSqlCipher;
 
@@ -53,10 +54,10 @@ public class MyGroupsTest {
     public void setUp() throws Exception {
 
 
-        mTestGroupTitle ="Test group title";
-        mTestAccount ="test@account.com";
-        mTestAccountType ="currently_unused";
-        mTestGroupId = -1; // not possible value
+        this.testGroupTitle ="Test group title";
+        this.testAccount ="test@account.com";
+        this.testAccountType ="currently_unused";
+        this.testGroupId = -1; // not possible value
     }
 
     @After
@@ -83,7 +84,8 @@ public class MyGroupsTest {
         assertThat(MyGroups.mCloudRemapGroupId.size(), is(0));
         assertThat(MyGroups.mGroupIdByAccountPlusTitle.size(), is(0));
 
-        int newId = MyGroups.addGroup( ctx, mTestGroupTitle, mTestAccount, mTestAccountType);
+        int newId =
+               MyGroups.addGroup( ctx, this.testGroupTitle, this.testAccount, this.testAccountType);
         assertThat( newId, not(0));
         assertThat( newId, not(-1));
         assertThat( newId, not(-2));
@@ -94,7 +96,7 @@ public class MyGroupsTest {
         assertThat(MyGroups.mCloudRemapGroupId.size(), is(0));
         assertThat(MyGroups.mGroupIdByAccountPlusTitle.size(), is(0));
 
-        int cachedId = MyGroups.getGroupId( mTestAccount, mTestGroupTitle);
+        int cachedId = MyGroups.getGroupId( this.testAccount, this.testGroupTitle);
         assertThat( newId, is( cachedId));
 
         MyGroups.deleteGroup( ctx, newId, false);

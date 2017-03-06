@@ -31,7 +31,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 
 /**
- * Keystore utility tests
+ * {@link KeystoreUtil} utility tests.
  */
 public class KeystoreUtilTest {
 
