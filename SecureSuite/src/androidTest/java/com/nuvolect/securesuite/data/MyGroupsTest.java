@@ -71,7 +71,6 @@ public class MyGroupsTest {
          * Create an empty database.
          * Initialize in memory group cache.
          * Create a group instance in database and cache.
-         * TODO test delete group
          */
         Context ctx = getTargetContext();
         SqlCipher.deleteDatabases(ctx);
