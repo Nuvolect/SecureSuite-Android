@@ -43,12 +43,9 @@ import static org.junit.Assert.assertThat;
 @SmallTest
 public class MyGroupsTest {
 
-    String testGroupTitle;
-    String testAccount;
-    String testAccountType;
-    int testGroupId;
-
-    private SqlCipher mSqlCipher;
+    private String testGroupTitle;
+    private String testAccount;
+    private String testAccountType;
 
     @Before
     public void setUp() throws Exception {
@@ -57,7 +54,7 @@ public class MyGroupsTest {
         this.testGroupTitle ="Test group title";
         this.testAccount ="test@account.com";
         this.testAccountType ="currently_unused";
-        this.testGroupId = -1; // not possible value
+        int testGroupId = -1;
     }
 
     @After
@@ -75,7 +72,8 @@ public class MyGroupsTest {
          */
         Context ctx = getTargetContext();
         SqlCipher.deleteDatabases(ctx);
-        mSqlCipher = SqlCipher.getInstance( ctx);
+        SqlCipher.getInstance(ctx); // Force db creation
+
         MyGroups.initGroupMemory();
 
         assertThat(MyGroups.mGroupAccount.size(), is(0));
