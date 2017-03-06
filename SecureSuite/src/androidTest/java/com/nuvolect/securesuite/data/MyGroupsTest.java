@@ -35,9 +35,9 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
 
-//
-//TODO create class description
-//
+/**
+ * Groups utility class tests.
+ */
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class MyGroupsTest {
@@ -47,13 +47,11 @@ public class MyGroupsTest {
     String mTestAccountType;
     int mTestGroupId;
 
-    Context m_ctx;
     private SqlCipher mSqlCipher;
 
     @Before
     public void setUp() throws Exception {
 
-        m_ctx = getTargetContext();
 
         mTestGroupTitle ="Test group title";
         mTestAccount ="test@account.com";
@@ -73,9 +71,11 @@ public class MyGroupsTest {
          * Create an empty database.
          * Initialize in memory group cache.
          * Create a group instance in database and cache.
+         * TODO test delete group
          */
-        SqlCipher.deleteDatabases(m_ctx);
-        mSqlCipher = SqlCipher.getInstance( m_ctx);
+        Context ctx = getTargetContext();
+        SqlCipher.deleteDatabases(ctx);
+        mSqlCipher = SqlCipher.getInstance( ctx);
         MyGroups.initGroupMemory();
 
         assertThat(MyGroups.mGroupAccount.size(), is(0));
@@ -84,7 +84,7 @@ public class MyGroupsTest {
         assertThat(MyGroups.mCloudRemapGroupId.size(), is(0));
         assertThat(MyGroups.mGroupIdByAccountPlusTitle.size(), is(0));
 
-        int newId = MyGroups.addGroup( m_ctx, mTestGroupTitle, mTestAccount, mTestAccountType);
+        int newId = MyGroups.addGroup( ctx, mTestGroupTitle, mTestAccount, mTestAccountType);
         assertThat( newId, not(0));
         assertThat( newId, not(-1));
         assertThat( newId, not(-2));
@@ -97,5 +97,12 @@ public class MyGroupsTest {
 
         int cachedId = MyGroups.getGroupId( mTestAccount, mTestGroupTitle);
         assertThat( newId, is( cachedId));
+
+        MyGroups.deleteGroup( ctx, newId, false);
+        assertThat(MyGroups.mGroupAccount.size(), is(0));
+        assertThat(mGroupTitle.size(), is(0));
+        assertThat(MyGroups.mGroupCount.size(), is(0));
+        assertThat(MyGroups.mCloudRemapGroupId.size(), is(0));
+        assertThat(MyGroups.mGroupIdByAccountPlusTitle.size(), is(0));
     }
 }
