@@ -42,45 +42,45 @@ public class KeystoreUtilTest {
     public void createKey() throws Exception {
 
         Context ctx = getTargetContext();
-        boolean keyCreated = KeystoreUtil.createKeyNotExists( ctx, testKeyAlias);
+        boolean keyCreated = KeystoreUtil.createKeyNotExists( ctx, this.testKeyAlias);
         assertThat( keyCreated, is( true ));
 
-        KeystoreUtil.deleteKey( ctx, testKeyAlias);
+        KeystoreUtil.deleteKey( ctx, this.testKeyAlias);
     }
 
     @Test
     public void encrypt() throws Exception {
 
-        KeystoreUtil.createKeyNotExists( getTargetContext(), testKeyAlias);
+        KeystoreUtil.createKeyNotExists( getTargetContext(), this.testKeyAlias);
 
-        JSONObject cipherObj = KeystoreUtil.encrypt( testKeyAlias, clearTextToEncrypt);
+        JSONObject cipherObj = KeystoreUtil.encrypt( this.testKeyAlias, this.clearTextToEncrypt);
         assertThat( cipherObj.getString("error"), is(""));
         assertThat( cipherObj.getString("success"), is("true"));
         assertThat( cipherObj.getString("ciphertext"), not(""));
-        assertThat( cipherObj.getString("ciphertext"), not(clearTextToEncrypt));
-        assertThat( cipherObj.getString("ciphertext"), not(testKeyAlias));
+        assertThat( cipherObj.getString("ciphertext"), not(this.clearTextToEncrypt));
+        assertThat( cipherObj.getString("ciphertext"), not(this.testKeyAlias));
 
-        JSONObject clearTextObj = KeystoreUtil.decrypt( testKeyAlias, cipherObj.getString("ciphertext"));
+        JSONObject clearTextObj = KeystoreUtil.decrypt( this.testKeyAlias, cipherObj.getString("ciphertext"));
         assertThat( clearTextObj.getString("error"), is(""));
         assertThat( clearTextObj.getString("success"), is("true"));
-        assertThat( clearTextObj.getString("cleartext"), is( clearTextToEncrypt));
+        assertThat( clearTextObj.getString("cleartext"), is( this.clearTextToEncrypt));
 
-        KeystoreUtil.deleteKey( getTargetContext(), testKeyAlias);
+        KeystoreUtil.deleteKey( getTargetContext(), this.testKeyAlias);
     }
 
     @Test
     public void deleteKey() throws Exception {
 
         Context ctx = getTargetContext();
-        boolean keyCreated = KeystoreUtil.createKeyNotExists( ctx, testKeyAlias);
+        boolean keyCreated = KeystoreUtil.createKeyNotExists( ctx, this.testKeyAlias);
         assertThat( keyCreated, is( true ));
 
-        JSONObject obj = KeystoreUtil.deleteKey( getTargetContext(), testKeyAlias);
+        JSONObject obj = KeystoreUtil.deleteKey( getTargetContext(), this.testKeyAlias);
         assertThat( obj.getString("error"), is(""));
 
 
         // Try to delete it a second time, should be gone
-        obj = KeystoreUtil.deleteKey( getTargetContext(), testKeyAlias);
+        obj = KeystoreUtil.deleteKey( getTargetContext(), this.testKeyAlias);
         assertThat( obj.getString("error"), not(""));
 
         boolean notFound = obj.getString("error").contains("not found");
