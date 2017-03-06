@@ -98,11 +98,6 @@ public class WorkerService extends Service {
         FULL_SYNC_OPTIMIZE_PLAN,
 
         /**
-         * Send a sync data request to the companion SecureSuite device
-         */
-//        FULL_SYNC_DATA_REQ,
-
-        /**
          * Send sync data to the companion SecureSuite device
          */
         FULL_SYNC_SEND_DATA,
@@ -252,7 +247,6 @@ public class WorkerService extends Service {
 
                     case FULL_SYNC_SEND_SOURCE_MANIFEST:
                     case FULL_SYNC_OPTIMIZE_PLAN:
-//                    case FULL_SYNC_DATA_REQ:
                     case FULL_SYNC_SEND_DATA:
                     case FULL_SYNC_PROCESS_DATA:
                         long upTimeMillis = SystemClock.uptimeMillis() + 100;

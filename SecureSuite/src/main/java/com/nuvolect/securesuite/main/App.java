@@ -43,7 +43,7 @@ public class App extends Application {
         /**
          * Load build-dependent data into static variables that can be accessed without context.
          */
-        LogUtil.setVerbose( Boolean.valueOf( mContext.getString(R.string.verbose_debug)));
+        LogUtil.setVerbose( Boolean.valueOf( mContext.getString(R.string.verbose_logging)));
 
         DEFAULT_IP_PORT = mContext.getString(R.string.default_ip_port);
         DEFAULT_PORT = Integer.valueOf(mContext.getString(R.string.default_port));

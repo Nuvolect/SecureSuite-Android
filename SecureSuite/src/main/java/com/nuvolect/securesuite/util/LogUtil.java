@@ -25,10 +25,21 @@ import android.util.Log;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+/**
+ * Utility class for logging. All logcat info goes through these methods.
+ * By default the development build enables verbose logging and the release
+ * build is quiet.
+ */
 public class LogUtil {
 
-    public static boolean VERBOSE = true;// 1. Auto set for build variant. 2. Developer menu option
-    public static boolean DEBUG = true;
+    /**
+     * Set each time the app starts from App.class with reference
+     * to debug/values/strings.xml and main/values/strings.xml.
+     *
+     * VERBOSE and DEBUG are also toggled from the developer menu.
+     */
+    public static boolean VERBOSE = false;
+    public static boolean DEBUG = false;// Used to enable blocks of debugging code.
 
     public static String TAG = "SecureSuite";
 

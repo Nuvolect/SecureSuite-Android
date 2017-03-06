@@ -24,5 +24,5 @@
     <string name="default_ip_port">0.0.0.0:8002</string>g
     <string name="app_signature">com.nuvolect.securesuite-debug</string>
     <string name="app_authorities">com.nuvolect.securesuite.debug</string>
-    <string name="verbose_debug">true</string>
+    <string name="verbose_logging">true</string>
 </resources>

@@ -463,7 +463,7 @@ public class ContactListActivity extends Activity
             LogUtil.log("=============CLA.onOptionsMenu: contact_list_single_menu");
         }
 
-        if( (LicenseManager.mIsWhitelistUser || Boolean.valueOf( m_act.getString(R.string.verbose_debug)))
+        if( (LicenseManager.mIsWhitelistUser || Boolean.valueOf( m_act.getString(R.string.verbose_logging)))
                 && DeveloperDialog.isEnabled()){
 
             Util.showMenu( menu, R.id.menu_developer );

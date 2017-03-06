@@ -337,7 +337,7 @@ public class GroupListActivity extends Activity
         else
             m_inflater.inflate(R.menu.group_list_single_menu, menu);
 
-        if( (LicenseManager.mIsWhitelistUser || Boolean.valueOf( m_act.getString(R.string.verbose_debug)))
+        if( (LicenseManager.mIsWhitelistUser || Boolean.valueOf( m_act.getString(R.string.verbose_logging)))
                 && DeveloperDialog.isEnabled()){
 
             MenuItem menuItem = menu.findItem(R.id.menu_developer);
