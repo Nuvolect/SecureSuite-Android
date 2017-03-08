@@ -46,7 +46,7 @@ android {
 
     defaultConfig {
         applicationId "com.nuvolect.securesuite"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 24
 
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
@@ -70,6 +70,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release
         }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 

@@ -49,7 +49,7 @@ Setting up a development environment
 Contributing code
 -----------------
 
-Code contributions should be sent via github as pull requests, from feature branches [as explained here](https://help.github.com/articles/using-pull-requests).
+[Code contributions](/CONTRIBUTING.md) should be sent via github as pull requests, from feature branches [as explained here](https://help.github.com/articles/using-pull-requests).
 
 Mailing list
 ------------

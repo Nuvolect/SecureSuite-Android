@@ -68,7 +68,7 @@
     <EditTextPreference
         android:key="country_code"
         android:title="Country Code (two-letter, ISO 3166-1)"
-        android:defaultValue="US"
+        android:defaultValue="@string/DEFAULT_COUNTRY_CODE"
         android:summary="Country Code"
         />
     <Preference

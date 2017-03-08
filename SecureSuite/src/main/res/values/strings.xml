@@ -77,4 +77,6 @@
     <string name="error_nfc_header">"YubiKey reported invalid %s byte."</string>
     <string name="error_nfc_tag_lost">"YubiKey has been taken off too early. Keep the YubiKey at the back until the operation finishes."</string>
     <string name="error_nfc_try_again">"Try again"</string>
+
+    <string name="DEFAULT_COUNTRY_CODE">"US"</string>
 </resources>

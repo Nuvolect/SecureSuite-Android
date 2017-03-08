@@ -96,12 +96,12 @@
                 android:title="Export group"
                 android:titleCondensed="Export group">
             </item>
+            <item
+                android:id="@+id/menu_cleanup"
+                android:title="Cleanup"
+                android:titleCondensed="Cleanup" >
+            </item>
         </menu>
-        <item
-            android:id="@+id/menu_cleanup"
-            android:title="Cleanup"
-            android:titleCondensed="Cleanup" >
-        </item>
     </item>
     <item
         android:id="@+id/menu_empty_trash"

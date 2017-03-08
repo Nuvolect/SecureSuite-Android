@@ -41,6 +41,24 @@ public class EditGroupMember implements Parcelable{
         this.display_name = display_name;
     }
 
+    protected EditGroupMember(Parcel in) {
+        contact_id = in.readLong();
+        thumbnail = in.readParcelable(Bitmap.class.getClassLoader());
+        display_name = in.readString();
+    }
+
+    public static final Creator<EditGroupMember> CREATOR = new Creator<EditGroupMember>() {
+        @Override
+        public EditGroupMember createFromParcel(Parcel in) {
+            return new EditGroupMember(in);
+        }
+
+        @Override
+        public EditGroupMember[] newArray(int size) {
+            return new EditGroupMember[size];
+        }
+    };
+
     @Override
     public int describeContents() {
         return 0;
