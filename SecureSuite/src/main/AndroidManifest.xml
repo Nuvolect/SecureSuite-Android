@@ -41,6 +41,8 @@
     <uses-permission android:name="android.permission.NFC" />
 
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
+    <uses-feature android:name="android.permission.PROCESS_OUTGOING_CALLS" android:required="false"/>
+    <uses-feature android:name="android.permission.READ_PHONE_STATE" android:required="false"/>
 
     <supports-screens android:largeScreens="true" android:xlargeScreens="true"/>
 
