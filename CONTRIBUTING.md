@@ -71,8 +71,8 @@ or it was decided that the issue is not something that SecureSuite should do at 
 ## Pull requests
 
 ### Sign the Contributor Licence Agreement (CLA)
-You need to sign our CLA before your pull request can be merged. You can sign it at: 
-[https://nuvolect.com/cla.htm](https://nuvolect.com/cla.htm)
+You need to sign our CLA before your pull request can be merged. You can find it at: 
+[https://nuvolect.com/cla.pdf](https://nuvolect.com/cla.pdf)
 
 ### Follow the Code Style Guidelines
 Before submitting a pull request please check that your code adheres to the [Code Style Guidelines](https://github.com/Nuvolect/SecureSuite-Android/wiki/Code-Style-Guidelines).
