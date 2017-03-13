@@ -83,7 +83,6 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.READ_PHONE_STATE;
 
 /**
  * An activity representing a list of Contacts. This activity has different
@@ -204,7 +203,6 @@ public class ContactListActivity extends Activity
 
         mTwoPane = findViewById(R.id.contact_detail_container) != null;
 
-//         Restore navigation to the persisted state
         if( actionBar != null)
             actionBar.setSelectedNavigationItem( Persist.getNavChoice(m_act));
 
@@ -219,9 +217,6 @@ public class ContactListActivity extends Activity
          */
         if( Persist.getImportInProgress(m_act) > 0)//import_cloud
             CloudImportDialog.cloudImportProgressDialog( m_act);
-
-//        CustomDialog.rateThisApp(m_act, false);// testing == false
-//        CustomDialog.makeDonation(m_act, false);
     }
 
     @Override
@@ -321,8 +316,7 @@ public class ContactListActivity extends Activity
             }
 
             // First time, request phone management access
-            if( ! hasPermission( READ_PHONE_STATE))
-                PermissionUtil.requestReadPhoneState(m_act, CConst.CALLER_ID_REQUEST_READ_PHONE_STATE);
+            PermissionUtil.requestFirstTimePermissions( m_act);
         }
 
         // Support for action bar pull down menu

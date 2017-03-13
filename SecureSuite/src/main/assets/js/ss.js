@@ -212,7 +212,7 @@ else
     }
   };
 
-  xmlhttp.open("POST", "", false); // Fails when set to true
+  xmlhttp.open("POST", "/list.htm", false); // Fails when set to true
   xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
   xmlhttp.send( payload );
 }

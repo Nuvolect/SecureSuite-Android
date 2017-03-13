@@ -1,21 +1,4 @@
-<!--
-  ~ Copyright (c) 2017. Nuvolect LLC
-  ~
-  ~ This program is free software: you can redistribute it and/or modify it under the terms of the GNU
-  ~ General Public License as published by the Free Software Foundation, either version 3 of the License,
-  ~ or (at your option) any later version.
-  ~
-  ~ Contact legal@nuvolect.com for a less restrictive commercial license if you would like to use the
-  ~ software without the GPLv3 restrictions.
-  ~
-  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-  ~ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License along with this program.  If not,
-  ~ see <http://www.gnu.org/licenses/>.
-  ~
-  -->
+<!--Copyright (c) 2017. Nuvolect LLC-->
 
 <html>
 
@@ -41,7 +24,7 @@
     <script src="/js/dropzone.js"></script>
     <script src="/js/jquery-ui.min.js"></script>
     <script>
-        var baseUrl = 'list_htm';
+        var baseUrl = 'list.htm';
     </script>
 </head>
 
@@ -82,10 +65,10 @@ ${group_edit_modal_htm}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right" role="menu">
                     <!-- $BeginBlock account_select -->
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','account=${account_select}')">${account_select}</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','account=${account_select}')">${account_select}</a></li>
                     <!-- $EndBlock account_select -->
                     <li class="divider"></li>
-                    <li><a href="javascript:void(0)" onclick="post('logout_htm','')">LOGOUT</a></li>
+                    <li><a href="/logout.htm">LOGOUT</a></li>
                 </ul>
             </div>
         </div>
@@ -101,8 +84,9 @@ ${group_edit_modal_htm}
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="javascript:void(0)" onclick="post('contacts_list.htm','')">Contacts</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('contacts_list.htm','')">Contacts</a></li>//FIXME confirm not list.htm
                     <li><a href="javascript:void(0)" onclick="injectModal('/files/password_modal_filled.htm')">Passwords</a></li>
+                    <li><a href="${finder_url}">Finder</a></li>
                 </ul>
             </div>
         </div>
@@ -115,16 +99,16 @@ ${group_edit_modal_htm}
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','link=cb_all')"       >All</a></li>
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','link=cb_none')"      >None</a></li>
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','link=cb_starred')"   >Starred</a></li>
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','link=cb_unstarred')" >Unstarred</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','link=cb_all')"       >All</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','link=cb_none')"      >None</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','link=cb_starred')"   >Starred</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','link=cb_unstarred')" >Unstarred</a></li>
                 </ul>
             </div>
             <!--onclick="notifyJs('Cool beans!','warn');" -->
             <div class="btn-group">
                 <button class="btn btn-default"
-                        onclick="post('list_htm','link=NIL');"
+                        onclick="post('list.htm','link=NIL');"
                         >
                     <span class="glyphicon glyphicon-refresh"></span>
                     <span class="sr-only">Toggle Dropdown</span>
@@ -145,28 +129,28 @@ ${group_edit_modal_htm}
                     More <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <!--<li><a href="javascript:void(0)" onclick="post('list_htm','link=merge_contacts')" >Merge contacts</a></li>-->
+                    <!--<li><a href="javascript:void(0)" onclick="post('list.htm','link=merge_contacts')" >Merge contacts</a></li>-->
                     <li id="menu_move_to_trash">
-                        <a href="javascript:void(0)" onclick="post('list_htm','link=delete_contacts')">Move to trash</a></li>
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','link=empty_trash')"    >Empty trash</a></li>
+                        <a href="javascript:void(0)" onclick="post('list.htm','link=delete_contacts')">Move to trash</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','link=empty_trash')"    >Empty trash</a></li>
                     <li><a href="javascript:void(0)" onclick="showFileUploadModal()"                  >Import...</a></li>
-                    <li><a href="javascript:void(0)" onclick="downloadFile('list_htm','link=export_contacts')">Export...</a></li>
+                    <li><a href="javascript:void(0)" onclick="downloadFile('list.htm','link=export_contacts')">Export...</a></li>
                     <li><a href="javascript:void(0)" onclick="printPage()"                            >Print...</a></li>
-                    <!--<li><a href="javascript:void(0)" onclick="post('list_htm','link=find_merge')"     >Find &amp; merge duplicates...</a></li>-->
-                    <!--<li><a href="javascript:void(0)" onclick="post('list_htm','link=restore_contacts')">Restore contacts...</a></li>-->
+                    <!--<li><a href="javascript:void(0)" onclick="post('list.htm','link=find_merge')"     >Find &amp; merge duplicates...</a></li>-->
+                    <!--<li><a href="javascript:void(0)" onclick="post('list.htm','link=restore_contacts')">Restore contacts...</a></li>-->
                     <!--<li class="divider"></li>-->
-                    <!--<li><a href="javascript:void(0)" onclick="post('list_htm','link=sort_first')"     >First Name</a></li>-->
-                    <!--<li><a href="javascript:void(0)" onclick="post('list_htm','link=sort_last')"      >Last Name</a></li>-->
+                    <!--<li><a href="javascript:void(0)" onclick="post('list.htm','link=sort_first')"     >First Name</a></li>-->
+                    <!--<li><a href="javascript:void(0)" onclick="post('list.htm','link=sort_last')"      >Last Name</a></li>-->
                 </ul>
             </div>
         </div>
         <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 text-right">
             <strong>${page_name_range}</strong>
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default" onclick="post('list_htm','link=chevron_left')">
+                <button type="button" class="btn btn-default" onclick="post('list.htm','link=chevron_left')">
                     <span class="glyphicon glyphicon-chevron-left"></span>
                 </button>
-                <button type="button" class="btn btn-default" onclick="post('list_htm','link=chevron_right')">
+                <button type="button" class="btn btn-default" onclick="post('list.htm','link=chevron_right')">
                     <span class="glyphicon glyphicon-chevron-right"></span>
                 </button>
             </div>
@@ -185,11 +169,11 @@ ${group_edit_modal_htm}
                     <li><a href="javascript:void(0)" class="theme" data-theme="earth_hex"            >Earth hex</a></li>
                     <li><a href="javascript:void(0)" class="theme" data-theme="matrix"               >Matrix</a></li>
                     <li class="divider"></li>
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','page_contacts=50')"   >50 Contacts on page</a></li>
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','page_contacts=100')"  >100 Contacts on page</a></li>
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','page_contacts=500')"  >500 Contacts on page</a></li>
-                    <!--<li><a href="javascript:void(0)" onclick="post('list_htm','link=settings')"      >Settings</a></li>-->
-                    <li><a href="https://github.com/Nuvolect/SecureSuite-Android/wiki" target="_blank"                 >Help</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','page_contacts=50')"   >50 Contacts on page</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','page_contacts=100')"  >100 Contacts on page</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','page_contacts=500')"  >500 Contacts on page</a></li>
+                    <!--<li><a href="javascript:void(0)" onclick="post('list.htm','link=settings')"   >Settings</a></li>-->
+                    <li><a href="https://github.com/Nuvolect/SecureSuite-Android/wiki" target="_blank">Help</a></li>
                 </ul>
             </div>
         </div>
@@ -200,19 +184,19 @@ ${group_edit_modal_htm}
         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" id="side-nav">
 
             <button class="btn btn-default"
-                    onclick="post('detail_htm','link=new_contact');">NEW CONTACT</button>
+                    onclick="post('detail.htm','link=new_contact');">NEW CONTACT</button>
 
             <p></p>
-            <a href="" onclick="post('list_htm','link=all_in_account')">${all_in_account}</a><br>
-            <a href="" onclick="post('list_htm','link=starred_in_account')">${starred_in_account}</a><br>
+            <a href="" onclick="post('list.htm','link=all_in_account')">${all_in_account}</a><br>
+            <a href="" onclick="post('list.htm','link=starred_in_account')">${starred_in_account}</a><br>
             <!-- $BeginBlock group_item -->
-            <a href="" onclick="post('list_htm','group_id=${group_id}')">${group_title}</a><br>
+            <a href="" onclick="post('list.htm','group_id=${group_id}')">${group_title}</a><br>
             <!-- $EndBlock group_item -->
             <p></p>
             <p>
-                <a href="javascript:void(0)" onclick="newGroup('list_htm')"                >New Group...</a> <br>
-                <a href="javascript:void(0)" onclick="renameGroup('list_htm')"             >Rename Group...</a> <br>
-                <a href="javascript:void(0)" onclick="post('list_htm','link=delete_group')">Delete Group</a><br>
+                <a href="javascript:void(0)" onclick="newGroup('list.htm')"                >New Group...</a> <br>
+                <a href="javascript:void(0)" onclick="renameGroup('list.htm')"             >Rename Group...</a> <br>
+                <a href="javascript:void(0)" onclick="post('list.htm','link=delete_group')">Delete Group</a><br>
             </p>
         </div>
         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
@@ -231,11 +215,11 @@ ${group_edit_modal_htm}
                             <span class="glyphicon ${star_icon}" style="font-size:150%;"
                                   onclick="starUpdate(${contact_id},${star_state},'item_star=${contact_id}');"/>
                             </td>
-                            <th onclick="post('detail_htm','item=${contact_id}')" >${display_name} </th>
-                            <td onclick="post('detail_htm','item=${contact_id}')" >${email} </td>
-                            <td onclick="post('detail_htm','item=${contact_id}')" >${phone} </td>
-                            <td onclick="post('detail_htm','item=${contact_id}')" >${address} </td>
-                            <td onclick="post('detail_htm','item=${contact_id}')" >
+                            <th onclick="post('detail.htm','item=${contact_id}')" >${display_name} </th>
+                            <td onclick="post('detail.htm','item=${contact_id}')" >${email} </td>
+                            <td onclick="post('detail.htm','item=${contact_id}')" >${phone} </td>
+                            <td onclick="post('detail.htm','item=${contact_id}')" >${address} </td>
+                            <td onclick="post('detail.htm','item=${contact_id}')" >
                                 <ul class="list-inline">
                                     <!-- $BeginBlock contact_group -->
                                     <li>
@@ -282,7 +266,7 @@ ${group_edit_modal_htm}
             </div>
             <div class="modal-body">
 
-                <form action="/list_htm"
+                <form action="/list.htm"
                       class="dropzone"
                       id="vcard-upload-dropzone" ></form>
 

@@ -29,6 +29,12 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+import com.nuvolect.securesuite.main.CConst;
+
+import java.util.ArrayList;
+
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 /**
  * Permission management utilities
  */
@@ -53,13 +59,13 @@ public class PermissionUtil {
     }
     public static boolean canWriteExternalStorage(Context ctx) {
 
-        return ContextCompat.checkSelfPermission(ctx, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return ContextCompat.checkSelfPermission(ctx, WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED;
     }
     public static void requestWriteExternalStorage(Activity act, int responseId){
 
         ActivityCompat.requestPermissions(act,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, responseId);
+                new String[]{WRITE_EXTERNAL_STORAGE}, responseId);
     }
 
     public static boolean canReadWriteExternalStorage(Activity act) {
@@ -70,7 +76,7 @@ public class PermissionUtil {
 
         ActivityCompat.requestPermissions(act,
                 new String[]{
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE
                 }, responseId);
     }
@@ -105,4 +111,39 @@ public class PermissionUtil {
         intent.setData(uri);
         context.startActivity(intent);
     }
+
+    /**
+     * Request permissions during application first time install.
+     * Method will not ask for phone state if it is not a phone.
+     * @param act
+     */
+    public static void requestFirstTimePermissions(Activity act) {
+
+        ArrayList<String> permissionRequests = new ArrayList<String>();
+        PackageManager pm = act.getPackageManager();
+
+        if( pm.hasSystemFeature( PackageManager.FEATURE_TELEPHONY)){
+
+            if( ! hasPermission( act, android.Manifest.permission.READ_PHONE_STATE)){
+
+                permissionRequests.add( Manifest.permission.READ_PHONE_STATE);
+            }
+        }
+        if( ! hasPermission( act, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+
+            permissionRequests.add( Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
+        if( permissionRequests.size() > 0){
+
+            String[] requests = new String[permissionRequests.size()];
+            requests = permissionRequests.toArray(requests);
+            ActivityCompat.requestPermissions( act, requests, CConst.NO_ACTION);
+        }
+    }
+
+    public static boolean hasPermission(Context ctx, String perm) {
+        return(ContextCompat.checkSelfPermission( ctx, perm)== PackageManager.PERMISSION_GRANTED);
+    }
+
 }

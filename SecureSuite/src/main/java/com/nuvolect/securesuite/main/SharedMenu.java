@@ -540,6 +540,16 @@ public class SharedMenu extends Activity {
                     Toast.makeText(m_act, "Calls will not be identified without Read Phone State", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case CConst.REQUEST_WRITE_EXTERNAL_STORAGE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // Do nothing
+                } else {
+                    Toast.makeText(m_act, "App will be unable to save files to external storage", Toast.LENGTH_SHORT).show();
+                }
+                break;
             default:{
 
                 LogUtil.log("SharedMenu sharedOnRequestPermissionResult UNMANAGED/ERROR requestCode: "+requestCode);

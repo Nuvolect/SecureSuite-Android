@@ -33,6 +33,12 @@ import com.nuvolect.securesuite.webserver.connector.ServeCmd;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.nanohttpd.protocols.http.IHTTPSession;
+import org.nanohttpd.protocols.http.NanoHTTPD;
+import org.nanohttpd.protocols.http.content.CookieHandler;
+import org.nanohttpd.protocols.http.request.Method;
+import org.nanohttpd.protocols.http.response.Response;
+import org.nanohttpd.protocols.http.response.Status;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,13 +46,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static com.nuvolect.securesuite.util.LogUtil.DEBUG;
 import static com.nuvolect.securesuite.util.LogUtil.log;
-import static com.nuvolect.securesuite.util.LogUtil.logException;
+import static com.nuvolect.securesuite.webserver.RestfulHtm.COMM_KEYS.uri;
 
 /**<pre>
  * Server for running webserver on a service or background thread.
@@ -70,41 +79,24 @@ public class CrypServer extends NanoHTTPD {
      * Storage for session data
      */
     public static HashMap<String, String> sessionMap;
-    private static String m_default_account;
-    private static String m_default_group_id;
+    private static String m_current_account;
+    private static String m_current_group_id;
     public static HashMap<String, ArrayList<Long>> sessionMapSelected;
     public static HashMap<String, HashMap<Integer, String>> sessionMapGroupEdit;
+    private static String EMBEDDED_HEADER_KEY = "referer";
+    private static String embedded_header_value = "";
     /**
      * System wide security token.
      */
     private static String m_sec_tok = "";
     private static boolean m_serverEnabled = false;
+    private Set<String> assetSet;
+    private Set<String> filesSet;
+    private static IHTTPSession m_session = null;
 
-    public enum URI_ENUM {NIL, login_htm, logout_htm, list_htm, detail_htm, restful_htm, }
-    public static URI_ENUM mCurrentPage = URI_ENUM.NIL;
-    public static boolean mUnlocked;
-    public static String password_modal_filename = "password_modal_filled.htm";
-    public static String password_modal_apply_filename = "password_modal_apply_filled.htm";
-    public static String group_edit_modal_filename = "group_edit_modal_filled.htm";
+    public static boolean mAuthenticated = false;
 
     private static Context m_ctx;
-
-    /**
-     * Common mime types for dynamic content
-     */
-    public static final String
-            MIME_PLAINTEXT = "text/plain",
-            MIME_HTML = "text/html",
-            MIME_JS = "application/javascript",
-            MIME_CSS = "text/css",
-            MIME_PNG = "image/png",
-            MIME_ICO = "image/x-icon",
-            MIME_WOFF = "application/font-woff",
-            MIME_DEFAULT_BINARY = "application/octet-stream",
-            MIME_VCARD = "text/vcard",
-            MIME_XML = "text/xml";
-
-    Response.IStatus HTTP_OK = Response.Status.OK;
 
     /**
      * CrypServer constructor that is called when the service starts.
@@ -122,8 +114,8 @@ public class CrypServer extends NanoHTTPD {
         sessionMap =  new HashMap<String, String>();
         sessionMapSelected =  new HashMap<String, ArrayList<Long>>();
         sessionMapGroupEdit =  new HashMap<String, HashMap<Integer, String>>();
-        m_default_account = Cryp.getCurrentAccount();
-        m_default_group_id = String.valueOf(MyGroups.getDefaultGroup(m_default_account));
+        m_current_account = Cryp.getCurrentAccount();
+        m_current_group_id = String.valueOf(MyGroups.getDefaultGroup(m_current_account));
 
         /**
          * Configure the security token. The token is generated on first use and
@@ -135,6 +127,22 @@ public class CrypServer extends NanoHTTPD {
          * All RESTful access to this IP is blocked unless it is the companion device.
          */
         WebUtil.NullHostNameVerifier.getInstance().setHostVerifierEnabled(true);
+
+        try {
+
+            String [] assetArray = ctx.getResources().getAssets().list("");
+            assetSet = new HashSet<String>(Arrays.asList( assetArray));
+
+            // Manually add folder and page, /elFinder-2.1.22/ss_finder.html
+            assetSet.add(CConst.ELFINDER_PAGE.substring(1));
+
+            // Manage a set of modals generated in the app:/files folder
+            String [] filesArray = ctx.getFilesDir().list();
+            filesSet = new HashSet<String>(Arrays.asList( filesArray));
+
+        } catch (IOException e) {
+            LogUtil.logException(CrypServer.class, e);
+        }
 
         ListHtm.init(m_ctx);
     }
@@ -178,111 +186,202 @@ public class CrypServer extends NanoHTTPD {
             return null;
         }
 
-        Map<String, String> headers = session.getHeaders();
+        m_session = session;
 
         CookieHandler cookies = session.getCookies();
         String uniqueId = cookies.read("uniqueId");
 
-        if( uniqueId == null) {
-            uniqueId = String.valueOf(System.currentTimeMillis());
+        if( uniqueId == null ){
 
-            cookies.set("uniqueId", uniqueId, 30);
-            mUnlocked = Cryp.getLockCode(m_ctx).isEmpty();
+            if( embedded_header_value.isEmpty())
+                embedded_header_value = WebUtil.getServerUrl(m_ctx);
 
-            if( mUnlocked )
-                mCurrentPage = URI_ENUM.list_htm;
-            else
-                mCurrentPage = URI_ENUM.login_htm;
+            Map<String, String> headers = session.getHeaders();
 
-            CrypServer.put(uniqueId, "currentPage", mCurrentPage.toString());
-        }else{
+            for (Map.Entry<String, String> entry : headers.entrySet())
+            {
+//                LogUtil.log(LogUtil.LogType.CRYP_SERVER, "header: "+entry.getKey() + ":::" + entry.getValue());
+                if( entry.getKey().startsWith( EMBEDDED_HEADER_KEY) &&
+                        entry.getValue().contains( embedded_header_value)){
+                    uniqueId = CConst.EMBEDDED_USER;
+//                    LogUtil.log(LogUtil.LogType.CRYP_SERVER, "header MATCH");
+                    break;
+                }
+            }
+            if( DEBUG && uniqueId == null){
 
-            mCurrentPage = URI_ENUM.valueOf(CrypServer.get(uniqueId, "currentPage"));
+                LogUtil.log(LogUtil.LogType.CRYP_SERVER, "header value mismatch: "+embedded_header_value);
+                for (Map.Entry<String, String> entry : headers.entrySet())
+                {
+                    LogUtil.log(LogUtil.LogType.CRYP_SERVER, "header: "+entry.getKey() + ":::" + entry.getValue());
+                }
+            }
         }
 
+        if( uniqueId == null) {
+
+            uniqueId = String.valueOf(System.currentTimeMillis());
+            cookies.set("uniqueId", uniqueId, 30);
+        }
+        /**
+         * Session is authenticated when authentication is wide open or
+         * session has been previously authenticated.
+         */
+        mAuthenticated = Cryp.getLockCode( m_ctx).isEmpty()
+                || uniqueId.contentEquals(CConst.EMBEDDED_USER)
+                || get(uniqueId, CConst.AUTHENTICATED, "0").contentEquals( "1");
+
         Method method = session.getMethod();
-        Map<String, String> params = session.getParms();
+
+        Map<String, String> files = new HashMap<String, String>();
+        try {
+            session.parseBody(files);
+        } catch (ResponseException e) {
+            LogUtil.logException(CrypServer.class, e);
+        } catch (IOException e) {
+            LogUtil.logException(CrypServer.class, e);
+        }
+
+        Map<String, List<String>> paramsMultiple = session.getParameters();
+        Map<String, String> params = new HashMap<String, String>();
+
+        /**
+         * Parameters can now have multiple values for a single key.
+         * Iterate over params and copy to a HashMap<String, String>.
+         * This "old way" is simple and compatible with code base.
+         * Duplicate keys are made unique { key, key_2, key_3, .. key_n }
+         */
+        Set<String> keySet = paramsMultiple.keySet();
+        for( String key : keySet){
+            List<String> values = paramsMultiple.get(key);
+            int n = 0;
+            for( String value : values){
+                if( ++n == 1){
+                    params.put( key, value);
+                }else{
+                    params.put( key+"_"+ n, value);
+                }
+            }
+        }
+
+        if( method == Method.POST)
+            log(LogUtil.LogType.CRYP_SERVER, method + " '" + uri + "' " + params.toString());
+
         String uri = session.getUri();
         params.put("uri", uri);
         params.put("queryParameterStrings", session.getQueryParameterString());
+
+        params.put(CConst.UNIQUE_ID, uniqueId);
 
         log(LogUtil.LogType.CRYP_SERVER, method + " '" + uri + "' " + params.toString());
 
         InputStream is = null;
 
         try {
-            if (uri != null) {
+            if (uri == null)
+                return null;
 
-                if (uri.endsWith(".vcf")) {
-                    File file = new File( m_ctx.getFilesDir()+"/export.vcf");
-                    is = new FileInputStream(file);
-                    return new Response(HTTP_OK, MIME_VCARD, is);
+            if (uri.endsWith(".vcf")) {
+                File file = new File( m_ctx.getFilesDir()+"/export.vcf");//FIXME hardcoded vcf name
+                is = new FileInputStream(file);
+                return new Response(Status.OK, MimeUtil.MIME_VCARD, is, -1);
 
-                } else if (uri.endsWith(".js")) {
+            } else if (uri.endsWith(".js")) {
+                is = m_ctx.getAssets().open(uri.substring(1));
+                return new Response(Status.OK, MimeUtil.MIME_JS, is, -1);
+
+            } else if (uri.endsWith(".css")) {
+                is = m_ctx.getAssets().open(uri.substring(1));
+                return new Response(Status.OK, MimeUtil.MIME_CSS, is, -1);
+
+            } else if (uri.endsWith(".map")) {
+                is = m_ctx.getAssets().open(uri.substring(1));
+                return new Response(Status.OK, MimeUtil.MIME_JSON, is, -1);
+
+            } else if (uri.contentEquals("/favicon.ico")) {
+                uri = "/img"+uri;
+                is = m_ctx.getAssets().open(uri.substring(1));
+                return new Response(Status.OK, MimeUtil.MIME_ICO, is, -1);
+
+            } else if (uri.endsWith(".png") || (uri.endsWith(".jpg"))) {
+                if( uri.startsWith("/img") || uri.startsWith("/css") || uri.startsWith("/elFinder"))
                     is = m_ctx.getAssets().open(uri.substring(1));
-                    return new Response(HTTP_OK, MIME_JS, is);
-
-                } else if (uri.endsWith(".css")) {
-                    is = m_ctx.getAssets().open(uri.substring(1));
-                    return new Response(HTTP_OK, MIME_CSS, is);
-
-                } else if (uri.contentEquals("/favicon.ico")) {
-                    uri = "/img"+uri;
-                    is = m_ctx.getAssets().open(uri.substring(1));
-                    return new Response(HTTP_OK, MIME_ICO, is);
-
-                } else if (uri.endsWith(".png") || (uri.endsWith(".jpg"))) {
-                    if( uri.startsWith("/img") || uri.startsWith("/css"))
-                        is = m_ctx.getAssets().open(uri.substring(1));
-                    else {
-                        File request = new File(uri);
-                        is = new FileInputStream(request);
-                    }
-                    // HTTP_OK = "200 OK" or HTTP_OK = Status.OK;(check comments)
-                    return new Response(HTTP_OK, MIME_PNG, is);
-
-                } else if (uri.endsWith(".ttf") || uri.endsWith("woff") || uri.endsWith("woff2")) {
-                    is = m_ctx.getAssets().open(uri.substring(1));
-                    // HTTP_OK = "200 OK" or HTTP_OK = Status.OK;(check comments)
-                    return new Response(HTTP_OK, MIME_WOFF, is);
-
-                } else if (uri.contentEquals("/")) {
-                    mCurrentPage = URI_ENUM.valueOf(CrypServer.get(uniqueId, "currentPage"));
-
-                } else if (uri.startsWith("/connector") && params.containsKey("cmd")) {
-
-                    Map<String, String> files = new HashMap<String, String>();
-                    try {
-                        session.parseBody(files);
-                    } catch (ResponseException e) {
-                        e.printStackTrace();
-                    }
-                    String postBody = session.getQueryParameterString();
-                    params.put("postBody", postBody);
-                    params.put(CConst.UNIQUE_ID, uniqueId);
-
-                    is = ServeCmd.process(m_ctx, params);
-
-                    return new Response(HTTP_OK, MIME_HTML, is);
-
-                }
                 else {
+                    File request = new File(uri);
+                    is = new FileInputStream(request);
+                }
+                return new Response(Status.OK, MimeUtil.MIME_PNG, is, -1);
 
-                    if ( mCurrentPage != URI_ENUM.login_htm && (uri.endsWith(".htm") || uri.endsWith(".html"))) {
+            } else if (uri.endsWith(".ttf") || uri.endsWith("woff") || uri.endsWith("woff2")) {
+                is = m_ctx.getAssets().open(uri.substring(1));
+                return new Response(Status.OK, MimeUtil.MIME_WOFF, is, -1);
 
-                        if( uri.startsWith("/files"))
-                            is = m_ctx.openFileInput(uri.substring(7));// filename starts at 7
-                        else
-                            is = m_ctx.getAssets().open(uri.substring(1));
+            } else if (! mAuthenticated && uri.startsWith("/connector")
+                    && params.containsKey("cmd") && params.get("cmd").contentEquals("login")) {
 
-                        return new Response(HTTP_OK, MIME_HTML, is);
+                params.put(CConst.UNIQUE_ID, uniqueId);
+
+                is = ServeCmd.process(m_ctx, params);
+
+                return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
+
+            } else if (mAuthenticated && uri.startsWith("/connector")) {
+
+                params.put(CConst.UNIQUE_ID, uniqueId);
+
+                is = ServeCmd.process(m_ctx, params);
+
+                return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
+
+            } else {
+
+                if( uri.contentEquals("/footer.htm")){
+
+                    is = m_ctx.getAssets().open("footer.htm");
+                    return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
+                }
+                /**
+                 * When locked only the login page is served, regardless of the uri
+                 */
+                if(! mAuthenticated){
+
+                    log(LogUtil.LogType.CRYP_SERVER, "Serving login.htm");
+                    is = m_ctx.getAssets().open("login.htm");
+                    return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
+                }
+
+                /**
+                 * Pages are served from /templates or from /assets.
+                 * Templates are populated via {@link MiniTemplator}.
+                 * Assets are served more traditionally with Angularjs.
+                 */
+                if ( uri.endsWith(".htm") || uri.endsWith(".html")) {
+
+                    /**
+                     * Serve /assets pages here.
+                     * Fall through to serve the {@Link MiniTemplator} pages below.
+                     */
+                    if( assetSet.contains( uri.substring(1))){
+
+                        log(LogUtil.LogType.CRYP_SERVER, "Serving asset page: "+uri);
+                        is = m_ctx.getAssets().open(uri.substring(1));
+                        return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
                     }
+//                        if( uri.startsWith("/files")){
+//
+//                            is = m_ctx.openFileInput(uri.substring(7));// filename starts at 7
+//                        }
+//                        else{
+//                            is = m_ctx.getAssets().open(uri.substring(1));
+//                        }
+//
+//                        return new Response(Status.OK, MIME_HTML, is, -1);
                 }
             }
 
         } catch (IOException e) {
             log(LogUtil.LogType.CRYP_SERVER, "Error opening file: " + uri.substring(1));
-            e.printStackTrace();
+            LogUtil.logException(CrypServer.class, e);
         }
         String generatedHtml = "";
 
@@ -292,9 +391,6 @@ public class CrypServer extends NanoHTTPD {
         if (method == Method.POST ) {
 
             try {
-                Map<String, String> files = new HashMap<String, String>();
-                session.parseBody(files);
-
                 if( DEBUG) {
                     log(LogUtil.LogType.CRYP_SERVER, "POST params: " + Util.trimAt(params.toString(), 50));
                 }
@@ -317,85 +413,43 @@ public class CrypServer extends NanoHTTPD {
                     params.put(CConst.FILE_UPLOAD, jsonObject.toString());
 
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                logException(m_ctx, LogUtil.LogType.CRYP_SERVER, e);
-            } catch (ResponseException e) {
-                e.printStackTrace();
-                logException(m_ctx, LogUtil.LogType.CRYP_SERVER, e);
             } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                if( ! uri.contentEquals("/")){
-
-                    if( uri.startsWith("/") && uri.endsWith("_htm"))
-                        uri = uri.substring(1);  // Removing leading '/' if template page
-                    mCurrentPage = URI_ENUM.valueOf(uri);
-                }
-
-            } catch (Exception e) {
-                log(LogUtil.LogType.CRYP_SERVER, "Error unknown key: " + uri);
-                LogUtil.logException(m_ctx, LogUtil.LogType.CRYP_SERVER, e);
+                LogUtil.logException(CrypServer.class, e);
             }
         }
-        log(LogUtil.LogType.CRYP_SERVER, "rendering page: " + mCurrentPage);
+//        log(LogUtil.LogType.CRYP_SERVER, "rendering page: " + mCurrentPage);
         long timeStart = System.currentTimeMillis();
 
-        switch (mCurrentPage){
-
-            case NIL:
-                break;
-            case login_htm:
-                if( Cryp.getLockCode(m_ctx).isEmpty()){
-
-                    CrypServer.put(uniqueId, "currentPage", URI_ENUM.list_htm.toString());
-                    generatedHtml = ListHtm.render(m_ctx, uniqueId, params);
-                }
-                else {
-                    CrypServer.put(uniqueId, "currentPage", URI_ENUM.login_htm.toString());
-                    generatedHtml = LoginHtm.render(m_ctx, uniqueId, params);
-                }
-                break;
-            case logout_htm:
-                CrypServer.put(uniqueId, "currentPage", mCurrentPage.toString());
-                generatedHtml = LogoutHtm.render(m_ctx, params);
-                break;
-            case list_htm:
-                CrypServer.put(uniqueId, "currentPage", mCurrentPage.toString());
-                generatedHtml = ListHtm.render(m_ctx, uniqueId, params);
-                break;
-            case detail_htm:
-                CrypServer.put(uniqueId, "currentPage", mCurrentPage.toString());
+        /**
+         * Pages served via {@link MiniTemplator}.
+         * Each page is generated in-memory and presented to the browser.
+         */
+        if( uri.contentEquals("/list.htm") || uri.contentEquals("/")) {
+            generatedHtml = ListHtm.render(m_ctx, uniqueId, params);
+        }
+        else {
+            if( uri.contentEquals("/detail.htm")) {
                 generatedHtml = DetailHtm.render(m_ctx, uniqueId, params);
-                break;
-            case restful_htm: {
-
+            }else {
                 /**
-                 * If it is a setup page, skip the security token check.
-                 * This can only be done when host verification is disabled.
+                 * Modals are generated with {@link MiniTemplator} under app:/files
                  */
-                boolean hostVerifierDisabled = ! WebUtil.NullHostNameVerifier.getInstance().m_hostVerifierEnabled;
-                if( hostVerifierDisabled
-                        && (params.containsKey(RestfulHtm.COMM_KEYS.register_companion_device.toString())
-                        || params.containsKey(RestfulHtm.COMM_KEYS.companion_ip_test.toString()))){
+                String fileCandidate = uri.substring(7);
 
-                    log(LogUtil.LogType.CRYP_SERVER, "sec_tok test skipped");
-                    generatedHtml = RestfulHtm.render(m_ctx, uniqueId, params);
-                }
-                else {
+                if (filesSet.contains( fileCandidate )) {
 
-                    String sec_tok = headers.get(CConst.SEC_TOK);
-                    if( sec_tok.contentEquals( m_sec_tok)){
+                    File file = new File(m_ctx.getFilesDir() +"/"+ fileCandidate);
+                    try {
+                        is = new FileInputStream(file);
+                        return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
 
-                        log(LogUtil.LogType.CRYP_SERVER, "sec_tok match");
-                        generatedHtml = RestfulHtm.render(m_ctx, uniqueId, params);
+                    } catch (FileNotFoundException e) {
+                        LogUtil.logException(CrypServer.class, e);
                     }
-                    else
-                        log(LogUtil.LogType.CRYP_SERVER, "sec_tok ERROR");
                 }
-                break;
+                else{
+                    log(LogUtil.LogType.CRYP_SERVER, "Page not found: " + uri);
+                }
             }
         }
 
@@ -409,15 +463,14 @@ public class CrypServer extends NanoHTTPD {
             String fileName = generatedHtml.substring(9);// Filename starts after ':' in char 9
 
             try {
-                log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file: "+fileName);
-
-                File file = new File( m_ctx.getFilesDir()+"/export.vcf");
+                File file = new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER+fileName);
                 is = new FileInputStream(file);
 
                 long fileLength = file.length();
+                log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file: "+fileName);
                 log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file length: "+fileLength);
 
-                Response response = new Response(HTTP_OK, MIME_VCARD, is);
+                Response response = new Response(Status.OK, MimeUtil.MIME_VCARD, is, -1);
                 response.addHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
                 response.addHeader("Pragma","no-cache");
                 response.addHeader("Cache-Control","no-cache, no-store, max-age=0, must-revalidate");
@@ -426,12 +479,12 @@ public class CrypServer extends NanoHTTPD {
                 return response;
 
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                LogUtil.logException(CrypServer.class, e);
                 log(LogUtil.LogType.CRYP_SERVER, "CrypServer download file not found: " + fileName);
             }
         }
 
-        return  new Response(Response.Status.OK, MIME_HTML, generatedHtml);
+        return  new Response(Status.OK, MimeUtil.MIME_HTML, generatedHtml);
     }
 
     /**
@@ -455,8 +508,8 @@ public class CrypServer extends NanoHTTPD {
     }
 
     /**
-     * Get session data for a unique key.  The default value is only referenced
-     * when the key cannot be found.
+     * Get session data for a unique key.
+     * The default value is only referenced when the key cannot be found.
      * @param uniqueId
      * @param key
      * @return
@@ -467,19 +520,13 @@ public class CrypServer extends NanoHTTPD {
         if( v == null){
             String s = "";
             if( key.equals("account"))
-                s = m_default_account;
+                s = m_current_account;
             else if (key.equals("group_id"))
-                s = m_default_group_id;
+                s = m_current_group_id;
             else if (key.equals("start_index"))
                 s = "0";
             else if (key.equals("search"))
                 s = "";
-            else if (key.equals("currentPage")) {
-                if (mUnlocked)
-                    s = URI_ENUM.list_htm.toString();
-                else
-                    s = URI_ENUM.login_htm.toString();
-            }
 
             sessionMap.put(key + uniqueId, s);
             return s;
@@ -611,6 +658,18 @@ public class CrypServer extends NanoHTTPD {
         }
     }
     /**
+     * Configure the security token.
+     * @param ctx
+     */
+    private static void initSecTok(Context ctx) {
+
+        setSecTok(
+                Cryp.get(
+                        CConst.SEC_TOK,
+                        Passphrase.generateRandomString(32, Passphrase.SYSTEM_MODE))
+        );
+    }
+    /**
      * Get the system wide security token
      * @return
      */
@@ -630,5 +689,44 @@ public class CrypServer extends NanoHTTPD {
 
         m_sec_tok = sec_tok;
         Cryp.put(CConst.SEC_TOK, sec_tok);
+    }
+
+    /**
+     * Clear user credentials.
+     * This will disable all network access with the exception of login.
+     *
+     * @param ctx
+     * @return
+     */
+    public static boolean clearCredentials(Context ctx){
+
+        boolean success = false;
+
+        if( m_session != null){
+
+            CookieHandler cookies = m_session.getCookies();
+            String uniqueId = cookies.read(CConst.UNIQUE_ID);
+            put(uniqueId, CConst.AUTHENTICATED, "0");
+
+            success = true;
+        }
+        mAuthenticated = false;
+        setSecTok( "");
+
+        return success;
+    }
+
+    /**
+     * Configure the security token and default page for a new user
+     * @param ctx
+     * @param uniqueId
+     */
+    public static void setValidUser(Context ctx, String uniqueId) {
+
+        initSecTok( ctx);
+
+        put(uniqueId, CConst.AUTHENTICATED, "1");
+
+        LogUtil.log(LogUtil.LogType.CRYP_SERVER, "cookie set authenticated: "+uniqueId);
     }
 }

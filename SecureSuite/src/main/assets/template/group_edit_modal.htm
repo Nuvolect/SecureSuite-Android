@@ -1,21 +1,4 @@
-<!--
-  ~ Copyright (c) 2017. Nuvolect LLC
-  ~
-  ~ This program is free software: you can redistribute it and/or modify it under the terms of the GNU
-  ~ General Public License as published by the Free Software Foundation, either version 3 of the License,
-  ~ or (at your option) any later version.
-  ~
-  ~ Contact legal@nuvolect.com for a less restrictive commercial license if you would like to use the
-  ~ software without the GPLv3 restrictions.
-  ~
-  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-  ~ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License along with this program.  If not,
-  ~ see <http://www.gnu.org/licenses/>.
-  ~
-  -->
+<!--Copyright (c) 2017. Nuvolect LLC-->
 
 <!-- Small modal -->
 <script type="text/javascript">
@@ -35,20 +18,20 @@
             <div class="modal-body">
                 <ul class="list-unstyled" style="padding:5px 5px">
                     <!-- $BeginBlock group_select -->
-                    <li onclick="groupCb('list_htm','${cb_group_id}')" >
+                    <li onclick="groupCb('list.htm','${cb_group_id}')" >
                         <input id="cb_${cb_group_id}" ${value_code} data-toggle="checkbox-x" data-size="md">
                         <label class="cbx-label medium" for="cb_${cb_group_id}">${group_select_title}</label>
                     </li>
                     <!-- $EndBlock group_select -->
                 </ul>
                 <br>
-                <a href="javascript:void(0)" onclick="newGroupContacts('list_htm')" >New group</a>
+                <a href="javascript:void(0)" onclick="newGroupContacts('list.htm')" >New group</a>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"
-                        onclick="postSamePage('list_htm','link=group_edit_cancel')">Cancel</button>
+                        onclick="postSamePage('list.htm','link=group_edit_cancel')">Cancel</button>
                 <button type="button" class="btn btn-primary"
-                        onclick="post('list_htm','link=group_edit_apply')">Apply</button>
+                        onclick="post('list.htm','link=group_edit_apply')">Apply</button>
             </div>
         </div>
     </div>

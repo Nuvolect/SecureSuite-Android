@@ -56,6 +56,7 @@ import static com.nuvolect.securesuite.data.SqlCipher.deleteIndexedItem;
 import static com.nuvolect.securesuite.data.SqlCipher.get;
 import static com.nuvolect.securesuite.data.SqlCipher.getKv;
 import static com.nuvolect.securesuite.data.SqlCipher.putKv;
+import static com.nuvolect.securesuite.util.LogUtil.log;
 
 /** Generate content and manage user interactions of the Detail HTML page. */
 public class DetailHtm {
@@ -97,6 +98,7 @@ public class DetailHtm {
 
         uri,                    // Full uri for routing
         queryParameterStrings,  // Raw parameters
+        unique_id,
 
         // Specific to this page
         add,            // Add a field, value is the field, index will hold multi-field index
@@ -179,7 +181,7 @@ public class DetailHtm {
          * Parse parameters and process any updates.
          * Return an Action indicating what to do next
          */
-        String action = parse(uniqueId, params);// set mContactId & others based on params
+        String action = parse(uniqueId, params);// set m_contact_id & others based on params
 
         if( action.startsWith("download:"))  // Check for download, action string includes filename
             return action;
@@ -208,6 +210,7 @@ public class DetailHtm {
             @Override
             public void run() {
 
+                //FIXME only call one time
                 PasswordModal.buildPasswordModal(m_ctx, true);// With Use password button
                 PasswordModal.buildPasswordModal(m_ctx, false);// no extra button
             }
@@ -530,7 +533,7 @@ public class DetailHtm {
             try {
                 key_enum = KEYS.valueOf(key);
             } catch (Exception e) {
-                LogUtil.log(LogUtil.LogType.DETAIL_HTM, "Error unknown key: " + key);
+                log(LogUtil.LogType.DETAIL_HTM, "Error unknown key: " + key);
                 LogUtil.logException(m_ctx, LogUtil.LogType.DETAIL_HTM, e);
             }
             LINKS link_enum = LINKS.NIL;
@@ -538,7 +541,7 @@ public class DetailHtm {
             switch(key_enum) {
 
                 case NIL: {
-                    LogUtil.log(LogUtil.LogType.DETAIL_HTM, "Error NIL key: " + key);
+                    log(LogUtil.LogType.DETAIL_HTM, "Error NIL key: " + key);
                     break;
                 }
                 case account:
@@ -561,7 +564,7 @@ public class DetailHtm {
                     break;
                 case item:{
                     m_contact_id = Long.valueOf(value);
-                    LogUtil.log(LogUtil.LogType.DETAIL_HTM, "item mContactId: " + m_contact_id);
+                    log(LogUtil.LogType.DETAIL_HTM, "item m_contact_id: " + m_contact_id);
                     break;
                 }
                 case item_star: {
@@ -580,7 +583,7 @@ public class DetailHtm {
                     try {
                         link_enum = LINKS.valueOf(value);
                     } catch (Exception e) {
-                        LogUtil.log(LogUtil.LogType.DETAIL_HTM, "Error unknown link: " + value);
+                        log(LogUtil.LogType.DETAIL_HTM, "Error unknown link: " + value);
                         LogUtil.logException(m_ctx, LogUtil.LogType.DETAIL_HTM, e);
                     }
                     break;
@@ -645,12 +648,15 @@ public class DetailHtm {
                 case export_contact: {
                     m_contact_id = Long.valueOf( value );
                     String userName = SqlCipher.get( m_contact_id, ATab.display_name);
-                    String fileName = userName.replaceAll("\\W+", "");
+                    String fileName = Safe.safeString( userName.replaceAll("\\W+", ""));
                     if( fileName.isEmpty())
                         fileName = "contact";
                     fileName = fileName + ".vcf";
 
-                    File file = new File( m_ctx.getFilesDir()+"/"+fileName);
+                    // Create a folder for temporary use if necessary
+                    new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER).mkdirs();
+
+                    File file = new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER+fileName);
                     ExportVcf.writeContactVcard(m_contact_id, file);
                     return "download:"+fileName;
                 }
@@ -671,13 +677,16 @@ public class DetailHtm {
                     break;
                 case theme:{
 
-                    LogUtil.log(LogUtil.LogType.DETAIL_HTM,"theme selected: " + value);
+                    log(LogUtil.LogType.DETAIL_HTM,"theme selected: " + value);
                     SettingsActivity.setTheme(m_ctx, value);
                     break;
                 }
                 case uri:
                 case queryParameterStrings:
+                case unique_id:
                     break;
+                default:
+                    log(LogUtil.LogType.DETAIL_HTM, "ERROR, unmanaged key_enum: " + key_enum);
             }
 
             switch (link_enum){
@@ -734,6 +743,8 @@ public class DetailHtm {
                 case sort_last:
                     CrypServer.notify(uniqueId, link_enum+" Not implemented yet","warn");
                     break;
+                default:
+                    log(LogUtil.LogType.DETAIL_HTM, "ERROR, unmanaged link_enum: " + link_enum);
             }
         }
         return CConst.GENERATE_HTML ;// Default to generate html as next step
@@ -776,7 +787,7 @@ public class DetailHtm {
                 putKv(m_contact_id, KvTab.password, password_placeholder);
                 break;
             default:
-                LogUtil.log(LogUtil.LogType.DETAIL_HTM, "addItem.Default unhandled key: " + field);
+                log(LogUtil.LogType.DETAIL_HTM, "addItem.Default unhandled key: " + field);
         }
     }
 
@@ -820,7 +831,7 @@ public class DetailHtm {
                 SqlCipher.putKv( m_contact_id, KvTab.password, "");
                 break;
             default:
-                LogUtil.log(LogUtil.LogType.DETAIL_HTM, "deleteItem.Default unhandled key: " + fieldString);
+                log(LogUtil.LogType.DETAIL_HTM, "deleteItem.Default unhandled key: " + fieldString);
         }
     }
 
@@ -859,7 +870,7 @@ public class DetailHtm {
         if( eid < mMultiFieldData.size())
             fieldData = mMultiFieldData.get(eid);
         else{
-            LogUtil.log(LogUtil.LogType.WEB_SERVER, "eid out of bounds: "+eid);
+            log(LogUtil.LogType.WEB_SERVER, "eid out of bounds: "+eid);
             return;
         }
 
@@ -904,26 +915,26 @@ public class DetailHtm {
                     SqlCipher.updateLabel(m_contact_id, DTab.website, fieldData.index, eid_value);
                 break;
             default:
-                LogUtil.log(LogUtil.LogType.DETAIL_HTM, "updateMultiField.Default unhandled key: " + eid_value);
+                log(LogUtil.LogType.DETAIL_HTM, "updateMultiField.Default unhandled key: " + eid_value);
         }
     }
 
     private static void updateField(String fieldName, String content) {
 
-        LogUtil.log(LogUtil.LogType.DETAIL_HTM, "fieldName: " + fieldName+", content: "+content);
+        log(LogUtil.LogType.DETAIL_HTM, "fieldName: " + fieldName+", content: "+content);
 
         FIELD field_enum = FIELD.NIL;
         try {
             field_enum = FIELD.valueOf(fieldName);
         } catch (Exception e) {
-            LogUtil.log(LogUtil.LogType.DETAIL_HTM, "Error unknown key: " + fieldName);
+            log(LogUtil.LogType.DETAIL_HTM, "Error unknown key: " + fieldName);
             LogUtil.logException(m_ctx, LogUtil.LogType.DETAIL_HTM, e);
         }
 
         switch(field_enum) {
 
             case NIL: {
-                LogUtil.log(LogUtil.LogType.DETAIL_HTM, "Error NIL key: " + fieldName);
+                log(LogUtil.LogType.DETAIL_HTM, "Error NIL key: " + fieldName);
                 break;
             }
             case full_name:
@@ -960,7 +971,7 @@ public class DetailHtm {
                 SqlCipher.putKv(m_contact_id, KvTab.nickname, content.trim());
                 break;
             default:
-                LogUtil.log(LogUtil.LogType.DETAIL_HTM, "updateField.Default unhandled key: " + fieldName);
+                log(LogUtil.LogType.DETAIL_HTM, "updateField.Default unhandled key: " + fieldName);
         }
     }
 }

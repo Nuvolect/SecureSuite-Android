@@ -1,21 +1,4 @@
-<!--
-  ~ Copyright (c) 2017. Nuvolect LLC
-  ~
-  ~ This program is free software: you can redistribute it and/or modify it under the terms of the GNU
-  ~ General Public License as published by the Free Software Foundation, either version 3 of the License,
-  ~ or (at your option) any later version.
-  ~
-  ~ Contact legal@nuvolect.com for a less restrictive commercial license if you would like to use the
-  ~ software without the GPLv3 restrictions.
-  ~
-  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-  ~ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License along with this program.  If not,
-  ~ see <http://www.gnu.org/licenses/>.
-  ~
-  -->
+<!--Copyright (c) 2017. Nuvolect LLC-->
 
 <html>
 
@@ -36,7 +19,7 @@
     <script src="/js/instantedit.js"></script>
     <script src="/js/jquery-ui.min.js"></script>
     <script>
-        var baseUrl = 'detail_htm';
+        var baseUrl = 'detail.htm';
     </script>
 </head>
 
@@ -78,10 +61,10 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right" role="menu">
                     <!-- $BeginBlock account_select -->
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','account=${account_select}')">${account_select}</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','account=${account_select}')">${account_select}</a></li>
                     <!-- $EndBlock account_select -->
                     <li class="divider"></li>
-                    <li><a href="javascript:void(0)" onclick="post('logout_htm','')">LOGOUT</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('logout.htm','')">LOGOUT</a></li>
                 </ul>
             </div>
         </div>
@@ -98,18 +81,18 @@
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','')">Contacts</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','')">Contacts</a></li>
                     <li><a href="javascript:void(0)" onclick="injectModal('/files/password_modal_filled.htm')">Passwords</a></li>
                 </ul>
             </div>
         </div>
         <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 ">
-            <button class="btn btn-default" onclick="post('list_htm','');" >
+            <button class="btn btn-default" onclick="post('list.htm','');" >
                 <span class="glyphicon glyphicon-arrow-left"></span>
             </button>
             <div class="btn-group">
                 <button class="btn btn-default"
-                        onclick="post('detail_htm','link=NIL');"
+                        onclick="post('detail.htm','link=NIL');"
                         >
                     <span class="glyphicon glyphicon-refresh"></span>
                     <span class="sr-only">Toggle Dropdown</span>
@@ -125,16 +108,16 @@
                 </button>
                 <ul class="dropdown-menu" role="menu" style="padding:5px 5px">
                     <!-- $BeginBlock group_select -->
-                    <li onclick="post('detail_htm','cb_group_id=${cb_group_id}')">
+                    <li onclick="post('detail.htm','cb_group_id=${cb_group_id}')">
                         <input id="cb_${cb_group_id}" ${value_code} data-toggle="checkbox-x" data-size="md">
                         <label class="cbx-label medium" for="cb_${cb_group_id}">${group_select_title}</label>
                     </li>
                     <!-- $EndBlock group_select -->
                     <li class="divider"></li>
-                    <li><a href="javascript:void(0)" onclick="newGroup('detail_htm')" >Create new</a></li>
+                    <li><a href="javascript:void(0)" onclick="newGroup('detail.htm')" >Create new</a></li>
                 </ul>
             </div>
-            <!--<button class="btn btn-default ${email_state}" onclick="post('detail_htm','link=email');" >-->
+            <!--<button class="btn btn-default ${email_state}" onclick="post('detail.htm','link=email');" >-->
             <!--<span class="glyphicon glyphicon-envelope"></span>-->
             <!--</button>-->
 
@@ -143,19 +126,19 @@
                          data-toggle="dropdown" aria-expanded="false">More<span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="javascript:void(0)" onclick="post('list_htm','delete_1_contact=${contact_id}')" >Delete contact</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','delete_1_contact=${contact_id}')" >Delete contact</a></li>
                     <li class="divider"></li>
-                    <li><a href="javascript:void(0)" onclick="post('detail_htm','add=username')"     >Add username</a></li>
-                    <li><a href="javascript:void(0)" onclick="post('detail_htm','add=password')"     >Add password</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('detail.htm','add=username')"     >Add username</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('detail.htm','add=password')"     >Add password</a></li>
                     <li class="divider"></li>
-                    <li><a href="javascript:void(0)" onclick="post('detail_htm','add=phoneticname')" >Add phonetic name</a></li>
-                    <li><a href="javascript:void(0)" onclick="post('detail_htm','add=nickname')"     >Add nickname</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('detail.htm','add=phoneticname')" >Add phonetic name</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('detail.htm','add=nickname')"     >Add nickname</a></li>
                     <li class="divider"></li>
-                    <li><a href="javascript:void(0)" onclick="post('detail_htm','add=date')"         >Add date</a></li>
-                    <li><a href="javascript:void(0)" onclick="post('detail_htm','add=website')"      >Add website</a></li>
-                    <li><a href="javascript:void(0)" onclick="post('detail_htm','add=relation')"     >Add relationship</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('detail.htm','add=date')"         >Add date</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('detail.htm','add=website')"      >Add website</a></li>
+                    <li><a href="javascript:void(0)" onclick="post('detail.htm','add=relation')"     >Add relationship</a></li>
                     <li class="divider"></li>
-                    <li><a href="javascript:void(0)" onclick="postSamePage('detail_htm','export_contact=${contact_id}')">Export contact</a></li>
+                    <li><a href="javascript:void(0)" onclick="postSamePage('detail.htm','export_contact=${contact_id}')">Export contact</a></li>
                     <li><a href="javascript:void(0)" onclick="printPage()"                           >Print...</a></li>
                 </ul>
             </div>
@@ -176,7 +159,7 @@
                     <li><a href="javascript:void(0)" class="theme" data-theme="earth_hex"            >Earth hex</a></li>
                     <li><a href="javascript:void(0)" class="theme" data-theme="matrix"               >Matrix</a></li>
                     <li class="divider"></li>
-                    <!--<li><a href="javascript:void(0)" onclick="post('detail_htm','link=settings')" >Settings</a></li>-->
+                    <!--<li><a href="javascript:void(0)" onclick="post('detail.htm','link=settings')" >Settings</a></li>-->
                     <li><a href="https://github.com/Nuvolect/SecureSuite-Android/wiki" target="_blank"              >Help</a></li>
                 </ul>
             </div>
@@ -188,25 +171,25 @@
         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" id="side-nav">
 
             <button class="btn btn-default"
-                    onclick="post('detail_htm','link=new_contact');">NEW CONTACT</button>
+                    onclick="post('detail.htm','link=new_contact');">NEW CONTACT</button>
 
             <p></p>
-            <a href="" onclick="post('list_htm','link=all_in_account')">${all_in_account}</a><br>
-            <a href="" onclick="post('list_htm','link=starred_in_account')">${starred_in_account}</a><br>
+            <a href="" onclick="post('list.htm','link=all_in_account')">${all_in_account}</a><br>
+            <a href="" onclick="post('list.htm','link=starred_in_account')">${starred_in_account}</a><br>
             <!-- $BeginBlock group_item -->
-            <a href="" onclick="post('list_htm','group_id=${group_id}')">${group_title}</a><br>
+            <a href="" onclick="post('list.htm','group_id=${group_id}')">${group_title}</a><br>
             <!-- $EndBlock group_item -->
             <p></p>
             <p>
-                <a href="javascript:void(0)" onclick="newGroup('detail_htm')"                >New Group...</a> <br>
-                <a href="javascript:void(0)" onclick="post('detail_htm','link=delete_group')">Delete Group</a>
+                <a href="javascript:void(0)" onclick="newGroup('detail.htm')"                >New Group...</a> <br>
+                <a href="javascript:void(0)" onclick="post('detail.htm','link=delete_group')">Delete Group</a>
             </p>
         </div>
         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
             <div class="panel panel-default" id="main-panel">
                 <div class="row">
                     <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-                        <a href="javascript:void(0)" onclick="post('detail_htm','link=contact_photo')">
+                        <a href="javascript:void(0)" onclick="post('detail.htm','link=contact_photo')">
                             <img src="${contact_photo}" class="img-responsive img-thumbnail contact-photo"></a>
                     </div>
                     <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
@@ -253,14 +236,14 @@
                                 <tr>
                                     <td align="right"><span id="${id_l}" class="editText" title="Click to edit!" style="cursor: pointer; font-size:75%; color:grey;">${email_cat}</span></td>
                                     <td><span id="${id_v}" class="editText" title="Click to edit!" style="cursor: pointer;" data-placeholder="Enter email" >${email_value}</span></td>
-                                    <td><span onclick="post('detail_htm','delete=email&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
+                                    <td><span onclick="post('detail.htm','delete=email&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
                                     <td><a href="mailto:${email_value}" target="_blank"><span class="glyphicon glyphicon-envelope"></span></a></td>
                                 </tr>
                                 <!-- $EndBlock email -->
                                 <!-- $BeginBlock email_post -->
                                 <tr>
                                     <td></td>
-                                    <td><span style="color:grey; font-size:75%" onclick="post('detail_htm','add=email')">Add email</span></td>
+                                    <td><span style="color:grey; font-size:75%" onclick="post('detail.htm','add=email')">Add email</span></td>
                                 </tr>
                                 <!-- $EndBlock email_post -->
 
@@ -268,13 +251,13 @@
                                 <tr>
                                     <td align="right"><span id="${id_l}" class="editText" title="Click to edit!" style="cursor: pointer; font-size:75%; color:grey;">${phone_cat}</span></td>
                                     <td><span id="${id_v}" class="editText" title="Click to edit!" style="cursor: pointer;">${phone_value}</span></td>
-                                    <td><span onclick="post('detail_htm','delete=phone&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
+                                    <td><span onclick="post('detail.htm','delete=phone&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
                                 </tr>
                                 <!-- $EndBlock phone -->
                                 <!-- $BeginBlock phone_post -->
                                 <tr>
                                     <td></td>
-                                    <td><span style="color:grey; font-size:75%" onclick="post('detail_htm','add=phone')">Add phone</span></td>
+                                    <td><span style="color:grey; font-size:75%" onclick="post('detail.htm','add=phone')">Add phone</span></td>
                                 </tr>
                                 <!-- $EndBlock phone_post -->
 
@@ -282,14 +265,14 @@
                                 <tr>
                                     <td align="right"><span id="${id_l}" class="editText" title="Click to edit!" style="cursor: pointer; font-size:75%; color:grey;">${address_cat}</span></td>
                                     <td><span id="${id_v}" class="editText multiline" title="Click to edit!" style="cursor: pointer;" data-placeholder="Enter address" >${address_value}</span></td>
-                                    <td><span onclick="post('detail_htm','delete=address&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
+                                    <td><span onclick="post('detail.htm','delete=address&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
                                     <td><a href="http://maps.google.com/?q=${address_uri_value}" target="_blank"><span class="glyphicon glyphicon-map-marker"></span></a></td>
                                 </tr>
                                 <!-- $EndBlock address -->
                                 <!-- $BeginBlock address_post -->
                                 <tr>
                                     <td></td>
-                                    <td><span style="color:grey; font-size:75%" onclick="post('detail_htm','add=address')">Add address</span></td>
+                                    <td><span style="color:grey; font-size:75%" onclick="post('detail.htm','add=address')">Add address</span></td>
                                 </tr>
                                 <!-- $EndBlock address_post -->
 
@@ -297,13 +280,13 @@
                                 <tr>
                                     <td align="right"><span id="${id_l}" class="editText" title="Click to edit!" style="cursor: pointer; font-size:75%; color:grey;">${website_cat}</span></td>
                                     <td><span id="${id_v}" class="editText" title="Click to edit!" style="cursor: pointer;" data-placeholder="Enter website" >${website_value}</span></td>
-                                    <td><span onclick="post('detail_htm','delete=website&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
+                                    <td><span onclick="post('detail.htm','delete=website&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
                                     <td><a href="${website_http_value}" target="_blank"><span class="glyphicon glyphicon-link"></span></a></td>
                                 <tr>
                                     <!-- $EndBlock website -->
                                     <!-- $BeginBlock website_post -->
                                     <td></td>
-                                    <td><span style="color:grey; font-size:75%" onclick="post('detail_htm','add=website')">Add website</span></td>
+                                    <td><span style="color:grey; font-size:75%" onclick="post('detail.htm','add=website')">Add website</span></td>
                                 </tr>
                                 <!-- $EndBlock website_post -->
 
@@ -311,7 +294,7 @@
                                 <tr>
                                     <td align="right" style="cursor: pointer; font-size:75%; color:grey;">Username</td>
                                     <td><span id="username" class="editText" title="Click to edit!" style="cursor: pointer;" data-placeholder="${username_placeholder}">${username}</span></td>
-                                    <td><span onclick="post('detail_htm','delete=username&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
+                                    <td><span onclick="post('detail.htm','delete=username&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
                                     <td><a href="javascript:void(0)" onclick="copyToClipboard('username')"><span class="glyphicon glyphicon-copy"></span></a></td>
                                 </tr>
                                 <!-- $EndBlock username_block -->
@@ -320,7 +303,7 @@
                                 <tr>
                                     <td align="right"><a href="javascript:void(0)" style="cursor: pointer; text-decoration: underline; font-size:75%; color:grey;" onclick="openPasswordModal(this)">Password</a></td>
                                     <td><span id="password" class="editText" title="Click to edit!" style="cursor: pointer;" data-placeholder="${password_placeholder}">${password}</span></td>
-                                    <td><span onclick="post('detail_htm','delete=password&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
+                                    <td><span onclick="post('detail.htm','delete=password&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
                                     <td><a href="javascript:void(0)" onclick="copyToClipboard('password')"><span class="glyphicon glyphicon-copy"></span></a></td>
                                 </tr>
                                 <!-- $EndBlock password_block -->
@@ -329,13 +312,13 @@
                                 <tr>
                                     <td align="right"><span id="${id_l}" class="editText" title="Click to edit!" style="cursor: pointer; font-size:75%; color:grey;">${date_cat}</span></td>
                                     <td><span id="${id_v}" class="editText" title="Click to edit!" style="cursor: pointer;" data-placeholder="Enter date" >${date_value}</span></td>
-                                    <td><span onclick="post('detail_htm','delete=date&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
+                                    <td><span onclick="post('detail.htm','delete=date&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
                                 <tr>
                                     <!-- $EndBlock date -->
                                     <!-- $BeginBlock date_post -->
                                 <tr>
                                     <td></td>
-                                    <td><span style="color:grey; font-size:75%" onclick="post('detail_htm','add=date')">Add date</span></td>
+                                    <td><span style="color:grey; font-size:75%" onclick="post('detail.htm','add=date')">Add date</span></td>
                                 </tr>
                                 <!-- $EndBlock date_post -->
 
@@ -343,13 +326,13 @@
                                 <tr>
                                     <td align="right"><span id="${id_l}" class="editText" title="Click to edit!" style="cursor: pointer; font-size:75%; color:grey;">${relation_cat}</span></td>
                                     <td><span id="${id_v}" class="editText" title="Click to edit!" style="cursor: pointer;" data-placeholder="Enter relationship">${relation_value}</span></td>
-                                    <td><span onclick="post('detail_htm','delete=relation&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
+                                    <td><span onclick="post('detail.htm','delete=relation&index=${del_i}');" style="cursor: pointer;" class="glyphicon glyphicon-trash"/></td>
                                 <tr>
                                     <!-- $EndBlock relation -->
                                     <!-- $BeginBlock relation_post -->
                                 <tr>
                                     <td></td>
-                                    <td><span style="color:grey; font-size:75%" onclick="post('detail_htm','add=relation')">Add relationship</span></td>
+                                    <td><span style="color:grey; font-size:75%" onclick="post('detail.htm','add=relation')">Add relationship</span></td>
                                 </tr>
                                 <!-- $EndBlock relation_post -->
                                 </tbody>

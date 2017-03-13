@@ -34,7 +34,7 @@ public class ServeCmd {
 
     private static boolean DEBUG = LogUtil.DEBUG;
 
-    enum CMD {
+    private enum CMD {
         // elFinder commands in documentation order
         open,      // open directory and initializes data when no directory is defined (first iteration)
         file,      // output file contents to the browser (download/preview)
@@ -84,8 +84,91 @@ public class ServeCmd {
 
         switch ( cmd){
 
+            case archive:
+                inputStream = CmdArchive.go(ctx, params);
+                break;
             case debug:
                 inputStream = CmdDebug.go(ctx, params);
+                break;
+            case dim:
+                break;
+            case duplicate:
+                inputStream = CmdDuplicate.go(params);
+                break;
+            case extract:
+                inputStream = CmdExtract.go(params);
+                break;
+            case file:
+                inputStream = CmdFile.go(params);
+                break;
+            case get:
+                inputStream = CmdGet.go(params);
+                break;
+            case info:
+                inputStream = CmdInfo.go(params);
+                break;
+            case ls:
+                inputStream = CmdLs.go(params);
+                break;
+            case login:
+                inputStream = CmdLogin.go(ctx, params);
+                break;
+            case logout:
+                inputStream = CmdLogout.go(ctx, params);
+                break;
+            case mkdir:
+                inputStream = CmdMkdir.go(params);
+                break;
+            case mkfile:
+                inputStream = CmdMkfile.go(params);
+                break;
+            case netmount:
+                break;
+            case open:
+                inputStream = CmdOpen.go(params);
+                break;
+            case parents:
+                inputStream = CmdParents.go(params);
+                break;
+            case paste:
+                inputStream = CmdPaste.go(params);
+                break;
+            case ping:
+                inputStream = CmdPing.go(params);
+                break;
+            case put:
+                inputStream = CmdPut.go(params);
+                break;
+            case size:
+                inputStream = CmdSize.go(params);
+                break;
+            case tmb:
+                break;
+            case tree:
+                inputStream = CmdTree.go(params);
+                break;
+            case rename:
+                inputStream = CmdRename.go(params);
+                break;
+            case resize:
+                inputStream = CmdResize.go(params);
+                break;
+            case rm:
+                inputStream = CmdRm.go(ctx, params);
+                break;
+            case search:
+                inputStream = CmdSearch.go(params);
+                break;
+            case test:
+                inputStream = CmdTest.go(ctx, params);
+                break;
+            case upload:
+                inputStream = CmdUpload.go(ctx, params);
+                break;
+            case url:
+                break;
+            case zipdl:
+                inputStream = CmdZipdl.go(ctx, params);
                 break;
             default:
                 LogUtil.log(LogUtil.LogType.SERVE, "Invalid connector command: "+error);

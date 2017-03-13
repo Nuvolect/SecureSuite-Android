@@ -70,6 +70,7 @@ public class CConst {
     public static final String ACCOUNT_NAME         = ATab.account_name.toString();
     public static final String ACCOUNT_TYPE         = ATab.account_type.toString();
     public static final String ADDRESS              = DTab.address.toString();
+    public static final String AUTHENTICATED        = "authenticated";
     public static final String BLOG_URL             = "https://nuvolect.com/blog";
     public static final String COMMS_SELECT         = DTab.comms_select.toString();
     public static final String CONTACT              = "contact";
@@ -79,7 +80,12 @@ public class CConst {
     public static final String CRYP_SYNC            = "cryp_sync";
     public static final String DATES                = DTab.date.toString();
     public static final String DISPLAY_NAME         = DTab.display_name.toString();
+    public static final String ELFINDER_PAGE        = "/elFinder-2.1.22/ss_finder.html";
+    public static final String ELF_                 = "elf_";
+    public static final String EMBEDDED_USER        = "embedded_user";
     public static final String EMAIL                = DTab.email.toString();
+    public static final String FILE_NAME            = "file_name";
+    public static final String FILE_PATH            = "file_path";
     public static final String FIX_ERRORS           = "fix_errors";
     public static final String GENERATE_HTML        = "generate_html";
     public static final String GROUP_TITLE          = "group_title";
@@ -117,6 +123,8 @@ public class CConst {
     public static final String QUERY_PARAMETER_STRINGS  = "queryParameterStrings";
     public static final String RELATION             = DTab.relation.toString();
     public static final String RESPONSE_CODE        = "response_code";
+    public static final String ROOT                 = "/";
+    public static final String SLASH                = "/";
     public static final String SEC_TOK              = "sec_tok";
     public static final String SERVER_ENABLED       = "server_enabled";
     public static final String SUBSCRIBER           = "subscriber";
@@ -126,6 +134,7 @@ public class CConst {
     public static final String UPDATES              = "updates";
     public static final String URI                  = "uri";
     public static final String VERSION              = ATab.version.toString();
+    public static final String VCF_FOLDER           = "/vcf/";
     public static final String WEBSITE              = DTab.website.toString();
     public static final String _ID                  = "_id";
 
@@ -176,17 +185,18 @@ public class CConst {
             VALIDATE_LOCK_CODE_TEST_ACTION                    = 16,
 
             CALLER_ID_REQUEST_READ_PHONE_STATE                = 17,
+            REQUEST_WRITE_EXTERNAL_STORAGE                    = 18,
 
-            IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS     = 18,
-            IMPORT_ACCOUNT_CONTACTS_REQUEST_GET_ACCOUNTS      = 19,
+            IMPORT_ACCOUNT_CONTACTS_REQUEST_READ_CONTACTS     = 19,
+            IMPORT_ACCOUNT_CONTACTS_REQUEST_GET_ACCOUNTS      = 20,
 
-            IMPORT_VCARD_REQUEST_EXTERNAL_STORAGE             = 20,
-            IMPORT_VCARD_BROWSE_ACTION                        = 21,
+            IMPORT_VCARD_REQUEST_EXTERNAL_STORAGE             = 21,
+            IMPORT_VCARD_BROWSE_ACTION                        = 22,
 
-            IMPORT_SINGLE_CONTACT_REQUEST_READ                = 22,
-            IMPORT_SINGLE_CONTACT_PICKER                      = 23,
+            IMPORT_SINGLE_CONTACT_REQUEST_READ                = 23,
+            IMPORT_SINGLE_CONTACT_PICKER                      = 24,
 
-            RESTORE_CONTACTS_DATABASE                         = 24;
+            RESTORE_CONTACTS_DATABASE                         = 25;
 
     public static final String RESTORE_BACKUP_PATH            = "restore_backup_path";
     public static final String IMPORT_VCF_PATH                = "import_vcf_path";

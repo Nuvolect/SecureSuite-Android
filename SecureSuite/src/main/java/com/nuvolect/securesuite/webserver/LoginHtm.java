@@ -110,7 +110,6 @@ public class LoginHtm {
 
             if( password.contentEquals(Cryp.getLockCode(ctx))) {
 
-                CrypServer.put(uniqueId, "currentPage", CrypServer.URI_ENUM.list_htm.toString());
                 LogUtil.log(LogUtil.LogType.LOGIN_HTM, "login approved");
                 String status = "Login successful " + TimeUtil.friendlyTimeMDYM(System.currentTimeMillis());
                 Cryp.put(CConst.LAST_LOGIN_STATUS, status);

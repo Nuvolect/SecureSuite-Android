@@ -21,6 +21,8 @@ package com.nuvolect.securesuite.main;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
 
 import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -51,5 +53,9 @@ public class App extends Application {
 
     public static Context getContext(){
         return mContext;
+    }
+
+    public static boolean hasPermission(String perm) {
+        return(ContextCompat.checkSelfPermission( mContext, perm)== PackageManager.PERMISSION_GRANTED);
     }
 }

@@ -1,0 +1,122 @@
+<!--
+  ~ Copyright (c) 2017. Nuvolect LLC
+  ~
+  ~ This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the License,
+  ~ or (at your option) any later version.
+  ~
+  ~ Contact legal@nuvolect.com for a less restrictive commercial license if you would like to use the
+  ~ software without the GPLv3 restrictions.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+  ~ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with this program.  If not,
+  ~ see <http://www.gnu.org/licenses/>.
+  ~
+  -->
+
+<html ng-app="myApp" ng-controller="LoginController as postCtrl" class="ng-scope">
+
+<head>
+    <title>SecureSuite</title>
+
+    <script src="/js/angular.min.js"></script>
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/login.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container">
+    <br>
+
+    <div class="row" align="center">
+
+        <img src="/img/icon_64.png" style="padding:10px;"/>
+        <br>
+        <span style="font-size:18px; color:grey;">SecureSuite</span>
+    </div>
+    <div class="card card-container">
+
+        <form class="login-form ng-pristine ng-invalid-required" ng-submit="postCtrl.postForm()">
+
+            <h2>Please sign in</h2>
+
+            <label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" id="inputPassword"
+                   class="form-control ng-pristine ng-untouched ng-invalid ng-invalid-required"
+                   placeholder="Password" required=""
+                   ng-model="postCtrl.inputData.password">
+            <br>
+            <div class="alert alert-danger ng-binding ng-hide" role="alert" ng-show="errorMsg">{{errorMsg}}</div>
+
+            <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
+        </form>
+        <a href="https://nuvolect.com/deepdive_help" target="_blank" class="forgot-password">
+            Need help?
+        </a>
+    </div>
+
+    <br>
+    <br>
+    <div ng-include="'/footer.htm'"></div>
+    <br>
+
+</div>
+
+<script src="/js/jquery-1.11.2.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+<script>
+	function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+    }
+    return "";
+    }
+    </script>
+<script>
+
+	angular.module('myApp', [])
+	.controller('LoginController', ['$scope', '$http', function($scope, $http) {
+
+		this.postForm = function() {
+
+			var encodedString =
+			    'cmd=login' +
+			    '&unique_id=' + getCookie("unique_id") +
+				'&password=' + encodeURIComponent(this.inputData.password);
+
+console.log("postForm: "+encodedString);
+
+			$http({
+				method: 'POST',
+				url: '/connector?cmd=login',
+				data: encodedString,
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			})
+			.success(function(data, status, headers, config) {
+
+				if ( data.user_confirmed) {
+				    console.log("user confirmed");
+					window.location.href = '/';
+				} else {
+
+					$scope.errorMsg = "Login not correct";
+				}
+			})
+			.error(function(data, status, headers, config) {
+				$scope.errorMsg = 'Unable to submit form';
+			})
+		}
+	}]);
+
+</script>
+</body>
+</html>

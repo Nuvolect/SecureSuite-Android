@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2017. Nuvolect LLC
+  ~
+  ~ This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the License,
+  ~ or (at your option) any later version.
+  ~
+  ~ Contact legal@nuvolect.com for a less restrictive commercial license if you would like to use the
+  ~ software without the GPLv3 restrictions.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+  ~ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with this program.  If not,
+  ~ see <http://www.gnu.org/licenses/>.
+  ~
+  -->
+
+<html ng-app="myApp" ng-controller="testController">
+<head>
+    <title>SS Performance Test</title>
+
+    <script src="/js/angular.min.js"></script>
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/test.css" rel="stylesheet">
+
+</head>
+
+<body>
+<!-- Bootstrap core JavaScript -->
+<script src="/js/jquery-1.11.2.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<div ng-include="'./navbar.htm'"></div>
+
+<div class="container">
+
+    <br>
+    <br>
+
+    <div align="center">
+
+        <table class="card">
+            <tr>
+                <td align="left">
+                    <strong>10 MB File</strong>
+                </td>
+                <td>
+                    <strong>SDCARD</strong>
+                </td>
+                <td>
+                    <strong>CRYPTO</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="left">
+                    Write file
+                </td>
+                <td align="right">
+                    {{write_sdcard_test_file}}
+                </td>
+                <td align="right">
+                    {{write_crypto_test_file}}
+                </td>
+            </tr>
+            <tr>
+                <td align="left">
+                    Read file
+                </td>
+                <td align="right">
+                    {{read_sdcard_test_file}}
+                </td>
+                <td align="right">
+                    {{read_crypto_test_file}}
+                </td>
+            </tr>
+            <tr>
+                <td align="left">
+                    Duplicate file
+                </td>
+                <td align="right">
+                    {{duplicate_sdcard_test_file}}
+                </td>
+                <td align="right">
+                    {{duplicate_crypto_test_file}}
+                </td>
+            </tr>
+            <tr>
+                <td align="left">
+                    Copy file across volumes
+                </td>
+                <td align="right">
+                    {{copy_crypto_file_to_sdcard}}
+                </td>
+                <td align="right">
+                    {{copy_sdcard_file_to_crypto}}
+                </td>
+            </tr>
+            <tr>
+                <td align="left">
+                    Delete test file
+                </td>
+                <td align="right">
+                    {{delete_sdcard_test_file}}
+                </td>
+                <td align="right">
+                    {{delete_crypto_test_file}}
+                </td>
+            </tr>
+            <tr>
+                <td align="left">
+                    Delete test folder
+                </td>
+                <td align="right">
+                    {{delete_sdcard_test_folder}}
+                </td>
+                <td align="right">
+                    {{delete_crypto_test_folder}}
+                </td>
+            </tr>
+        </table>
+        <br>
+        <p>Requires write external storage permission.</p>
+    </div>
+
+
+</div>
+
+<br>
+<br>
+
+<div ng-include="'/footer.htm'"></div>
+
+</div>
+
+<script>
+
+var app = angular.module('myApp', []);
+app.controller('testController', function($scope, $http, $parse) {
+
+  var tests = [
+  "write_sdcard_test_file",
+  "write_crypto_test_file",
+  "read_sdcard_test_file",
+  "read_crypto_test_file",
+  "duplicate_sdcard_test_file",
+  "duplicate_crypto_test_file",
+  "copy_crypto_file_to_sdcard",
+  "copy_sdcard_file_to_crypto",
+  "delete_sdcard_test_file",
+  "delete_crypto_test_file",
+  "delete_sdcard_test_folder",
+  "delete_crypto_test_folder",
+  ];
+
+  function runTest( i ){
+
+     $http.get("/connector/?cmd=test&test_id="+tests[ i ])
+       .then(function (response) {
+
+        // test_id the test name and is bound to the Angular result variable
+        // Get the model
+        var model = $parse(response.data.test_id);
+
+        // Replace timing result with error message if any
+        var testResult = response.data.delta_time;
+        if( response.data.error.length > 0)
+            testResult = response.data.error;
+
+        // Assigns a value to it
+        model.assign($scope, testResult);
+
+        var j = i + 1;
+        if( j < tests.length )
+            runTest( j );
+     });
+   };
+
+   runTest( 0 );
+});
+
+</script>
+</body>
+</html>

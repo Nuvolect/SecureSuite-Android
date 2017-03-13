@@ -33,6 +33,7 @@ import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Util;
+import com.nuvolect.securesuite.webserver.connector.ServeInit;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
@@ -60,10 +61,8 @@ import static com.nuvolect.securesuite.util.LogUtil.log;
 public class WebService extends Service {
 
 
-    private Context m_ctx;
     private String mIpAddress;
     private Handler mHandler;
-    public static File assetsDir;
     public static String assetsDirPath;
 
     private static SSLServerSocketFactory sslServerSocketFactory;
@@ -76,14 +75,19 @@ public class WebService extends Service {
      * The passPhrase is used to confirm the validity of the keystore
      */
     private static String keyFile = "/assets/keystore.bks";
-    private static char[] passPhrase = "27@NDMQu0cLY".toCharArray();
+    private static char[] keystoreValidationKey = "27@NDMQu0cLY".toCharArray();
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        m_ctx = getApplicationContext();
-        SqlCipher.getInstance(m_ctx);
+        Context ctx = getApplicationContext();
+        /**
+         * Initialize web service command data
+         */
+        ServeInit.init( ctx);
+
+        SqlCipher.getInstance(ctx);
         // Load group data into memory, used for group titles and people counts
         MyGroups.loadGroupMemory();
 
@@ -91,7 +95,7 @@ public class WebService extends Service {
          * Android app assets are stored in the APK and are not part of the filesystem.
          * Copy all of the files from apk/assets to app private data
          */
-        assetsDir = Util.copyAssets(m_ctx, "template");
+        File assetsDir = Util.copyAssets(ctx, "template");
         assetsDirPath = assetsDir.getAbsolutePath();
 
         WebServiceThread looper = new WebServiceThread();
@@ -101,24 +105,24 @@ public class WebService extends Service {
         } catch (InterruptedException e) {
             log(LogUtil.LogType.WEB_SERVICE,
                     "Interrupted during wait for the CommServiceThread to start, prepare for trouble!");
-            LogUtil.logException(m_ctx, LogUtil.LogType.WEB_SERVICE, e);
+            LogUtil.logException(ctx, LogUtil.LogType.WEB_SERVICE, e);
         }
 
-        CrypServer server = new CrypServer(m_ctx, WebUtil.getPort(m_ctx));
+        CrypServer server = new CrypServer(ctx, WebUtil.getPort(ctx));
 
         try {
             okHttpClient = null;
 
-            configureSSL(keyFile, passPhrase);
+            configureSSL(keyFile, keystoreValidationKey);
 
-            server.makeSecure( sslServerSocketFactory);
+            server.makeSecure( sslServerSocketFactory, null);
             server.start();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mIpAddress = wifiIpAddress(m_ctx);
-        log(LogUtil.LogType.WEB_SERVICE, "Server started: " + mIpAddress + ":" + WebUtil.getPort(m_ctx));
+        mIpAddress = wifiIpAddress(ctx);
+        log(LogUtil.LogType.WEB_SERVICE, "Server started: " + mIpAddress + ":" + WebUtil.getPort(ctx));
     }
 
     private class WebServiceThread extends Thread {

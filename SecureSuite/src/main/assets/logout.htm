@@ -1,0 +1,80 @@
+<!--
+  ~ Copyright (c) 2017. Nuvolect LLC
+  ~
+  ~ This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the License,
+  ~ or (at your option) any later version.
+  ~
+  ~ Contact legal@nuvolect.com for a less restrictive commercial license if you would like to use the
+  ~ software without the GPLv3 restrictions.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+  ~ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with this program.  If not,
+  ~ see <http://www.gnu.org/licenses/>.
+  ~
+  -->
+
+<html ng-app="myApp" ng-controller="logoutController">
+<head>
+    <title>SecureSuite</title>
+
+    <script src="/js/angular.min.js"></script>
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container">
+    <br>
+    <br>
+    <div align="center">
+        <a href="/"><img src="/img/icon_64.png"></a>
+        <h1>SecureSuite</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <br>
+            <br>
+            <br>
+            <h3>{{confirmation}}</h3>
+            <br>
+            <br>
+            <p class="lead">We recommend closing your browser once you're through. The information screens will remain in the browser's memory until the browser is closed.</p>
+            <br>
+            <br>
+            <br>
+            <h4>
+                <a href="/login.htm">Login again</a>
+            </h4>
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <div ng-include="'/footer.htm'"></div>
+    <br>
+
+</div>
+
+<script src="/js/jquery-1.11.2.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('logoutController', function($scope, $http) {
+
+        <!--response.data is the wrapper json object-->
+       $http.get("/connector/?cmd=logout")
+           .then(function (response) {
+
+                $scope.confirmation = response.data.confirmation;
+       });
+    });
+</script>
+</body>
+</html>
+

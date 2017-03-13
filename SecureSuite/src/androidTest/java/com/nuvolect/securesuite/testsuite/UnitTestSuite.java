@@ -19,8 +19,8 @@
 
 package com.nuvolect.securesuite.testsuite;
 
-import com.nuvolect.securesuite.data.MyGroupsTest;
 import com.nuvolect.securesuite.util.KeystoreUtilTest;
+import com.nuvolect.securesuite.util.OmniTest;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -32,7 +32,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses(
         {
                 KeystoreUtilTest.class,
-                MyGroupsTest.class,
+                // MyGroupsTest.class, // Will wipe contacts database
+                OmniTest.class,
         }
 )
 public class UnitTestSuite {

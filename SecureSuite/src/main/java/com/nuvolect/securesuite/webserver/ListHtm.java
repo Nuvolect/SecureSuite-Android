@@ -70,12 +70,13 @@ public class ListHtm {
     private static int m_start_index = 0;
     private static int PAGE_SIZE = 50;
     private static int m_page_size = PAGE_SIZE;
-    public static String m_account = "";
-    public static String m_search = "";
-    public static int m_group_id;
+    private static String m_account;
+    private static String m_search;
+    private static int m_group_id;
     private static int m_max_index;
-    private static String templateFile = "list.htm";
     private static String m_single_shot_command = "";
+    private static final String TEMPLATE_FILE = "list.htm";
+    private static final String GROUP_EDIT_MODAL_FILE = "group_edit_modal_filled.htm";
 
     /**
      * List of the main keys to associate with a key value pair.  This is typically a button or
@@ -93,6 +94,7 @@ public class ListHtm {
 
         uri,                    // Full uri for routing
         queryParameterStrings,  // Raw parameters
+        unique_id,
 
         // Specific to this page
         cb_group,       // Group ID is the value
@@ -169,6 +171,8 @@ public class ListHtm {
         m_start_index = Integer.valueOf(CrypServer.get(uniqueId, "start_index"));
         m_page_size   = Integer.valueOf(CrypServer.get(uniqueId, "page_contacts", ""+PAGE_SIZE));
 
+        log(LogUtil.LogType.LIST_HTM, "render() uniqueId   : " + uniqueId);
+        log(LogUtil.LogType.LIST_HTM, "render() m_account   : " + m_account);
         /**
          * Parse parameters and process any updates.
          * Return an Action indicating what to do next
@@ -205,7 +209,7 @@ public class ListHtm {
         HashMap<Integer, Integer> groupsThisPage = new HashMap<Integer, Integer>();
 
         try {
-            t = new MiniTemplator(WebService.assetsDirPath+"/"+templateFile);
+            t = new MiniTemplator(WebService.assetsDirPath+"/"+ TEMPLATE_FILE);
 
             /**
              * Add a single use command into the header, if any.  This can be used to
@@ -234,6 +238,7 @@ public class ListHtm {
                 t.setVariable("account_select", account_select);
                 t.addBlock("account_select");
             }
+            t.setVariable("finder_url", CConst.ELFINDER_PAGE);
 
             /**
              * Format the left side list of groups Title(count)
@@ -706,7 +711,10 @@ public class ListHtm {
                 }
                 case uri:
                 case queryParameterStrings:
+                case unique_id:
                     break;
+                default:
+                    log(LogUtil.LogType.LIST_HTM, "ERROR, unmanaged key_enum: " + key_enum);
             }
 
             switch (link_enum) {
@@ -879,6 +887,8 @@ public class ListHtm {
                 case file_upload_cancel:
                     CrypServer.put(uniqueId, "file_upload_modal", "");
                     break;
+                default:
+                    log(LogUtil.LogType.LIST_HTM, "ERROR, unmanaged link_enum: " + link_enum);
             }
         }
         return CConst.GENERATE_HTML;
@@ -941,7 +951,7 @@ public class ListHtm {
         if( mSelectId.isEmpty()){
 
             buildNotificationFile("Please select at least one contact", "info",
-                    CrypServer.group_edit_modal_filename);
+                    GROUP_EDIT_MODAL_FILE);
 
         }else{
 
@@ -990,7 +1000,7 @@ public class ListHtm {
 
                 String htm = t.generateOutput();
 
-                File file = new File( m_ctx.getFilesDir()+"/"+CrypServer.group_edit_modal_filename);
+                File file = new File( m_ctx.getFilesDir()+"/"+ GROUP_EDIT_MODAL_FILE);
                 Util.writeFile( file, htm);
 
             } catch (IOException e) {
