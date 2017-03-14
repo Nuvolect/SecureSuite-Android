@@ -113,6 +113,22 @@ public class ExportVcf {
             LogUtil.logException(act, LogType.EXPORT_VCF, e);
         }
     }
+
+    /**
+     * Get the filename for exporting a vCard for a single contact.
+     * @param contact_id
+     * @return
+     */
+    public static String getExportFilename( long contact_id){
+
+        String displayName = SqlCipher.get(contact_id, ATab.display_name);
+        String fileName = displayName.replaceAll("\\W+", "");
+        if( fileName.isEmpty())
+            fileName = "contact";
+        fileName = fileName + ".vcf";
+
+        return fileName;
+    }
     /**
      * Create a vcard for a single contact record
      * @param contact_id
@@ -138,7 +154,7 @@ public class ExportVcf {
      */
     public static int writeContactVcard(ArrayList<Long> arrayListId, File outputFile) {
 
-
+        outputFile.getParentFile().mkdirs();
         int count = 0;
 
         try {

@@ -133,12 +133,12 @@
 
 <div ng-include="'/footer.htm'"></div>
 
-</div>
-
 <script>
 
 var app = angular.module('myApp', []);
 app.controller('testController', function($scope, $http, $parse) {
+
+  $scope.year = new Date().getFullYear();// footer copyright year
 
   var tests = [
   "write_sdcard_test_file",

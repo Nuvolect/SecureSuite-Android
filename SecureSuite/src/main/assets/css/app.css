@@ -1,10 +1,22 @@
 @charset "utf-8";
-/* CSS Document */
 
 body {
 	background: url(/img/background.png) repeat left top;
 }
 
+.navbar-default {
+  background: none;
+  font-size: 1.3em !important;
+    line-height:60px;
+}
+.navbar-nav li a {
+    padding:0 15px;
+    line-height:60px;
+}
+.navbar-header a {
+    padding:0 15px;
+    line-height:60px;
+}
 table.card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   background-color: #e0e0e0;

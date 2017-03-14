@@ -93,8 +93,6 @@
 			    '&unique_id=' + getCookie("unique_id") +
 				'&password=' + encodeURIComponent(this.inputData.password);
 
-console.log("postForm: "+encodedString);
-
 			$http({
 				method: 'POST',
 				url: '/connector?cmd=login',

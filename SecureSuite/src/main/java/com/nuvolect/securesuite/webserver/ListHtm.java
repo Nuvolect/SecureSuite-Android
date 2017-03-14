@@ -61,7 +61,7 @@ public class ListHtm {
     //TODO settings Comfortable, cozy and compact
     private static Context m_ctx;
 
-    private static ArrayList<Long> mSelectId;
+    private static ArrayList<Long> mSelectId;           // List of contacts currently checked
     private static HashMap<Integer, String> mGroupEdit; // Group edit plan, <Group ID, {0,1,-}>
     private static ArrayList<Long> mDisplayId;          // IDs of currently displayed contacts
     private static ArrayList<Long> mStarredId;          // IDs of displayed contacts also starred
@@ -839,7 +839,10 @@ public class ListHtm {
                         CrypServer.notify(uniqueId, "Select at least one contact","warn");
                     else{
                         String fileName = "export.vcf";
-                        File file = new File( m_ctx.getFilesDir()+"/"+fileName);
+                        if( mSelectId.size() == 1){
+                            fileName = ExportVcf.getExportFilename( mSelectId.get(0));
+                        }
+                        File file = new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER+fileName);
                         ExportVcf.writeContactVcard( mSelectId, file);
                         return "download:"+fileName;
                     }

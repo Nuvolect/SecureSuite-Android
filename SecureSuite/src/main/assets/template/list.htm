@@ -1,6 +1,6 @@
 <!--Copyright (c) 2017. Nuvolect LLC-->
 
-<html>
+<html ng-app="myApp" ng-controller="Controller">
 
 <head>
     <title>SecureSuite</title>
@@ -12,7 +12,6 @@
     <link href="/css/dropzone.css" rel="stylesheet">
     <link href="/css/themes/${theme}.css" rel="stylesheet" id="theme">
 
-
     <!-- Command such as a header redirect to clear file upload parameters -->
     ${single_shot_command}
 
@@ -23,6 +22,8 @@
     <script src="/js/notify.js"></script>
     <script src="/js/dropzone.js"></script>
     <script src="/js/jquery-ui.min.js"></script>
+    <script src="/js/angular.min.js"></script>
+
     <script>
         var baseUrl = 'list.htm';
     </script>
@@ -133,6 +134,7 @@ ${group_edit_modal_htm}
                     <li><a href="javascript:void(0)" onclick="post('list.htm','link=empty_trash')"    >Empty trash</a></li>
                     <li><a href="javascript:void(0)" onclick="showFileUploadModal()"                  >Import...</a></li>
                     <li><a href="javascript:void(0)" onclick="downloadFile('list.htm','link=export_contacts')">Export...</a></li>
+                    <li><a href="javascript:void(0)" onclick="downloadFile2('list.htm?link=export_contacts','')">Export 2...</a></li>
                     <li><a href="javascript:void(0)" onclick="printPage()"                            >Print...</a></li>
                     <!--<li><a href="javascript:void(0)" onclick="post('list.htm','link=find_merge')"     >Find &amp; merge duplicates...</a></li>-->
                     <!--<li><a href="javascript:void(0)" onclick="post('list.htm','link=restore_contacts')">Restore contacts...</a></li>-->
@@ -233,23 +235,7 @@ ${group_edit_modal_htm}
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center">
-            <p>
-                &copy;
-                <script>
-			        var d = new Date();
-			        document.write(d.getFullYear());
-		        </script>
-                Nuvolect LLC -
-                <a href="https://securesuite.org/terms.htm" target="_blank">Terms</a>
-                -
-                <a href="https://securesuite.org/privacy.htm" target="_blank">Privacy</a>
-                -
-                <a href="https://github.com/Nuvolect/SecureSuite-Android/wiki" target="_blank">Wiki</a>
-            </p>
-        </div>
-    </div>
+    <div ng-include="'/footer.htm'"></div>
 </div>
 
 <div id="fileUploadModal" class="modal fade" role="dialog" >
@@ -282,6 +268,15 @@ ${group_edit_modal_htm}
 };
 </script>
 <script>${post_command}</script>
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('Controller', function($scope, $http) {
+
+    $scope.year = new Date().getFullYear(); // footer copyright year
+
+    });
+</script>
 
 <!--FUTURE fix printed footer, to be clean and simple.  It currently expands 3 URLs-->
 </body>
