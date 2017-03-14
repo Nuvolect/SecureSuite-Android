@@ -37,6 +37,7 @@ import org.nanohttpd.protocols.http.IHTTPSession;
 import org.nanohttpd.protocols.http.NanoHTTPD;
 import org.nanohttpd.protocols.http.content.CookieHandler;
 import org.nanohttpd.protocols.http.request.Method;
+import org.nanohttpd.protocols.http.response.IStatus;
 import org.nanohttpd.protocols.http.response.Response;
 import org.nanohttpd.protocols.http.response.Status;
 
@@ -458,25 +459,40 @@ public class CrypServer extends NanoHTTPD {
         log(LogUtil.LogType.CRYP_SERVER,
                 "render done len: " + generatedHtml.length() + ", time (ms): " + timeElapsed);
 
-        if( generatedHtml.startsWith("download:")){
+        if( generatedHtml.startsWith("{")){
 
-            String fileName = generatedHtml.substring(9);// Filename starts after ':' in char 9
+            String fileName = "";
+            long fileLength = -1;
+            try {
+                JSONObject object = new JSONObject( generatedHtml);
+                if( object.getString("error").isEmpty()) {
+                    fileName = object.getString("filename");
+                    fileLength = object.getLong("length");
+                }
+                else
+                    return null;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             try {
                 File file = new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER+fileName);
                 is = new FileInputStream(file);
 
-                long fileLength = file.length();
                 log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file: "+fileName);
                 log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file length: "+fileLength);
 
-                Response response = new Response(Status.OK, MimeUtil.MIME_VCARD, is, -1);
-                response.addHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
-                response.addHeader("Pragma","no-cache");
-                response.addHeader("Cache-Control","no-cache, no-store, max-age=0, must-revalidate");
-                response.addHeader("X-Content-Type-Options","nosniff");
+                Response response2 = new Response(Status.OK, MimeUtil.MIME_BIN, is, fileLength);
+                response2.addHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
+                return response2;
 
-                return response;
+//                Response response = new Response(Status.OK, MimeUtil.MIME_VCARD, is, -1);
+//                response.addHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
+//                response.addHeader("Pragma","no-cache");
+//                response.addHeader("Cache-Control","no-cache, no-store, max-age=0, must-revalidate");
+//                response.addHeader("X-Content-Type-Options","nosniff");
+//
+//                return response;
 
             } catch (FileNotFoundException e) {
                 LogUtil.logException(CrypServer.class, e);

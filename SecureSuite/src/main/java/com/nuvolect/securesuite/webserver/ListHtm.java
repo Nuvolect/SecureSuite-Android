@@ -179,7 +179,7 @@ public class ListHtm {
          */
         String action = parse(uniqueId, params);// set mContactId & others based on params
 
-        if( action.startsWith("download:"))  // Check for download, action string includes filename
+        if( action.startsWith("{"))  // Check for JSON, action string includes download details
             return action;
 
         /**
@@ -835,18 +835,34 @@ public class ListHtm {
                     break;
                 case export_contacts: {
 
-                    if( mSelectId.isEmpty())
-                        CrypServer.notify(uniqueId, "Select at least one contact","warn");
-                    else{
-                        String fileName = "export.vcf";
-                        if( mSelectId.size() == 1){
-                            fileName = ExportVcf.getExportFilename( mSelectId.get(0));
+                    JSONObject obj = new JSONObject();
+                    if( mSelectId.isEmpty()){
+
+                        String error = "Select at least one contact";
+                        CrypServer.notify(uniqueId, error,"warn");
+                        try {
+                            obj.put("error", error);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        File file = new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER+fileName);
-                        ExportVcf.writeContactVcard( mSelectId, file);
-                        return "download:"+fileName;
                     }
-                    break;
+                    else{
+                        String filename = "export.vcf";
+                        if( mSelectId.size() == 1){
+                            filename = ExportVcf.getExportFilename( mSelectId.get(0));
+                        }
+                        File file = new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER+filename);
+                        int num_contacts = ExportVcf.writeContactVcard( mSelectId, file);
+                        try {
+                            obj.put("num_contacts", num_contacts);
+                            obj.put("filename", filename);
+                            obj.put("length", file.length());
+                            obj.put("error", "");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return obj.toString();
                 }
                 case print_contacts:
                     CrypServer.notify(uniqueId, link_enum+" Not implemented yet","warn");
