@@ -170,6 +170,17 @@ public class DetailHtm {
         mMultiFieldData = new ArrayList<MultiFieldData>();
     }
 
+    /**
+     * Manage and render the contact detail page. Parameters are many as defined
+     * in {@link LINKS} and {@link KEYS} enumerations and passed in params.
+     *
+     * Params {@link KEYS.item} is the contact_id.
+     *
+     * @param ctx calling context
+     * @param uniqueId Session ID to support concurrent browser use.
+     * @param params Many, as defined in {@link LINKS} and {@link KEYS}.
+     * @return html of the page
+     */
     public static String render(Context ctx, String uniqueId, Map<String, String> params) {
 
         m_ctx = ctx;
@@ -279,7 +290,7 @@ public class DetailHtm {
                             out.close();
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        LogUtil.logException(m_ctx, LogUtil.LogType.DETAIL_HTM, e);
                     }
                 }
                 //Load the photo
@@ -405,7 +416,7 @@ public class DetailHtm {
             generatedHtml = t.generateOutput();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtil.logException(m_ctx, LogUtil.LogType.DETAIL_HTM, e);
         }
 
         return generatedHtml;
@@ -501,7 +512,7 @@ public class DetailHtm {
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            LogUtil.logException(m_ctx, LogUtil.LogType.DETAIL_HTM, e);
         }
     }
 

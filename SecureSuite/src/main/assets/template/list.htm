@@ -84,7 +84,7 @@ ${group_edit_modal_htm}
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="javascript:void(0)" onclick="post('contacts_list.htm','')">Contacts</a></li>//FIXME confirm not list.htm
+                    <li><a href="javascript:void(0)" onclick="post('list.htm','')">Contacts</a></li>
                     <li><a href="javascript:void(0)" onclick="injectModal('/files/password_modal_filled.htm')">Passwords</a></li>
                     <li><a href="${finder_url}">Finder</a></li>
                 </ul>
@@ -105,11 +105,9 @@ ${group_edit_modal_htm}
                     <li><a href="javascript:void(0)" onclick="post('list.htm','link=cb_unstarred')" >Unstarred</a></li>
                 </ul>
             </div>
-            <!--onclick="notifyJs('Cool beans!','warn');" -->
+
             <div class="btn-group">
-                <button class="btn btn-default"
-                        onclick="post('list.htm','link=NIL');"
-                        >
+                <button class="btn btn-default" onclick="post('list.htm','link=NIL');" >
                     <span class="glyphicon glyphicon-refresh"></span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
@@ -183,8 +181,7 @@ ${group_edit_modal_htm}
     <div class="row">
         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" id="side-nav">
 
-            <button class="btn btn-default"
-                    onclick="post('detail.htm','link=new_contact');">NEW CONTACT</button>
+            <a href="detail.htm?link=new_contact"> <button class="btn btn-default" >NEW CONTACT</button> </a>
 
             <p></p>
             <a href="" onclick="post('list.htm','link=all_in_account')">${all_in_account}</a><br>
@@ -215,11 +212,11 @@ ${group_edit_modal_htm}
                             <span class="glyphicon ${star_icon}" style="font-size:150%;"
                                   onclick="starUpdate(${contact_id},${star_state},'item_star=${contact_id}');"/>
                             </td>
-                            <th onclick="post('detail.htm','item=${contact_id}')" >${display_name} </th>
-                            <td onclick="post('detail.htm','item=${contact_id}')" >${email} </td>
-                            <td onclick="post('detail.htm','item=${contact_id}')" >${phone} </td>
-                            <td onclick="post('detail.htm','item=${contact_id}')" >${address} </td>
-                            <td onclick="post('detail.htm','item=${contact_id}')" >
+                            <th onclick="postGo('detail.htm',{item:${contact_id}},'GET')" >${display_name} </th>
+                            <td onclick="postGo('detail.htm',{item:${contact_id}},'GET')" >${email} </td>
+                            <td onclick="postGo('detail.htm',{item:${contact_id}},'GET')" >${phone} </td>
+                            <td onclick="postGo('detail.htm',{item:${contact_id}},'GET')" >${address} </td>
+                            <td onclick="postGo('detail.htm',{item:${contact_id}},'GET')" >
                                 <ul class="list-inline">
                                     <!-- $BeginBlock contact_group -->
                                     <li>

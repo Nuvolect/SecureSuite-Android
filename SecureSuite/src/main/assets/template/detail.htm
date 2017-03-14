@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title>${display_name} - securesuite</title>
+    <title>${display_name} - SecureSuite</title>
 
     <link href="/css/jquery-ui.min.css" rel="stylesheet">
     <link href="/css/bootstrap.css" rel="stylesheet">
@@ -27,8 +27,6 @@
 <script>${notify_js}</script>
 
 <div id="my_modal"></div>
-<br>
-
 <br>
 
 <div class="container-fluid" style="padding-left:20px">
@@ -61,10 +59,10 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right" role="menu">
                     <!-- $BeginBlock account_select -->
-                    <li><a href="javascript:void(0)" onclick="post('list.htm','account=${account_select}')">${account_select}</a></li>
+                    <li><a href="list.htm?account=${account_select}">${account_select} get</a></li>
                     <!-- $EndBlock account_select -->
                     <li class="divider"></li>
-                    <li><a href="javascript:void(0)" onclick="post('logout.htm','')">LOGOUT</a></li>
+                    <li><a href="logout.htm">LOGOUT</a></li>
                 </ul>
             </div>
         </div>
@@ -76,18 +74,17 @@
             <!-- Split button -->
             <div class="btn-group">
                 <button class="btn btn-transparent btn-lg dropdown-toggle"
-                        type="button" data-toggle="dropdown" aria-expanded="false">
-                    Contacts <span class="caret"></span>
+                        type="button" data-toggle="dropdown" aria-expanded="false">Contacts<span class="caret"></span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="javascript:void(0)" onclick="post('list.htm','')">Contacts</a></li>
+                    <li><a href="javascript:void(0)" onclick="postGo('list.htm','')">Contacts</a></li>
                     <li><a href="javascript:void(0)" onclick="injectModal('/files/password_modal_filled.htm')">Passwords</a></li>
                 </ul>
             </div>
         </div>
         <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 ">
-            <button class="btn btn-default" onclick="post('list.htm','');" >
+            <button class="btn btn-default" onclick="postGo('list.htm','');" >
                 <span class="glyphicon glyphicon-arrow-left"></span>
             </button>
             <div class="btn-group">

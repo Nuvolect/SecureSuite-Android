@@ -200,11 +200,9 @@ public class CrypServer extends NanoHTTPD {
 
             for (Map.Entry<String, String> entry : headers.entrySet())
             {
-//                LogUtil.log(LogUtil.LogType.CRYP_SERVER, "header: "+entry.getKey() + ":::" + entry.getValue());
                 if( entry.getKey().startsWith( EMBEDDED_HEADER_KEY) &&
                         entry.getValue().contains( embedded_header_value)){
                     uniqueId = CConst.EMBEDDED_USER;
-//                    LogUtil.log(LogUtil.LogType.CRYP_SERVER, "header MATCH");
                     break;
                 }
             }
@@ -417,7 +415,7 @@ public class CrypServer extends NanoHTTPD {
                 LogUtil.logException(CrypServer.class, e);
             }
         }
-//        log(LogUtil.LogType.CRYP_SERVER, "rendering page: " + mCurrentPage);
+
         long timeStart = System.currentTimeMillis();
 
         /**
