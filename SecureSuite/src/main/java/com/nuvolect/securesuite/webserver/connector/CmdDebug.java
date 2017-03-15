@@ -23,6 +23,8 @@ import android.content.Context;
 
 import com.nuvolect.securesuite.util.KeystoreUtil;
 import com.nuvolect.securesuite.util.LogUtil;
+import com.nuvolect.securesuite.util.OmniHash;
+import com.nuvolect.securesuite.webserver.MimeUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,6 +61,9 @@ public class CmdDebug {
         encrypt,
         get_keys,
         lockscreen_test,
+        decode_hash,
+        encode_hash,
+        mime,
     }
 
     public static ByteArrayInputStream go(Context ctx, Map<String, String> params) {
@@ -123,6 +128,24 @@ public class CmdDebug {
                         wrapper.put("result",result);
                         break;
                     }
+                    case decode_hash:{
+
+                        String result = decode_hash(params.get("data"));
+                        wrapper.put("result",result);
+                        break;
+                    }
+                    case encode_hash:{
+
+                        String result = encode_hash(params.get("data"));
+                        wrapper.put("result",result);
+                        break;
+                    }
+                    case mime:{
+
+                        String result = MimeUtil.getMime(params.get("data"));
+                        wrapper.put("result",result);
+                        break;
+                    }
                     default:
                         error = "Invalid test: "+test_id;
                 }
@@ -150,4 +173,22 @@ public class CmdDebug {
         return null;
     }
 
+    private static String decode_hash(String data) {
+
+        String hash = data;
+
+        /**
+         * The hash may include the volume ID, if so remove it to only use the hash.
+         */
+        String segments[] = data.split("_");
+        if( segments.length > 1)
+        hash = segments[1];
+
+        return OmniHash.decode( hash );
+    }
+
+    private static String encode_hash(String data) {
+
+        return OmniHash.encode( data );
+    }
 }

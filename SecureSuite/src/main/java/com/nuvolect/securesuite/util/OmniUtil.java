@@ -80,6 +80,9 @@ public class OmniUtil {
      */
     public static OmniFile getFileFromHash(String hash) {
 
+        if( hash.startsWith("/"))
+            hash = hash.substring(1);
+
         String segments[] = hash.split("_");
         String volumeId = segments[0] + "_";
 

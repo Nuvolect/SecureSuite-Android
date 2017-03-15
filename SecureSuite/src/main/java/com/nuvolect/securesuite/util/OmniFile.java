@@ -19,9 +19,9 @@
 
 package com.nuvolect.securesuite.util;//
 
+import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.webserver.MimeUtil;
 import com.nuvolect.securesuite.webserver.connector.FileObj;
-import com.nuvolect.securesuite.main.CConst;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 /**
@@ -66,6 +67,10 @@ public class OmniFile {
      * Flag set when file is created indicating file is a root directory of the volume.
      */
     private boolean m_isRoot;      // File is root of the filesystem
+    /**
+     * Hash, if the file was created from a hash, otherwise null;
+     */
+    private String m_volumeHash;
 
     /**
      * Debugging only
@@ -73,14 +78,12 @@ public class OmniFile {
     private String m_name;         // Name as reported by file system
     private String m_absolutePath; // Complete path including root
     private String m_path;         // Path relative to the volume
-    private String m_hash;         // Hash of path relative to volume
     private String m_lastModified; // Text of last time modified
 
     public void calcDebug(String myTag){
 
             m_name = this.getName();
             m_path = this.getPath();
-            m_hash = getHash();
             m_absolutePath = this.getAbsolutePath();
             m_lastModified = TimeUtil.friendlyTimeMDYM( this.lastModified());
 //            LogUtil.log( OmniFile.class, myTag+ " OmniFile:  "+ m_name+" last modified: "+ m_lastModified);
@@ -96,6 +99,7 @@ public class OmniFile {
         m_volumeId = volumeId;
         m_isRoot = Omni.isRoot( volumeId, path);
         m_isCryp = m_volumeId.contentEquals(Omni.cryptoVolumeId);
+        m_volumeHash = null;
 
         if( m_isCryp ){
             m_cry_file = new info.guardianproject.iocipher.File( path );
@@ -127,6 +131,7 @@ public class OmniFile {
      */
     public OmniFile( String volumeHash){
 
+        m_volumeHash = volumeHash;
         String segments[] = volumeHash.split("_");
         m_volumeId = segments[0] + "_";
         m_isRoot = Omni.isRoot( volumeHash);
@@ -455,6 +460,27 @@ public class OmniFile {
     }
 
     public String getMime() {
+
+        if( this.isDirectory())
+            return "directory";
+
+        if( m_volumeHash != null){
+
+            String hash = m_volumeHash;
+
+            String segments[] = m_volumeHash.split("_");
+            if( segments.length > 1){
+                hash = segments[1];
+            }
+
+            try {
+                String path = OmniHash.decodeWithException( hash);
+                String extension = FilenameUtils.getExtension(path).toLowerCase(Locale.US);
+                return MimeUtil.getMime( extension);
+            } catch (UnsupportedEncodingException e) {
+                return "";
+            }
+        }
 
         return MimeUtil.getMime( this );
     }

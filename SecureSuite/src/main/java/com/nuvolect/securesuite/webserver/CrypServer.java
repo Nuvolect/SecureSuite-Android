@@ -27,10 +27,14 @@ import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.LogUtil;
+import com.nuvolect.securesuite.util.OmniFile;
+import com.nuvolect.securesuite.util.OmniHash;
+import com.nuvolect.securesuite.util.OmniUtil;
 import com.nuvolect.securesuite.util.Passphrase;
 import com.nuvolect.securesuite.util.Util;
 import com.nuvolect.securesuite.webserver.connector.ServeCmd;
 
+import org.apache.commons.io.FilenameUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.nanohttpd.protocols.http.IHTTPSession;
@@ -50,6 +54,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -296,7 +301,7 @@ public class CrypServer extends NanoHTTPD {
                 is = m_ctx.getAssets().open(uri.substring(1));
                 return new Response(Status.OK, MimeUtil.MIME_ICO, is, -1);
 
-            } else if (uri.endsWith(".png") || (uri.endsWith(".jpg"))) {
+            } else if (uri.endsWith(".png") || (uri.endsWith(".jpg")) || uri.endsWith(".gif")) {
                 if( uri.startsWith("/img") || uri.startsWith("/css") || uri.startsWith("/elFinder"))
                     is = m_ctx.getAssets().open(uri.substring(1));
                 else {
@@ -324,7 +329,16 @@ public class CrypServer extends NanoHTTPD {
 
                 is = ServeCmd.process(m_ctx, params);
 
-                return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
+                String mime = MimeUtil.MIME_HTML;
+                if( params.get("cmd").contentEquals("file")){
+
+                    String volumeHash = params.get("target");
+                    String decoded = OmniHash.decodeVolumeHash( volumeHash);
+                    String extension = FilenameUtils.getExtension( decoded).toLowerCase(Locale.US);
+                    mime = MimeUtil.getMime(extension);
+                }
+
+                return new Response(Status.OK, mime, is, -1);
 
             } else {
 
@@ -441,7 +455,22 @@ public class CrypServer extends NanoHTTPD {
                     }
                 }
                 else{
-                    log(LogUtil.LogType.CRYP_SERVER, "Page not found: " + uri);
+                    if( OmniHash.isHash( uri )){
+
+                        OmniFile targetFile = OmniUtil.getFileFromHash(uri);
+                        if( targetFile.exists()){
+
+                            String mime = targetFile.getMime();
+                            is = targetFile.getFileInputStream();
+                            return new Response(Status.OK, mime, is, -1);
+                        }else{
+                            return new Response(Status.NOT_FOUND, MIME_PLAINTEXT, "404 File Not Found: "+uri);
+                        }
+                    }else{
+
+                        log(LogUtil.LogType.CRYP_SERVER, "Page not found: " + uri);
+                        return new Response(Status.NOT_FOUND, MIME_PLAINTEXT, "404 File Not Found: "+uri);
+                    }
                 }
             }
         }
@@ -474,17 +503,9 @@ public class CrypServer extends NanoHTTPD {
                 log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file: "+fileName);
                 log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file length: "+fileLength);
 
-                Response response2 = new Response(Status.OK, MimeUtil.MIME_BIN, is, fileLength);
-                response2.addHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
-                return response2;
-
-//                Response response = new Response(Status.OK, MimeUtil.MIME_VCARD, is, -1);
-//                response.addHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
-//                response.addHeader("Pragma","no-cache");
-//                response.addHeader("Cache-Control","no-cache, no-store, max-age=0, must-revalidate");
-//                response.addHeader("X-Content-Type-Options","nosniff");
-//
-//                return response;
+                Response response = new Response(Status.OK, MimeUtil.MIME_BIN, is, fileLength);
+                response.addHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
+                return response;
 
             } catch (FileNotFoundException e) {
                 LogUtil.logException(CrypServer.class, e);

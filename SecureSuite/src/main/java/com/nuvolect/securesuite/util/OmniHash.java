@@ -96,6 +96,47 @@ public class OmniHash {
 
         return decoded;
     }
+    /**
+     * Decode volume file/directory hash
+     * @param volumeHash
+     * @return
+     */
+    public static String decodeVolumeHash(String volumeHash){
+
+        String hash = "";
+        String segments[] = volumeHash.split("_");
+        if( segments.length > 1){
+            hash = segments[1];
+        }
+
+        hash = hash.replace('-','+'); // Reverse encoding substitutions
+        hash = hash.replace('.','/');
+
+        String decoded = null;
+        try {
+            decoded = new String( Base64.decode(hash, Base64.DEFAULT), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return decoded;
+    }
+
+    /**
+     * Decode file/directory hash with exception
+     * @param hash
+     * @return
+     */
+    public static String decodeWithException(String hash) throws UnsupportedEncodingException {
+
+        hash = hash.replace('-','+'); // Reverse encoding substitutions
+        hash = hash.replace('.','/');
+
+        String decoded = null;
+            decoded = new String( Base64.decode(hash, Base64.DEFAULT), "UTF-8");
+
+        return decoded;
+    }
 
     /**
      * Return the volume hash by passing the the volume and a path.
@@ -128,4 +169,41 @@ public class OmniHash {
                 +hashedUrl;
         return url;
     }
+
+    /**
+     * Inspect a URI and determine if it contains an OMNI hash.
+     * @param uri
+     * @return
+     */
+    public static boolean isHash(String uri) {
+
+        String hash = uri;
+
+        if( hash.startsWith("/"))
+            hash = hash.substring(1);
+
+        String segments[] = hash.split("_");
+        if( segments.length > 1){
+            hash = segments[1];
+        }
+        if( hash == null || hash.isEmpty())
+            return false;
+
+        try {
+            decodeWithException( hash );
+        } catch (UnsupportedEncodingException e) {
+            return false;
+        }
+
+        return true;
+    }
 }
+
+
+
+
+
+
+
+
+

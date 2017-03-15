@@ -201,6 +201,10 @@ public class CmdOpen {
                     LogUtil.log(LogUtil.LogType.CMD_OPEN,"Target: "+targetFile.getPath());
             }
             /**
+             * Make sure the thumbnail directory exists
+             */
+            new OmniFile( volumeId, Omni.THUMBNAIL_FOLDER_PATH).mkdirs();
+            /**
              * Add files that are in the target directory
              *
              * files : (Array) array of objects - files and directories in current directory.
