@@ -53,6 +53,8 @@ public class CmdSize {
 
         if( params.containsKey("targets[]"))
             targets[0] = params.get("targets[]");
+        else if( params.containsKey("targets[0]"))
+            targets[0] = params.get("targets[0]");
 
         OmniFile targetFile = new OmniFile( targets[0]);
 
