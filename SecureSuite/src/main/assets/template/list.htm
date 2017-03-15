@@ -133,7 +133,7 @@ ${group_edit_modal_htm}
                         <a href="javascript:void(0)" onclick="post('list.htm','link=delete_contacts')">Move to trash</a></li>
                     <li><a href="javascript:void(0)" onclick="post('list.htm','link=empty_trash')"    >Empty trash</a></li>
                     <li><a href="javascript:void(0)" onclick="showFileUploadModal()"                  >Import...</a></li>
-                    <li><a target="_self" href="list.htm?link=export_contacts">Export...</a></li>
+                    <li><a href="list.htm?link=export_contacts" target="_self" >Export...</a></li>
                     <li><a href="javascript:void(0)" onclick="printPage()"                            >Print...</a></li>
                     <!--<li><a href="javascript:void(0)" onclick="post('list.htm','link=find_merge')"     >Find &amp; merge duplicates...</a></li>-->
                     <!--<li><a href="javascript:void(0)" onclick="post('list.htm','link=restore_contacts')">Restore contacts...</a></li>-->
@@ -273,20 +273,6 @@ var app = angular.module('myApp', []);
 app.controller('Controller', function($scope, $http) {
 
     $scope.year = new Date().getFullYear(); // footer copyright year
-
-    $scope.downloadVcf = function(){
-
-        $http.get("/list.htm?link=export_contacts")
-          .then(function (response) {
-
-            console.log("result: "+result);
-            <!--debugger;-->
-
-            // Returned data is currently a string, convert it to JSON
-            <!--var result = $.parseJSON( response.data.result );-->
-
-         }
-    )};
 
 });
 </script>

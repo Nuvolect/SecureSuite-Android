@@ -94,26 +94,6 @@ function postGo(path, params, method) {
     form.submit();
 }
 
-// Present the download modal and post a message to build the export.vcf file
-function downloadFile( url, payload ) {
-
-    $( "#my_modal" ).load( '/files/file_download_modal.htm' );
-
-var xmlhttp;
-if (window.XMLHttpRequest)
-  {// code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp=new XMLHttpRequest();
-  }
-else
-  {// code for IE6, IE5
-        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-  }
-
-  xmlhttp.open("POST", url, false);// Fails when set to true
-  xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-  xmlhttp.send( payload );
-}
-
 function sendKeyElementId( key, id ) {
 
 var xmlhttp;

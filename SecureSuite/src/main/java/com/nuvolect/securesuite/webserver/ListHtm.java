@@ -432,7 +432,7 @@ public class ListHtm {
     }
 
     /**
-     * Parse and process params specific to this session.  Return "download:filename.ext" to
+     * Parse and process params specific to this session.  Return JSON to
      * facilitate a download for the next step, otherwise return GENERATE_HTML to
      * continue generating the page.
      * @param uniqueId

@@ -37,7 +37,6 @@ import org.nanohttpd.protocols.http.IHTTPSession;
 import org.nanohttpd.protocols.http.NanoHTTPD;
 import org.nanohttpd.protocols.http.content.CookieHandler;
 import org.nanohttpd.protocols.http.request.Method;
-import org.nanohttpd.protocols.http.response.IStatus;
 import org.nanohttpd.protocols.http.response.Response;
 import org.nanohttpd.protocols.http.response.Status;
 
@@ -280,14 +279,7 @@ public class CrypServer extends NanoHTTPD {
             if (uri == null)
                 return null;
 
-//            if (uri.endsWith(".vcf")) {
-//                File file = new File( m_ctx.getFilesDir()+"/export.vcf");//FIXME hardcoded vcf name
-//                is = new FileInputStream(file);
-//                return new Response(Status.OK, MimeUtil.MIME_VCARD, is, -1);
-//
-//            } else
-
-                if (uri.endsWith(".js")) {
+            if (uri.endsWith(".js")) {
                 is = m_ctx.getAssets().open(uri.substring(1));
                 return new Response(Status.OK, MimeUtil.MIME_JS, is, -1);
 

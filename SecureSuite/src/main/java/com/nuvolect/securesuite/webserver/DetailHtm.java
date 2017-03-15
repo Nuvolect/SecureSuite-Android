@@ -24,10 +24,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
-import com.nuvolect.securesuite.data.NameUtil;
 import com.nuvolect.securesuite.data.ExportVcf;
 import com.nuvolect.securesuite.data.MyAccounts;
 import com.nuvolect.securesuite.data.MyGroups;
+import com.nuvolect.securesuite.data.NameUtil;
 import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.main.SettingsActivity;
@@ -174,7 +174,7 @@ public class DetailHtm {
      * Manage and render the contact detail page. Parameters are many as defined
      * in {@link LINKS} and {@link KEYS} enumerations and passed in params.
      *
-     * Params {@link KEYS.item} is the contact_id.
+     * Params key: item is the contact_id.
      *
      * @param ctx calling context
      * @param uniqueId Session ID to support concurrent browser use.
@@ -194,7 +194,7 @@ public class DetailHtm {
          */
         String action = parse(uniqueId, params);// set m_contact_id & others based on params
 
-        if( action.startsWith("download:"))  // Check for download, action string includes filename
+        if( action.startsWith("{"))  // Check for JSON, action string includes download details
             return action;
 
         // else, action is GENERATE_HTML
@@ -517,7 +517,7 @@ public class DetailHtm {
     }
 
     /**
-     * Parse and process params specific to this session.  Return "download:filename.ext" to
+     * Parse and process params specific to this session.  Return JSON to
      * facilitate a download for the next step, otherwise return GENERATE_HTML to
      * continue generating the page.
      * @param uniqueId
@@ -657,19 +657,22 @@ public class DetailHtm {
                 case file_upload:
                     break;
                 case export_contact: {
+
+                    JSONObject obj = new JSONObject();
                     m_contact_id = Long.valueOf( value );
-                    String userName = SqlCipher.get( m_contact_id, ATab.display_name);
-                    String fileName = Safe.safeString( userName.replaceAll("\\W+", ""));
-                    if( fileName.isEmpty())
-                        fileName = "contact";
-                    fileName = fileName + ".vcf";
-
-                    // Create a folder for temporary use if necessary
-                    new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER).mkdirs();
-
-                    File file = new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER+fileName);
-                    ExportVcf.writeContactVcard(m_contact_id, file);
-                    return "download:"+fileName;
+                    String filename = ExportVcf.getExportFilename( m_contact_id);
+                    File file = new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER+filename);
+                    ExportVcf.writeContactVcard( m_contact_id, file);
+                    int num_contacts = 1;
+                    try {
+                        obj.put("num_contacts", num_contacts);
+                        obj.put("filename", filename);
+                        obj.put("length", file.length());
+                        obj.put("error", "");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    return obj.toString();
                 }
                 case password_update:{
 
