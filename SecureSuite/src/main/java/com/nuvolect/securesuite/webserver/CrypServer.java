@@ -420,15 +420,6 @@ public class CrypServer extends NanoHTTPD {
                         is = m_ctx.getAssets().open(uri.substring(1));
                         return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
                     }
-//                        if( uri.startsWith("/files")){
-//
-//                            is = m_ctx.openFileInput(uri.substring(7));// filename starts at 7
-//                        }
-//                        else{
-//                            is = m_ctx.getAssets().open(uri.substring(1));
-//                        }
-//
-//                        return new Response(Status.OK, MIME_HTML, is, -1);
                 }
             }
 
@@ -437,14 +428,6 @@ public class CrypServer extends NanoHTTPD {
             LogUtil.logException(CrypServer.class, e);
         }
         String generatedHtml = "";
-
-        /**
-         * Look for POST method and the case when passed the key for a new "page".
-         */
-        if (method == Method.POST ) {
-
-
-        }
 
         long timeStart = System.currentTimeMillis();
 
