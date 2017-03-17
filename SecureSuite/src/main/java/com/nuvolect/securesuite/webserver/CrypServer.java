@@ -35,6 +35,7 @@ import com.nuvolect.securesuite.util.Util;
 import com.nuvolect.securesuite.webserver.connector.ServeCmd;
 
 import org.apache.commons.io.FilenameUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.nanohttpd.protocols.http.IHTTPSession;
@@ -236,6 +237,9 @@ public class CrypServer extends NanoHTTPD {
 
         Method method = session.getMethod();
 
+        /**
+         * Get files associated with a POST method
+         */
         Map<String, String> files = new HashMap<String, String>();
         try {
             session.parseBody(files);
@@ -326,16 +330,54 @@ public class CrypServer extends NanoHTTPD {
             } else if (mAuthenticated && uri.startsWith("/connector")) {
 
                 params.put(CConst.UNIQUE_ID, uniqueId);
+                String mime = MimeUtil.MIME_HTML;
+
+                if( params.get("cmd").contentEquals("upload")) {
+
+                    try {
+                        Set<String> fileSet = files.keySet();
+                        JSONArray array = new JSONArray();
+
+                        if( ! fileSet.isEmpty()){
+
+                            for( String key : fileSet){
+
+                                JSONObject jsonObject = new JSONObject();
+                                String filePath = files.get(key);
+                                String fileName = params.get(key);
+                                jsonObject.put(CConst.FILE_PATH, filePath);
+                                jsonObject.put(CConst.FILE_NAME, fileName);
+                                array.put(jsonObject);
+                                log(LogUtil.LogType.CRYP_SERVER, "POST file jsonObject: "+jsonObject.toString());
+                            }
+                            /**
+                             * Save filenames and paths into params for processing by specific page
+                             */
+                            params.put(CConst.POST_UPLOADS, array.toString());
+
+                            if( DEBUG) {
+                                log(LogUtil.LogType.CRYP_SERVER, "upload params: " + Util.trimAt(array.toString(), 50));
+                            }
+                        }
+                    } catch (JSONException e) {
+                        LogUtil.logException(CrypServer.class, e);
+                    }
+                }
 
                 is = ServeCmd.process(m_ctx, params);
 
-                String mime = MimeUtil.MIME_HTML;
                 if( params.get("cmd").contentEquals("file")){
 
                     String volumeHash = params.get("target");
                     String decoded = OmniHash.decodeVolumeHash( volumeHash);
                     String extension = FilenameUtils.getExtension( decoded).toLowerCase(Locale.US);
                     mime = MimeUtil.getMime(extension);
+
+                } else{
+                    if (params.get("cmd").contentEquals("ls")) {
+
+                        mime = MimeUtil.MIME_JSON;
+                    }
                 }
 
                 return new Response(Status.OK, mime, is, -1);
@@ -397,32 +439,7 @@ public class CrypServer extends NanoHTTPD {
          */
         if (method == Method.POST ) {
 
-            try {
-                if( DEBUG) {
-                    log(LogUtil.LogType.CRYP_SERVER, "POST params: " + Util.trimAt(params.toString(), 50));
-                }
 
-                Set<String> fileSet = files.keySet();
-                if( ! fileSet.isEmpty()){
-
-                    JSONObject jsonObject = new JSONObject();
-
-                    for( String key : fileSet){
-
-                        String filePath = files.get(key);
-                        String fileName = params.get(key);
-                        jsonObject.put(fileName, filePath);
-                        log(LogUtil.LogType.CRYP_SERVER, "POST file jsonObject: "+jsonObject.toString());
-                    }
-                    /**
-                     * Save filenames and paths into params for processing by specific page
-                     */
-                    params.put(CConst.FILE_UPLOAD, jsonObject.toString());
-
-                }
-            } catch (JSONException e) {
-                LogUtil.logException(CrypServer.class, e);
-            }
         }
 
         long timeStart = System.currentTimeMillis();

@@ -72,6 +72,7 @@ public class CConst {
     public static final String ADDRESS              = DTab.address.toString();
     public static final String AUTHENTICATED        = "authenticated";
     public static final String BLOG_URL             = "https://nuvolect.com/blog";
+    public static final String CHUNK                = "/chunk/";
     public static final String COMMS_SELECT         = DTab.comms_select.toString();
     public static final String CONTACT              = "contact";
     public static final String CONTACT_ID           = SqlCipher.ADTab.contact_id.toString(); // DTab has the same field
@@ -231,7 +232,7 @@ public class CConst {
     public static final String VALIDATE_LOCK_CODE             = "validate_lock_code";
     public static final String CHANGE_LOCK_CODE               = "change_lock_code";
 
-    public static final String FILE_UPLOAD                    = "file_upload";
+    public static final String POST_UPLOADS                   = "post_uploads";
     public static final String RECORDS                        = "records";
 
     public static final String RESTFUL_HTM                    = "restful_htm";

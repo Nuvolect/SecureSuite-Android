@@ -23,17 +23,18 @@ import android.content.Context;
 
 import com.nuvolect.securesuite.util.Omni;
 
-//TODO create class description
-//
-public class ServeInit {
+/**
+ * Initialization related to the web server.
+ */
+public class ServerRelatedInit {
 
     public static void init(Context ctx){
 
         /**
          * Initialize application file system support
          */
-        Omni.init(ctx);
+        Omni.init( ctx );
 
-        CmdUpload.init();
+        CmdUpload.init( ctx );
     }
 }

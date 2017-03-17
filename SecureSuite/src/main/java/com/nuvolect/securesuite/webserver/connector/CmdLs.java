@@ -33,14 +33,16 @@ import java.util.Map;
 
 /**
  * <pre>
- * Return a list of file names in the target directory. arguments:
+ * Return a list of file names in the target directory.
+ *
+ * Arguments:
  *
  * cmd : ls
  * target : hash of directory,
  * intersect[] : list of files to match
  *
  * Response:
- * list : (Array) Files list.
+ * list : (Array) file names list. Return only duplicate files if the intersect[] is specified.
  *
  * Example:
  * cmd=ls&target=l2_Lw&intersect%5B%5D=Very+Nice.txt&_=1459218951937
@@ -90,42 +92,59 @@ public class CmdLs {
 
         try {
 
-            /**
-             * Iterate over all the files looking for intersects.
-             * When an intersect is found, remove it from consideration.
-             */
-            for(OmniFile file : files){
+            if( intersects.isEmpty()){
+                /**
+                 * Build a list of all files in the target folder.
+                 */
+                for(OmniFile file : files){
 
-                hit = "";
-
-                for(String intersect : intersects){
-
-                    if( file.getName().contentEquals( intersect )){
-
-                        list.put( FileObj.makeObj(volumeId, file, httpIpPort));
-                        LogUtil.log(LogUtil.LogType.CMD_LS, "File hit: " + intersect);
-                        hit = intersect;
-                    }
+                    list.put( FileObj.makeObj(volumeId, file, httpIpPort));
                 }
-                // Remove it from the list to speed the search
-                if( ! hit.isEmpty())
-                    intersects.remove(hit);
-                // Quit early when all intersects are satisfied
-                if( intersects.isEmpty())
-                    break;
-            }
-//            if( list.length() == 0)
-//                LogUtil.log(LogUtil.LogType.CMD_LS, "File MISS: " + intersect[0]);
+            }else{
 
+                /**
+                 * Build a list of intersect files that exist in the target folder.
+                 *
+                 * Iterate over all the files looking for intersects.
+                 * When an intersect is found, remove it from consideration.
+                 */
+                for(OmniFile file : files){
+
+                    hit = "";
+
+                    for(String intersect : intersects){
+
+                        if( file.getName().contentEquals( intersect )){
+
+                            list.put( FileObj.makeObj(volumeId, file, httpIpPort));
+                            LogUtil.log(LogUtil.LogType.CMD_LS, "File hit: " + intersect);
+                            hit = intersect;
+                        }
+                    }
+                    // Remove it from the list to speed the search
+                    if( ! hit.isEmpty())
+                        intersects.remove(hit);
+                    // Quit early when all intersects are satisfied
+                    if( intersects.isEmpty())
+                        break;
+                }
+
+            }
+            if( LogUtil.DEBUG){
+
+                LogUtil.log(LogUtil.LogType.CMD_LS, "list: " + list.toString(2));
+                if( !intersects.isEmpty() && list.length() == 0)
+                    LogUtil.log(LogUtil.LogType.CMD_LS, "File MISS: " + intersects.get(0));
+            }
             JSONObject wrapper = new JSONObject();
             wrapper.put("list", list);
 
             return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            LogUtil.logException( CmdLs.class, e);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            LogUtil.logException( CmdLs.class, e);
         }
 
         return null;

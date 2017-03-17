@@ -19,6 +19,8 @@
 
 package com.nuvolect.securesuite.util;//
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,12 +39,32 @@ public class OmniFiles {
 
         boolean success = true;
         try {
-
             copyFile(fromFile.getFileInputStream(), toFile.getOutputStream());
             toFile.setLastModified( fromFile.lastModified());
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtil.logException(OmniFiles.class, e);
+            success = false;
+        }
+        return success;
+    }
+
+    /**
+     * Mixed File to Omni file copy. This is used for files that cannot be accessed by Omni
+     * such as app/cache/NanoHttp file uploads.
+     * @param fromFile
+     * @param toFile
+     * @return
+     */
+    public static boolean copyFile(File fromFile, OmniFile toFile) {
+        boolean success = true;
+        try {
+            FileInputStream fis = new FileInputStream( fromFile);
+            copyFile( fis, toFile.getOutputStream());
+            toFile.setLastModified( fromFile.lastModified());
+
+        } catch (IOException e) {
+            LogUtil.logException(OmniFiles.class, e);
             success = false;
         }
         return success;
@@ -62,7 +84,7 @@ public class OmniFiles {
             copyFolder(srcDir, destDir);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtil.logException(OmniFiles.class, e);
             success = false;
         }
         return success;
