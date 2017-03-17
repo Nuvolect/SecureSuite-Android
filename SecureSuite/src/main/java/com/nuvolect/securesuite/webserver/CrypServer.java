@@ -146,6 +146,10 @@ public class CrypServer extends NanoHTTPD {
             String [] filesArray = ctx.getFilesDir().list();
             filesSet = new HashSet<String>(Arrays.asList( filesArray));
 
+            // Manually add files generated in app://files folder
+            filesSet.add( PasswordModal.PASSWORD_MODAL_PATH);
+            filesSet.add( PasswordModal.PASSWORD_MODAL_APPLY_PATH);
+
         } catch (IOException e) {
             LogUtil.logException(CrypServer.class, e);
         }

@@ -221,7 +221,9 @@ public class DetailHtm {
             @Override
             public void run() {
 
-                //FIXME only call one time
+                /**
+                 * Generate two versions of the modal for different use cases.
+                 */
                 PasswordModal.buildPasswordModal(m_ctx, true);// With Use password button
                 PasswordModal.buildPasswordModal(m_ctx, false);// no extra button
             }

@@ -32,8 +32,8 @@ import static com.nuvolect.securesuite.util.LogUtil.log;
 
 public class PasswordModal {
 
-    private static final String PASSWORD_MODAL_PATH = "/files/password_modal_filled.htm";
-    private static final String PASSWORD_MODAL_APPLY_PATH = "/files/password_modal_apply_filled.htm";
+    public static final String PASSWORD_MODAL_PATH = "password_modal_filled.htm";
+    public static final String PASSWORD_MODAL_APPLY_PATH = "password_modal_apply_filled.htm";
     /**
      * <pre>
      * Update the password modal and save it to a file in the private file area.
@@ -94,11 +94,10 @@ public class PasswordModal {
             File file = new File( ctx.getFilesDir()+"/"+fileName);
             Util.writeFile(file, htm);
 
+            log( PasswordModal.class, "Modal generated: " + file.getPath());
+
         } catch (IOException e) {
-            e.printStackTrace();
-            log(LogUtil.LogType.LIST_HTM, "updatePasswordModal IOException");
+            LogUtil.logException(PasswordModal.class, e);
         }
-
-
     }
 }
