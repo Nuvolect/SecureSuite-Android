@@ -67,7 +67,7 @@ import com.nuvolect.securesuite.util.PermissionUtil;
 import com.nuvolect.securesuite.util.Util;
 import com.nuvolect.securesuite.webserver.Comm;
 import com.nuvolect.securesuite.webserver.CrypServer;
-import com.nuvolect.securesuite.webserver.RestfulHtm;
+import com.nuvolect.securesuite.webserver.SyncRest;
 import com.nuvolect.securesuite.webserver.WebUtil;
 
 import org.json.JSONException;
@@ -159,8 +159,8 @@ public class SettingsFragment extends PreferenceFragment
 
         if (!WebUtil.getServerIpPort(m_act).contentEquals(App.DEFAULT_IP_PORT)) {
 
-            final String thisDeviceUrl = WebUtil.getServerUrl(m_act, CConst.RESTFUL_HTM);
-            parameters.put(RestfulHtm.COMM_KEYS.self_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+            final String thisDeviceUrl = WebUtil.getServerUrl(m_act, CConst.SYNC);
+            parameters.put(SyncRest.COMM_KEYS.self_ip_test.toString(), WebUtil.getServerIpPort(m_act));
 
             Comm.sendPostUi(m_act, thisDeviceUrl, parameters, new Comm.CommPostCallbacks() {
                 @Override
@@ -199,11 +199,11 @@ public class SettingsFragment extends PreferenceFragment
 
                     if (reachable) {
 
-                        final String companionUrl = WebUtil.getCompanionServerUrl(CConst.RESTFUL_HTM);
+                        final String companionUrl = WebUtil.getCompanionServerUrl(CConst.SYNC);
                         LogUtil.log("Companion device reachable: " + companionUrl);
 
                         Map<String, String> parameters = new HashMap<String, String>();
-                        parameters.put(RestfulHtm.COMM_KEYS.companion_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+                        parameters.put(SyncRest.COMM_KEYS.companion_ip_test.toString(), WebUtil.getServerIpPort(m_act));
 
                         Comm.sendPostUi(m_act, companionUrl, parameters, new Comm.CommPostCallbacks() {
                             @Override
@@ -703,14 +703,14 @@ public class SettingsFragment extends PreferenceFragment
 
                 if( secondsRemaining % 2 == 0){// test every 2 seconds
                     Map<String, String> parameters = new HashMap<String, String>();
-                    parameters.put(RestfulHtm.COMM_KEYS.companion_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+                    parameters.put(SyncRest.COMM_KEYS.companion_ip_test.toString(), WebUtil.getServerIpPort(m_act));
 
                     String companionServerIpPort = WebUtil.getCompanionServerIpPort();
                     String validationReport = Util.validIpPort(companionServerIpPort);
 
                     if( validationReport.contentEquals(CConst.OK)) {
 
-                        String companionServerUrl = WebUtil.getCompanionServerUrl( CConst.RESTFUL_HTM);
+                        String companionServerUrl = WebUtil.getCompanionServerUrl( CConst.SYNC);
                         Comm.sendPostUi(m_act, companionServerUrl, parameters, new Comm.CommPostCallbacks() {
                             @Override
                             public void success(String jsonString) {
@@ -987,12 +987,12 @@ public class SettingsFragment extends PreferenceFragment
 
                     if ( ipTest.contentEquals( CConst.OK )) {
 
-                        final String companionUrl = WebUtil.getCompanionServerUrl(CConst.RESTFUL_HTM);
+                        final String companionUrl = WebUtil.getCompanionServerUrl(CConst.SYNC);
                         final String myIpPort = WebUtil.getServerIpPort(m_act);
 
                         Map<String, String> parameters = new HashMap<String, String>();
                         parameters = new HashMap<String, String>();
-                        parameters.put(RestfulHtm.COMM_KEYS.register_companion_device.toString(), myIpPort);
+                        parameters.put(SyncRest.COMM_KEYS.register_companion_device.toString(), myIpPort);
                         parameters.put(CConst.SEC_TOK, CrypServer.getSecTok());
 
                         Comm.sendPostUi(m_act, companionUrl, parameters, new Comm.CommPostCallbacks() {

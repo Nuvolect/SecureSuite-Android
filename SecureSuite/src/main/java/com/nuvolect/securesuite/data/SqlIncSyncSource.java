@@ -23,7 +23,7 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.nuvolect.securesuite.webserver.Comm;
-import com.nuvolect.securesuite.webserver.RestfulHtm;
+import com.nuvolect.securesuite.webserver.SyncRest;
 import com.nuvolect.securesuite.webserver.WebUtil;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -139,9 +139,9 @@ public class SqlIncSyncSource {
         LogUtil.log(SQL_INC_SYNC_SRC, "startIncSyncSource starting, manifest report: \n"+syncIncManifest.report());
         LogUtil.log(SQL_INC_SYNC_SRC, "startIncSyncSource starting, jsonString: \n"+jsonString);
 
-        String url = WebUtil.getCompanionServerUrl(CConst.RESTFUL_HTM);
+        String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
         Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put(RestfulHtm.COMM_KEYS.tgt_inc_sync_source_manifest.toString(), jsonString);
+        parameters.put(SyncRest.COMM_KEYS.tgt_inc_sync_source_manifest.toString(), jsonString);
 
         Comm.sendPost(url, parameters, new Comm.CommPostCallbacks() {
             @Override
@@ -150,13 +150,13 @@ public class SqlIncSyncSource {
                 /**
                  * The request was successful.  The companion device will respond with a request for data.
                  */
-                LogUtil.log(SQL_INC_SYNC_SRC, RestfulHtm.COMM_KEYS.tgt_inc_sync_source_manifest + " response: " + response);
+                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.COMM_KEYS.tgt_inc_sync_source_manifest + " response: " + response);
             }
 
             @Override
             public void fail(String error) {
 
-                LogUtil.log(SQL_INC_SYNC_SRC, RestfulHtm.COMM_KEYS.tgt_inc_sync_source_manifest + " error: " + error);
+                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.COMM_KEYS.tgt_inc_sync_source_manifest + " error: " + error);
                 setSyncInProgress( false );
             }
         });
@@ -221,13 +221,13 @@ public class SqlIncSyncSource {
         /**
          * Communicate the batch of contact data to the companion server
          */
-        String url = WebUtil.getCompanionServerUrl(CConst.RESTFUL_HTM);
+        String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
 
         String payload = jsonObject.toString();
         String md5_payload = com.squareup.okhttp.internal.Util.md5Hex(payload);
 
         Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put(RestfulHtm.COMM_KEYS.tgt_inc_sync_data.toString(), payload );
+        parameters.put(SyncRest.COMM_KEYS.tgt_inc_sync_data.toString(), payload );
         parameters.put(CConst.MD5_PAYLOAD, md5_payload);
 
         LogUtil.log(SQL_INC_SYNC_SRC, "incSyncDataSend, json package length: "+jsonObject.length());
@@ -240,14 +240,14 @@ public class SqlIncSyncSource {
                  * The request was successful.  The companion device will process the data
                  * and respond with the next step.
                  */
-                LogUtil.log(SQL_INC_SYNC_SRC, RestfulHtm.COMM_KEYS.tgt_inc_sync_data + " response: " + response);
+                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.COMM_KEYS.tgt_inc_sync_data + " response: " + response);
             }
 
             @Override
             public void fail(String error) {
 
                 setSyncInProgress( false );
-                LogUtil.log(SQL_INC_SYNC_SRC, RestfulHtm.COMM_KEYS.tgt_inc_sync_data + " error: " + error);
+                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.COMM_KEYS.tgt_inc_sync_data + " error: " + error);
             }
         });
     }

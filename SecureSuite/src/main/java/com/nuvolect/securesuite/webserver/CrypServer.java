@@ -61,7 +61,8 @@ import java.util.Set;
 
 import static com.nuvolect.securesuite.util.LogUtil.DEBUG;
 import static com.nuvolect.securesuite.util.LogUtil.log;
-import static com.nuvolect.securesuite.webserver.RestfulHtm.COMM_KEYS.uri;
+import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_JSON;
+import static com.nuvolect.securesuite.webserver.SyncRest.COMM_KEYS.uri;
 
 /**<pre>
  * Server for running webserver on a service or background thread.
@@ -200,13 +201,12 @@ public class CrypServer extends NanoHTTPD {
 
         CookieHandler cookies = session.getCookies();
         String uniqueId = cookies.read("uniqueId");
+        Map<String, String> headers = session.getHeaders();
 
         if( uniqueId == null ){
 
             if( embedded_header_value.isEmpty())
                 embedded_header_value = WebUtil.getServerUrl(m_ctx);
-
-            Map<String, String> headers = session.getHeaders();
 
             for (Map.Entry<String, String> entry : headers.entrySet())
             {
@@ -302,7 +302,7 @@ public class CrypServer extends NanoHTTPD {
 
             } else if (uri.endsWith(".map")) {
                 is = m_ctx.getAssets().open(uri.substring(1));
-                return new Response(Status.OK, MimeUtil.MIME_JSON, is, -1);
+                return new Response(Status.OK, MIME_JSON, is, -1);
 
             } else if (uri.contentEquals("/favicon.ico")) {
                 uri = "/img"+uri;
@@ -380,13 +380,48 @@ public class CrypServer extends NanoHTTPD {
                 } else{
                     if (params.get("cmd").contentEquals("ls")) {
 
-                        mime = MimeUtil.MIME_JSON;
+                        mime = MIME_JSON;
                     }
                 }
 
                 return new Response(Status.OK, mime, is, -1);
 
-            } else {
+            } if( uri.contentEquals("/sync")){
+
+                if( ! mAuthenticated){
+
+                    return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Invalid authentication: "+uri);
+                }else{
+                    /**
+                     * If it is a setup page, skip the security token check.
+                     * This can only be done when host verification is disabled.
+                     */
+                    boolean hostVerifierDisabled = ! WebUtil.NullHostNameVerifier.getInstance().m_hostVerifierEnabled;
+                    if( hostVerifierDisabled
+                            && (params.containsKey(SyncRest.COMM_KEYS.register_companion_device.toString())
+                            || params.containsKey(SyncRest.COMM_KEYS.companion_ip_test.toString()))){
+
+                        log(LogUtil.LogType.CRYP_SERVER, "sec_tok test skipped");
+                        String json = SyncRest.render(m_ctx, uniqueId, params);
+                        return new Response(Status.OK, MIME_PLAINTEXT, json);
+                    }
+                    else {
+                        String sec_tok = headers.get(CConst.SEC_TOK);
+                        if( sec_tok.contentEquals( m_sec_tok)){
+
+                            log(LogUtil.LogType.CRYP_SERVER, "sec_tok match");
+                            String json = SyncRest.render(m_ctx, uniqueId, params);
+                            return new Response(Status.OK, MIME_PLAINTEXT, json);
+                        }
+                        else{
+
+                            log(LogUtil.LogType.CRYP_SERVER, "sec_tok ERROR");
+                            return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Invalid security token: "+uri);
+                        }
+                    }
+                }
+            }
+            else {
 
                 if( uri.contentEquals("/footer.htm")){
 
@@ -468,6 +503,7 @@ public class CrypServer extends NanoHTTPD {
                             is = targetFile.getFileInputStream();
                             return new Response(Status.OK, mime, is, -1);
                         }else{
+                            log(LogUtil.LogType.CRYP_SERVER, "Page not found: " + uri);
                             return new Response(Status.NOT_FOUND, MIME_PLAINTEXT, "404 File Not Found: "+uri);
                         }
                     }else{
@@ -696,10 +732,8 @@ public class CrypServer extends NanoHTTPD {
      */
     private static void initSecTok(Context ctx) {
 
-        setSecTok(
-                Cryp.get(
-                        CConst.SEC_TOK,
-                        Passphrase.generateRandomString(32, Passphrase.SYSTEM_MODE))
+        setSecTok( Cryp.get( CConst.SEC_TOK,
+               Passphrase.generateRandomString(32, Passphrase.SYSTEM_MODE))
         );
     }
     /**

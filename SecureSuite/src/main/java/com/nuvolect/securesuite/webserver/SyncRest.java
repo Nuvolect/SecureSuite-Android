@@ -32,16 +32,14 @@ import com.nuvolect.securesuite.util.WorkerCommand;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
- * Generate and manage the utility page and RESTful services.
+ * Support for data synchronization RESTful services.
  */
-public class RestfulHtm {
+public class SyncRest {
 
     private static Context m_ctx;
-    private static String templateFile = "restful.htm";
 
     static String[] param_keys = {
 
@@ -171,29 +169,7 @@ public class RestfulHtm {
         if( action.isEmpty())  // Check for empty string
             return "";
 
-        /**
-         * Generate the page html and return it as the session response
-         */
-        return generateHtml( uniqueId, params);
-    }
-
-    private static String generateHtml(String uniqueId, Map<String, String> params) {
-
-        String generatedHtml = "";
-
-        try {
-            MiniTemplator t = new MiniTemplator(WebService.assetsDirPath + "/" + templateFile);
-
-            t.setVariable("notify_js", CrypServer.getNotify(uniqueId));
-
-            generatedHtml = t.generateOutput();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            LogUtil.logException(LogUtil.LogType.RESTFUL_HTM, e);
-        }
-
-        return generatedHtml;
+        return new JSONObject().toString();
     }
 
     private static String parse(final String uniqueId, Map<String, String> params) {
@@ -209,7 +185,7 @@ public class RestfulHtm {
 
             if( LogUtil.DEBUG){
                 String str = value.length() > 30 ? value.substring(0, 30) : value;
-                LogUtil.log(LogUtil.LogType.RESTFUL_HTM, "key, value: " + key+", "+str);
+                LogUtil.log(LogUtil.LogType.SYNC_REST, "key, value: " + key+", "+str);
             }
 
             if( isParameterKey(key)) {// Used to key a parameter, not a command key
@@ -220,8 +196,8 @@ public class RestfulHtm {
             try {
                 key_enum = COMM_KEYS.valueOf(key);
             } catch (Exception e) {
-                LogUtil.log(LogUtil.LogType.RESTFUL_HTM, "Error unknown key: " + key);
-                LogUtil.logException(m_ctx, LogUtil.LogType.RESTFUL_HTM, e);
+                LogUtil.log(LogUtil.LogType.SYNC_REST, "Error unknown key: " + key);
+                LogUtil.logException(m_ctx, LogUtil.LogType.SYNC_REST, e);
             }
 
             switch (key_enum) {
@@ -257,13 +233,13 @@ public class RestfulHtm {
 
                         WebUtil.setCompanionServerIpPort( value );
 
-                        LogUtil.log(LogUtil.LogType.RESTFUL_HTM, key_enum
+                        LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum
                                 +" registered: "+value+", sec_tok: "+sec_tok);
 
                         return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
                     }else{
 
-                        LogUtil.log(LogUtil.LogType.RESTFUL_HTM, key_enum
+                        LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum
                                 +" ERROR registration attempt and not in pairing mode");
 
                         return WebUtil.response(CConst.RESPONSE_CODE_REGISTRATION_ERROR_209).toString();
@@ -293,7 +269,7 @@ public class RestfulHtm {
                 case src_full_sync_data_req:{
 
                     JSONObject response = SqlFullSyncSource.getInstance().inspectSyncDataRequest(value);
-                    LogUtil.log(LogUtil.LogType.RESTFUL_HTM, key_enum+" response: " + response.toString());
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum+" response: " + response.toString());
 
                     if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
 
@@ -308,7 +284,7 @@ public class RestfulHtm {
                     JSONObject response = SqlFullSyncTarget.getInstance().inspectSyncData(
                             m_ctx, value, md5_payload);
 
-                    LogUtil.log(LogUtil.LogType.RESTFUL_HTM, key_enum+" response: " + response.toString());
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum+" response: " + response.toString());
 
                     if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
 
@@ -335,7 +311,7 @@ public class RestfulHtm {
                 case src_inc_sync_data_req:{
 
                     JSONObject response = SqlIncSyncSource.getInstance().inspectSyncDataRequest(value);
-                    LogUtil.log(LogUtil.LogType.RESTFUL_HTM, key_enum+" response: " + response.toString());
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum+" response: " + response.toString());
 
                     if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
 
@@ -350,7 +326,7 @@ public class RestfulHtm {
                     JSONObject response = SqlIncSyncTarget.getInstance().incSyncInspectData(
                             m_ctx, value, md5_payload);
 
-                    LogUtil.log(LogUtil.LogType.RESTFUL_HTM, key_enum+" response: " + response.toString());
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum+" response: " + response.toString());
 
                     if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
 

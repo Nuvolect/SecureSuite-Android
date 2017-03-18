@@ -40,7 +40,7 @@ import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.webserver.Comm;
 import com.nuvolect.securesuite.webserver.CrypServer;
-import com.nuvolect.securesuite.webserver.RestfulHtm;
+import com.nuvolect.securesuite.webserver.SyncRest;
 import com.nuvolect.securesuite.webserver.WebUtil;
 
 import java.util.HashMap;
@@ -136,9 +136,9 @@ public class ServerFragment extends DialogFragment {
         if (serverEnabled && !WebUtil.getServerIpPort(m_act).contentEquals(
                 App.DEFAULT_IP_PORT)) {
 
-            final String thisDeviceUrl = WebUtil.getServerUrl(m_act, CConst.RESTFUL_HTM);
+            final String thisDeviceUrl = WebUtil.getServerUrl(m_act, CConst.SYNC);
             Map<String, String> parameters = new HashMap<String, String>();
-            parameters.put(RestfulHtm.COMM_KEYS.self_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+            parameters.put(SyncRest.COMM_KEYS.self_ip_test.toString(), WebUtil.getServerIpPort(m_act));
 
             LogUtil.log("thisDeviceUrl: " + thisDeviceUrl);
 

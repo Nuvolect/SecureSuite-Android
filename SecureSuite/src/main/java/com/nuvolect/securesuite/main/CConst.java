@@ -235,7 +235,7 @@ public class CConst {
     public static final String POST_UPLOADS                   = "post_uploads";
     public static final String RECORDS                        = "records";
 
-    public static final String RESTFUL_HTM                    = "restful_htm";
+    public static final String SYNC                           = "sync";
     public static final String YUBIKEY_SERIAL1                = "yubikey_serial1";
     public static final String YUBIKEY_SERIAL2                = "yubikey_serial2";
 

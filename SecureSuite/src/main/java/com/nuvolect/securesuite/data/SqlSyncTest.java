@@ -31,7 +31,7 @@ import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import com.nuvolect.securesuite.webserver.Comm;
-import com.nuvolect.securesuite.webserver.RestfulHtm;
+import com.nuvolect.securesuite.webserver.SyncRest;
 import com.nuvolect.securesuite.webserver.WebUtil;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -101,14 +101,14 @@ public class SqlSyncTest {
 
         managePayloadSize();
         Map<String, String> parameters = makeParameters();
-        parameters.put(RestfulHtm.COMM_KEYS.ping_test.toString(), String.valueOf(++ping_counter));
-        String url = WebUtil.getCompanionServerUrl(CConst.RESTFUL_HTM);
+        parameters.put(SyncRest.COMM_KEYS.ping_test.toString(), String.valueOf(++ping_counter));
+        String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
 
         Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
             @Override
             public void success(String response) {
 
-                LogUtil.log(LogUtil.LogType.SQL_SYNC_TEST, RestfulHtm.COMM_KEYS.ping_test + " response: " + response);
+                LogUtil.log(LogUtil.LogType.SQL_SYNC_TEST, SyncRest.COMM_KEYS.ping_test + " response: " + response);
 
                 if (WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)) {
 
@@ -139,7 +139,7 @@ public class SqlSyncTest {
             @Override
             public void fail(String error) {
 
-                LogUtil.log(LogUtil.LogType.SQL_SYNC_TEST, RestfulHtm.COMM_KEYS.ping_test + " error: " + error);
+                LogUtil.log(LogUtil.LogType.SQL_SYNC_TEST, SyncRest.COMM_KEYS.ping_test + " error: " + error);
             }
         });
         if( m_continueTest)
@@ -152,14 +152,14 @@ public class SqlSyncTest {
 
         managePayloadSize();
         Map<String, String> parameters = makeParameters();
-        parameters.put(RestfulHtm.COMM_KEYS.pong_test.toString(), String.valueOf( ++pong_counter));
-        String url = WebUtil.getCompanionServerUrl(CConst.RESTFUL_HTM);
+        parameters.put(SyncRest.COMM_KEYS.pong_test.toString(), String.valueOf( ++pong_counter));
+        String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
 
         Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
             @Override
             public void success(String response) {
 
-                LogUtil.log(LogUtil.LogType.SQL_SYNC_TEST, RestfulHtm.COMM_KEYS.pong_test + " response: " + response);
+                LogUtil.log(LogUtil.LogType.SQL_SYNC_TEST, SyncRest.COMM_KEYS.pong_test + " response: " + response);
 
                 if (WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)) {
 
@@ -184,7 +184,7 @@ public class SqlSyncTest {
 
             @Override
             public void fail(String error) {
-                LogUtil.log(LogUtil.LogType.SQL_SYNC_TEST, RestfulHtm.COMM_KEYS.pong_test + " error: " + error);
+                LogUtil.log(LogUtil.LogType.SQL_SYNC_TEST, SyncRest.COMM_KEYS.pong_test + " error: " + error);
             }
         });
         if( m_continueTest)
@@ -266,13 +266,13 @@ public class SqlSyncTest {
                         response = WebUtil.response(CConst.RESPONSE_CODE_MD5_FAIL_203);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
-                    LogUtil.logException(LogUtil.LogType.RESTFUL_HTM, e);
+                    LogUtil.logException(LogUtil.LogType.SYNC_REST, e);
                 }
-                LogUtil.log(LogUtil.LogType.RESTFUL_HTM, label
+                LogUtil.log(LogUtil.LogType.SYNC_REST, label
                         +"ping test size: "+ encodedPayload.length()+", continue: " + response.toString());
             }else{
                 response = WebUtil.response(CConst.RESPONSE_CODE_DONE_101); // done
-                LogUtil.log(LogUtil.LogType.RESTFUL_HTM, label+" done: " + response.toString());
+                LogUtil.log(LogUtil.LogType.SYNC_REST, label+" done: " + response.toString());
             }
             return response;
         }

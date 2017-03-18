@@ -23,7 +23,7 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.nuvolect.securesuite.webserver.Comm;
-import com.nuvolect.securesuite.webserver.RestfulHtm;
+import com.nuvolect.securesuite.webserver.SyncRest;
 import com.nuvolect.securesuite.webserver.WebUtil;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -98,7 +98,7 @@ public class SqlIncSyncTarget {
 
         if( ! m_source_manifest.isEmpty()){
 
-            String url = WebUtil.getCompanionServerUrl(CConst.RESTFUL_HTM);
+            String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
             Map<String, String> parameters = new HashMap<String, String>();
 
             /**
@@ -108,24 +108,24 @@ public class SqlIncSyncTarget {
              * until the entire manifest is satisfied.
              */
             String request = new Gson().toJson(m_source_manifest);
-            parameters.put(RestfulHtm.COMM_KEYS.src_inc_sync_data_req.toString(), request);
+            parameters.put(SyncRest.COMM_KEYS.src_inc_sync_data_req.toString(), request);
 
             Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
                 @Override
                 public void success(String response) {
 
-                    LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, RestfulHtm.COMM_KEYS.src_inc_sync_data_req + " response: " + response);
+                    LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.COMM_KEYS.src_inc_sync_data_req + " response: " + response);
                 }
 
                 @Override
                 public void fail(String error) {
 
-                    LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, RestfulHtm.COMM_KEYS.src_inc_sync_data_req + " error: " + error);
+                    LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.COMM_KEYS.src_inc_sync_data_req + " error: " + error);
                 }
             });
         }
         else
-            LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, RestfulHtm.COMM_KEYS.src_inc_sync_data_req +" no data, all done");
+            LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.COMM_KEYS.src_inc_sync_data_req +" no data, all done");
     }
 
     public JSONObject incSyncInspectData(Context ctx, String payload, String md5_payload) {
@@ -196,22 +196,22 @@ public class SqlIncSyncTarget {
 
         WorkerCommand.refreshUserInterface(ctx, CConst.RECREATE);
 
-        String url = WebUtil.getCompanionServerUrl(CConst.RESTFUL_HTM);
+        String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
         Map<String, String> parameters = new HashMap<String, String>();
 
-        parameters.put(RestfulHtm.COMM_KEYS.src_inc_sync_end.toString(), "no_errors");
+        parameters.put(SyncRest.COMM_KEYS.src_inc_sync_end.toString(), "no_errors");
 
         Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
             @Override
             public void success(String response) {
 
-                LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, RestfulHtm.COMM_KEYS.src_inc_sync_end + " response: " + response);
+                LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.COMM_KEYS.src_inc_sync_end + " response: " + response);
             }
 
             @Override
             public void fail(String error) {
 
-                LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, RestfulHtm.COMM_KEYS.src_inc_sync_end + " error: " + error);
+                LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.COMM_KEYS.src_inc_sync_end + " error: " + error);
             }
         });
     }

@@ -79,7 +79,7 @@ public class LogUtil {
         NFC_SESSION,
         PASSWORD,
         REST,
-        RESTFUL_HTM,
+        SYNC_REST,
         RESTORE_DB,
         SECURE,
         SEND_SMS,
