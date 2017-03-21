@@ -108,24 +108,24 @@ public class SqlIncSyncTarget {
              * until the entire manifest is satisfied.
              */
             String request = new Gson().toJson(m_source_manifest);
-            parameters.put(SyncRest.COMM_KEYS.src_inc_sync_data_req.toString(), request);
+            parameters.put(SyncRest.CMD.src_inc_sync_data_req.toString(), request);
 
             Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
                 @Override
                 public void success(String response) {
 
-                    LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.COMM_KEYS.src_inc_sync_data_req + " response: " + response);
+                    LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.CMD.src_inc_sync_data_req + " response: " + response);
                 }
 
                 @Override
                 public void fail(String error) {
 
-                    LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.COMM_KEYS.src_inc_sync_data_req + " error: " + error);
+                    LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.CMD.src_inc_sync_data_req + " error: " + error);
                 }
             });
         }
         else
-            LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.COMM_KEYS.src_inc_sync_data_req +" no data, all done");
+            LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.CMD.src_inc_sync_data_req +" no data, all done");
     }
 
     public JSONObject incSyncInspectData(Context ctx, String payload, String md5_payload) {
@@ -199,19 +199,19 @@ public class SqlIncSyncTarget {
         String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
         Map<String, String> parameters = new HashMap<String, String>();
 
-        parameters.put(SyncRest.COMM_KEYS.src_inc_sync_end.toString(), "no_errors");
+        parameters.put(SyncRest.CMD.src_inc_sync_end.toString(), "no_errors");
 
         Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
             @Override
             public void success(String response) {
 
-                LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.COMM_KEYS.src_inc_sync_end + " response: " + response);
+                LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.CMD.src_inc_sync_end + " response: " + response);
             }
 
             @Override
             public void fail(String error) {
 
-                LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.COMM_KEYS.src_inc_sync_end + " error: " + error);
+                LogUtil.log(LogUtil.LogType.SQL_INC_SYNC_TARGET, SyncRest.CMD.src_inc_sync_end + " error: " + error);
             }
         });
     }

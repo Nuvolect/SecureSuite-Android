@@ -64,7 +64,7 @@ import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_JSON;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_PNG;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_TTF;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_WOFF;
-import static com.nuvolect.securesuite.webserver.SyncRest.COMM_KEYS.uri;
+import static com.nuvolect.securesuite.webserver.SyncRest.CMD.uri;
 import static java.util.Locale.US;
 
 /**<pre>
@@ -430,7 +430,7 @@ public class CrypServer extends NanoHTTPD {
                                     return new Response(Status.OK, MIME_JSON, is, -1);
                                 case sync:
                                     String json = SyncRest.render(m_ctx, uniqueId, params);
-                                    return new Response(Status.OK, MIME_JSON, json);
+                                    return new Response(Status.OK, MIME_PLAINTEXT, json);
                                 case connector:{
 
                                     String mime = MIME_JSON;
@@ -452,8 +452,8 @@ public class CrypServer extends NanoHTTPD {
                              */
                             boolean hostVerifierDisabled = !WebUtil.NullHostNameVerifier.getInstance().m_hostVerifierEnabled;
                             if (ext == EXT.sync && hostVerifierDisabled
-                                    && (params.containsKey(SyncRest.COMM_KEYS.register_companion_device.toString())
-                                    || params.containsKey(SyncRest.COMM_KEYS.companion_ip_test.toString()))) {
+                                    && (params.containsKey(SyncRest.CMD.register_companion_device.toString())
+                                    || params.containsKey(SyncRest.CMD.companion_ip_test.toString()))) {
 
                                 log(LogUtil.LogType.CRYP_SERVER, "sec_tok test skipped");
                                 String json = SyncRest.render(m_ctx, uniqueId, params);

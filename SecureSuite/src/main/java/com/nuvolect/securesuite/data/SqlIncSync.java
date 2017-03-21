@@ -110,8 +110,8 @@ public class SqlIncSync {
 
         if( mSyncEnabled){
 
-        mSyncSuspended = false;
-        setSyncTimer(ctx);
+            mSyncSuspended = false;
+            setSyncTimer(ctx);
         }
     }
 
@@ -120,10 +120,10 @@ public class SqlIncSync {
 
         if( mSyncEnabled){
 
-        SqlCipher.putIncSync( INC_SYNC_TYPE.INSERT_CONTACT.ordinal(), contact_id);
+            SqlCipher.putIncSync( INC_SYNC_TYPE.INSERT_CONTACT.ordinal(), contact_id);
 
-        if( !mSyncSuspended)
-            setSyncTimer(ctx);
+            if( !mSyncSuspended)
+                setSyncTimer(ctx);
         }
     }
 
@@ -131,10 +131,10 @@ public class SqlIncSync {
 
         if( mSyncEnabled){
 
-        SqlCipher.putIncSync( INC_SYNC_TYPE.UPDATE_CONTACT.ordinal(), contact_id);
+            SqlCipher.putIncSync( INC_SYNC_TYPE.UPDATE_CONTACT.ordinal(), contact_id);
 
-        if( !mSyncSuspended)
-            setSyncTimer(ctx);
+            if( !mSyncSuspended)
+                setSyncTimer(ctx);
         }
     }
 
@@ -200,9 +200,8 @@ public class SqlIncSync {
     private Runnable m_incrementalSyncTimer = new Runnable() {
         public void run() {
 
-            WorkerCommand.queStartIncSync(m_ctx);
-
-            mHandler.removeCallbacks(m_incrementalSyncTimer);
+        WorkerCommand.queStartIncSync(m_ctx);
+        mHandler.removeCallbacks(m_incrementalSyncTimer);
         }
     };
 
@@ -211,8 +210,7 @@ public class SqlIncSync {
      */
     public void setIncomingUpdate(){
 
-        Cryp.put(CConst.LAST_INCOMING_UPDATE, "Incoming update: "
-                + TimeUtil.friendlyTimeMDYM(System.currentTimeMillis()));
+        Cryp.put(CConst.LAST_INCOMING_UPDATE, TimeUtil.friendlyTimeMDYM(System.currentTimeMillis()));
     }
     /**
      * Return text string with the last time the device was updated as an incoming companion.
@@ -220,15 +218,14 @@ public class SqlIncSync {
      */
     public String getIncomingUpdate(){
 
-        return Cryp.get(CConst.LAST_INCOMING_UPDATE, "Incoming update: never");
+        return Cryp.get(CConst.LAST_INCOMING_UPDATE, "never");
     }
     /**
      * Set a text string with the last time the device was updated as an outgoing companion.
      */
     public void setOutgoingUpdate(){
 
-    Cryp.put(CConst.LAST_OUTGOING_UPDATE, "Outgoing update: "
-            + TimeUtil.friendlyTimeMDYM(System.currentTimeMillis()));
+        Cryp.put(CConst.LAST_OUTGOING_UPDATE, TimeUtil.friendlyTimeMDYM(System.currentTimeMillis()));
     }
     /**
      * Return text string with the last time the device was updated as an outgoing companion.
@@ -236,6 +233,6 @@ public class SqlIncSync {
      */
     public String getOutgoingUpdate(){
 
-        return Cryp.get(CConst.LAST_OUTGOING_UPDATE, "Outgoing update: never");
+        return Cryp.get(CConst.LAST_OUTGOING_UPDATE, "never");
     }
 }

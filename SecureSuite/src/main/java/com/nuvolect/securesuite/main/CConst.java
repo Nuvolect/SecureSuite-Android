@@ -78,6 +78,7 @@ public class CConst {
     public static final String AUTHENTICATED        = "authenticated";
     public static final String BLOG_URL             = "https://nuvolect.com/blog";
     public static final String CHUNK                = "/chunk/";
+    public static final String CMD                  = "cmd";
     public static final String COMMS_SELECT         = DTab.comms_select.toString();
     public static final String CONTACT              = "contact";
     public static final String CONTACT_ID           = SqlCipher.ADTab.contact_id.toString(); // DTab has the same field
@@ -104,7 +105,6 @@ public class CConst {
     public static final String LAST_INCOMING_UPDATE = "last_outgoing_update";
     public static final String LAST_LOGIN_STATUS    = "last_login_status";
     public static final String LAST_OUTGOING_UPDATE = "last_incoming_update";
-    public static final String MD5_PAYLOAD          = "md5_payload";
     public static final String MEMBERS              = "members";
     public static final String MEMBERS_DELETED      = "members_deleted";
     public static final String NAME_FIRST           = KvTab.name_first.toString();
@@ -119,7 +119,6 @@ public class CConst {
     public static final String OK                   = "ok";
     public static final String ORGANIZATION         = KvTab.organization.toString();
     public static final String PASSWORD             = "password";
-    public static final String PAYLOAD              = "payload";
     public static final String PERMISSION_MANAGER   = "permission_manager";
     public static final String PHONE                = DTab.phone.toString();
     public static final String PHONETIC_FAMILY      = KvTab.phonetic_family.toString();
@@ -144,6 +143,16 @@ public class CConst {
     public static final String VCF_FOLDER           = "/vcf/";
     public static final String WEBSITE              = DTab.website.toString();
     public static final String _ID                  = "_id";
+
+    // Data sync keys
+    public static final String DATA_REQUEST         = "data_request";
+    public static final String IP_PORT              = "ip_port";
+    public static final String MD5_PAYLOAD          = "md5_payload";
+    public static final String NUM_TESTS            = "num_tests";
+    public static final String PAYLOAD              = "payload";
+    public static final String SOURCE_MANIFEST      = "source_manifest";
+    public static final String SYNC_DATA            = "sync_data";
+    public static final String SYNC_DATA_REQUEST    = "sync_data_request";
 
 
     public static final String TRUE = "true";

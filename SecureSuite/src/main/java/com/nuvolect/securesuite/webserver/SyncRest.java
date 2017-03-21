@@ -23,6 +23,7 @@ import android.content.Context;
 
 import com.nuvolect.securesuite.data.SqlFullSyncSource;
 import com.nuvolect.securesuite.data.SqlFullSyncTarget;
+import com.nuvolect.securesuite.data.SqlIncSync;
 import com.nuvolect.securesuite.data.SqlIncSyncSource;
 import com.nuvolect.securesuite.data.SqlIncSyncTarget;
 import com.nuvolect.securesuite.data.SqlSyncTest;
@@ -30,16 +31,17 @@ import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.WorkerCommand;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Map;
+
+import static com.nuvolect.securesuite.webserver.WebUtil.getCompanionServerIpPort;
 
 /**
  * Support for data synchronization RESTful services.
  */
 public class SyncRest {
-
-    private static Context m_ctx;
 
     static String[] param_keys = {
 
@@ -62,21 +64,27 @@ public class SyncRest {
         return false;
     }
 
-    public static enum COMM_KEYS {NIL,
+    public static enum CMD {
+
+        NIL,
 
         /**
          * Send this IP to self.  Success is when this IP matches the definition of self.
+         * Parameter: {@link CConst#IP_PORT} : 1.2.3.4:3210
          */
         self_ip_test,
         /**
          * Send this IP to the companion.  Success is when this IP is defined as companion
          * on the companion device.
+         * Parameter: {@link CConst#IP_PORT} : 1.2.3.4:3210
          */
         companion_ip_test,
         /**
          * Register companion device.  Used to associate a second SecureSuite device
          * to serve as a backup and to share contact/password data updates.
          * A security token SEC_TOK is passed that is used with all future communications.
+         * Parameter: {@link CConst#SEC_TOK} : 32 char token
+         * Parameter: {@link CConst#COMPANION_IP_PORT} : 1.2.3.4:3210
          */
         register_companion_device,
 
@@ -84,56 +92,74 @@ public class SyncRest {
         /**
          * Internal request to start the full sync process.
          * This will initiate full_sync_versions to the target SecureSuite device
+         * Parameter: none
          */
         src_full_sync_start,
 
         /**
          * Receive _id of all records on the target SecureSuite device.
          * It will respond with a series of sync_data_req calls.
+         * Parameter: {@link CConst#SOURCE_MANIFEST} : json string
          */
         tgt_full_sync_source_manifest,
 
         /**
          * Request specific data from the source SecureSuite device.
          * Data is supplied as a JSONArray of contacts in simple form.
+         * Parameter: data_request : json string
          */
         src_full_sync_data_req,
 
         /**
          * Send a JSONArray of contacts in simple form.
+         * Parameter: {@link CConst#SYNC_DATA} : json string
          */
         tgt_full_sync_data,
 
         /**
          * Sent when the sync plan is empty and sync is complete.
          * Time to clean up.
+         * Parameter: none
          */
         src_full_sync_end,
 //////////////////////////////////////////////////////////////////////////////////////
         /**
          * Send a manifest describing updates to the target device.
          * It in turn will respond with requests for updates.
+         * Parameter: {@link CConst#SOURCE_MANIFEST} : json string
          */
         tgt_inc_sync_source_manifest,
 
         /**
          * Request incremental data from the source
+         * Parameter: {@link CConst#SYNC_DATA_REQUEST} : json string
          */
         src_inc_sync_data_req,
 
         /**
          * Send requested data
+         * Parameter: {@link CConst#MD5_PAYLOAD} : 32char
+         * Parameter: {@link CConst#SYNC_DATA} : json string
          */
         tgt_inc_sync_data,
 
         /**
          * Send when all data has been supplied and incremental sync is complete.
+         * Parameter: none
          */
         src_inc_sync_end,
 //////////////////////////////////////////////////////////////////////////////////////
 
         /**
+         * Current synchronization state.
+         * Parameter: none
+         */
+        sync_state,
+        /**
          * Communication test.  Bounce data back and forth to exercise communications.
+         * Parameter: {@link CConst#MD5_PAYLOAD} : 32char
+         * Parameter: {@link CConst#PAYLOAD} : json string
+         * Parameter: {@link CConst#NUM_TESTS} : integer string
          */
         ping_test,
         pong_test,
@@ -145,68 +171,38 @@ public class SyncRest {
         queryParameterStrings,  // Raw parameters
     }
 
-    public static void init(Context ctx){
-
-        m_ctx = ctx;
-    }
-
+    /**
+     * Parse parameters and process any updates.
+     *
+     * @param ctx
+     * @param uniqueId
+     * @param params
+     * @return
+     */
     public static String render(Context ctx, String uniqueId, Map<String, String> params) {
 
-        m_ctx = ctx;
+        String jsonString = parse(ctx, uniqueId, params);// set mContactId & others based on params
 
-        /**
-         * Parse parameters and process any updates.
-         * Return an Action indicating what to do next
-         */
-        String action = parse(uniqueId, params);// set mContactId & others based on params
-
-        if( action.startsWith("download:"))  // Check for download, action string includes filename
-            return action;
-
-        if( action.startsWith("{"))  // Check for jsonObject
-            return action;
-
-        if( action.isEmpty())  // Check for empty string
-            return "";
-
-        return new JSONObject().toString();
+        return jsonString;
     }
 
-    private static String parse(final String uniqueId, Map<String, String> params) {
+    private static String parse(Context ctx, final String uniqueId, Map<String, String> params) {
 
-        String key = "";
-        String value = "";
-
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            key = entry.getKey();
-            value = entry.getValue();
-            if( value == null)
-                value = "";
-
-            if( LogUtil.DEBUG){
-                String str = value.length() > 30 ? value.substring(0, 30) : value;
-                LogUtil.log(LogUtil.LogType.SYNC_REST, "key, value: " + key+", "+str);
-            }
-
-            if( isParameterKey(key)) {// Used to key a parameter, not a command key
-                continue;
-            }
-
-            COMM_KEYS key_enum = COMM_KEYS.NIL;
+            CMD cmd = CMD.NIL;
             try {
-                key_enum = COMM_KEYS.valueOf(key);
+                cmd = CMD.valueOf(params.get(CConst.CMD));
             } catch (Exception e) {
-                LogUtil.log(LogUtil.LogType.SYNC_REST, "Error unknown key: " + key);
-                LogUtil.logException(m_ctx, LogUtil.LogType.SYNC_REST, e);
+                LogUtil.log(LogUtil.LogType.SYNC_REST, "Error invalid command: " + cmd);
+                LogUtil.logException(ctx, LogUtil.LogType.SYNC_REST, e);
             }
 
-            switch (key_enum) {
+            switch (cmd) {
 
                 case NIL:
 
                 case self_ip_test:{
 
-                    if( value.contentEquals(WebUtil.getServerIpPort(m_ctx)))
+                    if( params.get(CConst.IP_PORT).contentEquals(WebUtil.getServerIpPort(ctx)))
                         return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
                     else
                         return WebUtil.response(CConst.RESPONSE_CODE_SELF_TEST_FAIL_211).toString();
@@ -214,7 +210,7 @@ public class SyncRest {
 
                 case companion_ip_test:{
 
-                    if( value.contentEquals(WebUtil.getCompanionServerIpPort()))
+                    if( params.get(CConst.IP_PORT).contentEquals(getCompanionServerIpPort()))
                         return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
                     else
                         return WebUtil.response(CConst.RESPONSE_CODE_COMPANION_TEST_FAIL_210).toString();
@@ -231,15 +227,15 @@ public class SyncRest {
                         String sec_tok = params.get(CConst.SEC_TOK);
                         CrypServer.setSecTok( sec_tok );
 
-                        WebUtil.setCompanionServerIpPort( value );
+                        WebUtil.setCompanionServerIpPort( params.get(CConst.COMPANION_IP_PORT) );
 
-                        LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum
-                                +" registered: "+value+", sec_tok: "+sec_tok);
+                        LogUtil.log(LogUtil.LogType.SYNC_REST, cmd
+                                +" registered: "+params.get(CConst.COMPANION_IP_PORT)+", sec_tok: "+sec_tok);
 
                         return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
                     }else{
 
-                        LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum
+                        LogUtil.log(LogUtil.LogType.SYNC_REST, cmd
                                 +" ERROR registration attempt and not in pairing mode");
 
                         return WebUtil.response(CConst.RESPONSE_CODE_REGISTRATION_ERROR_209).toString();
@@ -251,29 +247,31 @@ public class SyncRest {
                     if( SqlFullSyncTarget.getInstance().syncInProcess())
                         return WebUtil.response(CConst.RESPONSE_CODE_SYNC_IN_PROCESS_201).toString();
                     else {
-                        WorkerCommand.fullSyncSendSourceManifest(m_ctx);
+                        WorkerCommand.fullSyncSendSourceManifest(ctx);
 
                         return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
                     }
                 }
                 case tgt_full_sync_source_manifest:{
 
-                    JSONObject response = SqlFullSyncTarget.getInstance().inspectSourceManifest(value);
+                    JSONObject response = SqlFullSyncTarget.getInstance()
+                            .inspectSourceManifest(params.get(CConst.SOURCE_MANIFEST));
 
                     if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
 
-                        WorkerCommand.queOptimizeFullSyncPlan(m_ctx);// and make first sync request
+                        WorkerCommand.queOptimizeFullSyncPlan(ctx);// and make first sync request
                     }
                     return response.toString();
                 }
                 case src_full_sync_data_req:{
 
-                    JSONObject response = SqlFullSyncSource.getInstance().inspectSyncDataRequest(value);
-                    LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum+" response: " + response.toString());
+                    JSONObject response = SqlFullSyncSource.getInstance()
+                            .inspectSyncDataRequest(params.get(CConst.DATA_REQUEST));
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
 
                     if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
 
-                        WorkerCommand.queFullSyncSendData(m_ctx);
+                        WorkerCommand.queFullSyncSendData(ctx);
                     }
                     return response.toString();
                 }
@@ -282,40 +280,42 @@ public class SyncRest {
                     String md5_payload = params.get(CConst.MD5_PAYLOAD);
 
                     JSONObject response = SqlFullSyncTarget.getInstance().inspectSyncData(
-                            m_ctx, value, md5_payload);
+                            ctx, params.get(CConst.SYNC_DATA), md5_payload);
 
-                    LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum+" response: " + response.toString());
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
 
                     if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
 
-                        WorkerCommand.queFullSyncProcessData(m_ctx);
+                        WorkerCommand.queFullSyncProcessData(ctx);
                     }
                     return response.toString();
                 }
                 case src_full_sync_end:{
 
-                    SqlFullSyncSource.getInstance().fullSyncEnd(m_ctx);
+                    SqlFullSyncSource.getInstance().fullSyncEnd(ctx);
                     return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
                 }
 
                 case tgt_inc_sync_source_manifest:{
 
-                    JSONObject response = SqlIncSyncTarget.getInstance().inspectSourceManifest(value);
+                    JSONObject response = SqlIncSyncTarget.getInstance()
+                            .inspectSourceManifest(params.get(CConst.SOURCE_MANIFEST));
 
                     if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
 
-                        WorkerCommand.queOptimizeIncSyncPlan(m_ctx);// and make first sync request
+                        WorkerCommand.queOptimizeIncSyncPlan(ctx);// and make first sync request
                     }
                     return response.toString();
                 }
                 case src_inc_sync_data_req:{
 
-                    JSONObject response = SqlIncSyncSource.getInstance().inspectSyncDataRequest(value);
-                    LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum+" response: " + response.toString());
+                    JSONObject response = SqlIncSyncSource.getInstance()
+                            .inspectSyncDataRequest(params.get(CConst.SYNC_DATA_REQUEST));
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
 
                     if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
 
-                        WorkerCommand.queIncSyncSendData(m_ctx);
+                        WorkerCommand.queIncSyncSendData(ctx);
                     }
                     return response.toString();
                 }
@@ -324,33 +324,52 @@ public class SyncRest {
                     String md5_payload = params.get(CConst.MD5_PAYLOAD);
 
                     JSONObject response = SqlIncSyncTarget.getInstance().incSyncInspectData(
-                            m_ctx, value, md5_payload);
+                            ctx, params.get(CConst.SYNC_DATA), md5_payload);
 
-                    LogUtil.log(LogUtil.LogType.SYNC_REST, key_enum+" response: " + response.toString());
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
 
                     if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
 
-                        WorkerCommand.queIncSyncProcessData(m_ctx);
+                        WorkerCommand.queIncSyncProcessData(ctx);
                     }
                     return response.toString();
                 }
                 case src_inc_sync_end: {
 
-                    SqlIncSyncSource.getInstance().incSyncEnd(m_ctx);
+                    SqlIncSyncSource.getInstance().incSyncEnd(ctx);
                     return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
+                }
+
+
+                case sync_state:{
+
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put( "companion_ip_port", getCompanionServerIpPort());
+                        jsonObject.put( "my_ip_port", WebUtil.getServerIpPort(ctx));
+                        jsonObject.put( "incoming_update", SqlIncSync.getInstance().getIncomingUpdate());
+                        jsonObject.put( "outgoing_update", SqlIncSync.getInstance().getOutgoingUpdate());
+
+                        LogUtil.log(LogUtil.LogType.SYNC_REST, "sync_state response: "+jsonObject.toString(2));//mkk remove
+
+                        return jsonObject.toString();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 case ping_test:{
 
                     String md5_payload = params.get(CConst.MD5_PAYLOAD);
                     String encodedPayload = params.get(CConst.PAYLOAD);
-                    String numberOfTests = value;
+                    String numberOfTests = params.get(CConst.NUM_TESTS);
 
                     JSONObject response = SqlSyncTest.getInstance()
                             .checkResult("ping", numberOfTests, md5_payload, encodedPayload);
 
                     if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100))
-                        WorkerCommand.quePongTest(m_ctx);
+                        WorkerCommand.quePongTest(ctx);
 
                     return response.toString();
                 }
@@ -358,21 +377,17 @@ public class SyncRest {
 
                     String md5_payload = params.get(CConst.MD5_PAYLOAD);
                     String encodedPayload = params.get(CConst.PAYLOAD);
-                    String numberOfTests = value;
+                    String numberOfTests = params.get(CConst.NUM_TESTS);
 
                     JSONObject response = SqlSyncTest.getInstance()
                             .checkResult("pong", numberOfTests, md5_payload, encodedPayload);
                     return response.toString();
                 }
 
-                // Ignore
-                case uri:
-                case queryParameterStrings:
-                    break;
-
                 default:
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, "Invalid command: "+cmd);
             }
-        }
-        return CConst.GENERATE_HTML ;// Default to generate html as next step
+
+        return new JSONObject().toString();
     }
 }

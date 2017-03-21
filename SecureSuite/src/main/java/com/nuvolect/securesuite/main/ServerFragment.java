@@ -138,7 +138,7 @@ public class ServerFragment extends DialogFragment {
 
             final String thisDeviceUrl = WebUtil.getServerUrl(m_act, CConst.SYNC);
             Map<String, String> parameters = new HashMap<String, String>();
-            parameters.put(SyncRest.COMM_KEYS.self_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+            parameters.put(SyncRest.CMD.self_ip_test.toString(), WebUtil.getServerIpPort(m_act));
 
             LogUtil.log("thisDeviceUrl: " + thisDeviceUrl);
 

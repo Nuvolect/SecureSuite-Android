@@ -160,7 +160,7 @@ public class SettingsFragment extends PreferenceFragment
         if (!WebUtil.getServerIpPort(m_act).contentEquals(App.DEFAULT_IP_PORT)) {
 
             final String thisDeviceUrl = WebUtil.getServerUrl(m_act, CConst.SYNC);
-            parameters.put(SyncRest.COMM_KEYS.self_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+            parameters.put(SyncRest.CMD.self_ip_test.toString(), WebUtil.getServerIpPort(m_act));
 
             Comm.sendPostUi(m_act, thisDeviceUrl, parameters, new Comm.CommPostCallbacks() {
                 @Override
@@ -203,7 +203,7 @@ public class SettingsFragment extends PreferenceFragment
                         LogUtil.log("Companion device reachable: " + companionUrl);
 
                         Map<String, String> parameters = new HashMap<String, String>();
-                        parameters.put(SyncRest.COMM_KEYS.companion_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+                        parameters.put(SyncRest.CMD.companion_ip_test.toString(), WebUtil.getServerIpPort(m_act));
 
                         Comm.sendPostUi(m_act, companionUrl, parameters, new Comm.CommPostCallbacks() {
                             @Override
@@ -703,7 +703,7 @@ public class SettingsFragment extends PreferenceFragment
 
                 if( secondsRemaining % 2 == 0){// test every 2 seconds
                     Map<String, String> parameters = new HashMap<String, String>();
-                    parameters.put(SyncRest.COMM_KEYS.companion_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+                    parameters.put(SyncRest.CMD.companion_ip_test.toString(), WebUtil.getServerIpPort(m_act));
 
                     String companionServerIpPort = WebUtil.getCompanionServerIpPort();
                     String validationReport = Util.validIpPort(companionServerIpPort);
@@ -992,7 +992,7 @@ public class SettingsFragment extends PreferenceFragment
 
                         Map<String, String> parameters = new HashMap<String, String>();
                         parameters = new HashMap<String, String>();
-                        parameters.put(SyncRest.COMM_KEYS.register_companion_device.toString(), myIpPort);
+                        parameters.put(SyncRest.CMD.register_companion_device.toString(), myIpPort);
                         parameters.put(CConst.SEC_TOK, CrypServer.getSecTok());
 
                         Comm.sendPostUi(m_act, companionUrl, parameters, new Comm.CommPostCallbacks() {

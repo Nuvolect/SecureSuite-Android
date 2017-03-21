@@ -38,67 +38,91 @@
 
 <div class="container">
 
-        <h1>Developer</h1>
+    <h1>Developer</h1>
     <br>
-    <br>
 
-    <div align="left">
-        <table align="left">
+    <table align="left">
 
-            <tr>
-                <td>
-                    <button ng-click="runTest('encode_hash', encode_hash_data )">Encode hash</button>
-                </td>
-                <td>
-                    <input type="text" ng-model="encode_hash_data" size="50"/>
-                </td>
-                <td>
-                    Result: {{ encode_hash_result }}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button ng-click="runTest('decode_hash', decode_hash_data )">Decode hash</button>
-                </td>
-                <td>
-                    <input type="text" ng-model="decode_hash_data" size="50"/>
-                </td>
-                <td>
-                    Result: {{ decode_hash_result }}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button ng-click="runTest('mime', mime_data )">Mime type</button>
-                </td>
-                <td>
-                    <input type="text" ng-model="mime_data" size="50"/>
-                </td>
-                <td>
-                    Result: {{ mime_result }}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    JQuery version
-                </td>
-                <td>
-                    {{jquery_version}}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    AngularJS version
-                </td>
-                <td>
-                    {{angular_version}}
-                </td>
-            </tr>
+        <tr>
+            <td>
+                <button ng-click="runTest('encode_hash', encode_hash_data )">Encode hash</button>
+            </td>
+            <td>
+                <input type="text" ng-model="encode_hash_data" size="50"/>
+            </td>
+            <td>
+                Result: {{ encode_hash_result }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button ng-click="runTest('decode_hash', decode_hash_data )">Decode hash</button>
+            </td>
+            <td>
+                <input type="text" ng-model="decode_hash_data" size="50"/>
+            </td>
+            <td>
+                Result: {{ decode_hash_result }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button ng-click="runTest('mime', mime_data )">Mime type</button>
+            </td>
+            <td>
+                <input type="text" ng-model="mime_data" size="50"/>
+            </td>
+            <td>
+                Result: {{ mime_result }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                JQuery version
+            </td>
+            <td>
+                {{jquery_version}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                AngularJS version
+            </td>
+            <td>
+                {{angular_version}}
+            </td>
+        </tr>
+    </table>
 
-        </table>
+</div>
+<div class="container">
 
-    </div>
+    <h3>Device Sync</h3>
 
+    <table align="left">
+
+        <tr>
+            <th>Data</th>
+            <th>This Device</th>
+            <th>Companion Device</th>
+        </tr>
+        <tr>
+            <td>IP:port</td>
+            <td>{{ my_ip_port }}</td>
+            <td>{{ companion_ip_port }}</td>
+        </tr>
+        <tr>
+            <td>Incoming update</td>
+            <td>{{ my_incoming_update }}</td>
+            <td>{{ companion_incoming_update }}</td>
+        </tr>
+        <tr>
+            <td>Outgoing update</td>
+            <td>{{ my_outgoing_update }}</td>
+            <td>{{ companion_outgoing_update }}</td>
+        </tr>
+
+    </table>
 
 </div>
 
@@ -111,9 +135,36 @@
 var app = angular.module('myApp', []);
 app.controller('debugController', function($scope, $http, $parse) {
 
+   $scope.mySyncState = function(){
+
+       // First get data for this device, then a second call for the companion device
+       $http.get("/sync?cmd=sync_state")
+           .then(function (response) {
+           $scope.my_ip_port = response.data.my_ip_port;
+           $scope.companion_ip_port = response.data.companion_ip_port;
+           $scope.my_incoming_update = response.data.incoming_update;
+           $scope.my_outgoing_update = response.data.outgoing_update;
+
+           var companion_url = "https://"+response.data.companion_ip_port;
+
+           // Get data for the companion device
+           $scope.companionSyncState( companion_url );
+       });
+   };
+
+   $scope.companionSyncState = function( url ){
+
+        $http.get( url+"/sync?cmd=sync_state&extrastuff=forFun")
+            .then(function (response) {
+
+            $scope.companion_incoming_update = response.data.incoming_update;
+            $scope.companion_outgoing_update = response.data.outgoing_update;
+        });
+   };
+
   $scope.runTest = function( id, data ){
 
-     $http.get("/admin/?cmd=debug&test_id="+id+"&data="+data)
+     $http.get("/admin?cmd=debug&test_id="+id+"&data="+data)
        .then(function (response) {
 
         // test_id the test name and is bound to the Angular result variable
@@ -133,6 +184,8 @@ app.controller('debugController', function($scope, $http, $parse) {
 
    $scope.jquery_version = jQuery.fn.jquery;
    $scope.angular_version = angular.version.full;
+
+   $scope.mySyncState();
 
 });
 

@@ -141,7 +141,7 @@ public class SqlIncSyncSource {
 
         String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
         Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put(SyncRest.COMM_KEYS.tgt_inc_sync_source_manifest.toString(), jsonString);
+        parameters.put(SyncRest.CMD.tgt_inc_sync_source_manifest.toString(), jsonString);
 
         Comm.sendPost(url, parameters, new Comm.CommPostCallbacks() {
             @Override
@@ -150,13 +150,13 @@ public class SqlIncSyncSource {
                 /**
                  * The request was successful.  The companion device will respond with a request for data.
                  */
-                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.COMM_KEYS.tgt_inc_sync_source_manifest + " response: " + response);
+                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.CMD.tgt_inc_sync_source_manifest + " response: " + response);
             }
 
             @Override
             public void fail(String error) {
 
-                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.COMM_KEYS.tgt_inc_sync_source_manifest + " error: " + error);
+                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.CMD.tgt_inc_sync_source_manifest + " error: " + error);
                 setSyncInProgress( false );
             }
         });
@@ -227,7 +227,7 @@ public class SqlIncSyncSource {
         String md5_payload = com.squareup.okhttp.internal.Util.md5Hex(payload);
 
         Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put(SyncRest.COMM_KEYS.tgt_inc_sync_data.toString(), payload );
+        parameters.put(SyncRest.CMD.tgt_inc_sync_data.toString(), payload );
         parameters.put(CConst.MD5_PAYLOAD, md5_payload);
 
         LogUtil.log(SQL_INC_SYNC_SRC, "incSyncDataSend, json package length: "+jsonObject.length());
@@ -240,14 +240,14 @@ public class SqlIncSyncSource {
                  * The request was successful.  The companion device will process the data
                  * and respond with the next step.
                  */
-                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.COMM_KEYS.tgt_inc_sync_data + " response: " + response);
+                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.CMD.tgt_inc_sync_data + " response: " + response);
             }
 
             @Override
             public void fail(String error) {
 
                 setSyncInProgress( false );
-                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.COMM_KEYS.tgt_inc_sync_data + " error: " + error);
+                LogUtil.log(SQL_INC_SYNC_SRC, SyncRest.CMD.tgt_inc_sync_data + " error: " + error);
             }
         });
     }

@@ -105,21 +105,21 @@ public class SqlFullSyncSource {
             e.printStackTrace();
         }
 
-        parameters.put(SyncRest.COMM_KEYS.tgt_full_sync_source_manifest.toString(), manifest.toString());
+        parameters.put(SyncRest.CMD.tgt_full_sync_source_manifest.toString(), manifest.toString());
 
         Comm.sendPost(m_ctx, url, parameters, new Comm.CommPostCallbacks() {
             @Override
             public void success(String response) {
 
                 updateProgressDialog(2);// Push along a bit so user knows connectivity is working
-                LogUtil.log(LogUtil.LogType.SQL_FULL_SYNC_SRC, SyncRest.COMM_KEYS.tgt_full_sync_source_manifest + " response: " + response);
+                LogUtil.log(LogUtil.LogType.SQL_FULL_SYNC_SRC, SyncRest.CMD.tgt_full_sync_source_manifest + " response: " + response);
             }
 
             @Override
             public void fail(String error) {
 
 //                CrypServer.notify(uniqueId, "Co-device not found. Is WiFi enabled?", "warn");
-                LogUtil.log(LogUtil.LogType.SQL_FULL_SYNC_SRC, SyncRest.COMM_KEYS.tgt_full_sync_source_manifest + " error: " + error);
+                LogUtil.log(LogUtil.LogType.SQL_FULL_SYNC_SRC, SyncRest.CMD.tgt_full_sync_source_manifest + " error: " + error);
             }
         });
         return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100);
@@ -176,7 +176,7 @@ public class SqlFullSyncSource {
         String md5_payload = com.squareup.okhttp.internal.Util.md5Hex(payload);
 
         Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put(SyncRest.COMM_KEYS.tgt_full_sync_data.toString(), payload );
+        parameters.put(SyncRest.CMD.tgt_full_sync_data.toString(), payload );
         parameters.put(CConst.MD5_PAYLOAD, md5_payload);
 
         Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
@@ -187,13 +187,13 @@ public class SqlFullSyncSource {
                  * The request was successful.  The companion device will process the data
                  * and respond with the next step.
                  */
-                LogUtil.log(LogUtil.LogType.SQL_FULL_SYNC_SRC, SyncRest.COMM_KEYS.tgt_full_sync_data + " response: " + response);
+                LogUtil.log(LogUtil.LogType.SQL_FULL_SYNC_SRC, SyncRest.CMD.tgt_full_sync_data + " response: " + response);
             }
 
             @Override
             public void fail(String error) {
 
-                LogUtil.log(LogUtil.LogType.SQL_FULL_SYNC_SRC, SyncRest.COMM_KEYS.tgt_full_sync_data + " error: " + error);
+                LogUtil.log(LogUtil.LogType.SQL_FULL_SYNC_SRC, SyncRest.CMD.tgt_full_sync_data + " error: " + error);
             }
         });
     }
