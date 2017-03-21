@@ -22,12 +22,13 @@ package com.nuvolect.securesuite.webserver.connector;
 import android.content.Context;
 
 import com.nuvolect.securesuite.util.LogUtil;
+import com.nuvolect.securesuite.webserver.admin.CmdPing;
 
 import java.io.InputStream;
 import java.util.Map;
 
 /**
- * Dispatch to serve RESTful services. Currently only a few app commands are managed.
+ * Dispatch to serve RESTful services.
  * This class will be expanded to serve the full set of elFinder commands.
  */
 public class ServeCmd {
@@ -62,12 +63,6 @@ public class ServeCmd {
         netmount,  // mount network volume during user session. Only ftp now supported.
         ping,      // simple ping, returns the time
         zipdl,     // zip and download files
-
-        // App commands
-        debug,     // debugging commands
-        login,
-        logout,
-        test,      // run a test
     }
 
     public static InputStream process(Context ctx, Map<String, String> params) {
@@ -86,9 +81,6 @@ public class ServeCmd {
 
             case archive:
                 inputStream = CmdArchive.go(ctx, params);
-                break;
-            case debug:
-                inputStream = CmdDebug.go(ctx, params);
                 break;
             case dim:
                 break;
@@ -109,12 +101,6 @@ public class ServeCmd {
                 break;
             case ls:
                 inputStream = CmdLs.go(params);
-                break;
-            case login:
-                inputStream = CmdLogin.go(ctx, params);
-                break;
-            case logout:
-                inputStream = CmdLogout.go(ctx, params);
                 break;
             case mkdir:
                 inputStream = CmdMkdir.go(params);
@@ -159,9 +145,6 @@ public class ServeCmd {
             case search:
                 inputStream = CmdSearch.go(params);
                 break;
-            case test:
-                inputStream = CmdTest.go(ctx, params);
-                break;
             case upload:
                 inputStream = CmdUpload.go(ctx, params);
                 break;
@@ -171,7 +154,7 @@ public class ServeCmd {
                 inputStream = CmdZipdl.go(ctx, params);
                 break;
             default:
-                LogUtil.log(LogUtil.LogType.SERVE, "Invalid connector command: "+error);
+                LogUtil.log(LogUtil.LogType.CONNECTOR_SERVE_CMD, "Invalid connector command: "+error);
         }
 
         return inputStream;

@@ -158,7 +158,7 @@ app.controller('testController', function($scope, $http, $parse) {
 
   function runTest( i ){
 
-     $http.get("/connector/?cmd=test&test_id="+tests[ i ])
+     $http.get("/admin/?cmd=test&test_id="+tests[ i ])
        .then(function (response) {
 
         // test_id the test name and is bound to the Angular result variable

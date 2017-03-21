@@ -206,7 +206,7 @@ public class WebUtil {
      */
     public static String getServerUrl(Context ctx, String page) {
 
-        return getServerUrl(ctx)+"/"+ page;
+        return getServerUrl(ctx) + page;
     }
 
     /**
@@ -247,7 +247,7 @@ public class WebUtil {
 
     public static String getCompanionServerUrl(String page) {
 
-        return getCompanionServerUrl()+"/"+ page;
+        return getCompanionServerUrl()+page;
     }
 
     public static String buildUrl(String endPoint, Map<String, String> params) {

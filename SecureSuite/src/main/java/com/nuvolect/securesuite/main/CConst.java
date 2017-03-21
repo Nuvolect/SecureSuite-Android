@@ -63,6 +63,11 @@ public class CConst {
     public static final String RECREATE             = "recreate";
     public static final String PASSWORDS            = "passwords";
 
+    // Restful endpoints
+    public static final String ADMIN                = "/admin";
+    public static final String CONNECTOR            = "/connector";
+    public static final String SYNC                 = "/sync";
+
     public final static int LARGE_ICON              = R.drawable.app_high_res_icon;
     public final static int SMALL_ICON              = R.drawable.icon_64;
     public static final String ACCOUNT_DATA         = "account_data";
@@ -129,6 +134,7 @@ public class CConst {
     public static final String SEC_TOK              = "sec_tok";
     public static final String SERVER_ENABLED       = "server_enabled";
     public static final String SUBSCRIBER           = "subscriber";
+    public static final String TMB_FOLDER           = "/.tmb/";
     public static final String TITLE                = KvTab.title.toString();
     public static final String TOTAL                = "total";
     public static final String UNIQUE_ID            = "unique_id";
@@ -235,7 +241,6 @@ public class CConst {
     public static final String POST_UPLOADS                   = "post_uploads";
     public static final String RECORDS                        = "records";
 
-    public static final String SYNC                           = "sync";
     public static final String YUBIKEY_SERIAL1                = "yubikey_serial1";
     public static final String YUBIKEY_SERIAL2                = "yubikey_serial2";
 

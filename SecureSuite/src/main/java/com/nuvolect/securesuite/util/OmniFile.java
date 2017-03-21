@@ -131,6 +131,9 @@ public class OmniFile {
      */
     public OmniFile( String volumeHash){
 
+        if( volumeHash.startsWith("/"))
+            volumeHash = volumeHash.substring(1);
+
         m_volumeHash = volumeHash;
         String segments[] = volumeHash.split("_");
         m_volumeId = segments[0] + "_";

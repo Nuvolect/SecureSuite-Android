@@ -434,7 +434,7 @@ public class CmdUpload {
 
             }else{
 
-                wrapper = CmdUtil.errorWrapper( error);
+                wrapper = Util.errorWrapper( error);
             }
 
             return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));

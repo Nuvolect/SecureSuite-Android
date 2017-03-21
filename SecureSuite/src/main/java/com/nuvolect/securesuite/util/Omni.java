@@ -173,9 +173,14 @@ public class Omni {
      */
     public static boolean isActiveVolume( String volumeId){
 
+        if( volumeId == null || volumeId.isEmpty())
+            return false;
+
+        String vId_ = volumeId + "_";
+
         for( String vol : activeVolumeIds) {
 
-            if( vol.contentEquals( volumeId))
+            if( vol.contentEquals( vId_))
                 return true;
         }
         return false;

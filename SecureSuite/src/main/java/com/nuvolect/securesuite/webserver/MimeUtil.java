@@ -120,6 +120,7 @@ public class MimeUtil {
             MIME_TGZ	= "application/x-tar",
             MIME_TIFF	= "image/tiff",
             MIME_TSV	= "text/tab-separated-values",
+            MIME_TTF	= "application/font-sfnt",
             MIME_TXT	= "text/plain",
             MIME_VCARD  = "text/vcard",
             MIME_WAV	= "audio/wav",

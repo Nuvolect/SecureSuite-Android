@@ -270,6 +270,8 @@ public class DetailHtm {
                 t.setVariable("account_select", account_select);
                 t.addBlock("account_select");
             }
+            t.setVariable("finder_url", CConst.ELFINDER_PAGE);
+
             // Show contact photo if they have one
             String encodedImage = SqlCipher.get(m_contact_id, DTab.photo);
             if( encodedImage.isEmpty())
@@ -296,7 +298,7 @@ public class DetailHtm {
                     }
                 }
                 //Load the photo
-                t.setVariable("contact_photo", m_ctx.getFilesDir() + "/" + contact_photo);
+                t.setVariable("contact_photo", "/files/" + contact_photo);
             }
 
             /**

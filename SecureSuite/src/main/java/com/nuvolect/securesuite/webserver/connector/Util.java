@@ -17,10 +17,28 @@
  *
  */
 
-package com.nuvolect.securesuite.webserver;
+package com.nuvolect.securesuite.webserver.connector;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
- * Administrative RESTFul services.
+ * Utility methods to support finder commands
  */
-public class AdminRest {
+class Util {
+
+    public static JSONObject errorWrapper(String error) {
+
+        JSONArray warning = new JSONArray();
+        warning.put( error );
+        JSONObject wrapper = new JSONObject();
+        try {
+            wrapper.put( "warning", warning);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return wrapper;
+    }
 }

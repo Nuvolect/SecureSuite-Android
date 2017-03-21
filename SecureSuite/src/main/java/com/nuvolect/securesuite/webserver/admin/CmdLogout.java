@@ -17,7 +17,7 @@
  *
  */
 
-package com.nuvolect.securesuite.webserver.connector;//
+package com.nuvolect.securesuite.webserver.admin;//
 
 import android.content.Context;
 

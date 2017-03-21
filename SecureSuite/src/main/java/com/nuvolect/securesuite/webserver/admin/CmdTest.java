@@ -17,7 +17,7 @@
  *                            
  */
 
-package com.nuvolect.securesuite.webserver.connector;//
+package com.nuvolect.securesuite.webserver.admin;//
 
 import android.content.Context;
 
@@ -26,6 +26,7 @@ import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Omni;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniFiles;
+import com.nuvolect.securesuite.webserver.connector.CmdRm;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -171,31 +171,32 @@ public class OmniHash {
     }
 
     /**
-     * Inspect a URI and determine if it contains an OMNI hash.
+     * Inexpensive test to determine if a URI is an OMNI hash.
+     * Expecting in this order
+     * 1. optional /
+     * 2. volume ID
+     * 3. '_' underscore
+     * 4. base64 hash, length greather than 0
+     *
+     * Method does not test to see if the file reference actually exists.
      * @param uri
      * @return
      */
     public static boolean isHash(String uri) {
 
         String hash = uri;
+        if( hash == null || hash.isEmpty())
+            return false;
 
         if( hash.startsWith("/"))
             hash = hash.substring(1);
 
         String segments[] = hash.split("_");
-        if( segments.length > 1){
-            hash = segments[1];
-        }
-        if( hash == null || hash.isEmpty())
+        if( segments.length > 1 && Omni.isActiveVolume( segments[0])
+                && segments[1].length() > 0)
+            return true;
+        else
             return false;
-
-        try {
-            decodeWithException( hash );
-        } catch (UnsupportedEncodingException e) {
-            return false;
-        }
-
-        return true;
     }
 }
 

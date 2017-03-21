@@ -29,10 +29,9 @@ import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniHash;
-import com.nuvolect.securesuite.util.OmniUtil;
 import com.nuvolect.securesuite.util.Passphrase;
 import com.nuvolect.securesuite.util.Util;
-import com.nuvolect.securesuite.webserver.connector.ServeCmd;
+import com.nuvolect.securesuite.webserver.connector.CmdUpload;
 
 import org.apache.commons.io.FilenameUtils;
 import org.json.JSONArray;
@@ -51,21 +50,40 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import static com.nuvolect.securesuite.util.LogUtil.DEBUG;
 import static com.nuvolect.securesuite.util.LogUtil.log;
+import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_GIF;
+import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_ICO;
+import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_JPG;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_JSON;
+import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_PNG;
+import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_TTF;
+import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_WOFF;
 import static com.nuvolect.securesuite.webserver.SyncRest.COMM_KEYS.uri;
+import static java.util.Locale.US;
 
 /**<pre>
  * Server for running webserver on a service or background thread.
+ *
+ * Two types of pages are served, traditional html/angular and MiniTemplator.class pages.
+ *
+ * Services are guided by a set of rules
+ *   without authentication
+ *      assets: { js, css, map, png, jpg, ico, ttf, woff, woff2}
+ *      assets: { login.htm, footer.htm}
+ *      REST: { admin?cmd=login}
+ *   with authentication
+ *      MiniTemplator: { list.htm, detail.htm}
+ *      assets: { logout.htm, navbar.htm, developer.htm, crypto_performance.htm, keystore.htm}
+ *      files: { password_modal*.htm, group_edit_modal*.htm}
+ *      REST: { connector?cmd=* }
+ *      REST: { admin?cmd=* }
+ *      REST: { sync?* }
  *
  * SECURITY AND AUTHENTICATION
  *
@@ -80,6 +98,7 @@ import static com.nuvolect.securesuite.webserver.SyncRest.COMM_KEYS.uri;
  */
 public class CrypServer extends NanoHTTPD {
 
+    private static Context m_ctx;
     private static final long NOTIFY_DURATION = 3 * 1000L;  // How long to show a notification
     public static int mPort = 0;
     /**
@@ -97,13 +116,34 @@ public class CrypServer extends NanoHTTPD {
      */
     private static String m_sec_tok = "";
     private static boolean m_serverEnabled = false;
-    private Set<String> assetSet;
-    private Set<String> filesSet;
     private static IHTTPSession m_session = null;
-
     public static boolean mAuthenticated = false;
 
-    private static Context m_ctx;
+    private enum EXT {
+        js, css, map, png, jpg, gif, ico, ttf, woff, woff2, invalid, htm, html,
+        // RESTFull services
+        admin, connector, sync, omni,
+    }
+
+    private enum PAGE {
+        // Served from /files, generated with MiniTemplate
+        list,
+        detail,
+        password_modal_filled,
+        password_modal_apply_filled,
+        group_edit_modal_filled,
+        // Served from assets
+        crypto_performance,
+        developer,
+        footer,
+        keystore,
+        login,
+        logout,
+        navbar,
+        ss_finder,
+
+        invalid,
+    }
 
     /**
      * CrypServer constructor that is called when the service starts.
@@ -134,26 +174,6 @@ public class CrypServer extends NanoHTTPD {
          * All RESTful access to this IP is blocked unless it is the companion device.
          */
         WebUtil.NullHostNameVerifier.getInstance().setHostVerifierEnabled(true);
-
-        try {
-
-            String [] assetArray = ctx.getResources().getAssets().list("");
-            assetSet = new HashSet<String>(Arrays.asList( assetArray));
-
-            // Manually add folder and page, /elFinder-2.1.22/ss_finder.html
-            assetSet.add(CConst.ELFINDER_PAGE.substring(1));
-
-            // Manage a set of modals generated in the app:/files folder
-            String [] filesArray = ctx.getFilesDir().list();
-            filesSet = new HashSet<String>(Arrays.asList( filesArray));
-
-            // Manually add files generated in app://files folder
-            filesSet.add( PasswordModal.PASSWORD_MODAL_PATH);
-            filesSet.add( PasswordModal.PASSWORD_MODAL_APPLY_PATH);
-
-        } catch (IOException e) {
-            LogUtil.logException(CrypServer.class, e);
-        }
 
         ListHtm.init(m_ctx);
     }
@@ -200,16 +220,16 @@ public class CrypServer extends NanoHTTPD {
         m_session = session;
 
         CookieHandler cookies = session.getCookies();
-        String uniqueId = cookies.read("uniqueId");
         Map<String, String> headers = session.getHeaders();
+        String uniqueId = cookies.read("uniqueId");
 
         if( uniqueId == null ){
 
             if( embedded_header_value.isEmpty())
                 embedded_header_value = WebUtil.getServerUrl(m_ctx);
 
-            for (Map.Entry<String, String> entry : headers.entrySet())
-            {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+
                 if( entry.getKey().startsWith( EMBEDDED_HEADER_KEY) &&
                         entry.getValue().contains( embedded_header_value)){
                     uniqueId = CConst.EMBEDDED_USER;
@@ -219,8 +239,8 @@ public class CrypServer extends NanoHTTPD {
             if( DEBUG && uniqueId == null){
 
                 LogUtil.log(LogUtil.LogType.CRYP_SERVER, "header value mismatch: "+embedded_header_value);
-                for (Map.Entry<String, String> entry : headers.entrySet())
-                {
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+
                     LogUtil.log(LogUtil.LogType.CRYP_SERVER, "header: "+entry.getKey() + ":::" + entry.getValue());
                 }
             }
@@ -287,273 +307,395 @@ public class CrypServer extends NanoHTTPD {
         log(LogUtil.LogType.CRYP_SERVER, method + " '" + uri + "' " + params.toString());
 
         InputStream is = null;
+        EXT ext = null;
+
+        String fileExtension = FilenameUtils.getExtension( uri ).toLowerCase(US);
+        if( fileExtension.isEmpty()){
+            if( uri.contentEquals("/")){
+                ext = EXT.htm;
+                if( mAuthenticated)
+                    uri = "/list.htm";
+                else
+                    uri = "/login.htm";
+            }else{
+                ext = determineServiceEnum( uri );
+            }
+        }
+        else{
+            try {
+                ext = EXT.valueOf( fileExtension );
+            } catch (IllegalArgumentException e) {
+                log(LogUtil.LogType.CRYP_SERVER, "ERROR invalid extension "+ uri + fileExtension);
+                ext = EXT.invalid;
+            }
+        }
 
         try {
+
             if (uri == null)
                 return null;
 
-            if (uri.endsWith(".js")) {
-                is = m_ctx.getAssets().open(uri.substring(1));
-                return new Response(Status.OK, MimeUtil.MIME_JS, is, -1);
+            switch (ext) {
 
-            } else if (uri.endsWith(".css")) {
-                is = m_ctx.getAssets().open(uri.substring(1));
-                return new Response(Status.OK, MimeUtil.MIME_CSS, is, -1);
-
-            } else if (uri.endsWith(".map")) {
-                is = m_ctx.getAssets().open(uri.substring(1));
-                return new Response(Status.OK, MIME_JSON, is, -1);
-
-            } else if (uri.contentEquals("/favicon.ico")) {
-                uri = "/img"+uri;
-                is = m_ctx.getAssets().open(uri.substring(1));
-                return new Response(Status.OK, MimeUtil.MIME_ICO, is, -1);
-
-            } else if (uri.endsWith(".png") || (uri.endsWith(".jpg")) || uri.endsWith(".gif")) {
-                if( uri.startsWith("/img") || uri.startsWith("/css") || uri.startsWith("/elFinder"))
+                case js:
                     is = m_ctx.getAssets().open(uri.substring(1));
-                else {
-                    File request = new File(uri);
-                    is = new FileInputStream(request);
-                }
-                return new Response(Status.OK, MimeUtil.MIME_PNG, is, -1);
+                    return new Response(Status.OK, MimeUtil.MIME_JS, is, -1);
+                case css:
+                    is = m_ctx.getAssets().open(uri.substring(1));
+                    return new Response(Status.OK, MimeUtil.MIME_CSS, is, -1);
+                case map:
+                    is = m_ctx.getAssets().open(uri.substring(1));
+                    return new Response(Status.OK, MIME_JSON, is, -1);
+                case png:
+                    if( uri.startsWith("/img") || uri.startsWith("/css") || uri.startsWith("/elFinder")){
 
-            } else if (uri.endsWith(".ttf") || uri.endsWith("woff") || uri.endsWith("woff2")) {
-                is = m_ctx.getAssets().open(uri.substring(1));
-                return new Response(Status.OK, MimeUtil.MIME_WOFF, is, -1);
-
-            } else if (! mAuthenticated && uri.startsWith("/connector")
-                    && params.containsKey("cmd") && params.get("cmd").contentEquals("login")) {
-
-                params.put(CConst.UNIQUE_ID, uniqueId);
-
-                is = ServeCmd.process(m_ctx, params);
-
-                return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
-
-            } else if (mAuthenticated && uri.startsWith("/connector")) {
-
-                params.put(CConst.UNIQUE_ID, uniqueId);
-                String mime = MimeUtil.MIME_HTML;
-
-                if( params.get("cmd").contentEquals("upload")) {
-
-                    try {
-                        Set<String> fileSet = files.keySet();
-                        JSONArray array = new JSONArray();
-
-                        if( ! fileSet.isEmpty()){
-
-                            for( String key : fileSet){
-
-                                JSONObject jsonObject = new JSONObject();
-                                String filePath = files.get(key);
-                                String fileName = params.get(key);
-                                jsonObject.put(CConst.FILE_PATH, filePath);
-                                jsonObject.put(CConst.FILE_NAME, fileName);
-                                array.put(jsonObject);
-                                log(LogUtil.LogType.CRYP_SERVER, "POST file jsonObject: "+jsonObject.toString());
-                            }
-                            /**
-                             * Save filenames and paths into params for processing by specific page
-                             */
-                            params.put(CConst.POST_UPLOADS, array.toString());
-
-                            if( DEBUG) {
-                                log(LogUtil.LogType.CRYP_SERVER, "upload params: " + Util.trimAt(array.toString(), 50));
-                            }
-                        }
-                    } catch (JSONException e) {
-                        LogUtil.logException(CrypServer.class, e);
-                    }
-                }
-
-                is = ServeCmd.process(m_ctx, params);
-
-                if( params.get("cmd").contentEquals("file")){
-
-                    String volumeHash = params.get("target");
-                    String decoded = OmniHash.decodeVolumeHash( volumeHash);
-                    String extension = FilenameUtils.getExtension( decoded).toLowerCase(Locale.US);
-                    mime = MimeUtil.getMime(extension);
-
-                } else{
-                    if (params.get("cmd").contentEquals("ls")) {
-
-                        mime = MIME_JSON;
-                    }
-                }
-
-                return new Response(Status.OK, mime, is, -1);
-
-            } if( uri.contentEquals("/sync")){
-
-                if( ! mAuthenticated){
-
-                    return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Invalid authentication: "+uri);
-                }else{
-                    /**
-                     * If it is a setup page, skip the security token check.
-                     * This can only be done when host verification is disabled.
-                     */
-                    boolean hostVerifierDisabled = ! WebUtil.NullHostNameVerifier.getInstance().m_hostVerifierEnabled;
-                    if( hostVerifierDisabled
-                            && (params.containsKey(SyncRest.COMM_KEYS.register_companion_device.toString())
-                            || params.containsKey(SyncRest.COMM_KEYS.companion_ip_test.toString()))){
-
-                        log(LogUtil.LogType.CRYP_SERVER, "sec_tok test skipped");
-                        String json = SyncRest.render(m_ctx, uniqueId, params);
-                        return new Response(Status.OK, MIME_PLAINTEXT, json);
-                    }
-                    else {
-                        String sec_tok = headers.get(CConst.SEC_TOK);
-                        if( sec_tok.contentEquals( m_sec_tok)){
-
-                            log(LogUtil.LogType.CRYP_SERVER, "sec_tok match");
-                            String json = SyncRest.render(m_ctx, uniqueId, params);
-                            return new Response(Status.OK, MIME_PLAINTEXT, json);
-                        }
-                        else{
-
-                            log(LogUtil.LogType.CRYP_SERVER, "sec_tok ERROR");
-                            return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Invalid security token: "+uri);
-                        }
-                    }
-                }
-            }
-            else {
-
-                if( uri.contentEquals("/footer.htm")){
-
-                    is = m_ctx.getAssets().open("footer.htm");
-                    return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
-                }
-                /**
-                 * When locked only the login page is served, regardless of the uri
-                 */
-                if(! mAuthenticated){
-
-                    log(LogUtil.LogType.CRYP_SERVER, "Serving login.htm");
-                    is = m_ctx.getAssets().open("login.htm");
-                    return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
-                }
-
-                /**
-                 * Pages are served from /templates or from /assets.
-                 * Templates are populated via {@link MiniTemplator}.
-                 * Assets are served more traditionally with Angularjs.
-                 */
-                if ( uri.endsWith(".htm") || uri.endsWith(".html")) {
-
-                    /**
-                     * Serve /assets pages here.
-                     * Fall through to serve the {@Link MiniTemplator} pages below.
-                     */
-                    if( assetSet.contains( uri.substring(1))){
-
-                        log(LogUtil.LogType.CRYP_SERVER, "Serving asset page: "+uri);
                         is = m_ctx.getAssets().open(uri.substring(1));
+                        return new Response(Status.OK, MIME_PNG, is, -1);
+                    }
+                    else if ( uri.startsWith("/files/")){
+                        String fileName = FilenameUtils.getName( uri);
+                        File file = new File( m_ctx.getFilesDir() + "/" + fileName);
+                        is = new FileInputStream(file);
+                        return new Response(Status.OK, MIME_PNG, is, -1);
+                    }
+                    log(LogUtil.LogType.CRYP_SERVER, "ERROR not found: "+uri);
+                    return new Response(Status.NOT_FOUND, MIME_PLAINTEXT, "Not found: " + uri);
+                case jpg:
+                    is = m_ctx.getAssets().open(uri.substring(1));
+                    return new Response(Status.OK, MIME_JPG, is, -1);
+                case gif:
+                    is = m_ctx.getAssets().open(uri.substring(1));
+                    return new Response(Status.OK, MIME_GIF, is, -1);
+                case ico:
+                    is = m_ctx.getAssets().open(uri.substring(1));
+                    return new Response(Status.OK, MIME_ICO, is, -1);
+                case ttf:
+                    is = m_ctx.getAssets().open(uri.substring(1));
+                    return new Response(Status.OK, MIME_TTF, is, -1);
+                case woff:
+                case woff2:
+                    is = m_ctx.getAssets().open(uri.substring(1));
+                    return new Response(Status.OK, MIME_WOFF, is, -1);
+                case htm:
+                case html: {
+                    if (uri.contentEquals("/login.htm")) {
+                        log(LogUtil.LogType.CRYP_SERVER, "Serving login.htm");
+                        is = m_ctx.getAssets().open("login.htm");
                         return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
                     }
+                    if (mAuthenticated) {
+
+                        return serveAuthenticatedHtml(uri, uniqueId, params);
+                    } else {
+                        return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Invalid authentication: " + uri);
+                    }
                 }
+                case omni:{
+                    String mime = "";
+                    OmniFile omniFile = new OmniFile( uri);
+                    if( omniFile.getPath().startsWith(CConst.TMB_FOLDER)){
+                        /**
+                         * Request for a thumbnail file.
+                         * The file name is hashed and mime type is png.
+                         */
+                        mime = MIME_PNG;
+                    }
+                    else
+                        mime = omniFile.getMime();
+
+                    is = omniFile.getFileInputStream();
+                    return new Response(Status.OK, mime, is, -1);
+                }
+                case admin: {
+                    /**
+                     * GET/POST /admin?cmd=login works with or without validation.
+                     * All other REST services require authentication.
+                     */
+                    if (params.containsKey("cmd") && params.get("cmd").contentEquals("login")) {
+
+                        is = com.nuvolect.securesuite.webserver.admin.ServeCmd.process(m_ctx, params);
+                        return new Response(Status.OK, MIME_JSON, is, -1);
+                    }
+                }
+                case connector:
+                case sync: {
+                    if (!mAuthenticated) {
+                        return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Invalid authentication: " + uri);
+                    } else {
+                        if ( passSecurityCheck( uri, headers )) {
+
+                            switch (ext) {
+                                case admin:
+                                    is = com.nuvolect.securesuite.webserver.admin.ServeCmd.process(m_ctx, params);
+                                    return new Response(Status.OK, MIME_JSON, is, -1);
+                                case sync:
+                                    String json = SyncRest.render(m_ctx, uniqueId, params);
+                                    return new Response(Status.OK, MIME_JSON, json);
+                                case connector:{
+
+                                    String mime = MIME_JSON;
+                                    if( params.get("cmd").contentEquals("upload")){
+                                        loadUploadParams( files, params);
+                                    }
+                                    else if( params.get("cmd").contentEquals("file")){
+
+                                        OmniFile omniFile = new OmniFile( params.get("target") );
+                                        mime = omniFile.getMime();
+                                    }
+                                    is = com.nuvolect.securesuite.webserver.connector.ServeCmd.process(m_ctx, params);
+                                    return new Response(Status.OK, mime, is, -1);
+                                }
+                            }
+                        } else {
+                            /**
+                             * The security token can be temporarily disabled during companion pairing.
+                             */
+                            boolean hostVerifierDisabled = !WebUtil.NullHostNameVerifier.getInstance().m_hostVerifierEnabled;
+                            if (ext == EXT.sync && hostVerifierDisabled
+                                    && (params.containsKey(SyncRest.COMM_KEYS.register_companion_device.toString())
+                                    || params.containsKey(SyncRest.COMM_KEYS.companion_ip_test.toString()))) {
+
+                                log(LogUtil.LogType.CRYP_SERVER, "sec_tok test skipped");
+                                String json = SyncRest.render(m_ctx, uniqueId, params);
+                                return new Response(Status.OK, MIME_PLAINTEXT, json);
+                            } else {
+
+                                log(LogUtil.LogType.CRYP_SERVER, "sec_tok ERROR");
+                                return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Invalid security token: " + uri);
+                            }
+                        }
+                    }
+                }
+                case invalid:
+                    log(LogUtil.LogType.CRYP_SERVER, "ERROR invalid extension " + uri);
+                    return new Response(Status.NOT_ACCEPTABLE, MIME_PLAINTEXT, "Invalid request " + uri);
+                default:
+                    log(LogUtil.LogType.CRYP_SERVER, "ERROR unmanaged extension " + ext);
+                    return new Response(Status.NOT_FOUND, MIME_PLAINTEXT, "Not found: " + uri);
             }
 
-        } catch (IOException e) {
-            log(LogUtil.LogType.CRYP_SERVER, "Error opening file: " + uri.substring(1));
+        } catch ( Exception e) {
+            log(LogUtil.LogType.CRYP_SERVER, "ERROR exception " + uri);
             LogUtil.logException(CrypServer.class, e);
         }
-        String generatedHtml = "";
+        return new Response(Status.NOT_FOUND, MIME_PLAINTEXT, "Unmanaged request: " + uri);
+    }
 
-        long timeStart = System.currentTimeMillis();
+    /**
+     * Load paramameters passed via POST method to be processed by {@link CmdUpload }
+     * @param files
+     * @param params
+     */
+    private void loadUploadParams(Map<String, String> files, Map<String, String> params) {
 
-        /**
-         * Pages served via {@link MiniTemplator}.
-         * Each page is generated in-memory and presented to the browser.
-         */
-        if( uri.contentEquals("/list.htm") || uri.contentEquals("/")) {
-            generatedHtml = ListHtm.render(m_ctx, uniqueId, params);
-        }
-        else {
-            if( uri.contentEquals("/detail.htm")) {
-                generatedHtml = DetailHtm.render(m_ctx, uniqueId, params);
-            }else {
+        try {
+            Set<String> fileSet = files.keySet();
+            JSONArray array = new JSONArray();
+
+            if( ! fileSet.isEmpty()){
+
+                for( String key : fileSet){
+
+                    JSONObject jsonObject = new JSONObject();
+                    String filePath = files.get(key);
+                    String fileName = params.get(key);
+                    jsonObject.put(CConst.FILE_PATH, filePath);
+                    jsonObject.put(CConst.FILE_NAME, fileName);
+                    array.put(jsonObject);
+                    log(LogUtil.LogType.CRYP_SERVER, "POST file jsonObject: "+jsonObject.toString());
+                }
                 /**
-                 * Modals are generated with {@link MiniTemplator} under app:/files
+                 * Save filenames and paths into params for processing by specific page
                  */
-                String fileCandidate = uri.substring(7);
+                params.put(CConst.POST_UPLOADS, array.toString());
 
-                if (filesSet.contains( fileCandidate )) {
+                if( DEBUG) {
+                    log(LogUtil.LogType.CRYP_SERVER, "upload params: " + Util.trimAt(array.toString(), 50));
+                }
+            }
+        } catch (JSONException e) {
+            LogUtil.logException(CrypServer.class, e);
+        }
+    }
 
-                    File file = new File(m_ctx.getFilesDir() +"/"+ fileCandidate);
-                    try {
-                        is = new FileInputStream(file);
-                        return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
+    /**
+     * Perform a series of security checks for a REST service.
+     * @param uri
+     * @param headers
+     */
+    private boolean passSecurityCheck(String uri, Map<String, String> headers) {
 
-                    } catch (FileNotFoundException e) {
-                        LogUtil.logException(CrypServer.class, e);
-                    }
+        if( mAuthenticated)
+            return true;
+
+        if (headers.containsKey(CConst.SEC_TOK) && headers.get(CConst.SEC_TOK).contentEquals(m_sec_tok)) {
+            return true;
+        }
+
+        if( headers.containsKey("referer")){
+
+            String referer = headers.get("referer");
+            String serverIpPort = WebUtil.getServerUrl(m_ctx);
+
+            if( referer.startsWith( serverIpPort)){
+
+                LogUtil.log(LogUtil.LogType.CRYP_SERVER, "Referer approved");
+                return true;
+            }else{
+                LogUtil.log(LogUtil.LogType.CRYP_SERVER, "ERROR referer DENIED: "+uri);
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Convert a REST uri into an enum
+     * @param uri
+     * @return
+     */
+    private EXT determineServiceEnum(String uri) {
+
+        if( uri.startsWith("/admin"))
+            return EXT.admin;
+        else
+        if( uri.startsWith("/connector"))
+            return EXT.connector;
+        else
+        if( uri.startsWith("/sync"))
+            return EXT.sync;
+        else
+        if(OmniHash.isHash( uri))
+            return EXT.omni;
+        else
+            return EXT.invalid;
+    }
+
+    /**
+     * Serve HTML files:
+     *     MiniTemplator: { list.htm, detail.htm}
+     *     assets: { logout.htm, navbar.htm, developer.htm, crypto_performance.htm, keystore.htm}
+     *     files: { password_modal*.htm, group_edit_modal*.htm}
+     * @param uri
+     * @param uniqueId
+     * @param params
+     */
+    private Response serveAuthenticatedHtml(String uri, String uniqueId, Map<String, String> params) {
+
+        String baseName = FilenameUtils.getBaseName( uri ).toLowerCase(US);
+
+        log(LogUtil.LogType.CRYP_SERVER, "Serve authenticated HTML: " + baseName);
+
+        PAGE page = null;
+        try {
+            page = PAGE.valueOf( baseName);
+        } catch (IllegalArgumentException e) {
+            log(LogUtil.LogType.CRYP_SERVER, "ERROR invalid page "+ uri + baseName);
+            page = PAGE.invalid;
+        }
+
+        switch ( page ){
+
+            /**
+             * MiniTemplator pages generated real-time, served from app:/files
+             */
+            case list:
+            case detail:{
+                log(LogUtil.LogType.CRYP_SERVER, "Serving page: "+uri);
+                String htmlOrJson;
+                if( page == PAGE.list)
+                    htmlOrJson = ListHtm.render(m_ctx, uniqueId, params);
+                else
+                    htmlOrJson = DetailHtm.render(m_ctx, uniqueId, params);
+
+                if( htmlOrJson.startsWith("{")){
+                    return getFileDownload( htmlOrJson);
                 }
                 else{
-                    if( OmniHash.isHash( uri )){
-
-                        OmniFile targetFile = OmniUtil.getFileFromHash(uri);
-                        if( targetFile.exists()){
-
-                            String mime = targetFile.getMime();
-                            is = targetFile.getFileInputStream();
-                            return new Response(Status.OK, mime, is, -1);
-                        }else{
-                            log(LogUtil.LogType.CRYP_SERVER, "Page not found: " + uri);
-                            return new Response(Status.NOT_FOUND, MIME_PLAINTEXT, "404 File Not Found: "+uri);
-                        }
-                    }else{
-
-                        log(LogUtil.LogType.CRYP_SERVER, "Page not found: " + uri);
-                        return new Response(Status.NOT_FOUND, MIME_PLAINTEXT, "404 File Not Found: "+uri);
-                    }
+                    return new Response(Status.OK, MimeUtil.MIME_HTML, htmlOrJson);
                 }
             }
-        }
+            /**
+             * MiniTemplator files served from app:/files, generated by listHtm and detailHtm
+             */
+            case password_modal_filled:
+            case password_modal_apply_filled:
+            case group_edit_modal_filled: {
+                log(LogUtil.LogType.CRYP_SERVER, "Serving file: "+uri);
+                try {
+                    File file = new File(m_ctx.getFilesDir() + uri);
+                    InputStream is = new FileInputStream(file);
+                    return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
 
-        long timeElapsed = System.currentTimeMillis() - timeStart;
-
-        log(LogUtil.LogType.CRYP_SERVER,
-                "render done len: " + generatedHtml.length() + ", time (ms): " + timeElapsed);
-
-        if( generatedHtml.startsWith("{")){
-
-            String fileName = "";
-            long fileLength = -1;
-            try {
-                JSONObject object = new JSONObject( generatedHtml);
-                if( object.getString("error").isEmpty()) {
-                    fileName = object.getString("filename");
-                    fileLength = object.getLong("length");
+                } catch (FileNotFoundException e) {
+                    LogUtil.logException(CrypServer.class, e);
                 }
-                else
-                    return null;
-            } catch (JSONException e) {
-                e.printStackTrace();
+                break;
+            }
+            /**
+             * Pages served from assets
+             */
+            case crypto_performance:
+            case developer:
+            case footer:
+            case keystore:
+            case login:
+            case logout:
+            case navbar:
+            case ss_finder:{
+                log(LogUtil.LogType.CRYP_SERVER, "Serving asset: "+uri.substring(1));
+                try {
+                    InputStream is = m_ctx.getAssets().open(uri.substring(1));
+                    return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             }
 
-            try {
-                File file = new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER+fileName);
-                is = new FileInputStream(file);
+            case invalid:
+                log(LogUtil.LogType.CRYP_SERVER, "ERROR invalid page "+ uri);
+                return new Response(Status.NOT_ACCEPTABLE, MIME_PLAINTEXT, "Invalid request "+uri);
+            default:
+                log(LogUtil.LogType.CRYP_SERVER, "ERROR unmanaged page "+ uri);
+                return new Response(Status.NOT_FOUND, MIME_PLAINTEXT, "Not found: "+uri);
+        }
+        log(LogUtil.LogType.CRYP_SERVER, "ERROR serving page"+ uri);
+        return new Response(Status.NOT_FOUND, MIME_PLAINTEXT, "Error serving page: "+uri);
+    }
 
-                log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file: "+fileName);
-                log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file length: "+fileLength);
+    private Response getFileDownload(String jsonString) {
 
-                Response response = new Response(Status.OK, MimeUtil.MIME_BIN, is, fileLength);
-                response.addHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
-                return response;
-
-            } catch (FileNotFoundException e) {
-                LogUtil.logException(CrypServer.class, e);
-                log(LogUtil.LogType.CRYP_SERVER, "CrypServer download file not found: " + fileName);
+        String fileName = "";
+        long fileLength = -1;
+        try {
+            JSONObject object = new JSONObject( jsonString );
+            if( object.getString("error").isEmpty()) {
+                fileName = object.getString("filename");
+                fileLength = object.getLong("length");
             }
+            else
+                return null;
+        } catch (JSONException e) {
+            e.printStackTrace();//TODO handle exception
         }
 
-        return  new Response(Status.OK, MimeUtil.MIME_HTML, generatedHtml);
+        try {
+            File file = new File( m_ctx.getFilesDir()+CConst.VCF_FOLDER+fileName);
+            InputStream is = new FileInputStream(file);
+
+            log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file: "+fileName);
+            log(LogUtil.LogType.CRYP_SERVER, "CrypServer downloading file length: "+fileLength);
+
+            Response response = new Response(Status.OK, MimeUtil.MIME_BIN, is, fileLength);
+            response.addHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
+            return response;
+
+        } catch (FileNotFoundException e) {
+            LogUtil.logException(CrypServer.class, e);
+            log(LogUtil.LogType.CRYP_SERVER, "CrypServer download file not found: " + fileName);
+        }
+        return null;//TODO Return 404?
     }
 
     /**
@@ -733,7 +875,7 @@ public class CrypServer extends NanoHTTPD {
     private static void initSecTok(Context ctx) {
 
         setSecTok( Cryp.get( CConst.SEC_TOK,
-               Passphrase.generateRandomString(32, Passphrase.SYSTEM_MODE))
+                Passphrase.generateRandomString(32, Passphrase.SYSTEM_MODE))
         );
     }
     /**

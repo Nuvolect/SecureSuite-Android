@@ -113,7 +113,7 @@ app.controller('debugController', function($scope, $http, $parse) {
 
   $scope.runTest = function( id, data ){
 
-     $http.get("/connector/?cmd=debug&test_id="+id+"&data="+data)
+     $http.get("/admin/?cmd=debug&test_id="+id+"&data="+data)
        .then(function (response) {
 
         // test_id the test name and is bound to the Angular result variable

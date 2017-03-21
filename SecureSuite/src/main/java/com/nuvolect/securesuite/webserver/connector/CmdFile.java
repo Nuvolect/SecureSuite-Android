@@ -52,13 +52,6 @@ public class CmdFile {
             OmniFile targetFile = OmniUtil.getFileFromHash(target);
             LogUtil.log(LogUtil.LogType.CMD_FILE, "Target " + targetFile.getPath());
 
-            /**
-             * download parameter referenced in CrypServer
-             */
-//        boolean download = false;
-//        if( params.containsKey("download"))
-//            download = params.get("download").contentEquals("1");
-
             InputStream is = null;
             try {
 

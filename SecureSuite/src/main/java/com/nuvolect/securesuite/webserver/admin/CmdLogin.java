@@ -17,7 +17,7 @@
  *
  */
 
-package com.nuvolect.securesuite.webserver.connector;//
+package com.nuvolect.securesuite.webserver.admin;//
 
 import android.content.Context;
 
@@ -52,8 +52,6 @@ public class CmdLogin {
 
             if( validatedUser){
 
-//                if( uniqueId.contentEquals(CConst.EMBEDDED_USER))
-//                    CrypServer.setCookie( CConst.UNIQUE_ID, uniqueId, 7);
                 CrypServer.setValidUser(ctx, uniqueId);
                 LogUtil.log(LogUtil.LogType.CMD_LOGIN, "authenticate success: "+uniqueId);
             }
