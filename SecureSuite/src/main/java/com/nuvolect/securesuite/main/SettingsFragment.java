@@ -155,14 +155,15 @@ public class SettingsFragment extends PreferenceFragment
         // Display current IP address
         final Preference ipPref = findPreference("ip_address");
         ipPref.setSummary(WebUtil.getServerUrl(m_act) + " OFFLINE");
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String, String>();
 
         if (!WebUtil.getServerIpPort(m_act).contentEquals(App.DEFAULT_IP_PORT)) {
 
             final String thisDeviceUrl = WebUtil.getServerUrl(m_act, CConst.SYNC);
-            parameters.put(SyncRest.CMD.self_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+            params.put( CConst.CMD, SyncRest.CMD.self_ip_test.toString());
+            params.put( CConst.IP_PORT, WebUtil.getServerIpPort(m_act));
 
-            Comm.sendPostUi(m_act, thisDeviceUrl, parameters, new Comm.CommPostCallbacks() {
+            Comm.sendPostUi(m_act, thisDeviceUrl, params, new Comm.CommPostCallbacks() {
                 @Override
                 public void success(String jsonString) {
 
@@ -202,10 +203,11 @@ public class SettingsFragment extends PreferenceFragment
                         final String companionUrl = WebUtil.getCompanionServerUrl(CConst.SYNC);
                         LogUtil.log("Companion device reachable: " + companionUrl);
 
-                        Map<String, String> parameters = new HashMap<String, String>();
-                        parameters.put(SyncRest.CMD.companion_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put( CConst.CMD, SyncRest.CMD.companion_ip_test.toString());
+                        params.put( CConst.IP_PORT, WebUtil.getServerIpPort(m_act));
 
-                        Comm.sendPostUi(m_act, companionUrl, parameters, new Comm.CommPostCallbacks() {
+                        Comm.sendPostUi(m_act, companionUrl, params, new Comm.CommPostCallbacks() {
                             @Override
                             public void success(String jsonString) {
 
@@ -702,8 +704,9 @@ public class SettingsFragment extends PreferenceFragment
                 countdown_tv.setText(minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
 
                 if( secondsRemaining % 2 == 0){// test every 2 seconds
-                    Map<String, String> parameters = new HashMap<String, String>();
-                    parameters.put(SyncRest.CMD.companion_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put( CConst.CMD, SyncRest.CMD.companion_ip_test.toString());
+                    params.put( CConst.IP_PORT, WebUtil.getServerIpPort(m_act));
 
                     String companionServerIpPort = WebUtil.getCompanionServerIpPort();
                     String validationReport = Util.validIpPort(companionServerIpPort);
@@ -711,7 +714,7 @@ public class SettingsFragment extends PreferenceFragment
                     if( validationReport.contentEquals(CConst.OK)) {
 
                         String companionServerUrl = WebUtil.getCompanionServerUrl( CConst.SYNC);
-                        Comm.sendPostUi(m_act, companionServerUrl, parameters, new Comm.CommPostCallbacks() {
+                        Comm.sendPostUi(m_act, companionServerUrl, params, new Comm.CommPostCallbacks() {
                             @Override
                             public void success(String jsonString) {
 
@@ -990,12 +993,13 @@ public class SettingsFragment extends PreferenceFragment
                         final String companionUrl = WebUtil.getCompanionServerUrl(CConst.SYNC);
                         final String myIpPort = WebUtil.getServerIpPort(m_act);
 
-                        Map<String, String> parameters = new HashMap<String, String>();
-                        parameters = new HashMap<String, String>();
-                        parameters.put(SyncRest.CMD.register_companion_device.toString(), myIpPort);
-                        parameters.put(CConst.SEC_TOK, CrypServer.getSecTok());
+                        Map<String, String> params = new HashMap<String, String>();
+                        params = new HashMap<String, String>();
+                        params.put( CConst.CMD, SyncRest.CMD.register_companion_device.toString());
+                        params.put( CConst.IP_PORT, myIpPort);
+                        params.put( CConst.SEC_TOK, CrypServer.getSecTok());
 
-                        Comm.sendPostUi(m_act, companionUrl, parameters, new Comm.CommPostCallbacks() {
+                        Comm.sendPostUi(m_act, companionUrl, params, new Comm.CommPostCallbacks() {
                             @Override
                             public void success(String jsonObject) {
 

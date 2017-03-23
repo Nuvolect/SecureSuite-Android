@@ -43,27 +43,10 @@ import static com.nuvolect.securesuite.webserver.WebUtil.getCompanionServerIpPor
  */
 public class SyncRest {
 
-    static String[] param_keys = {
-
-            CConst.SEC_TOK,
-            CConst.ACCOUNT_ID,
-            CConst.CONTACT_ID,
-            CConst.GROUP_ID,
-            CConst.MD5_PAYLOAD,
-            CConst.PAYLOAD,
-            CConst.URI,
-            CConst.QUERY_PARAMETER_STRINGS,
-    };
-    private static boolean isParameterKey(String key) {
-
-        for( String param_key : param_keys){
-
-            if( param_key.contentEquals( key ))
-                return true;
-        }
-        return false;
-    }
-
+    /**
+     * Commands supported by this REST interface.
+     * Use key {@link CConst#CMD} and a value from the enum table.
+     */
     public static enum CMD {
 
         NIL,
@@ -84,7 +67,7 @@ public class SyncRest {
          * to serve as a backup and to share contact/password data updates.
          * A security token SEC_TOK is passed that is used with all future communications.
          * Parameter: {@link CConst#SEC_TOK} : 32 char token
-         * Parameter: {@link CConst#COMPANION_IP_PORT} : 1.2.3.4:3210
+         * Parameter: {@link CConst#IP_PORT} : 1.2.3.4:3210
          */
         register_companion_device,
 
@@ -106,13 +89,14 @@ public class SyncRest {
         /**
          * Request specific data from the source SecureSuite device.
          * Data is supplied as a JSONArray of contacts in simple form.
-         * Parameter: data_request : json string
+         * Parameter: {@link CConst#DATA_REQUEST} : json string
          */
         src_full_sync_data_req,
 
         /**
          * Send a JSONArray of contacts in simple form.
          * Parameter: {@link CConst#SYNC_DATA} : json string
+         * Parameter: {@link CConst#MD5_PAYLOAD} : 32char hex
          */
         tgt_full_sync_data,
 
@@ -159,16 +143,16 @@ public class SyncRest {
          * Communication test.  Bounce data back and forth to exercise communications.
          * Parameter: {@link CConst#MD5_PAYLOAD} : 32char
          * Parameter: {@link CConst#PAYLOAD} : json string
-         * Parameter: {@link CConst#NUM_TESTS} : integer string
+         * Parameter: {@link CConst#COUNTER} : integer string
          */
         ping_test,
-        pong_test,
-
         /**
-         * Basic parameters for routing and speciality query
+         * Communication test.  Bounce data back and forth to exercise communications.
+         * Parameter: {@link CConst#MD5_PAYLOAD} : 32char
+         * Parameter: {@link CConst#PAYLOAD} : json string
+         * Parameter: {@link CConst#COUNTER} : integer string
          */
-        uri,                    // Full uri for routing
-        queryParameterStrings,  // Raw parameters
+        pong_test,
     }
 
     /**
@@ -188,205 +172,202 @@ public class SyncRest {
 
     private static String parse(Context ctx, final String uniqueId, Map<String, String> params) {
 
-            CMD cmd = CMD.NIL;
-            try {
-                cmd = CMD.valueOf(params.get(CConst.CMD));
-            } catch (Exception e) {
-                LogUtil.log(LogUtil.LogType.SYNC_REST, "Error invalid command: " + cmd);
-                LogUtil.logException(ctx, LogUtil.LogType.SYNC_REST, e);
+        CMD cmd = CMD.NIL;
+        try {
+            cmd = CMD.valueOf(params.get(CConst.CMD));
+        } catch (Exception e) {
+            LogUtil.log(LogUtil.LogType.SYNC_REST, "Error invalid command: " + cmd);
+            LogUtil.logException(ctx, LogUtil.LogType.SYNC_REST, e);
+        }
+
+        switch (cmd) {
+
+            case NIL:
+
+            case self_ip_test:{
+
+                if( params.get(CConst.IP_PORT).contentEquals(WebUtil.getServerIpPort(ctx)))
+                    return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
+                else
+                    return WebUtil.response(CConst.RESPONSE_CODE_SELF_TEST_FAIL_211).toString();
             }
 
-            switch (cmd) {
+            case companion_ip_test:{
 
-                case NIL:
-
-                case self_ip_test:{
-
-                    if( params.get(CConst.IP_PORT).contentEquals(WebUtil.getServerIpPort(ctx)))
-                        return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
-                    else
-                        return WebUtil.response(CConst.RESPONSE_CODE_SELF_TEST_FAIL_211).toString();
-                }
-
-                case companion_ip_test:{
-
-                    if( params.get(CConst.IP_PORT).contentEquals(getCompanionServerIpPort()))
-                        return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
-                    else
-                        return WebUtil.response(CConst.RESPONSE_CODE_COMPANION_TEST_FAIL_210).toString();
-                }
-
-                case register_companion_device:{
-
-                    /**
-                     * Only allow registration when device is in pairing mode, this is the
-                     * only time host verification is disabled.
-                     */
-                    if( ! WebUtil.NullHostNameVerifier.getInstance().m_hostVerifierEnabled ){
-
-                        String sec_tok = params.get(CConst.SEC_TOK);
-                        CrypServer.setSecTok( sec_tok );
-
-                        WebUtil.setCompanionServerIpPort( params.get(CConst.COMPANION_IP_PORT) );
-
-                        LogUtil.log(LogUtil.LogType.SYNC_REST, cmd
-                                +" registered: "+params.get(CConst.COMPANION_IP_PORT)+", sec_tok: "+sec_tok);
-
-                        return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
-                    }else{
-
-                        LogUtil.log(LogUtil.LogType.SYNC_REST, cmd
-                                +" ERROR registration attempt and not in pairing mode");
-
-                        return WebUtil.response(CConst.RESPONSE_CODE_REGISTRATION_ERROR_209).toString();
-                    }
-                }
-
-                case src_full_sync_start:{
-
-                    if( SqlFullSyncTarget.getInstance().syncInProcess())
-                        return WebUtil.response(CConst.RESPONSE_CODE_SYNC_IN_PROCESS_201).toString();
-                    else {
-                        WorkerCommand.fullSyncSendSourceManifest(ctx);
-
-                        return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
-                    }
-                }
-                case tgt_full_sync_source_manifest:{
-
-                    JSONObject response = SqlFullSyncTarget.getInstance()
-                            .inspectSourceManifest(params.get(CConst.SOURCE_MANIFEST));
-
-                    if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
-
-                        WorkerCommand.queOptimizeFullSyncPlan(ctx);// and make first sync request
-                    }
-                    return response.toString();
-                }
-                case src_full_sync_data_req:{
-
-                    JSONObject response = SqlFullSyncSource.getInstance()
-                            .inspectSyncDataRequest(params.get(CConst.DATA_REQUEST));
-                    LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
-
-                    if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
-
-                        WorkerCommand.queFullSyncSendData(ctx);
-                    }
-                    return response.toString();
-                }
-                case tgt_full_sync_data: {
-
-                    String md5_payload = params.get(CConst.MD5_PAYLOAD);
-
-                    JSONObject response = SqlFullSyncTarget.getInstance().inspectSyncData(
-                            ctx, params.get(CConst.SYNC_DATA), md5_payload);
-
-                    LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
-
-                    if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
-
-                        WorkerCommand.queFullSyncProcessData(ctx);
-                    }
-                    return response.toString();
-                }
-                case src_full_sync_end:{
-
-                    SqlFullSyncSource.getInstance().fullSyncEnd(ctx);
+                if( params.get(CConst.IP_PORT).contentEquals(getCompanionServerIpPort()))
                     return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
-                }
-
-                case tgt_inc_sync_source_manifest:{
-
-                    JSONObject response = SqlIncSyncTarget.getInstance()
-                            .inspectSourceManifest(params.get(CConst.SOURCE_MANIFEST));
-
-                    if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
-
-                        WorkerCommand.queOptimizeIncSyncPlan(ctx);// and make first sync request
-                    }
-                    return response.toString();
-                }
-                case src_inc_sync_data_req:{
-
-                    JSONObject response = SqlIncSyncSource.getInstance()
-                            .inspectSyncDataRequest(params.get(CConst.SYNC_DATA_REQUEST));
-                    LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
-
-                    if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
-
-                        WorkerCommand.queIncSyncSendData(ctx);
-                    }
-                    return response.toString();
-                }
-                case tgt_inc_sync_data:{
-
-                    String md5_payload = params.get(CConst.MD5_PAYLOAD);
-
-                    JSONObject response = SqlIncSyncTarget.getInstance().incSyncInspectData(
-                            ctx, params.get(CConst.SYNC_DATA), md5_payload);
-
-                    LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
-
-                    if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
-
-                        WorkerCommand.queIncSyncProcessData(ctx);
-                    }
-                    return response.toString();
-                }
-                case src_inc_sync_end: {
-
-                    SqlIncSyncSource.getInstance().incSyncEnd(ctx);
-                    return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
-                }
-
-
-                case sync_state:{
-
-                    try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put( "companion_ip_port", getCompanionServerIpPort());
-                        jsonObject.put( "my_ip_port", WebUtil.getServerIpPort(ctx));
-                        jsonObject.put( "incoming_update", SqlIncSync.getInstance().getIncomingUpdate());
-                        jsonObject.put( "outgoing_update", SqlIncSync.getInstance().getOutgoingUpdate());
-
-                        LogUtil.log(LogUtil.LogType.SYNC_REST, "sync_state response: "+jsonObject.toString(2));//mkk remove
-
-                        return jsonObject.toString();
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                case ping_test:{
-
-                    String md5_payload = params.get(CConst.MD5_PAYLOAD);
-                    String encodedPayload = params.get(CConst.PAYLOAD);
-                    String numberOfTests = params.get(CConst.NUM_TESTS);
-
-                    JSONObject response = SqlSyncTest.getInstance()
-                            .checkResult("ping", numberOfTests, md5_payload, encodedPayload);
-
-                    if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100))
-                        WorkerCommand.quePongTest(ctx);
-
-                    return response.toString();
-                }
-                case pong_test:{
-
-                    String md5_payload = params.get(CConst.MD5_PAYLOAD);
-                    String encodedPayload = params.get(CConst.PAYLOAD);
-                    String numberOfTests = params.get(CConst.NUM_TESTS);
-
-                    JSONObject response = SqlSyncTest.getInstance()
-                            .checkResult("pong", numberOfTests, md5_payload, encodedPayload);
-                    return response.toString();
-                }
-
-                default:
-                    LogUtil.log(LogUtil.LogType.SYNC_REST, "Invalid command: "+cmd);
+                else
+                    return WebUtil.response(CConst.RESPONSE_CODE_COMPANION_TEST_FAIL_210).toString();
             }
+
+            case register_companion_device:{
+
+                /**
+                 * Only allow registration when device is in pairing mode, this is the
+                 * only time host verification is disabled.
+                 */
+                if( ! WebUtil.NullHostNameVerifier.getInstance().m_hostVerifierEnabled ){
+
+                    String sec_tok = params.get(CConst.SEC_TOK);
+                    CrypServer.setSecTok( sec_tok );
+
+                    WebUtil.setCompanionServerIpPort( params.get(CConst.IP_PORT) );
+
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, cmd
+                            +" registered: "+params.get(CConst.IP_PORT)+", sec_tok: "+sec_tok);
+
+                    return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
+                }else{
+
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, cmd
+                            +" ERROR registration attempt and not in pairing mode");
+
+                    return WebUtil.response(CConst.RESPONSE_CODE_REGISTRATION_ERROR_209).toString();
+                }
+            }
+
+            case src_full_sync_start:{
+
+                if( SqlFullSyncTarget.getInstance().syncInProcess())
+                    return WebUtil.response(CConst.RESPONSE_CODE_SYNC_IN_PROCESS_201).toString();
+                else {
+                    WorkerCommand.fullSyncSendSourceManifest(ctx);
+
+                    return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
+                }
+            }
+            case tgt_full_sync_source_manifest:{
+
+                JSONObject response = SqlFullSyncTarget.getInstance()
+                        .inspectSourceManifest(params.get(CConst.SOURCE_MANIFEST));
+
+                if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
+
+                    WorkerCommand.queOptimizeFullSyncPlan(ctx);// and make first sync request
+                }
+                return response.toString();
+            }
+            case src_full_sync_data_req:{
+
+                JSONObject response = SqlFullSyncSource.getInstance()
+                        .inspectSyncDataRequest(params.get(CConst.DATA_REQUEST));
+                LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
+
+                if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
+
+                    WorkerCommand.queFullSyncSendData(ctx);
+                }
+                return response.toString();
+            }
+            case tgt_full_sync_data: {
+
+                String md5_payload = params.get(CConst.MD5_PAYLOAD);
+
+                JSONObject response = SqlFullSyncTarget.getInstance().inspectSyncData(
+                        ctx, params.get(CConst.SYNC_DATA), md5_payload);
+
+                LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
+
+                if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
+
+                    WorkerCommand.queFullSyncProcessData(ctx);
+                }
+                return response.toString();
+            }
+            case src_full_sync_end:{
+
+                SqlFullSyncSource.getInstance().fullSyncEnd(ctx);
+                return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
+            }
+
+            case tgt_inc_sync_source_manifest:{
+
+                JSONObject response = SqlIncSyncTarget.getInstance()
+                        .inspectSourceManifest(params.get(CConst.SOURCE_MANIFEST));
+
+                if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
+
+                    WorkerCommand.queOptimizeIncSyncPlan(ctx);// and make first sync request
+                }
+                return response.toString();
+            }
+            case src_inc_sync_data_req:{
+
+                JSONObject response = SqlIncSyncSource.getInstance()
+                        .inspectSyncDataRequest(params.get(CConst.SYNC_DATA_REQUEST));
+                LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
+
+                if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
+
+                    WorkerCommand.queIncSyncSendData(ctx);
+                }
+                return response.toString();
+            }
+            case tgt_inc_sync_data:{
+
+                JSONObject response = SqlIncSyncTarget.getInstance().incSyncInspectData(
+                        ctx, params.get(CConst.SYNC_DATA), params.get(CConst.MD5_PAYLOAD));
+
+                LogUtil.log(LogUtil.LogType.SYNC_REST, cmd +" response: " + response.toString());
+
+                if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100)){
+
+                    WorkerCommand.queIncSyncProcessData(ctx);
+                }
+                return response.toString();
+            }
+            case src_inc_sync_end: {
+
+                SqlIncSyncSource.getInstance().incSyncEnd(ctx);
+                return WebUtil.response(CConst.RESPONSE_CODE_SUCCESS_100).toString();
+            }
+
+            case sync_state:{
+
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put( "companion_ip_port", getCompanionServerIpPort());
+                    jsonObject.put( "my_ip_port", WebUtil.getServerIpPort(ctx));
+                    jsonObject.put( "incoming_update", SqlIncSync.getInstance().getIncomingUpdate());
+                    jsonObject.put( "outgoing_update", SqlIncSync.getInstance().getOutgoingUpdate());
+
+                    LogUtil.log(LogUtil.LogType.SYNC_REST, "sync_state response: "+jsonObject.toString(2));
+
+                    return jsonObject.toString();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            case ping_test:{
+
+                String md5_payload = params.get(CConst.MD5_PAYLOAD);
+                String encodedPayload = params.get(CConst.PAYLOAD);
+                String numberOfTests = params.get(CConst.COUNTER);
+
+                JSONObject response = SqlSyncTest.getInstance()
+                        .checkResult("ping", numberOfTests, md5_payload, encodedPayload);
+
+                if( WebUtil.responseMatch(response, CConst.RESPONSE_CODE_SUCCESS_100))
+                    WorkerCommand.quePongTest(ctx);
+
+                return response.toString();
+            }
+            case pong_test:{
+
+                String md5_payload = params.get(CConst.MD5_PAYLOAD);
+                String encodedPayload = params.get(CConst.PAYLOAD);
+                String numberOfTests = params.get(CConst.COUNTER);
+
+                JSONObject response = SqlSyncTest.getInstance()
+                        .checkResult("pong", numberOfTests, md5_payload, encodedPayload);
+                return response.toString();
+            }
+
+            default:
+                LogUtil.log(LogUtil.LogType.SYNC_REST, "Invalid command: "+cmd);
+        }
 
         return new JSONObject().toString();
     }

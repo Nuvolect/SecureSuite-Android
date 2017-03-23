@@ -96,7 +96,7 @@ public class SqlFullSyncSource {
         }
 
         String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String, String>();
 
         JSONObject manifest = SqlCipher.getSourceManifest();
         try {
@@ -105,9 +105,10 @@ public class SqlFullSyncSource {
             e.printStackTrace();
         }
 
-        parameters.put(SyncRest.CMD.tgt_full_sync_source_manifest.toString(), manifest.toString());
+        params.put( CConst.CMD, SyncRest.CMD.tgt_full_sync_source_manifest.toString());
+        params.put( CConst.SOURCE_MANIFEST, manifest.toString());
 
-        Comm.sendPost(m_ctx, url, parameters, new Comm.CommPostCallbacks() {
+        Comm.sendPost(m_ctx, url, params, new Comm.CommPostCallbacks() {
             @Override
             public void success(String response) {
 
@@ -175,11 +176,12 @@ public class SqlFullSyncSource {
         String payload = jsonObject.toString();
         String md5_payload = com.squareup.okhttp.internal.Util.md5Hex(payload);
 
-        Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put(SyncRest.CMD.tgt_full_sync_data.toString(), payload );
-        parameters.put(CConst.MD5_PAYLOAD, md5_payload);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put( CConst.CMD, SyncRest.CMD.tgt_full_sync_data.toString());
+        params.put( CConst.SYNC_DATA, payload );
+        params.put( CConst.MD5_PAYLOAD, md5_payload);
 
-        Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
+        Comm.sendPost(ctx, url, params, new Comm.CommPostCallbacks() {
             @Override
             public void success(String response) {
 

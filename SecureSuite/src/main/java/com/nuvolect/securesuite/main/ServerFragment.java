@@ -137,12 +137,13 @@ public class ServerFragment extends DialogFragment {
                 App.DEFAULT_IP_PORT)) {
 
             final String thisDeviceUrl = WebUtil.getServerUrl(m_act, CConst.SYNC);
-            Map<String, String> parameters = new HashMap<String, String>();
-            parameters.put(SyncRest.CMD.self_ip_test.toString(), WebUtil.getServerIpPort(m_act));
+            Map<String, String> params = new HashMap<String, String>();
+            params.put( CConst.CMD,     SyncRest.CMD.self_ip_test.toString());
+            params.put( CConst.IP_PORT, WebUtil.getServerIpPort(m_act));
 
             LogUtil.log("thisDeviceUrl: " + thisDeviceUrl);
 
-            Comm.sendPostUi(m_act, thisDeviceUrl, parameters, new Comm.CommPostCallbacks() {
+            Comm.sendPostUi(m_act, thisDeviceUrl, params, new Comm.CommPostCallbacks() {
                 @Override
                 public void success(String jsonString) {
 

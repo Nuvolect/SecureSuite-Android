@@ -64,7 +64,6 @@ import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_JSON;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_PNG;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_TTF;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_WOFF;
-import static com.nuvolect.securesuite.webserver.SyncRest.CMD.uri;
 import static java.util.Locale.US;
 
 /**<pre>
@@ -295,9 +294,6 @@ public class CrypServer extends NanoHTTPD {
             }
         }
 
-        if( method == Method.POST)
-            log(LogUtil.LogType.CRYP_SERVER, method + " '" + uri + "' " + params.toString());
-
         String uri = session.getUri();
         params.put("uri", uri);
         params.put("queryParameterStrings", session.getQueryParameterString());
@@ -451,9 +447,9 @@ public class CrypServer extends NanoHTTPD {
                              * The security token can be temporarily disabled during companion pairing.
                              */
                             boolean hostVerifierDisabled = !WebUtil.NullHostNameVerifier.getInstance().m_hostVerifierEnabled;
-                            if (ext == EXT.sync && hostVerifierDisabled
-                                    && (params.containsKey(SyncRest.CMD.register_companion_device.toString())
-                                    || params.containsKey(SyncRest.CMD.companion_ip_test.toString()))) {
+                            if (ext == EXT.sync && hostVerifierDisabled &&  params.containsKey(CConst.CMD)
+                                    && (params.get(CConst.CMD).contentEquals(SyncRest.CMD.register_companion_device.toString())
+                                    || params.get(CConst.CMD).contentEquals(SyncRest.CMD.companion_ip_test.toString()))) {
 
                                 log(LogUtil.LogType.CRYP_SERVER, "sec_tok test skipped");
                                 String json = SyncRest.render(m_ctx, uniqueId, params);

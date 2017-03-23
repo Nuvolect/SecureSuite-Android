@@ -145,10 +145,11 @@ public class CConst {
     public static final String _ID                  = "_id";
 
     // Data sync keys
+    public static final String COUNTER              = "counter";
     public static final String DATA_REQUEST         = "data_request";
+    public static final String ERROR                = "error";
     public static final String IP_PORT              = "ip_port";
     public static final String MD5_PAYLOAD          = "md5_payload";
-    public static final String NUM_TESTS            = "num_tests";
     public static final String PAYLOAD              = "payload";
     public static final String SOURCE_MANIFEST      = "source_manifest";
     public static final String SYNC_DATA            = "sync_data";

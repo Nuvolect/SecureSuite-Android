@@ -99,7 +99,7 @@ public class SqlIncSyncTarget {
         if( ! m_source_manifest.isEmpty()){
 
             String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
-            Map<String, String> parameters = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<String, String>();
 
             /**
              * Build the next increment of the plan.  Each pass the remaining manifest is sent
@@ -108,9 +108,11 @@ public class SqlIncSyncTarget {
              * until the entire manifest is satisfied.
              */
             String request = new Gson().toJson(m_source_manifest);
-            parameters.put(SyncRest.CMD.src_inc_sync_data_req.toString(), request);
 
-            Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
+            params.put( CConst.CMD, SyncRest.CMD.src_inc_sync_data_req.toString());
+            params.put( CConst.SYNC_DATA_REQUEST, request);
+
+            Comm.sendPost(ctx, url, params, new Comm.CommPostCallbacks() {
                 @Override
                 public void success(String response) {
 
@@ -197,11 +199,11 @@ public class SqlIncSyncTarget {
         WorkerCommand.refreshUserInterface(ctx, CConst.RECREATE);
 
         String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
-        Map<String, String> parameters = new HashMap<String, String>();
 
-        parameters.put(SyncRest.CMD.src_inc_sync_end.toString(), "no_errors");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put( CConst.CMD, SyncRest.CMD.src_inc_sync_end.toString());
 
-        Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
+        Comm.sendPost(ctx, url, params, new Comm.CommPostCallbacks() {
             @Override
             public void success(String response) {
 

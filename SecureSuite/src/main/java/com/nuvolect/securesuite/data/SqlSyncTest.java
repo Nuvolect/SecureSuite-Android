@@ -100,11 +100,17 @@ public class SqlSyncTest {
     public JSONObject ping_test(final Context ctx) {
 
         managePayloadSize();
-        Map<String, String> parameters = makeParameters();
-        parameters.put(SyncRest.CMD.ping_test.toString(), String.valueOf(++ping_counter));
+
+        /**
+         * Build the payload and generate MD5
+         */
+        Map<String, String> params = makeParameters();
+        params.put( CConst.CMD, SyncRest.CMD.ping_test.toString());
+        params.put( CConst.COUNTER, String.valueOf(++ping_counter));
+
         String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
 
-        Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
+        Comm.sendPost(ctx, url, params, new Comm.CommPostCallbacks() {
             @Override
             public void success(String response) {
 
@@ -151,8 +157,14 @@ public class SqlSyncTest {
     public JSONObject pong_test(final Context ctx) {
 
         managePayloadSize();
+
+        /**
+         * Build the payload and generate MD5
+         */
         Map<String, String> parameters = makeParameters();
-        parameters.put(SyncRest.CMD.pong_test.toString(), String.valueOf( ++pong_counter));
+        parameters.put( CConst.CMD, SyncRest.CMD.pong_test.toString());
+        parameters.put( CConst.COUNTER, String.valueOf( ++pong_counter));
+
         String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
 
         Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
@@ -290,7 +302,7 @@ public class SqlSyncTest {
 
         m_act = act;
 
-        String title = "Ping pong progress?" ;
+        String title = "Pyramid comm test with companion device" ;
         String message = "Shall we?" ;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(act);

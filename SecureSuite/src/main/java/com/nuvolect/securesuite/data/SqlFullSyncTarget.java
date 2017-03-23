@@ -319,11 +319,11 @@ public class SqlFullSyncTarget {
         SqlIncSync.getInstance().setIncomingUpdate();
 
         String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String, String>();
 
-        parameters.put(SyncRest.CMD.src_full_sync_end.toString(), "no_errors");
+        params.put( CConst.CMD, SyncRest.CMD.src_full_sync_end.toString());
 
-        Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
+        Comm.sendPost(ctx, url, params, new Comm.CommPostCallbacks() {
             @Override
             public void success(String response) {
 

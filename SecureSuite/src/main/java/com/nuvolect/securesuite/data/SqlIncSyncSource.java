@@ -141,7 +141,8 @@ public class SqlIncSyncSource {
 
         String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
         Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put(SyncRest.CMD.tgt_inc_sync_source_manifest.toString(), jsonString);
+        parameters.put( CConst.CMD, SyncRest.CMD.tgt_inc_sync_source_manifest.toString());
+        parameters.put( CConst.SOURCE_MANIFEST, jsonString);
 
         Comm.sendPost(url, parameters, new Comm.CommPostCallbacks() {
             @Override
@@ -226,13 +227,14 @@ public class SqlIncSyncSource {
         String payload = jsonObject.toString();
         String md5_payload = com.squareup.okhttp.internal.Util.md5Hex(payload);
 
-        Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put(SyncRest.CMD.tgt_inc_sync_data.toString(), payload );
-        parameters.put(CConst.MD5_PAYLOAD, md5_payload);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put( CConst.CMD, SyncRest.CMD.tgt_inc_sync_data.toString());
+        params.put( CConst.SYNC_DATA, payload );
+        params.put( CConst.MD5_PAYLOAD, md5_payload);
 
         LogUtil.log(SQL_INC_SYNC_SRC, "incSyncDataSend, json package length: "+jsonObject.length());
 
-        Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
+        Comm.sendPost(ctx, url, params, new Comm.CommPostCallbacks() {
             @Override
             public void success(String response) {
 

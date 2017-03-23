@@ -154,7 +154,7 @@ app.controller('debugController', function($scope, $http, $parse) {
 
    $scope.companionSyncState = function( url ){
 
-        $http.get( url+"/sync?cmd=sync_state&extrastuff=forFun")
+        $http.get( url+"/sync?cmd=sync_state")
             .then(function (response) {
 
             $scope.companion_incoming_update = response.data.incoming_update;
