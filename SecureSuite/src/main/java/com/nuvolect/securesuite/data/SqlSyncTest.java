@@ -29,7 +29,9 @@ import android.os.Looper;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.nuvolect.securesuite.util.TimeUtil;
 import com.nuvolect.securesuite.webserver.Comm;
 import com.nuvolect.securesuite.webserver.SyncRest;
 import com.nuvolect.securesuite.webserver.WebUtil;
@@ -109,6 +111,7 @@ public class SqlSyncTest {
         params.put( CConst.COUNTER, String.valueOf(++ping_counter));
 
         String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
+        startTime = System.currentTimeMillis();
 
         Comm.sendPost(ctx, url, params, new Comm.CommPostCallbacks() {
             @Override
@@ -166,6 +169,7 @@ public class SqlSyncTest {
         parameters.put( CConst.COUNTER, String.valueOf( ++pong_counter));
 
         String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
+        startTime = System.currentTimeMillis();
 
         Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
             @Override
@@ -302,8 +306,14 @@ public class SqlSyncTest {
 
         m_act = act;
 
+        if( ! WebUtil.companionServerAssigned()){
+            Toast.makeText(act, "Configure companion device for test to operate", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         String title = "Pyramid comm test with companion device" ;
-        String message = "Shall we?" ;
+        String message = "This is a non-destructive network performance test. "
+                +"Payload size is incrementally increased.";
 
         AlertDialog.Builder builder = new AlertDialog.Builder(act);
         builder.setTitle(title);
@@ -311,7 +321,7 @@ public class SqlSyncTest {
         builder.setIcon(CConst.SMALL_ICON);
         builder.setCancelable(true);
 
-        builder.setPositiveButton("Go for it!", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Start test", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 setProgressCallback(m_act, pingPongCallbacks);
@@ -334,13 +344,27 @@ public class SqlSyncTest {
         tv.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    long startTime = 0;
+
     PingPongCallbacks pingPongCallbacks = new PingPongCallbacks() {
         @Override
         public void progressUpdate(Activity act, int ping_counter, int pong_counter, int payload_size) {
 
             if( m_pingPongProgressDialog != null && m_pingPongProgressDialog.isShowing()) {
                 m_pingPongProgressDialog.setProgress(pong_counter + ping_counter);
-                m_pingPongProgressDialog.setMessage("Payload size last test: " + payload_size);
+
+                String s = "Payload size last test: " + payload_size +" bytes";
+                if( startTime > 0){
+                    s += "\nTime: "+ TimeUtil.deltaTimeHrMinSecMs( startTime );
+
+                    long deltaTime = System.currentTimeMillis() - startTime;
+                    if( deltaTime > 0){
+
+                        long bytesMs = payload_size / deltaTime;
+                        s += "\nSpeed: " + bytesMs + " bytes/ms";
+                    }
+                }
+                m_pingPongProgressDialog.setMessage( s );
             }
         }
         @Override
@@ -353,8 +377,8 @@ public class SqlSyncTest {
     private void pingPongProgress(Activity act){
 
         m_pingPongProgressDialog = new ProgressDialog(m_act);
-        m_pingPongProgressDialog.setTitle("Ping Pong In Progress");
-        m_pingPongProgressDialog.setMessage("And away we go...");
+        m_pingPongProgressDialog.setTitle("Ping Pong Test In Progress");
+        m_pingPongProgressDialog.setMessage("Starting test...");
         m_pingPongProgressDialog.setMax(SqlSyncTest.MAX_PING_PONG_TESTS);
         m_pingPongProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         m_pingPongProgressDialog.setIndeterminate(false);

@@ -30,6 +30,8 @@ import com.nuvolect.securesuite.util.Passphrase;
 import com.nuvolect.securesuite.util.TimeUtil;
 import com.nuvolect.securesuite.util.WorkerCommand;
 
+import org.apache.commons.lang3.StringUtils;
+
 /** Incremental sync object and methods */
 public class SqlIncSync {
 
@@ -210,7 +212,7 @@ public class SqlIncSync {
      */
     public void setIncomingUpdate(){
 
-        Cryp.put(CConst.LAST_INCOMING_UPDATE, TimeUtil.friendlyTimeMDYM(System.currentTimeMillis()));
+        Cryp.put(CConst.LAST_INCOMING_UPDATE, String.valueOf(System.currentTimeMillis()));
     }
     /**
      * Return text string with the last time the device was updated as an incoming companion.
@@ -218,14 +220,23 @@ public class SqlIncSync {
      */
     public String getIncomingUpdate(){
 
-        return Cryp.get(CConst.LAST_INCOMING_UPDATE, "never");
+        /**
+         * Previous versions saved an entire formatted time, current only stores time
+         * as a String long. It formatted for use on demand.
+         */
+        String s = Cryp.get(CConst.LAST_INCOMING_UPDATE, "0");
+        if(StringUtils.isNumeric( s )){
+            String time = TimeUtil.friendlyTimeMDYM( Long.valueOf( s ));
+            s = "Incoming update: "+time;
+        }
+        return s;
     }
     /**
      * Set a text string with the last time the device was updated as an outgoing companion.
      */
     public void setOutgoingUpdate(){
 
-        Cryp.put(CConst.LAST_OUTGOING_UPDATE, TimeUtil.friendlyTimeMDYM(System.currentTimeMillis()));
+        Cryp.put(CConst.LAST_OUTGOING_UPDATE, String.valueOf(System.currentTimeMillis()));
     }
     /**
      * Return text string with the last time the device was updated as an outgoing companion.
@@ -233,6 +244,15 @@ public class SqlIncSync {
      */
     public String getOutgoingUpdate(){
 
-        return Cryp.get(CConst.LAST_OUTGOING_UPDATE, "never");
+        /**
+         * Previous versions saved an entire formatted time, current only stores time
+         * as a String long. It formatted for use on demand.
+         */
+        String s = Cryp.get(CConst.LAST_OUTGOING_UPDATE, "0");
+        if(StringUtils.isNumeric( s )){
+            String time = TimeUtil.friendlyTimeMDYM( Long.valueOf( s ));
+            s = "Outgoing update: "+time;
+        }
+        return s;
     }
 }

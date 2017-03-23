@@ -70,7 +70,7 @@ public class DeveloperDialog {
         DB_Repair,
         DB_Counts,
         Start_Incremental_Sync,
-        Ping_Pong,
+        Ping_Pong_Companion_Speed_Test,
         Decrement_App_Version,
         Set_Default_Display_names,
         Test_RateThisApp,
@@ -104,7 +104,7 @@ public class DeveloperDialog {
                                 WorkerCommand.queStartIncSync(m_act);
                                 break;
 
-                            case Ping_Pong:
+                            case Ping_Pong_Companion_Speed_Test:
                                 SqlSyncTest.getInstance().pingPongConfirmDiag(m_act);
                                 break;
                             case Dump_Group_Title_Table:{
