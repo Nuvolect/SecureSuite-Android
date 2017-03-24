@@ -159,32 +159,31 @@ public class SyncRest {
      * Parse parameters and process any updates.
      *
      * @param ctx
-     * @param uniqueId
      * @param params
      * @return
      */
-    public static String render(Context ctx, String uniqueId, Map<String, String> params) {
+    public static String render(Context ctx, Map<String, String> params) {
 
-        String jsonString = parse(ctx, uniqueId, params);// set mContactId & others based on params
+        String jsonString = parse(ctx, params);// set mContactId & others based on params
 
         return jsonString;
     }
 
-    private static String parse(Context ctx, final String uniqueId, Map<String, String> params) {
+    private static String parse(Context ctx, Map<String, String> params) {
 
         CMD cmd = CMD.NIL;
         try {
             cmd = CMD.valueOf(params.get(CConst.CMD));
         } catch (Exception e) {
-            LogUtil.log(LogUtil.LogType.SYNC_REST, "Error invalid command: " + cmd);
+            LogUtil.log(LogUtil.LogType.SYNC_REST, "Error invalid command: " + params);
             LogUtil.logException(ctx, LogUtil.LogType.SYNC_REST, e);
         }
-
         LogUtil.log(LogUtil.LogType.SYNC_REST, "cmd=" + cmd +" params: "+params);
 
         switch (cmd) {
 
             case NIL:
+                break;
 
             case self_ip_test:{
 
