@@ -418,9 +418,6 @@ public class CrypServer extends NanoHTTPD {
                 }
                 case connector:
                 case sync: {
-                    if (!mAuthenticated) {
-                        return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Invalid authentication: " + uri);
-                    } else {
                         if ( passSecurityCheck( uri, headers )) {
 
                             switch (ext) {
@@ -428,7 +425,7 @@ public class CrypServer extends NanoHTTPD {
                                     is = com.nuvolect.securesuite.webserver.admin.ServeCmd.process(m_ctx, params);
                                     return new Response(Status.OK, MIME_JSON, is, -1);
                                 case sync:
-                                    String json = SyncRest.render(m_ctx, uniqueId, params);
+                                    String json = SyncRest.render(m_ctx, params);
                                     return new Response(Status.OK, MIME_PLAINTEXT, json);
                                 case connector:{
 
@@ -455,14 +452,13 @@ public class CrypServer extends NanoHTTPD {
                                     || params.get(CConst.CMD).contentEquals(SyncRest.CMD.companion_ip_test.toString()))) {
 
                                 log(LogUtil.LogType.CRYP_SERVER, "sec_tok test skipped");
-                                String json = SyncRest.render(m_ctx, uniqueId, params);
+                                String json = SyncRest.render(m_ctx, params);
                                 return new Response(Status.OK, MIME_PLAINTEXT, json);
                             } else {
 
-                                log(LogUtil.LogType.CRYP_SERVER, "sec_tok ERROR");
-                                return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Invalid security token: " + uri);
+                                log(LogUtil.LogType.CRYP_SERVER, "Authentication ERROR: "+params);
+                                return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Authentication error: " + uri);
                             }
-                        }
                     }
                 }
                 case invalid:

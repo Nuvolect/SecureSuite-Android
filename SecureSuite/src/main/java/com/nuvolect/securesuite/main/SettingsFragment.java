@@ -202,6 +202,8 @@ public class SettingsFragment extends PreferenceFragment
                             @Override
                             public void success(String jsonString) {
 
+                                LogUtil.log(LogUtil.LogType.SETTINGS, "companion_ip_test response : " + jsonString);
+
                                 String summary;
                                 if( WebUtil.responseMatch(jsonString, CConst.RESPONSE_CODE_SUCCESS_100))
                                     summary = WebUtil.getCompanionServerUrl() + " ONLINE"
@@ -217,6 +219,8 @@ public class SettingsFragment extends PreferenceFragment
 
                             @Override
                             public void fail(String error) {
+
+                                LogUtil.log(LogUtil.LogType.SETTINGS, "companion_ip_test response error : " + error);
 
                                 String summary = WebUtil.getCompanionServerUrl() + " OFFLINE"
                                         +"\n"+SqlIncSync.getInstance().getIncomingUpdate()

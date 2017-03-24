@@ -266,7 +266,6 @@ public class SqlFullSyncSource {
      * Pass the progressCallBacks link to the SqlSyncSource class.
      * Start the backup process.
      * Provide a cancel button to stop the process.
-     * //TODO show a dialog on the remote device with backup progress.
      * @param act
      * @return
      */

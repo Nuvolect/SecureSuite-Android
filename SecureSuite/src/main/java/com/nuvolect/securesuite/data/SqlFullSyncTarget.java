@@ -203,7 +203,7 @@ public class SqlFullSyncTarget {
         if( ! m_source_manifest.isEmpty()){
 
             String url = WebUtil.getCompanionServerUrl(CConst.SYNC);
-            Map<String, String> parameters = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<String, String>();
 
             /**
              * Build the next increment of the plan.  Each pass the remaining manifest is sent
@@ -212,9 +212,10 @@ public class SqlFullSyncTarget {
              * until the entire manifest is satisfied.
              */
             String request = new Gson().toJson(m_source_manifest);
-            parameters.put(SyncRest.CMD.src_full_sync_data_req.toString(), request);
+            params.put( CConst.CMD, SyncRest.CMD.src_full_sync_data_req.toString());
+            params.put( CConst.DATA_REQUEST, request);
 
-            Comm.sendPost(ctx, url, parameters, new Comm.CommPostCallbacks() {
+            Comm.sendPost(ctx, url, params, new Comm.CommPostCallbacks() {
                 @Override
                 public void success(String response) {
 
@@ -242,6 +243,7 @@ public class SqlFullSyncTarget {
      */
     public JSONObject inspectSyncData( Context ctx, String payload, String md5_payload) {
 
+        //TODO validate payload with md5 check
         try {
             m_syncIncrementDataObj = new JSONObject( payload );
 
