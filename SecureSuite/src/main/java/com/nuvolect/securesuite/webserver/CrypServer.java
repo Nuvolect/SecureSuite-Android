@@ -99,15 +99,16 @@ public class CrypServer extends NanoHTTPD {
 
     private static Context m_ctx;
     private static final long NOTIFY_DURATION = 3 * 1000L;  // How long to show a notification
-    public static int mPort = 0;
+    public static int m_port = 0;
+    private static String m_serverUrl;
     /**
      * Storage for session data
      */
-    public static HashMap<String, String> sessionMap;
+    public static HashMap<String, String> m_sessionMap;
     private static String m_current_account;
     private static String m_current_group_id;
-    public static HashMap<String, ArrayList<Long>> sessionMapSelected;
-    public static HashMap<String, HashMap<Integer, String>> sessionMapGroupEdit;
+    public static HashMap<String, ArrayList<Long>> m_sessionMapSelected;
+    public static HashMap<String, HashMap<Integer, String>> m_sessionMapGroupEdit;
     private static String EMBEDDED_HEADER_KEY = "referer";
     private static String embedded_header_value = "";
     /**
@@ -153,13 +154,14 @@ public class CrypServer extends NanoHTTPD {
         super(port);//FUTURE allow server to bind to a named host? super(hostToBindTo, port)
 
         m_ctx = ctx;
-        mPort = port;
+        m_port = port;
+        m_serverUrl = WebUtil.getServerUrl(m_ctx);
         m_serverEnabled = Cryp.get(CConst.SERVER_ENABLED, CConst.FALSE).contentEquals(CConst.TRUE);
 
         // Initialize session data
-        sessionMap =  new HashMap<String, String>();
-        sessionMapSelected =  new HashMap<String, ArrayList<Long>>();
-        sessionMapGroupEdit =  new HashMap<String, HashMap<Integer, String>>();
+        m_sessionMap =  new HashMap<String, String>();
+        m_sessionMapSelected =  new HashMap<String, ArrayList<Long>>();
+        m_sessionMapGroupEdit =  new HashMap<String, HashMap<Integer, String>>();
         m_current_account = Cryp.getCurrentAccount();
         m_current_group_id = String.valueOf(MyGroups.getDefaultGroup(m_current_account));
 
@@ -296,6 +298,7 @@ public class CrypServer extends NanoHTTPD {
 
         String uri = session.getUri();
         params.put("uri", uri);
+        params.put("url", m_serverUrl);
         params.put("queryParameterStrings", session.getQueryParameterString());
 
         params.put(CConst.UNIQUE_ID, uniqueId);
@@ -703,10 +706,10 @@ public class CrypServer extends NanoHTTPD {
      */
     public static String get(String uniqueId, String key, String defaultString) {
 
-        String v = sessionMap.get(key+uniqueId);
+        String v = m_sessionMap.get(key+uniqueId);
         if( v == null){
             v = defaultString;
-            sessionMap.put(key + uniqueId, defaultString);
+            m_sessionMap.put(key + uniqueId, defaultString);
         }
         if( key.contains("file_upload_modal"))
             log(LogUtil.LogType.CRYP_SERVER, "get key file_upload_modal, length: "+v.length());
@@ -723,7 +726,7 @@ public class CrypServer extends NanoHTTPD {
      */
     public static String get(String uniqueId, String key) {
 
-        String v = sessionMap.get(key+uniqueId);
+        String v = m_sessionMap.get(key+uniqueId);
         if( v == null){
             String s = "";
             if( key.equals("account"))
@@ -735,7 +738,7 @@ public class CrypServer extends NanoHTTPD {
             else if (key.equals("search"))
                 s = "";
 
-            sessionMap.put(key + uniqueId, s);
+            m_sessionMap.put(key + uniqueId, s);
             return s;
         }else{
             return v;
@@ -750,7 +753,7 @@ public class CrypServer extends NanoHTTPD {
      */
     public static ArrayList<Long> getSelectId(String uniqueId) {
 
-        ArrayList<Long> arrayList = sessionMapSelected.get(uniqueId);
+        ArrayList<Long> arrayList = m_sessionMapSelected.get(uniqueId);
         if( arrayList == null)
             arrayList = new ArrayList<Long>();
 
@@ -765,7 +768,7 @@ public class CrypServer extends NanoHTTPD {
      */
     public static void putGroupEdit(String uniqueId, HashMap<Integer, String> plan) {
 
-        sessionMapGroupEdit.put( uniqueId, plan);
+        m_sessionMapGroupEdit.put( uniqueId, plan);
     }
     /**
      * Get hash map of group edit plan from session data.
@@ -775,7 +778,7 @@ public class CrypServer extends NanoHTTPD {
      */
     public static HashMap<Integer, String> getGroupEdit(String uniqueId) {
 
-        HashMap<Integer, String> hashMap = sessionMapGroupEdit.get(uniqueId);
+        HashMap<Integer, String> hashMap = m_sessionMapGroupEdit.get(uniqueId);
         if( hashMap == null)
             hashMap = new HashMap<Integer, String>();
 
@@ -790,7 +793,7 @@ public class CrypServer extends NanoHTTPD {
      */
     public static void putSelectId(String uniqueId, ArrayList<Long> selected) {
 
-        sessionMapSelected.put( uniqueId, selected);
+        m_sessionMapSelected.put( uniqueId, selected);
     }
 
     /**
@@ -804,7 +807,7 @@ public class CrypServer extends NanoHTTPD {
         if( key.contains("file_upload_modal"))
             log(LogUtil.LogType.CRYP_SERVER, "put key file_upload_modal, length: "+value.length());
 
-        sessionMap.put(key + uniqueId, value);
+        m_sessionMap.put(key + uniqueId, value);
     }
 
     /**
@@ -815,7 +818,7 @@ public class CrypServer extends NanoHTTPD {
      */
     public static void put(String uniqueId, String key, int intValue){
 
-        sessionMap.put(key + uniqueId, String.valueOf(intValue));
+        m_sessionMap.put(key + uniqueId, String.valueOf(intValue));
     }
     /**
      * Save session data to the hashmap
@@ -825,7 +828,7 @@ public class CrypServer extends NanoHTTPD {
      */
     public static void put(String uniqueId, String key, long longValue){
 
-        sessionMap.put(key + uniqueId, String.valueOf(longValue));
+        m_sessionMap.put(key + uniqueId, String.valueOf(longValue));
     }
 
     /**

@@ -180,6 +180,8 @@ public class SyncRest {
             LogUtil.logException(ctx, LogUtil.LogType.SYNC_REST, e);
         }
 
+        LogUtil.log(LogUtil.LogType.SYNC_REST, "cmd=" + cmd +" params: "+params);
+
         switch (cmd) {
 
             case NIL:

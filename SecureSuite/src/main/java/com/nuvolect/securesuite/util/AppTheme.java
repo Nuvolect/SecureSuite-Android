@@ -57,13 +57,13 @@ public class AppTheme {
 
     /**
      * Activate and return the current theme.
-     * @param m_act
+     * @param act
      * @return
      */
-    public static int activateTheme(Activity m_act) {
+    public static int activateTheme(Activity act) {
 
-        m_act.setTheme(getThemeRStyle(m_act.getApplicationContext()));
-        return SettingsActivity.getThemeNumber( m_act);
+        act.setTheme(getThemeRStyle( act));
+        return SettingsActivity.getThemeNumber(act);
     }
 
     /**
@@ -110,17 +110,16 @@ public class AppTheme {
 
         int theme = SettingsActivity.getThemeNumber(ctx);
 
-        return getThemeRStyle(ctx, theme);
+        return getThemeRStyle( theme);
     }
 
     /**
      * Settings saves the current theme as a string '1' to 'n'.  It is converted
      * to an int then this method will return the actual theme R.style.
-     * @param ctx
      * @param themeValue
      * @return int theme R.style
      */
-    public static int getThemeRStyle(Context ctx, int themeValue){
+    public static int getThemeRStyle( int themeValue){
 
         switch( themeValue ){
         case 1:

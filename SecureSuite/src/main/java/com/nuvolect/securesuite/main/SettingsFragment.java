@@ -157,28 +157,19 @@ public class SettingsFragment extends PreferenceFragment
         ipPref.setSummary(WebUtil.getServerUrl(m_act) + " OFFLINE");
         Map<String, String> params = new HashMap<String, String>();
 
-        if (!WebUtil.getServerIpPort(m_act).contentEquals(App.DEFAULT_IP_PORT)) {
+        if ( CrypServer.isServerEnabled() &&
+                !WebUtil.getServerIpPort(m_act).contentEquals(App.DEFAULT_IP_PORT)) {
 
-            final String thisDeviceUrl = WebUtil.getServerUrl(m_act, CConst.SYNC);
-            params.put( CConst.CMD, SyncRest.CMD.self_ip_test.toString());
-            params.put( CConst.IP_PORT, WebUtil.getServerIpPort(m_act));
+            final String thisDeviceIp = WebUtil.getServerIp( m_act );
 
-            Comm.sendPostUi(m_act, thisDeviceUrl, params, new Comm.CommPostCallbacks() {
+            Comm.testConnectionOnUi( thisDeviceIp, new Comm.TestConnectionCallbacks() {
                 @Override
-                public void success(String jsonString) {
+                public void result( boolean reachable) {
 
-                    if (WebUtil.responseMatch(jsonString, CConst.RESPONSE_CODE_SUCCESS_100)) {
-
+                    if ( reachable ) {
                         String summary = WebUtil.getServerUrl(m_act) + " ONLINE";
                         ipPref.setSummary(summary);
                     }
-                }
-
-                @Override
-                public void fail(String error) {
-
-                    String summary = WebUtil.getServerUrl(m_act) + " OFFLINE";
-                    ipPref.setSummary(summary);
                 }
             });
         }

@@ -192,6 +192,33 @@ public class MyAccounts {
             return accounts[0];
     }
 
+    /**
+     * Get the users main account, other than the default account.
+     * @return
+     */
+    public static String getMainAccount() {
+
+        String account = "";
+        int contacts = 0;
+        for( String anAccount : getAccounts()){
+
+            /**
+             * Filter out Default_account, other not likely to be an email.
+             */
+            if( ! anAccount.contains("@"))
+                continue;
+
+            int accountContacts = getContactCount(anAccount);
+
+            if( accountContacts > contacts){
+
+                contacts = accountContacts;
+                account = anAccount;
+            }
+        }
+        return account;
+    }
+
     public static int numberOfAccounts(){
 
         String[] accounts = getAccounts();

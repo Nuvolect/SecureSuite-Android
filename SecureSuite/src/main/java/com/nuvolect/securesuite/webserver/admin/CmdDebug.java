@@ -24,6 +24,7 @@ import android.content.Context;
 import com.nuvolect.securesuite.util.KeystoreUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniHash;
+import com.nuvolect.securesuite.webserver.Comm;
 import com.nuvolect.securesuite.webserver.MimeUtil;
 
 import org.json.JSONArray;
@@ -33,6 +34,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * test
@@ -64,6 +66,7 @@ public class CmdDebug {
         decode_hash,
         encode_hash,
         mime,
+        is_reachable,
     }
 
     public static ByteArrayInputStream go(Context ctx, Map<String, String> params) {
@@ -144,6 +147,26 @@ public class CmdDebug {
 
                         String result = MimeUtil.getMime(params.get("data"));
                         wrapper.put("result",result);
+                        break;
+                    }
+                    case is_reachable:{
+
+                        final boolean[] isReachable = {false};
+
+                        final CountDownLatch latch = new CountDownLatch( 1 );
+
+                        Comm.testConnection(params.get("data"), new Comm.TestConnectionCallbacks() {
+                            @Override
+                            public void result(boolean reachable) {
+
+                                isReachable[0] = reachable;
+                                latch.countDown();
+                            }
+                        });
+
+                        latch.await();
+
+                        wrapper.put("result", "isReachable: "+isReachable[0]);
                         break;
                     }
                     default:

@@ -28,7 +28,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
 
-import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Util;
 
@@ -320,9 +319,10 @@ public class BackupRestore {
                 BackupRestore.copyDbToStorage( basePath, SqlCipher.account_db);
                 BackupRestore.copyDbToStorage( basePath, SqlCipher.detail_db);
 
+                String mainEmail = MyAccounts.getMainAccount();
                 Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                 intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_EMAIL, new String[] {LicensePersist.getLicenseAccount(act)});
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[] { mainEmail });
                 intent.putExtra(Intent.EXTRA_SUBJECT, "SecureSuite Backup");
                 intent.putExtra(Intent.EXTRA_TEXT, userMessage);
 

@@ -93,6 +93,7 @@ public class ListHtm {
         spacing,        // Page element spacing: comfortable, cozy, compact
 
         uri,                    // Full uri for routing
+        url,                    // Url for of this device
         queryParameterStrings,  // Raw parameters
         unique_id,
 
@@ -710,6 +711,7 @@ public class ListHtm {
                     break;
                 }
                 case uri:
+                case url:
                 case queryParameterStrings:
                 case unique_id:
                     break;

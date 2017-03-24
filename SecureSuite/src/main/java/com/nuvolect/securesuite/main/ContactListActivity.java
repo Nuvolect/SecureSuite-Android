@@ -144,7 +144,7 @@ public class ContactListActivity extends Activity
         // Action bar progress setup.  Needs to be called before setting the content view
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-        m_theme = AppTheme.activateTheme(m_act);
+        m_theme = AppTheme.activateTheme( m_act);
         setContentView(R.layout.contact_list_activity);
 
         /**

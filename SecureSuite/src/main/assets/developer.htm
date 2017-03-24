@@ -44,37 +44,24 @@
     <table align="left">
 
         <tr>
-            <td>
-                <button ng-click="runTest('encode_hash', encode_hash_data )">Encode hash</button>
-            </td>
-            <td>
-                <input type="text" ng-model="encode_hash_data" size="50"/>
-            </td>
-            <td>
-                Result: {{ encode_hash_result }}
-            </td>
+            <td><button ng-click="runTest('encode_hash',encode_hash_data)">Encode hash</button></td>
+            <td> <input type="text" ng-model="encode_hash_data" size="50"/> </td>
+            <td> Result: {{ encode_hash_result }} </td>
         </tr>
         <tr>
-            <td>
-                <button ng-click="runTest('decode_hash', decode_hash_data )">Decode hash</button>
-            </td>
-            <td>
-                <input type="text" ng-model="decode_hash_data" size="50"/>
-            </td>
-            <td>
-                Result: {{ decode_hash_result }}
-            </td>
+            <td><button ng-click="runTest('decode_hash',decode_hash_data)">Decode hash</button></td>
+            <td> <input type="text" ng-model="decode_hash_data" size="50"/> </td>
+            <td> Result: {{ decode_hash_result }} </td>
         </tr>
         <tr>
-            <td>
-                <button ng-click="runTest('mime', mime_data )">Mime type</button>
-            </td>
-            <td>
-                <input type="text" ng-model="mime_data" size="50"/>
-            </td>
-            <td>
-                Result: {{ mime_result }}
-            </td>
+            <td> <button ng-click="runTest('mime', mime_data )">Mime type</button> </td>
+            <td> <input type="text" ng-model="mime_data" size="50"/> </td>
+            <td> Result: {{ mime_result }} </td>
+        </tr>
+        <tr>
+            <td><button ng-click="runTest('is_reachable',is_reachable_data)">Is reachable</button></td>
+            <td> <input type="text" ng-model="is_reachable_data" size="50"/> </td>
+            <td>Result: {{ is_reachable_result }}</td>
         </tr>
         <tr>
             <td>
@@ -95,6 +82,24 @@
     </table>
 
 </div>
+<div class="container">
+
+    <h3>API</h3>
+
+    <table align="left">
+
+        <tr>
+            <th>API</th>
+            <th>Result</th>
+        </tr>
+        <tr>
+            <td> <button ng-click="self_ip_test()">/sync/cmd=self_ip_test</button> </td>
+            <td>{{ self_ip_test }}</td>
+        </tr>
+    </table>
+
+</div>
+
 <div class="container">
 
     <h3>Device Sync</h3>
@@ -172,13 +177,22 @@ app.controller('debugController', function($scope, $http, $parse) {
         // Get the model
         var model = $parse(response.data.test_id+"_result");
 
-        // Replace timing result with error message if any
+        // Display error message if any
         var result = response.data.result;
         if( response.data.error.length > 0)
             result = response.data.error;
 
         // Assigns a value to it
         model.assign($scope, result);
+     });
+   };
+
+  $scope.self_ip_test = function(){
+
+     $http.get("/sync?cmd=self_ip_test&ip_port="+$scope.my_ip_port)
+       .then(function (response) {
+
+        $scope.self_ip_test = response;
      });
    };
 

@@ -20,7 +20,6 @@
 package com.nuvolect.securesuite.webserver.connector;//
 
 import com.nuvolect.securesuite.util.LogUtil;
-import com.nuvolect.securesuite.util.Omni;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniUtil;
 
@@ -33,8 +32,20 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-//TODO create class description
-//
+/**
+ * Create a new directory.
+ *
+ * Arguments:
+ *
+ * cmd : mkdir
+ * target : hash of target directory,
+ * name : New directory name
+ * dirs[] : array of new directories path (requests at pre-flight of folder upload)
+ * Response:
+ *
+ * added : (Array) Array with a single object - a new directory. Information about File/Directory
+ * hashes : (Object) Object of the hash value as a key to the given path in the dirs[]
+ */
 public class CmdMkdir {
 
     public static InputStream go(Map<String, String> params) {
@@ -52,7 +63,7 @@ public class CmdMkdir {
         if( params.containsKey("name"))
             name = params.get("name");
 
-        String volumeId = Omni.getVolumeId(target);
+        String volumeId = targetFile.getVolumeId();
         String path = targetFile.getPath();
 
         OmniFile file = new OmniFile(volumeId, path+"/"+name);

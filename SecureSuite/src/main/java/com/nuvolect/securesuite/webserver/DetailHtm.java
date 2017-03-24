@@ -97,6 +97,7 @@ public class DetailHtm {
         spacing,        // Page element spacing: comfortable, cozy, compact
 
         uri,                    // Full uri for routing
+        url,                    // Full url for this device
         queryParameterStrings,  // Raw parameters
         unique_id,
 
@@ -700,6 +701,7 @@ public class DetailHtm {
                     break;
                 }
                 case uri:
+                case url:
                 case queryParameterStrings:
                 case unique_id:
                     break;
