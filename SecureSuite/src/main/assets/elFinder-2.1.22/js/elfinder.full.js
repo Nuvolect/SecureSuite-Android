@@ -17742,7 +17742,6 @@ elFinder.prototype.commands.fullscreen = function() {
 		
 		about = function() {
 
-			//mkk
             html.push('<p>SecureSuite is a product of Nuvolect LLC, with many thanks to the elFinder team.</p>');
             html.push('<p>Contact Nuvolect at team@nuvolect.com or visit <a href="https://securesuite.org/">SecureSuite.org</a></p>');
 

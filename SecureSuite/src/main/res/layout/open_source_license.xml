@@ -41,6 +41,15 @@
     	\nNo modifications are made to this library.
     	\nLicense: https://www.zetetic.net/sqlcipher/license
     	\n
+    	\nIOCIPHER
+	    \IOCIPHER is an open source library that provides transparent, secure 256-bit AES encryption of an entire filesystem. This is far superior to hiding files or encrypting individual files.
+	    \nNo modifications are made to this library.
+	    \nLicense: http://www.apache.org/licenses/LICENSE-2.0
+	    \n
+    	\nelFinder
+    	\nelFinder is an open-source full feature file manager for web apps, written in JavaScript using jQuery UI. Creation is inspired by simplicity and convenience of Finder program used in Mac OS X operating system.
+    	\nLicense: https://opensource.org/licenses/BSD-3-Clause
+    	\n
     	\nEZ-VCARD
     	\nThis library enables the import and export of industry standard vCard (.vcf) files.
     	\nNo modifications are made to this library.
