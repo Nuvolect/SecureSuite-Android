@@ -18,14 +18,9 @@
   ~
   -->
 
-<resources>
-    
-    <string-array name="action_bar_spinner_menu">
-    	<item>Contacts</item>
-    	<item>Groups</item>
-		<item>Passwords</item>
-		<item>Finder</item>
-		<item>Server</item>
-	</string-array>
-
-</resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/finder_webview"
+             android:layout_width="fill_parent"
+             android:layout_height="fill_parent"
+             android:layout_margin="4dp"
+    />

@@ -178,6 +178,12 @@ public class GroupListActivity extends Activity
                         f.start();
                         break;
                     }
+                    case finder:{
+
+                        Intent intent = new Intent(m_act, FinderActivity.class);
+                        startActivity(intent);
+                        break;
+                    }
                     case server:{
 
                         /**

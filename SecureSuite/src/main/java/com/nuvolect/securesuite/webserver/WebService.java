@@ -76,6 +76,7 @@ public class WebService extends Service {
      */
     private static String keyFile = "/assets/keystore.bks";
     private static char[] keystoreValidationKey = "27@NDMQu0cLY".toCharArray();
+    public static String CERTIFICATE_DETAILS = "Issued to: CN=Nuvolect LLC,OU=Development,O=Nuvolect LLC,L=Orlando,ST=FL,C=US;";
 
     @Override
     public void onCreate() {

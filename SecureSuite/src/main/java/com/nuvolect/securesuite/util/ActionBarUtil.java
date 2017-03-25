@@ -95,4 +95,12 @@ public class ActionBarUtil {
             return false;
         }
     }
+
+    public static void hide(Activity act) {
+
+        ActionBar actionBar = act.getActionBar();
+        if( actionBar != null)
+            actionBar.hide();
+    }
+
 }

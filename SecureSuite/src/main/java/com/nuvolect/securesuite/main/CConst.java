@@ -55,7 +55,8 @@ public class CConst {
     public static final int RESPONSE_CODE_SELF_TEST_FAIL_211      = 211;
     public static final int RESPONSE_CODE_SHARE_VCF               = 212;
 
-    public enum NavMenu {contacts, groups, passwords, server }
+    //** Must match order of: R.array.action_bar_spinner_menu) **/
+    public enum NavMenu {contacts, groups, passwords, finder, server }
 
     /** for communicating between services and activities or web server to refresh */
     public static final String UI_TYPE_KEY          = "ui_type_key";

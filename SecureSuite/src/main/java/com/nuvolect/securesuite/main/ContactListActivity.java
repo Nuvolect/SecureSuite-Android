@@ -43,6 +43,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -99,7 +100,7 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
  * This activity also implements the required
  * {@link ContactListFragment.Callbacks} interface to listen for item selections.
  */
-public class ContactListActivity extends Activity
+public class ContactListActivity extends FragmentActivity
         implements ContactListFragment.Callbacks,
         ContactEditFragment.Callbacks,
         ContactDetailFragment.Callbacks {
@@ -109,6 +110,7 @@ public class ContactListActivity extends Activity
     private ContactListFragment m_clf_fragment;
     private static Activity m_act;
     private static Context m_ctx;
+    private ActionBar actionBar;
 
     private ArrayAdapter<CharSequence> adapter;
     private OnNavigationListener navigationListener;
@@ -119,7 +121,6 @@ public class ContactListActivity extends Activity
     private Bundle m_savedInstanceState;
     private static String mNewDbPassphrase;
     private static String mNewDbPath;
-    private ActionBar actionBar;
 
     //    IncomingHandler mHandler = new IncomingHandler( this );
     private static Handler mainHandler = new Handler();
@@ -362,13 +363,15 @@ public class ContactListActivity extends Activity
                     }
                     case passwords:{
 
-                        /**
-                         * Restore the spinner such that the Server is never persisted
-                         * and never shows.
-                         */
                         actionBar.setSelectedNavigationItem( Persist.getNavChoice(m_act));
                         PasswordFragment f = PasswordFragment.newInstance(m_act);
                         f.start();
+                        break;
+                    }
+                    case finder:{
+
+                        Intent intent = new Intent(m_act, FinderActivity.class);
+                        startActivity(intent);
                         break;
                     }
                     case server:{
