@@ -76,7 +76,10 @@ public class OmniTest {
         boolean isCrypt = volumeId.contentEquals( Omni.cryptoVolumeId);
         assertThat( rootFolder.isCryp(), is( isCrypt));
 
-        OmniFile rootFile = new OmniFile( volumeId, "/.rootFile");
+        OmniFile rootFile = new OmniFile( volumeId, "/.rootFileZz");
+
+        if( rootFile.exists())
+            rootFile.delete();
 
         assertThat( rootFile.exists(), is( false ));
         assertThat( rootFile.isRoot(), is( false ));
