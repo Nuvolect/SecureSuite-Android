@@ -222,7 +222,7 @@ public class CrypServer extends NanoHTTPD {
 
         CookieHandler cookies = session.getCookies();
         Map<String, String> headers = session.getHeaders();
-        String uniqueId = cookies.read("uniqueId");
+        String uniqueId = cookies.read(CConst.UNIQUE_ID);
 
         if( uniqueId == null ){
 
@@ -250,7 +250,7 @@ public class CrypServer extends NanoHTTPD {
         if( uniqueId == null) {
 
             uniqueId = String.valueOf(System.currentTimeMillis());
-            cookies.set("uniqueId", uniqueId, 30);
+            cookies.set( CConst.UNIQUE_ID, uniqueId, 30);
         }
         /**
          * Session is authenticated when authentication is wide open or

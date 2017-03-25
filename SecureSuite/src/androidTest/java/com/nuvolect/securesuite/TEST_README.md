@@ -1,11 +1,15 @@
 # Instrumented Tests
 
-## Written
-1. Android Keystore encrypt/decrypt
-1. Group cache add group, delete group.
-This also deletes and creates a new SQLCipher database.
+Note that MyGroupsTest.java deletes and recreates the database.
+All contacts in the database will be lost.
 
-## Sprint
 
 ## Backlog
-1. AES Symmetrical encrypt/decrypt
+
+1. Server REST interface tests
+1. elFinder connector API tests
+1. SqlCipher tests
+1. Symmetric and asymettric encryption tests
+1. UI tests
+
+

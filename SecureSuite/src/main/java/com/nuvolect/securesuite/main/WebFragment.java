@@ -93,7 +93,7 @@ public class WebFragment extends MyWebViewFragment {
         CookieManager.getInstance().setAcceptThirdPartyCookies( webView, true );
         CookieManager.getInstance().flush();
 
-        String cookie = "unique_id="+ CConst.EMBEDDED_USER
+        String cookie = CConst.UNIQUE_ID+"="+ CConst.EMBEDDED_USER
                 +" ; path=/;"
                 +" expires="+ Cookie.getHTTPTime( 7 )+";";
 
