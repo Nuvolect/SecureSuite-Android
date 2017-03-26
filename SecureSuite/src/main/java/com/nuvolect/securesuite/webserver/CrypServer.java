@@ -297,8 +297,8 @@ public class CrypServer extends NanoHTTPD {
         }
 
         String uri = session.getUri();
-        params.put("uri", uri);
-        params.put("url", m_serverUrl);
+        params.put(CConst.URI, uri);
+        params.put(CConst.URL, m_serverUrl);
         params.put("queryParameterStrings", session.getQueryParameterString());
 
         params.put(CConst.UNIQUE_ID, uniqueId);

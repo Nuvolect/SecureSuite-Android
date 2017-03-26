@@ -84,7 +84,7 @@ public class OmniUtil {
             hash = hash.substring(1);
 
         String segments[] = hash.split("_");
-        String volumeId = segments[0] + "_";
+        String volumeId = segments[0];
 
         String path = OmniHash.decode(segments[1]);
         OmniFile targetFile = new OmniFile( volumeId, path );

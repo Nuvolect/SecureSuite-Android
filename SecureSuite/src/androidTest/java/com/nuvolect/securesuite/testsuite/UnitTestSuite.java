@@ -21,6 +21,7 @@ package com.nuvolect.securesuite.testsuite;
 
 import com.nuvolect.securesuite.util.KeystoreUtilTest;
 import com.nuvolect.securesuite.util.OmniTest;
+import com.nuvolect.securesuite.webserver.connector.CmdMkfileTest;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -34,6 +35,7 @@ import org.junit.runners.Suite;
                 KeystoreUtilTest.class,
                 // MyGroupsTest.class, // Will wipe contacts database
                 OmniTest.class,
+                CmdMkfileTest.class,
         }
 )
 public class UnitTestSuite {

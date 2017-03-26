@@ -38,6 +38,8 @@ import static org.junit.Assert.assertThat;
 /**
  * {@link MyGroups} utility class tests.
  * Also tests {@link SqlCipher} database delete and creation.
+ *
+ * WARNING!!!   TEST WILL WIPE THE DATABASE CLEAN.
  */
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -71,6 +73,13 @@ public class MyGroupsTest {
          * Create a group instance in database and cache.
          */
         Context ctx = getTargetContext();
+
+        /**
+         * This test will wipe the database clean.
+         * Comment out this line to run test.
+         */
+        assertThat( true , is( false ));
+
         SqlCipher.deleteDatabases(ctx);
         SqlCipher.getInstance(ctx); // Force db creation
 

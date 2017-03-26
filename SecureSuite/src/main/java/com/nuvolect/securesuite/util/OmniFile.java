@@ -136,7 +136,7 @@ public class OmniFile {
 
         m_volumeHash = volumeHash;
         String segments[] = volumeHash.split("_");
-        m_volumeId = segments[0] + "_";
+        m_volumeId = segments[0];
         m_isRoot = Omni.isRoot( volumeHash);
         m_isCryp = m_volumeId.contentEquals(Omni.cryptoVolumeId);
 
@@ -160,7 +160,7 @@ public class OmniFile {
      */
     public String getHash(){
 
-        return m_volumeId+OmniHash.encode( getPath());
+        return m_volumeId+"_"+OmniHash.encode( getPath());
     }
 
     /**
@@ -212,7 +212,7 @@ public class OmniFile {
         if( m_isCryp )
             absolutePath = m_cry_file.getPath();
         else
-            absolutePath = m_std_file.getPath();
+            absolutePath = m_std_file.getPath();//FIXME confirm works for private filesystem
 
             String root = Omni.getRoot( this.m_volumeId);
             String path = ("/"+StringUtils.removeStart( absolutePath, root)).replace("//","/");

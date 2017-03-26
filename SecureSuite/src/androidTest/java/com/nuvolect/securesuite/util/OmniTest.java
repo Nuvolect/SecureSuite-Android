@@ -93,5 +93,10 @@ public class OmniTest {
 
         assertThat( rootFile.delete(), is( true ));
         assertThat( rootFile.exists(), is( false ));
+
+        String[] vIds = Omni.getActiveVolumeIds();
+        for( String vId : vIds){
+            assertThat( vId.contains("_"), is( false));
+        }
     }
 }

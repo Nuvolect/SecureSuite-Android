@@ -34,19 +34,27 @@ import java.io.InputStream;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
- * Omni provides a elFinder compatible thin layer between the app and native file utilities.
+ * Omni provides a layer between the app and native file utilities.
  * It allows common code to interact with volumes of different types such
  * as clear text volumes, encrypted volumes and (future) network volumes.
+ * It provides methods that can operate between clear-text and encrypted files.
  * It provides an abstraction for the root path of a file system.
  *
  * An physical file path is derived from two parts, a volumeId and a path.
  * The volumeId represents root of the path upto the root '/';
  * The path is appended to the root to make the full physical path.
  *
+ * A volume hash has two parts, the volume ID follwed by a path with
+ * '_' underscore separator.
+ *
+ * The volumeId is one or more alpha characters followed by one more more
+ * integer digits. When combined with a hashed path, the volume ID is followed
+ * by an underscore '_' character.
+ *
  * A volume can be an entire disk or a sub-tree inside a filesystem.
  * The volume root can be hidden and inaccessable from the user interface.
  *
- * For example on Linux or OSX userVolumeId "u0_" can be positioned at:
+ * For example on Linux or OSX userVolumeId "u0" can be positioned at:
  *     /Users/auser/.deep_dive/
  * The path /com.company.appname combined with the volume root makes:
  *     /Users/auser/.deep_dive/com.company.appname
@@ -72,9 +80,9 @@ public class Omni {
     private static JSONObject volName; // key: vId, value: volume name
     private static JSONObject volHash; // key: vHash, value: vId
 
-    public static String localVolumeId = "l0_"; // Local Volume 0, sdcard on Android, root on Linux
-    public static String userVolumeId = "u0_"; // User Volume 0, relative to user file
-    public static String cryptoVolumeId = "c0_"; // Encrypted Volume 0
+    public static String localVolumeId = "l0"; // Local Volume 0, sdcard on Android, root on Linux
+    public static String userVolumeId = "u0"; // User Volume 0, relative to user file
+    public static String cryptoVolumeId = "c0"; // Encrypted Volume 0
     /**
      * Give the user three volumes, the SDCARD a private volume and an encrypted volume
      */
@@ -129,9 +137,9 @@ public class Omni {
             volName.put( userVolumeId,   "private");
             volName.put( cryptoVolumeId, "crypto");
 
-            volHash.put( localVolumeId  + OmniHash.encode( CConst.ROOT), localVolumeId);
-            volHash.put( userVolumeId   + OmniHash.encode( CConst.ROOT), userVolumeId);
-            volHash.put( cryptoVolumeId + OmniHash.encode( CConst.ROOT), cryptoVolumeId);
+            volHash.put( localVolumeId  + "_" + OmniHash.encode( CConst.ROOT), localVolumeId);
+            volHash.put( userVolumeId   + "_" + OmniHash.encode( CConst.ROOT), userVolumeId);
+            volHash.put( cryptoVolumeId + "_" + OmniHash.encode( CConst.ROOT), cryptoVolumeId);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -176,11 +184,9 @@ public class Omni {
         if( volumeId == null || volumeId.isEmpty())
             return false;
 
-        String vId_ = volumeId + "_";
-
         for( String vol : activeVolumeIds) {
 
-            if( vol.contentEquals( vId_))
+            if( vol.contentEquals( volumeId))
                 return true;
         }
         return false;
@@ -209,8 +215,8 @@ public class Omni {
      * <pre>
      * Get the root path of a volume terminated with '/'.
      * Examples:
-     * l0_ /storage/emulated/0/
-     * c0_ /
+     * l0 /storage/emulated/0/
+     * c0 /
      * @param volumeId
      * @return
      * </pre>
@@ -236,7 +242,7 @@ public class Omni {
         if( segments.length == 0)
             return "";
 
-        String volumeId = segments[0] + "_";
+        String volumeId = segments[0];
 
         /**
          * Identify the volumeId by testing if it is a key in the map.
@@ -264,7 +270,7 @@ public class Omni {
     }
 
     /**
-     * Determine if a file is a root directory.
+     * Determine if a volume hash is a root directory.
      * Examples for root: l0_Lw, m0_lw
      *
      * @param volumeHash : volumeId followed by the encoded short path
@@ -291,7 +297,7 @@ public class Omni {
      * Return volumeId of a of a mixed hash/path uri.
      * Example:
      * http://10.0.1.25:8218/l0_L3N0b3JhZ2UvZW11bGF0ZWQvMC9Eb3dubG9hZA/Download/frozen%20rose.jpg
-     * returns: l0_
+     * returns: l0
      * @param uri
      * @return
      */

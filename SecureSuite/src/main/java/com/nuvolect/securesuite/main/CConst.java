@@ -108,6 +108,7 @@ public class CConst {
     public static final String LAST_OUTGOING_UPDATE = "last_incoming_update";
     public static final String MEMBERS              = "members";
     public static final String MEMBERS_DELETED      = "members_deleted";
+    public static final String NAME                 = "name";
     public static final String NAME_FIRST           = KvTab.name_first.toString();
     public static final String NAME_LAST            = KvTab.name_last.toString();
     public static final String NAME_MIDDLE          = KvTab.name_middle.toString();
@@ -134,12 +135,14 @@ public class CConst {
     public static final String SEC_TOK              = "sec_tok";
     public static final String SERVER_ENABLED       = "server_enabled";
     public static final String SUBSCRIBER           = "subscriber";
+    public static final String TARGET               = "target";
     public static final String TMB_FOLDER           = "/.tmb/";
     public static final String TITLE                = KvTab.title.toString();
     public static final String TOTAL                = "total";
     public static final String UNIQUE_ID            = "unique_id";
     public static final String UPDATES              = "updates";
     public static final String URI                  = "uri";
+    public static final String URL                  = "url";
     public static final String VERSION              = ATab.version.toString();
     public static final String VCF_FOLDER           = "/vcf/";
     public static final String WEBSITE              = DTab.website.toString();
