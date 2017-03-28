@@ -136,6 +136,7 @@ public class CConst {
     public static final String SERVER_ENABLED       = "server_enabled";
     public static final String SUBSCRIBER           = "subscriber";
     public static final String TARGET               = "target";
+    public static final String STRING32             = "01234567890123456789012345678901";
     public static final String TMB_FOLDER           = "/.tmb/";
     public static final String TITLE                = KvTab.title.toString();
     public static final String TOTAL                = "total";
@@ -235,7 +236,7 @@ public class CConst {
     public static final String APP_VCF                        = "securesuite.vcf";
 
     public static final String DATABASE_PASSPHRASE            = "database_passphrase";
-    public static final String RANDOM_EDGE                    = "h0!U9#Wfnx";
+    public static final String RANDOM_EDGE                    = "h0!U9#Wfnx";// Validates security certificate
     public static final String THEME_SETTINGS                 = "theme_settings";
 
     public static final String IMPORT_PROGRESS                = "import_progress";

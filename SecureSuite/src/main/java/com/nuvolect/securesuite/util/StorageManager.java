@@ -28,9 +28,10 @@ import java.io.IOException;
 
 import info.guardianproject.iocipher.VirtualFileSystem;
 
-//TODO create class description
-//
 
+/**
+ * Manage storage startup such as for IOCipher.
+ */
 public class StorageManager {
 
     private final static String DEFAULT_PATH = "crypto.db";

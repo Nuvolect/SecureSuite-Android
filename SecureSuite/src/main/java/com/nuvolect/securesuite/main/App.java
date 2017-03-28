@@ -33,29 +33,29 @@ import com.nuvolect.securesuite.util.LogUtil;
  */
 public class App extends Application {
 
-    private static Context mContext;
+    private static Context m_ctx;
     public static String DEFAULT_IP_PORT = "0.0.0.0:0000";
     public static int DEFAULT_PORT = 0;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mContext = this;
+        m_ctx = this;
 
         /**
          * Load build-dependent data into static variables that can be accessed without context.
          */
-        LogUtil.setVerbose( Boolean.valueOf( mContext.getString(R.string.verbose_logging)));
+        LogUtil.setVerbose( Boolean.valueOf( m_ctx.getString(R.string.verbose_logging)));
 
-        DEFAULT_IP_PORT = mContext.getString(R.string.default_ip_port);
-        DEFAULT_PORT = Integer.valueOf(mContext.getString(R.string.default_port));
+        DEFAULT_IP_PORT = m_ctx.getString(R.string.default_ip_port);
+        DEFAULT_PORT = Integer.valueOf(m_ctx.getString(R.string.default_port));
     }
 
     public static Context getContext(){
-        return mContext;
+        return m_ctx;
     }
 
     public static boolean hasPermission(String perm) {
-        return(ContextCompat.checkSelfPermission( mContext, perm)== PackageManager.PERMISSION_GRANTED);
+        return(ContextCompat.checkSelfPermission(m_ctx, perm)== PackageManager.PERMISSION_GRANTED);
     }
 }

@@ -33,7 +33,7 @@ import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Util;
-import com.nuvolect.securesuite.webserver.connector.ServerRelatedInit;
+import com.nuvolect.securesuite.webserver.connector.ServerInit;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
@@ -86,7 +86,7 @@ public class WebService extends Service {
         /**
          * Initialize web service command data
          */
-        ServerRelatedInit.init( ctx);
+        ServerInit.init( ctx);
 
         SqlCipher.getInstance(ctx);
         // Load group data into memory, used for group titles and people counts

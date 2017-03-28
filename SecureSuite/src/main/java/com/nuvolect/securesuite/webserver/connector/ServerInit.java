@@ -26,7 +26,7 @@ import com.nuvolect.securesuite.util.Omni;
 /**
  * Initialization related to the web server.
  */
-public class ServerRelatedInit {
+public class ServerInit {
 
     public static void init(Context ctx){
 
