@@ -19,21 +19,21 @@
   ~
   -->
 
-<html ng-app="myApp" ng-controller="debugController">
+<html ng-app="myApp" ng-controller="myController">
 <head>
     <title>Developer</title>
 
-    <script src="/js/angular.min.js"></script>
     <link href="/css/bootstrap.css" rel="stylesheet">
     <link href="/css/app.css" rel="stylesheet">
-    <link href="/css/probe.css" rel="stylesheet">
+
+    <script src="/js/jquery-1.11.2.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/angular.min.js"></script>
 
 </head>
 
 <body>
-<!-- Bootstrap core JavaScript -->
-<script src="/js/jquery-1.11.2.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
+
 <div ng-include="'./navbar.htm'"></div>
 
 <div class="container">
@@ -138,7 +138,9 @@
 <script>
 
 var app = angular.module('myApp', []);
-app.controller('debugController', function($scope, $http, $parse) {
+app.controller('myController', function($scope, $http, $parse) {
+
+   $scope.year = new Date().getFullYear(); // footer copyright year
 
    $scope.mySyncState = function(){
 
