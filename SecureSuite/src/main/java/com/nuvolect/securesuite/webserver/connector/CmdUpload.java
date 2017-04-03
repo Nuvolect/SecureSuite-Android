@@ -22,6 +22,7 @@ package com.nuvolect.securesuite.webserver.connector;//
 import android.content.Context;
 
 import com.nuvolect.securesuite.main.CConst;
+import com.nuvolect.securesuite.util.FileUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniFiles;
@@ -237,6 +238,16 @@ public class CmdUpload {
                     JSONObject postUpload = postUploads.getJSONObject(i);
                     String uploadFileName = postUpload.getString(CConst.FILE_NAME);
                     String filePath = postUpload.getString(CConst.FILE_PATH);
+
+                    /**
+                     * When filePath is empty, a file with zero bytes was uploaded.
+                     */
+                    if( filePath.isEmpty()){
+
+                        filePath = ctx.getApplicationInfo().dataDir+"/.empty_file.txt";
+                        File emptyFile = new File( filePath);
+                        FileUtil.writeFile( emptyFile, "");
+                    }
 
                     File srcFile = new File(filePath);
                     OmniFile destFile = new OmniFile(targetVolumeId, destPath + "/" + uploadFileName);
