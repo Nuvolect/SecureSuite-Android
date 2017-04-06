@@ -88,7 +88,7 @@ public class CConst {
     public static final String CRYP_SYNC            = "cryp_sync";
     public static final String DATES                = DTab.date.toString();
     public static final String DISPLAY_NAME         = DTab.display_name.toString();
-    public static final String ELFINDER_PAGE        = "/elFinder-2.1.22/ss_finder.html";
+    public static final String ELFINDER_PAGE        = "/elFinder-2.1.24-nightly/ss_finder.html";
     public static final String ELF_                 = "elf_";
     public static final String EMBEDDED_USER        = "embedded_user";
     public static final String EMAIL                = DTab.email.toString();

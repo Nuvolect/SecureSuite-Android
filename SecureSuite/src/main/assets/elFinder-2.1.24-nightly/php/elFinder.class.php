@@ -155,7 +155,8 @@ class elFinder {
 		'netmount'  => array('protocol' => true, 'host' => true, 'path' => false, 'port' => false, 'user' => false, 'pass' => false, 'alias' => false, 'options' => false),
 		'url'       => array('target' => true, 'options' => false),
 		'callback'  => array('node' => true, 'json' => false, 'bind' => false, 'done' => false),
-		'chmod'     => array('targets' => true, 'mode' => true)
+		'chmod'     => array('targets' => true, 'mode' => true),
+		'subdirs'   => array('targets' => true)
 	);
 	
 	/**
@@ -958,6 +959,7 @@ class elFinder {
 		$res = true;
 		if (is_object($volume) && method_exists($volume, 'netunmount')) {
 			$res = $volume->netunmount($netVolumes, $key);
+			$volume->clearSessionCache();
 		}
 		if ($res) {
 			if (is_string($key) && isset($netVolumes[$key])) {
@@ -1134,7 +1136,8 @@ class elFinder {
 		// so open default dir
 		if ((!$cwd || !$cwd['read']) && $init) {
 			$volume = $this->default;
-			$cwd    = $volume->dir($volume->defaultPath());
+			$target = $volume->defaultPath();
+			$cwd    = $volume->dir($target);
 		}
 		
 		if (!$cwd) {
@@ -1146,17 +1149,22 @@ class elFinder {
 
 		$files = array();
 
+		// get current working directory files list
+		if (($ls = $volume->scandir($cwd['hash'])) === false) {
+			return array('error' => $this->error(self::ERROR_OPEN, $cwd['name'], $volume->error()));
+		}
+		
+		if (isset($cwd['dirs']) && $cwd['dirs'] != 1) {
+			$cwd = $volume->dir($target);
+		}
+		
 		// get other volume root
 		if ($tree) {
 			foreach ($this->volumes as $id => $v) {
 				$files[] = $v->file($v->root());
 			}
 		}
-
-		// get current working directory files list
-		if (($ls = $volume->scandir($cwd['hash'])) === false) {
-			return array('error' => $this->error(self::ERROR_OPEN, $cwd['name'], $volume->error()));
-		}
+		
 		// long polling mode
 		if ($args['compare']) {
 			$sleep = max(1, (int)$volume->getOption('lsPlSleep'));
@@ -1645,6 +1653,26 @@ class elFinder {
 	}
 
 	/**
+	 * Return has subdirs
+	 *
+	 * @param  array  command arguments
+	 * @return array
+	 * @author Dmitry Naoki Sawada
+	 **/
+	protected function subdirs($args) {
+	
+		$result  = array('subdirs' => array());
+		$targets = $args['targets'];
+	
+		foreach ($targets as $target) {
+			if (($volume = $this->volume($target)) !== false) {
+				$result['subdirs'][$target] = $volume->subdirs($target)? 1 : 0;
+			}
+		}
+		return $result;
+	}
+
+	/**
 	* Get remote contents
 	*
 	* @param  string   $url     target url
@@ -1857,16 +1885,23 @@ class elFinder {
 	 * 
 	 * @param  string $str
 	 * @param  array  $extTable
+	 * @param  array  $args
 	 * @return array
 	 * @author Naoki Sawada
 	 */
-	protected function parse_data_scheme( $str, $extTable ) {
+	protected function parse_data_scheme( $str, $extTable, $args = null) {
 		$data = $name = '';
 		if ($fp = fopen('data://'.substr($str, 5), 'rb')) {
 			if ($data = stream_get_contents($fp)) {
 				$meta = stream_get_meta_data($fp);
 				$ext = isset($extTable[$meta['mediatype']])? '.' . $extTable[$meta['mediatype']] : '';
-				$name = substr(md5($data), 0, 8) . $ext;
+				// Set name if name eq 'image.png' and $args has 'name' array, e.g. clipboard data
+				if (is_array($args['name']) && isset($args['name'][0]) && isset($_POST['overwrite']) && ! $_POST['overwrite']) {
+					$name = $args['name'][0];
+				} else {
+					$name = substr(md5($data), 0, 8);
+				}
+				$name .= $ext;
 			}
 			fclose($fp);
 		}
@@ -2269,7 +2304,7 @@ class elFinder {
 					$_name = '';
 					// check is data:
 					if (substr($url, 0, 5) === 'data:') {
-						list($data, $args['name'][$i]) = $this->parse_data_scheme($url, $extTable);
+						list($data, $args['name'][$i]) = $this->parse_data_scheme($url, $extTable, $args);
 					} else {
 						$fp = fopen($tmpfname, 'wb');
 						$data = $this->get_remote_contents($url, 30, 5, 'Mozilla/5.0', $fp);
@@ -2361,11 +2396,16 @@ class elFinder {
 					}
 					return $result;
 				} else {
-					// for form clipboard with Google Chrome
-					$type = $files['type'][$i];
-					$ext = isset($extTable[$type])? '.' . $extTable[$type] : '';
-					$name = substr(md5(basename($tmpname)), 0, 8) . $ext;
+					// for form clipboard with Google Chrome or Opera
+					$name = 'image.png';
 				}
+			}
+			
+			// Set name if name eq 'image.png' and $args has 'name' array, e.g. clipboard data
+			if (strtolower($name) === 'image.png' && is_array($args['name']) && isset($args['name'][$i]) && isset($_POST['overwrite']) && ! $_POST['overwrite']) {
+				$type = $files['type'][$i];
+				$ext = isset($extTable[$type])? '.' . $extTable[$type] : '';
+				$name = $args['name'][$i] . $ext;
 			}
 			
 			// do hook function 'upload.presave'
@@ -2694,9 +2734,16 @@ class elFinder {
 			return array('error' => $this->error(self::ERROR_EXTRACT, '#'.$target, self::ERROR_FILE_NOT_FOUND));
 		}  
 
-		return ($file = $volume->extract($target, $makedir))
-			? array('added' => isset($file['read'])? array($file) : $file)
-			: array('error' => $this->error(self::ERROR_EXTRACT, $volume->path($target), $volume->error()));
+		$res = array();
+		if ($file = $volume->extract($target, $makedir)) {
+			$res['added'] = isset($file['read'])? array($file) : $file;
+			if ($err = $volume->error()) {
+				$res['warning'] = $err;
+			}
+		} else {
+			$res['error'] = $this->error(self::ERROR_EXTRACT, $volume->path($target), $volume->error());
+		}
+		return $res;
 	}
 	
 	/**
@@ -3464,6 +3511,21 @@ class elFinder {
 	
 		if ($dlurl) {
 			$url = parse_url($dlurl);
+			$ports = array(
+				'http'  => '80',
+				'ssl'   => '443',
+				'ftp'   => '21'
+			);
+			$url['scheme'] = strtolower($url['scheme']);
+			if ($url['scheme'] === 'https') {
+				$url['scheme'] = 'ssl';
+			}
+			if (! isset($url['port']) && isset($ports[$url['scheme']])) {
+				$url['port'] = $ports[$url['scheme']];
+			}
+			if (! isset($url['port'])) {
+				return false;
+			}
 			$cookies = array();
 			if ($data['cookies']) {
 				foreach ($data['cookies'] as $d => $c) {
@@ -3474,7 +3536,7 @@ class elFinder {
 			}
 
 			$query = isset($url['query']) ? '?'.$url['query'] : '';
-			$stream = stream_socket_client('ssl://'.$url['host'].':443');
+			$stream = stream_socket_client($url['scheme'].'://'.$url['host'].':'.$url['port']);
 			stream_set_timeout($stream, 300);
 			fputs($stream, "GET {$url['path']}{$query} HTTP/1.1\r\n");
 			fputs($stream, "Host: {$url['host']}\r\n");

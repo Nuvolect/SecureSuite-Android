@@ -24,6 +24,11 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -122,6 +127,20 @@ public class ServerFragment extends DialogFragment {
         m_refreshIv = rootView.findViewById(R.id.refreshIv);
         m_refreshIv.setOnClickListener(onClickRefreshIP);
 
+        m_ipAddressTv.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                copyIpToPasteBuffer();
+            }
+        });
+        m_ipAddressTv.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                browserChooser();
+                return false;
+            }
+        });
         setDialogData();
 
         return rootView;
@@ -207,4 +226,33 @@ public class ServerFragment extends DialogFragment {
             }
         }
     };
+
+    private void copyIpToPasteBuffer() {
+
+        // Gets a handle to the clipboard service.
+        ClipboardManager clipboard = (ClipboardManager)
+                getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+
+        String ipAddress = WebUtil.getServerUrl(getActivity());
+
+        // Creates a new text clip to put on the clipboard
+        ClipData clip = ClipData.newPlainText("App IP address", ipAddress);
+
+        // Set the clipboard's primary clip.
+        clipboard.setPrimaryClip(clip);
+
+        Toast.makeText(getActivity(), "IP address copied to paste buffer", Toast.LENGTH_SHORT).show();
+    }
+
+    private void browserChooser(){
+
+        Uri uri = Uri.parse( WebUtil.getServerUrl( getActivity()) );
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+
+        Intent chooser = Intent.createChooser( intent, "Choose browser");
+        // Verify the intent will resolve to at least one activity
+        if (chooser.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(chooser);
+        }
+    }
 }
