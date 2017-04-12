@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -122,7 +123,7 @@ public class CrypServer extends NanoHTTPD {
     private enum EXT {
         js, css, map, png, jpg, gif, ico, ttf, woff, woff2, invalid, htm, html,
         // RESTFull services
-        admin, connector, sync, omni,
+        admin, calendar, connector, sync, omni,
     }
 
     private enum PAGE {
@@ -133,6 +134,12 @@ public class CrypServer extends NanoHTTPD {
         password_modal_apply_filled,
         group_edit_modal_filled,
         // Served from assets
+<<<<<<< Updated upstream
+=======
+        calendar,
+        event_edit,
+        spa,
+>>>>>>> Stashed changes
         crypto_performance,
         developer,
         footer,
@@ -140,7 +147,7 @@ public class CrypServer extends NanoHTTPD {
         login,
         logout,
         navbar,
-        ss_finder,
+        finder,
 
         invalid,
     }
@@ -261,6 +268,9 @@ public class CrypServer extends NanoHTTPD {
                 || get(uniqueId, CConst.AUTHENTICATED, "0").contentEquals( "1");
 
         Method method = session.getMethod();
+        Map<String, List<String>> paramsMultiple = session.getParameters();
+        Map<String, String> params = new HashMap<String, String>();
+
 
         /**
          * Get files associated with a POST method
@@ -273,9 +283,40 @@ public class CrypServer extends NanoHTTPD {
         } catch (IOException e) {
             LogUtil.logException(CrypServer.class, e);
         }
+        /**
+         * {
+         *    "data": {
+         *        "EventID": 0,
+         *        "StartAt": "2017/04/13 12:00 AM",
+         *        "EndAt": "2017/04/14 12:00 AM",
+         *        "IsFullDay": false,
+         *        "Title ": "Sample title",
+         *        "Description": "Something about the event"
+         *    }
+         * }
+         */
+        if( method.equals( Method.POST) && files.size() > 0){
 
-        Map<String, List<String>> paramsMultiple = session.getParameters();
-        Map<String, String> params = new HashMap<String, String>();
+            if( files.containsKey("postData")){
+
+                try {
+                    JSONObject postData = new JSONObject( files.get("postData"));
+                    JSONObject data = postData.getJSONObject("data");
+                    params.put("data", data.toString());
+
+                    Iterator<String> keys = data.keys();
+
+                    while ( keys.hasNext()){
+
+                        String key = keys.next();
+                        String value = data.getString( key);
+                        params.put( key, value );
+                    }
+                } catch (JSONException e) {
+                    LogUtil.logException(CrypServer.class, e);
+                }
+            }
+        }
 
         /**
          * Parameters can now have multiple values for a single key.
@@ -416,6 +457,7 @@ public class CrypServer extends NanoHTTPD {
                         return new Response(Status.OK, MIME_JSON, is, -1);
                     }
                 }
+                case calendar:
                 case connector:
                 case sync: {
                         if ( passSecurityCheck( uri, headers )) {
@@ -424,9 +466,10 @@ public class CrypServer extends NanoHTTPD {
                                 case admin:
                                     is = com.nuvolect.securesuite.webserver.admin.ServeCmd.process(m_ctx, params);
                                     return new Response(Status.OK, MIME_JSON, is, -1);
-                                case sync:
-                                    String json = SyncRest.render(m_ctx, params);
-                                    return new Response(Status.OK, MIME_PLAINTEXT, json);
+                                case calendar:{
+                                    String json = CalendarRest.process(m_ctx, params);
+                                    return new Response(Status.OK, MIME_JSON, json);
+                                }
                                 case connector:{
 
                                     String mime = MIME_JSON;
@@ -441,6 +484,9 @@ public class CrypServer extends NanoHTTPD {
                                     is = com.nuvolect.securesuite.webserver.connector.ServeCmd.process(m_ctx, params);
                                     return new Response(Status.OK, mime, is, -1);
                                 }
+                                case sync:
+                                    String json = SyncRest.process(m_ctx, params);
+                                    return new Response(Status.OK, MIME_PLAINTEXT, json);
                             }
                         } else {
                             /**
@@ -452,7 +498,7 @@ public class CrypServer extends NanoHTTPD {
                                     || params.get(CConst.CMD).contentEquals(SyncRest.CMD.companion_ip_test.toString()))) {
 
                                 log(LogUtil.LogType.CRYP_SERVER, "sec_tok test skipped");
-                                String json = SyncRest.render(m_ctx, params);
+                                String json = SyncRest.process(m_ctx, params);
                                 return new Response(Status.OK, MIME_PLAINTEXT, json);
                             } else {
 
@@ -551,6 +597,9 @@ public class CrypServer extends NanoHTTPD {
      */
     private EXT determineServiceEnum(String uri) {
 
+        if( uri.startsWith("/calendar"))
+            return EXT.calendar;
+        else
         if( uri.startsWith("/admin"))
             return EXT.admin;
         else
@@ -630,6 +679,12 @@ public class CrypServer extends NanoHTTPD {
             /**
              * Pages served from assets
              */
+<<<<<<< Updated upstream
+=======
+            case calendar:
+            case event_edit:
+            case spa:
+>>>>>>> Stashed changes
             case crypto_performance:
             case developer:
             case footer:
@@ -637,7 +692,7 @@ public class CrypServer extends NanoHTTPD {
             case login:
             case logout:
             case navbar:
-            case ss_finder:{
+            case finder:{
                 log(LogUtil.LogType.CRYP_SERVER, "Serving asset: "+uri.substring(1));
                 try {
                     InputStream is = m_ctx.getAssets().open(uri.substring(1));

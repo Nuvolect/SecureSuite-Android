@@ -26,12 +26,14 @@ import android.widget.Toast;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.DbPassphrase;
+import com.nuvolect.securesuite.util.JsonUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.LogUtil.LogType;
 import com.nuvolect.securesuite.util.Passphrase;
 import com.nuvolect.securesuite.util.Persist;
 
 import net.sqlcipher.Cursor;
+import net.sqlcipher.DatabaseUtils;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -47,6 +49,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
+import static com.nuvolect.securesuite.data.SqlCipher.CALTab.event;
 
 
 /**
@@ -108,6 +112,7 @@ public class SqlCipher {
     public static final String ACCOUNT_DATA_TABLE  = "account_data_table";
     public static final String ACCOUNT_CRYP_TABLE  = "account_cryp_table";
     public static final String INC_SYNC_TABLE      = "inc_sync_table";
+    public static final String CALENDAR_TABLE      = "calendar_table";
 
     public static final String[] ACCOUNT_DB_COLUMNS =
     /**/{"_id","contact_id","display_name","display_name_source","last_name","starred","account_name","account_type","cloud_c_id","version","cloud_version"};
@@ -134,6 +139,9 @@ public class SqlCipher {
             {"_id","key","value" };
     public enum ISTab
     /**/{ _id,  type,  contact_id  };
+
+    public enum CALTab
+    /**/{ _id,  start, end, event };
 
     public SqlCipher(Context applicationContext) {
         m_ctx = applicationContext;
@@ -177,6 +185,10 @@ public class SqlCipher {
             account_db = SQLiteDatabase.openOrCreateDatabase(account_databaseFile, passphrase, null);
         } catch (Exception e) {
             LogUtil.logException(LogType.SQLCIPHER, e);
+        }
+        if( ! newInstall) {
+//            account_db.delete( CALENDAR_TABLE, null, null);//mkk
+            dbExpansion();
         }
 
         // If first time install, create DB but do not put anything in it
@@ -245,12 +257,25 @@ public class SqlCipher {
                     + ISTab.contact_id      + " long"
                     + ");");
 
+            dbExpansion();
+
             detail_db.setVersion( DATABASE_VERSION);
             account_db.setVersion( DATABASE_VERSION);
         }
     }
 
+    /**
+     * Create a table for holding calendar events if it does not exist.
+     */
+    public static void dbExpansion(){
 
+        account_db.execSQL("CREATE TABLE if not exists " + CALENDAR_TABLE + " ("
+                + CALTab._id      + " integer primary key,"
+                + CALTab.start    + " long not null,"
+                + CALTab.end      + " long not null,"
+                + event           + " text not null"
+                + ");");
+    }
 
     public static synchronized void deleteDatabases(Context ctx){
 
@@ -511,7 +536,7 @@ public class SqlCipher {
             contact.put(DTab.address.toString(),      encodeBase64(c, DTab.address.ordinal()));
             contact.put(DTab.website.toString(),      encodeBase64(c, DTab.website.ordinal()));
             contact.put(DTab.im.toString(),           encodeBase64(c, DTab.im.ordinal()));
-            contact.put(DTab.date.toString(),        encodeBase64(c, DTab.date.ordinal()));
+            contact.put(DTab.date.toString(),         encodeBase64(c, DTab.date.ordinal()));
             contact.put(DTab.relation.toString(),     encodeBase64(c, DTab.relation.ordinal()));
             contact.put(DTab.internetcall.toString(), encodeBase64(c, DTab.internetcall.ordinal()));
             c.close();
@@ -3308,4 +3333,110 @@ public class SqlCipher {
         }
         return manifest;
     }
+
+    public static synchronized JSONObject putEvent(int id, long start, long end, String event) {
+
+        account_db.beginTransaction();//mkk
+        boolean success = true;
+
+        ContentValues cv = new ContentValues();
+        cv.put(CALTab.start.toString(), start);
+        cv.put(CALTab.end.toString(), end);
+        cv.put(CALTab.event.toString(), event);
+
+        if( id == 0){
+            long row_id = account_db.insert(CALENDAR_TABLE, null, cv); // returns row _id
+            if( row_id >= 0){
+                account_db.setTransactionSuccessful();
+            }
+            else{
+                success = false;
+            }
+        }else{
+
+            String where = CALTab._id+"=?";
+            String[] args = new String[]{String.valueOf( id )};
+
+            long rows = account_db.update(CALENDAR_TABLE, cv, where, args); // returns number of rows affected
+            if (rows > 0) {
+                account_db.setTransactionSuccessful();
+            } else {
+                success = false;
+            }
+        }
+        account_db.endTransaction();
+
+        return JsonUtil.successObj( success, "Event update error");
+    }
+
+    public static synchronized JSONArray getEvents(long start, long end) throws JSONException {
+
+        String[] projection = {
+                CALTab._id.toString(), CALTab.start.toString(), CALTab.end.toString(), event.toString()};
+
+        String where = DatabaseUtils.concatenateWhere(
+                CALTab.start+">=?",
+                CALTab.end + "<=?"
+                );
+
+        String[] args = new String[]{ String.valueOf(start), String.valueOf(end) };
+
+        Cursor c = account_db.query( CALENDAR_TABLE, projection, where, args, null, null, null);
+
+        JSONArray jsonArray = new JSONArray();
+
+        int i=0;
+        while( c.moveToNext()){
+
+            /**
+             * Get the event data then overwrite the ID with the unique row number.
+             */
+            String strJson = c.getString( 3 );
+            JSONObject jsonObject = new JSONObject( strJson);
+
+            int id = c.getInt( 0 );
+            jsonObject.put("id", id);
+
+            jsonArray.put( jsonObject);
+        }
+        c.close();
+        return jsonArray;
+
+//        JSONArray jsonArray = new JSONArray();
+//        JSONObject j1 = new JSONObject(
+//                "{ \"id\": 51347, \"title\": \"Apr12\", \"description\": \"description about my event\", \"start\": \"2017-04-12\", \"end\": \"2017-04-12\", \"allDay\": false, \"recurring\": true }"
+//        );
+//
+//        JSONObject j2 = new JSONObject(
+//            "{ \"id\": 51347, \"title\": \"Apr13\", \"description\": \"description about my event\", \"start\": \"2017-04-13\", \"end\": \"2017-04-13\", \"allDay\": false, \"recurring\": true }"
+//        );
+//
+//        jsonArray.put(j1);
+//        jsonArray.put(j2);
+//
+//        return jsonArray;
+    }
+
+    /**
+     * Delete a calendar event record.
+     * @param id
+     * @return
+     */
+    public static synchronized JSONObject deleteEvent(int id) {//mkk
+
+        boolean success = true;
+        String where = CALTab._id+"=?";
+        String[] args = new String[]{String.valueOf( id )};
+
+        account_db.beginTransaction();
+        long rows = account_db.delete( CALENDAR_TABLE, where, args);
+        if (rows > 0) {
+            account_db.setTransactionSuccessful();
+        } else {
+            success = false;
+        }
+        account_db.endTransaction();
+        return JsonUtil.successObj( success, "Event delete error");
+    }
+
 }

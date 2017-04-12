@@ -6,17 +6,37 @@ body {
 
 .navbar-default {
   background: none;
-  font-size: 1.3em !important;
-    line-height:60px;
+  font-size: 1.2em !important;
+  line-height:32px;
+  color: grey;
+  margin-bottom: 0px;
+
+  float:none;
+  margin: 0 auto;
+  display: table;
+  table-layout: fixed;
+  border: transparent;
 }
-.navbar-nav li a {
-    padding:0 15px;
-    line-height:60px;
+.navbar-nav li > a {
+  padding:0 15px;
+  line-height:32px;
 }
 .navbar-header a {
-    padding:0 15px;
-    line-height:60px;
+  padding:0 15px;
+  line-height:32px;
 }
+.btn-secondary-transparent {
+  background-color: transparent;
+  font-size: 1.0em !important;
+  color: grey;
+  line-height:0px;
+}
+.dropdown-menu > li > a {
+  font-size: 1.3em !important;
+  color: grey;
+  line-height:32px;
+}
+
 table.card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   background-color: #e0e0e0;
@@ -27,6 +47,10 @@ table.card {
       padding-bottom: 20px;
       padding-left: 25px;
 
+}
+
+.calendar-padding{
+  padding: 15px;
 }
 
 tr {

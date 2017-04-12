@@ -470,30 +470,30 @@ $(function() {
 	});
 
 	// autocomplete search - ***** future feature
-	$('#search_field').autocomplete({
-      	minLength: 3,
-      	source: 'json.php',
-      	focus: function(event, ui) {
-        	$('#search_field').val(ui.item.name);
-        	return false;
-      	},
-      	select: function(event, ui) {
-      	    // set the value of the search box the name that was selected
-        	$('#search_field').val(ui.item.name);
-        	// do something with the value returned (ie: redirect to that user's details)
-        	//postSamePage('details.htm', 'id=' + ui.item.id);
-			return false;
-      	}
-    })
-    .autocomplete('instance')._renderItem = function(ul, item) {
-      	var re = new RegExp('(' + this.term + ')', 'gi');
-		var template = '<strong>$1</strong>';
-		var html = item.name.replace(re, template);
-
-		return $('<li>')
-        	.append('<a>' + html + '</a>')
-        	.appendTo(ul);
-    };
+//	$('#search_field').autocomplete({
+//      	minLength: 3,
+//      	source: 'json.php',
+//      	focus: function(event, ui) {
+//        	$('#search_field').val(ui.item.name);
+//        	return false;
+//      	},
+//      	select: function(event, ui) {
+//      	    // set the value of the search box the name that was selected
+//        	$('#search_field').val(ui.item.name);
+//        	// do something with the value returned (ie: redirect to that user's details)
+//        	//postSamePage('details.htm', 'id=' + ui.item.id);
+//			return false;
+//      	}
+//    })
+//    .autocomplete('instance')._renderItem = function(ul, item) {
+//      	var re = new RegExp('(' + this.term + ')', 'gi');
+//		var template = '<strong>$1</strong>';
+//		var html = item.name.replace(re, template);
+//
+//		return $('<li>')
+//        	.append('<a>' + html + '</a>')
+//        	.appendTo(ul);
+//    };
 
     // clear the search box when the x is clicked
 	$('#clear-search').click(function() {

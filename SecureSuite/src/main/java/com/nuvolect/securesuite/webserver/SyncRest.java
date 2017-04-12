@@ -162,7 +162,7 @@ public class SyncRest {
      * @param params
      * @return
      */
-    public static String render(Context ctx, Map<String, String> params) {
+    public static String process(Context ctx, Map<String, String> params) {
 
         String jsonString = parse(ctx, params);// set mContactId & others based on params
 
