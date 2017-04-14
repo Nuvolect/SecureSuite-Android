@@ -134,12 +134,12 @@ public class CrypServer extends NanoHTTPD {
         password_modal_apply_filled,
         group_edit_modal_filled,
         // Served from assets
-<<<<<<< Updated upstream
-=======
         calendar,
+        cal,
+        cal_edit,
+        cal_modal,
         event_edit,
-        spa,
->>>>>>> Stashed changes
+        index,
         crypto_performance,
         developer,
         footer,
@@ -679,12 +679,12 @@ public class CrypServer extends NanoHTTPD {
             /**
              * Pages served from assets
              */
-<<<<<<< Updated upstream
-=======
             case calendar:
+            case cal:
+            case cal_edit:
+            case cal_modal:
             case event_edit:
-            case spa:
->>>>>>> Stashed changes
+            case index:
             case crypto_performance:
             case developer:
             case footer:
@@ -698,7 +698,7 @@ public class CrypServer extends NanoHTTPD {
                     InputStream is = m_ctx.getAssets().open(uri.substring(1));
                     return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LogUtil.logException(CrypServer.class, e);
                 }
                 break;
             }

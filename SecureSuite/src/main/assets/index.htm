@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2017. Nuvolect LLC
+  -->
+
+<html ng-app="myApp" ng-controller="indexController">
+<head>
+    <title>SecureSuite</title>
+
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-colorselector.min.css" rel="stylesheet">
+    <link href="/css/fullcalendar.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+
+    <script src="/js/moment.js"></script>
+    <script src="/js/fullcalendar.js"></script>
+    <script src="/js/calendar.js"></script>
+    <script src="/js/angular-strap.min.js"></script>
+    <script src="/js/angular-strap.tpl.min.js"></script>
+
+</head>
+
+<body>
+
+<div ng-include="'/navbar.htm'"></div>
+
+    <div ng-view></div>
+
+<br>
+<br>
+<div ng-include="'/footer.htm'"></div>
+
+<script>
+
+var app = angular.module('myApp', [ 'ngRoute', 'ui.calendar', 'ui.bootstrap', 'mgcrea.ngStrap']);
+
+app.config(function($routeProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl : "cal.htm",
+        controller : "calController"
+    })
+    .when("/cal", {
+        templateUrl : "cal.htm",
+        controller : "calController"
+    })
+    .when("/cal_edit", {
+        templateUrl : "cal_edit.htm",
+        controller : "calEditController"
+    });
+});
+
+app.controller('indexController', ['$scope', function( $scope) {
+
+  $scope.year = new Date().getFullYear(); // footer copyright year
+}]);
+
+app.factory('calService', function() {
+
+    var savedData = {}
+
+    function set(data) {
+        savedData = data;
+    }
+
+    function get() {
+        return savedData;
+    }
+
+    return {
+        set: set,
+        get: get
+    }
+});
+
+
+</script>
+
+<script src="/calendar/cal.js"></script>
+<script src="/calendar/cal_edit.js"></script>
+
+</body>
+</html>

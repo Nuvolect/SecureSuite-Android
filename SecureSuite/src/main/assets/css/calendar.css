@@ -1,8 +1,12 @@
 @charset "utf-8";
 
-.box {
-  float: left;
-  width: 200px;
-  height: 100px;
-  margin: 1em;
+// For color selection checkboxes
+.checked {
+    display:none;
+}
+.active .checked {
+    display:inline-block;
+}
+.active .unchecked {
+    display:none;
 }

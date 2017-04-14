@@ -10,6 +10,7 @@
 
     <script src="/js/angular.min.js"></script>
     <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bootstrap-colorselector.min.css" rel="stylesheet">
     <link href="/css/app.css" rel="stylesheet">
     <link href="/css/probe.css" rel="stylesheet">
 
@@ -19,12 +20,41 @@
 <!-- Bootstrap core JavaScript -->
 <script src="/js/jquery-1.11.2.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
+<script src="/js/bootstrap-colorselector.min.js"></script>
 <div ng-include="'./navbar.htm'"></div>
 
 <h1 align="center">Developer</h1>
 <br>
 
 <div class="container">
+    <!-- https://github.com/flaute/bootstrap-colorselector-->
+    <div class="row">
+        <div class='col-sm-2'>
+            <h5>Event color</h5>
+        </div>
+        <div class='col-sm-8'>
+            <select id="colorselector">
+                <option value="106" data-color="#A0522D">sienna</option>
+                <option value="47" data-color="#CD5C5C" selected="selected">indianred</option>
+                <option value="87" data-color="#FF4500">orangered</option>
+                <option value="17" data-color="#008B8B">darkcyan</option>
+                <option value="18" data-color="#B8860B">darkgoldenrod</option>
+                <option value="68" data-color="#32CD32">limegreen</option>
+                <option value="42" data-color="#FFD700">gold</option>
+                <option value="77" data-color="#48D1CC">mediumturquoise</option>
+                <option value="107" data-color="#87CEEB">skyblue</option>
+                <option value="46" data-color="#FF69B4">hotpink</option>
+                <option value="47" data-color="#CD5C5C">indianred</option>
+                <option value="64" data-color="#87CEFA">lightskyblue</option>
+                <option value="13" data-color="#6495ED">cornflowerblue</option>
+                <option value="15" data-color="#DC143C">crimson</option>
+                <option value="24" data-color="#FF8C00">darkorange</option>
+                <option value="78" data-color="#C71585">mediumvioletred</option>
+                <option value="123" data-color="#000000">black</option>
+            </select>
+        </div>
+    </div>
+
     <table align="center">
 
         <tr>
@@ -127,6 +157,19 @@
 var app = angular.module('myApp', []);
 app.controller('debugController', function($scope, $http, $parse) {
 
+  $scope.year = new Date().getFullYear(); // footer copyright year
+
+  $('#colorselector').colorselector();
+  $('#colorselector').colorselector('setColor', '#87CEFA');
+debugger;
+  $('#colorselector').colorselector({
+
+      callback: function (value, color, title) {
+
+         console.log('color: '+color);
+      }
+  });
+
    $scope.mySyncState = function(){
 
        // First get data for this device, then a second call for the companion device
@@ -187,6 +230,7 @@ app.controller('debugController', function($scope, $http, $parse) {
    $scope.angular_version = angular.version.full;
 
    $scope.mySyncState();
+
 
 });
 

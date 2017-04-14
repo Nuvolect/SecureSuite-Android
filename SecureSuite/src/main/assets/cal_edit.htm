@@ -1,0 +1,116 @@
+<div class="container">
+
+    <br>
+    <button class="btn btn-danger" type="button" ng-click="save()">Save</button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+
+    <div class="row">
+        <h4>{{ alertMessage }}</h4>
+        <div class="col-xs-9">
+            <label for="eventTitle">Event title</label>
+            <input class="form-control" id="eventTitle" type="text" value="{{event_title}}">
+        </div>
+    </div>
+    <br>
+
+    <div class="row">
+        <div class='col-sm-12'>
+            <form name="timepickerForm" class="form-inline" role="form">
+                <div class="form-group">
+                    <label class="control-label"><i class="fa fa-calendar"></i> Start</label><br>
+                    <div class="form-group">
+                        <input type="text" size="8" class="form-control" ng-model="sharedStartDate" data-autoclose="1" placeholder="Date" bs-datepicker>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" size="10" class="form-control" ng-model="sharedStartDate" data-time-format="h:mm:ss a" data-autoclose="1" placeholder="Time" bs-timepicker>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label"><i class="fa fa-calendar"></i> End</label><br>
+                    <div class="form-group">
+                        <input type="text" size="8" class="form-control" ng-model="sharedEndDate" data-autoclose="1" placeholder="Date" bs-datepicker>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" size="10" class="form-control" ng-model="sharedEndDate" data-time-format="h:mm:ss a" data-autoclose="1" placeholder="Time" bs-timepicker>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <div class="row">
+        <div class='col-sm-6'>
+            <ul class="list-inline">
+                <li>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="">All day</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="">Repeat...</label>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class='col-sm-9'>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" rows="4" id="description" ng-model="event_description"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- https://github.com/flaute/bootstrap-colorselector-->
+    <div class="row">
+        <div class='col-sm-2'>
+            <h5>Event color</h5>
+        </div>
+        <div class='col-sm-8'>
+            <select id="colorselector">
+                <option value="106" data-color="#A0522D">sienna</option>
+                <option value="47" data-color="#CD5C5C" selected="selected">indianred</option>
+                <option value="87" data-color="#FF4500">orangered</option>
+                <option value="17" data-color="#008B8B">darkcyan</option>
+                <option value="18" data-color="#B8860B">darkgoldenrod</option>
+                <option value="68" data-color="#32CD32">limegreen</option>
+                <option value="42" data-color="#FFD700">gold</option>
+                <option value="77" data-color="#48D1CC">mediumturquoise</option>
+                <option value="107" data-color="#87CEEB">skyblue</option>
+                <option value="46" data-color="#FF69B4">hotpink</option>
+                <option value="47" data-color="#CD5C5C">indianred</option>
+                <option value="64" data-color="#87CEFA">lightskyblue</option>
+                <option value="13" data-color="#6495ED">cornflowerblue</option>
+                <option value="15" data-color="#DC143C">crimson</option>
+                <option value="24" data-color="#FF8C00">darkorange</option>
+                <option value="78" data-color="#C71585">mediumvioletred</option>
+                <option value="123" data-color="#000000">black</option>
+            </select>
+        </div>
+    </div>
+
+    <!--https://www.w3schools.com/angular/angular_select.asp-->
+    <br>
+    <div class="row">
+        <div class='col-sm-2'>
+            <h5>Notifications</h5>
+        </div>
+        <div class='col-sm-9'>
+            <table >
+                <tr ng-repeat="n in notifications">
+                    <td><input style="text-align:right" size="6" ng-model="n.count" /></td>
+                    <td><select ng-model="n.units" ng-options="u for u in unitNames"></select></td>
+                    <td>x</td>
+                </tr>
+            </table>
+            <button type="button" class="btn btn-link"
+                    ng-click="addNotification()">Add a notification</button>
+        </div>
+    </div>
+
+</div>

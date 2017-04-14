@@ -1,83 +1,5 @@
-<!DOCTYPE html>
-<!--
-  ~ Copyright (c) 2017. Nuvolect LLC
-  -->
 
-<html ng-app="myApp" ng-controller="myController">
-<head>
-    <title>Calendar</title>
-
-    <link href="/css/bootstrap.css" rel="stylesheet">
-    <link href="/css/app.css" rel="stylesheet">
-    <link href="/css/fullcalendar.css" rel="stylesheet">
-
-    <script src="/js/jquery-1.11.2.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/angular.min.js"></script>
-    <script src="/js/ui-bootstrap-tpls-2.5.0.min.js"></script>
-
-    <script src="/js/moment.js"></script>
-    <script src="/js/fullcalendar.js"></script>
-    <script src="/js/calendar.js"></script>
-
-</head>
-
-<body>
-
-<div ng-include="'/navbar.htm'"></div>
-
-<div class="calendar-padding" style="background: white;">
-
-    <p>
-        <button type="button" class="btn btn-link" data-toggle="modal"
-                data-target=".new-event-modal">Create event</button>
-    </p>
-    <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" calendar="myCalendar"></div>
-
-    <h4>{{ alertMessage }}</h4>
-</div>
-
-<br>
-<br>
-<div ng-include="'/footer.htm'"></div>
-
-<!--Angular template for modal dialog code structure starts here-->
-<script type="text/ng-template" id="modalContent.html">
-    <div class="modal-header">
-        <button type="button" class="close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-        <h3 class="modal-title">Event</h3>
-    </div>
-    <div class="modal-body">
-        <div style="color:red">{{Message}}</div>
-        <div class="form-group">
-            <label>Event Title : </label>
-            <input type="text" ng-model="NewEvent.title" autofocus class="form-control" />
-        </div>
-        <div class="form-group">
-            <label>Description : </label>
-            <input type="text" ng-model="NewEvent.description" class="form-control" />
-        </div>
-            When<br>
-            <strong>{{SlotRange}}</strong>
-        </div>
-
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-info" type="button" ng-click="edit()">Edit</button>
-        <button class="btn btn-primary" type="button" ng-click="save()">Save</button>
-        <button class="btn btn-danger" type="button" ng-show="NewEvent.id > 0" ng-click="delete()">Delete</button>
-        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-
-    </div>
-</script>
-<!--Angular modal dialog code ends here-->
-
-<script>
-
-var app = angular.module('myApp', ['ui.calendar', 'ui.bootstrap']);
-
-
-app.controller('myController', function($scope, $http, uiCalendarConfig, $uibModal) {
+app.controller('calController', function($scope, $http, uiCalendarConfig, $uibModal) {
 
   $scope.year = new Date().getFullYear(); // footer copyright year
 
@@ -118,7 +40,7 @@ app.controller('myController', function($scope, $http, uiCalendarConfig, $uibMod
             $scope.events.slice(0, $scope.events.length);
 
             angular.forEach(data.data, function (value) {
-
+//debugger;// is value.notifications defined?
                 $scope.events.push({
                     id: value.id,
                     title: value.title,
@@ -126,6 +48,7 @@ app.controller('myController', function($scope, $http, uiCalendarConfig, $uibMod
                     start: value.start,
                     end: value.end,
                     allDay: value.allDay,
+                    notifications: value.notifications,
                     stick: true
                 });
             });
@@ -165,19 +88,24 @@ app.controller('myController', function($scope, $http, uiCalendarConfig, $uibMod
                     end: end,
                     allDay: false,
                     title: '',
-                    description: ''
+                    description: '',
+                    notifications:[
+                        {count: 30, units: 'minutes'}
+                    ]
                 }
                 $scope.showModal();
             },
             eventClick: function (event) {
                 $scope.SelectedEvent = event;
+//debugger;
                 $scope.NewEvent = {
                     id: event.id,
                     start: event.start,
                     end: event.end,
                     allDay: false,
                     title: event.title,
-                    description: event.description
+                    description: event.description,
+                    notifications : event.notifications
                 }
                 $scope.showModal();
             },
@@ -192,8 +120,9 @@ app.controller('myController', function($scope, $http, uiCalendarConfig, $uibMod
 
     //This function shows bootstrap modal dialog
     $scope.showModal = function () {
+//debugger;
         $scope.option = {
-            templateUrl: 'modalContent.html',
+            templateUrl: 'cal_modal.htm',
             controller: 'modalController',
             backdrop: 'static',
             resolve: {
@@ -214,7 +143,7 @@ app.controller('myController', function($scope, $http, uiCalendarConfig, $uibMod
             switch (data.operation) {
 
                 case 'save':            //save
-
+//debugger;
                     $http.post("/calendar/save", {data: $scope.NewEvent} )
                     .then(function (response) {
 
@@ -238,34 +167,15 @@ app.controller('myController', function($scope, $http, uiCalendarConfig, $uibMod
                     break;
             }
         }, function () {
-            console.log('Modal dialog closed');
+//            console.log('Modal dialog closed');
         })
     }
 
 })
 
-app.factory('calService', function() {
-
-    var savedData = {}
-
-    function set(data) {
-        savedData = data;
-    }
-
-    function get() {
-        return savedData;
-    }
-
-    return {
-        set: set,
-        get: get
-    }
-});
-
-
 app.controller('modalController',
-            ['$scope','$rootScope','calService','$window','$uibModalInstance','NewEvent',
-    function ($scope,  $rootScope,  calService,  $window,  $uibModalInstance,  NewEvent) {
+            ['$scope','$location','calService','$uibModalInstance','NewEvent',
+    function ($scope,  $location,  calService,  $uibModalInstance,  NewEvent) {
 
     $scope.NewEvent = NewEvent;
     $scope.Message = "";
@@ -285,14 +195,11 @@ app.controller('modalController',
     $scope.edit = function () {
 
         // Save to be picked up in destination page controller
-        $rootScope.calEventData = $scope.NewEvent;
         calService.set($scope.NewEvent);
-
-        var test = calService.get();
 
         $uibModalInstance.dismiss('cancel');
 
-        $window.location.href = '/event_edit.htm';
+        $location.path('cal_edit');
     }
     $scope.delete = function () {
         $uibModalInstance.close({ event: $scope.NewEvent, operation: 'delete' });
@@ -302,6 +209,3 @@ app.controller('modalController',
     }
 }]);
 
-</script>
-</body>
-</html>
