@@ -12,6 +12,14 @@ app.controller('calEditController', ['$scope','$location','$http','calService',
 
   $scope.alertMessage = "";
   $scope.unitNames = ["minutes","hours","days","weeks","years"];
+  $scope.repeatNames = [
+      "Daily",
+      "Every weekday (Monday to Friday)",
+      "Every Monday, Wednesday, and Friday",
+      "Weekly",
+      "Monthly",
+      "Yearly"
+      ];
 
       $scope.addNotification = function(){
 
@@ -26,6 +34,7 @@ app.controller('calEditController', ['$scope','$location','$http','calService',
       $scope.save = function(){
           $scope.NewEvent.start = $scope.sharedStartDate;
           $scope.NewEvent.end = $scope.sharedEndDate;
+          $scope.NewEvent.color = $scope.colorData.color;
 
           $http.post("/calendar/save", {data: $scope.NewEvent} )
           .then(function (response) {
@@ -45,14 +54,9 @@ app.controller('calEditController', ['$scope','$location','$http','calService',
       $scope.sharedStartDate = $scope.NewEvent.start; // (formatted: 3/13/17 3:30 PM)
       $scope.sharedEndDate = $scope.NewEvent.end; // (formatted: 3/13/17 3:30 PM)
 
-      $('#colorselector').colorselector();
-      $('#colorselector').colorselector('setColor', '#87CEFA');
+      $scope.colorData = { "color": $scope.NewEvent.color };
 
-      $('#colorselector').colorselector({
-            callback: function (value, color, title) {
-console.log("color: "+color);
-            }
-      });
-
+      $scope.repeatName = "Weekly";
+      $scope.repeatCB = false;
 }]);
 

@@ -1,12 +1,9 @@
 @charset "utf-8";
 
-// For color selection checkboxes
-.checked {
-    display:none;
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
 }
-.active .checked {
-    display:inline-block;
-}
-.active .unchecked {
-    display:none;
-}
+
+

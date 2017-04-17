@@ -40,7 +40,7 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
             $scope.events.slice(0, $scope.events.length);
 
             angular.forEach(data.data, function (value) {
-//debugger;// is value.notifications defined?
+
                 $scope.events.push({
                     id: value.id,
                     title: value.title,
@@ -49,6 +49,7 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
                     end: value.end,
                     allDay: value.allDay,
                     notifications: value.notifications,
+                    color: value.color,
                     stick: true
                 });
             });
@@ -89,6 +90,7 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
                     allDay: false,
                     title: '',
                     description: '',
+                    color: '#67C2E0',
                     notifications:[
                         {count: 30, units: 'minutes'}
                     ]
@@ -105,7 +107,8 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
                     allDay: false,
                     title: event.title,
                     description: event.description,
-                    notifications : event.notifications
+                    notifications : event.notifications,
+                    color : event.color
                 }
                 $scope.showModal();
             },
