@@ -56,7 +56,7 @@ public class CConst {
     public static final int RESPONSE_CODE_SHARE_VCF               = 212;
 
     //** Must match order of: R.array.action_bar_spinner_menu) **/
-    public enum NavMenu {contacts, groups, passwords, finder, server }
+    public enum NavMenu {contacts, groups, passwords, calendar, finder, server }
 
     /** for communicating between services and activities or web server to refresh */
     public static final String UI_TYPE_KEY          = "ui_type_key";
@@ -78,6 +78,7 @@ public class CConst {
     public static final String ADDRESS              = DTab.address.toString();
     public static final String AUTHENTICATED        = "authenticated";
     public static final String BLOG_URL             = "https://nuvolect.com/blog";
+    public static final String CALENDAR_PAGE        = "/cal.htm";
     public static final String CHUNK                = "/chunk/";
     public static final String CMD                  = "cmd";
     public static final String COMMS_SELECT         = DTab.comms_select.toString();

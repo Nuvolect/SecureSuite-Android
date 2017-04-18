@@ -368,6 +368,12 @@ public class ContactListActivity extends FragmentActivity
                         f.start();
                         break;
                     }
+                    case calendar:{
+
+                        Intent intent = new Intent(m_act, CalendarActivity.class);
+                        startActivity(intent);
+                        break;
+                    }
                     case finder:{
 
                         Intent intent = new Intent(m_act, FinderActivity.class);

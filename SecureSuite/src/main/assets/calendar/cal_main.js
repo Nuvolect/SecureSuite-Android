@@ -19,14 +19,14 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
             return "";
         }
     }
-    // this function clears clender enents
+    // Clears calendar evennts
     function clearCalendar() {
         if (uiCalendarConfig.calendars.myCalendar != null) {
             uiCalendarConfig.calendars.myCalendar.fullCalendar('removeEvents');
             uiCalendarConfig.calendars.myCalendar.fullCalendar('unselect');
         }
     }
-    //Load events from server to display on calendar
+    // Load events from server to display on calendar
     function populate() {
         clearCalendar();
 
@@ -60,8 +60,7 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
     //UI- calendar configuration
     $scope.uiConfig = {
         calendar: {
-            utc: true,
-            transmitTZD: true,
+            timezone: 'local',
             allDay: false,
             height: 450,
             editable: true,
@@ -69,7 +68,7 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
             header: {
                 left:'today prev,next title',
                 center: '',
-                right: 'month,agendaWeek,agendaDay,listDay,listMonth,listWeek,listYear'
+                right: 'month,agendaWeek,agendaDay,listWeek'
             },
             timeFormat: {
                 month: ' ', // for hide on month view
@@ -99,7 +98,7 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
             },
             eventClick: function (event) {
                 $scope.SelectedEvent = event;
-//debugger;
+
                 $scope.NewEvent = {
                     id: event.id,
                     start: event.start,
@@ -123,7 +122,7 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
 
     //This function shows bootstrap modal dialog
     $scope.showModal = function () {
-//debugger;
+
         $scope.option = {
             templateUrl: 'cal_modal.htm',
             controller: 'modalController',
@@ -140,13 +139,11 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
         modal.result.then(function (data) {
 
             $scope.NewEvent = data.event;
-            $scope.NewEvent.start = data.event.start.format();
-            $scope.NewEvent.end = data.event.end.format();
 
             switch (data.operation) {
 
-                case 'save':            //save
-//debugger;
+                case 'save':
+
                     $http.post("/calendar/save", {data: $scope.NewEvent} )
                     .then(function (response) {
 
@@ -156,7 +153,7 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
                     })
                     break;
 
-                case 'delete':          //delete
+                case 'delete':
 
                     $http.post("/calendar/delete", {data: $scope.NewEvent} )
                     .then(function (response) {
@@ -183,9 +180,9 @@ app.controller('modalController',
     $scope.NewEvent = NewEvent;
     $scope.Message = "";
 
-    var fromDate = moment(NewEvent.start).format('YYYY/MM/DD LT');
-    var endDate = moment(NewEvent.end).format('YYYY/MM/DD LT');
-    $scope.SlotRange = fromDate + " - " + endDate;
+    var fromDate = moment(NewEvent.start).format('MM/DD/YYYY LT');
+    var endDate = moment(NewEvent.end).format('MM/DD/YYYY LT');
+    $scope.slot_range = fromDate + " - " + endDate;
 
     $scope.save = function () {
         if ($scope.NewEvent.title.trim() != "") {

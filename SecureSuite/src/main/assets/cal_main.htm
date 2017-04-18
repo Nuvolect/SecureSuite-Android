@@ -2,6 +2,17 @@
   ~ Copyright (c) 2017. Nuvolect LLC
   -->
 
+<div class="calendar-padding" style="background: white;">
+
+    <p>
+        <button type="button" class="btn btn-link" data-toggle="modal"
+                data-target=".new-event-modal">Create event</button>
+    </p>
+    <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" calendar="myCalendar"></div>
+
+    <h4>{{ alertMessage }}</h4>
+</div>
+
 <script type="text/ng-template" id="cal_modal.htm">
     <div class="modal-header">
         <button type="button" class="close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
@@ -17,8 +28,10 @@
             <label>Description : </label>
             <input type="text" ng-model="NewEvent.description" class="form-control" />
         </div>
-        When<br>
-        <strong>{{SlotRange}}</strong>
+        <div class="form-group">
+            <label>When : </label>
+            <p>{{ slot_range }}</p>
+        </div>
     </div>
 
     </div>

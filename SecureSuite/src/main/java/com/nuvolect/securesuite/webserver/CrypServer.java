@@ -134,12 +134,9 @@ public class CrypServer extends NanoHTTPD {
         password_modal_apply_filled,
         group_edit_modal_filled,
         // Served from assets
-        calendar,
         cal,
+        cal_main,
         cal_edit,
-        cal_modal,
-        event_edit,
-        index,
         crypto_performance,
         developer,
         footer,
@@ -679,12 +676,9 @@ public class CrypServer extends NanoHTTPD {
             /**
              * Pages served from assets
              */
-            case calendar:
             case cal:
+            case cal_main:
             case cal_edit:
-            case cal_modal:
-            case event_edit:
-            case index:
             case crypto_performance:
             case developer:
             case footer:

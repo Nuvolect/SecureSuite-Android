@@ -1,43 +1,96 @@
+<!DOCTYPE html>
 <!--
   ~ Copyright (c) 2017. Nuvolect LLC
+  ~
+  ~ Calendar is implemented as a single page web app with two pages. This allows
+  ~ for sharing event data between pages.
+  ~ cal.htm - main page, all css and js includes
+  ~ cal_main.htm - body of the calendar, month, week, day, etc.
+  ~ cal_event.htm - page for editing a single event
   -->
 
-<div class="calendar-padding" style="background: white;">
+<html ng-app="myApp" ng-controller="indexController">
+<head>
+    <title>SecureSuite</title>
 
-    <p>
-        <button type="button" class="btn btn-link" data-toggle="modal"
-                data-target=".new-event-modal">Create event</button>
-    </p>
-    <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" calendar="myCalendar"></div>
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/css/fullcalendar.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/calendar.css" rel="stylesheet">
 
-    <h4>{{ alertMessage }}</h4>
-</div>
+    <script src="/js/jquery-1.12.4.min.js"></script>
+    <script src="/js/angular.min.js"></script>
+    <script src="/js/angular-route.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/ui-bootstrap-tpls-2.5.0.min.js"></script>
 
-<script type="text/ng-template" id="cal_modal.htm">
-    <div class="modal-header">
-        <button type="button" class="close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-        <h3 class="modal-title">Event</h3>
-    </div>
-    <div class="modal-body">
-        <div style="color:red">{{Message}}</div>
-        <div class="form-group">
-            <label>Event Title : </label>
-            <input type="text" ng-model="NewEvent.title" autofocus class="form-control" />
-        </div>
-        <div class="form-group">
-            <label>Description : </label>
-            <input type="text" ng-model="NewEvent.description" class="form-control" />
-        </div>
-        When<br>
-        <strong>{{SlotRange}}</strong>
-    </div>
+    <script src="/js/moment.js"></script>
+    <script src="/js/fullcalendar.js"></script>
+    <script src="/js/calendar.js"></script>
+    <script src="/js/angular-strap.min.js"></script>
+    <script src="/js/angular-strap.tpl.min.js"></script>
 
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-info" type="button" ng-click="edit()">Edit</button>
-        <button class="btn btn-primary" type="button" ng-click="save()">Save</button>
-        <button class="btn btn-danger" type="button" ng-show="NewEvent.id > 0" ng-click="delete()">Delete</button>
-        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</head>
 
-    </div>
+<body>
+
+<div ng-include="'/navbar.htm'"></div>
+
+    <div ng-view></div>
+
+<br>
+<br>
+<div ng-include="'/footer.htm'"></div>
+
+<script>
+
+var app = angular.module('myApp', [ 'ngRoute', 'ui.calendar', 'ui.bootstrap', 'mgcrea.ngStrap']);
+
+app.config(function($routeProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl : "cal_main.htm",
+        controller : "calController"
+    })
+    .when("/cal", {
+        templateUrl : "cal_main.htm",
+        controller : "calController"
+    })
+    .when("/cal_edit", {
+        templateUrl : "cal_edit.htm",
+        controller : "calEditController"
+    });
+});
+
+app.controller('indexController', ['$scope', function( $scope) {
+
+  $scope.year = new Date().getFullYear(); // footer copyright year
+}]);
+
+app.factory('calService', function() {
+
+    var savedData = {}
+
+    function set(data) {
+        savedData = data;
+    }
+
+    function get() {
+        return savedData;
+    }
+
+    return {
+        set: set,
+        get: get
+    }
+});
+
+
 </script>
+
+<script src="/calendar/cal_main.js"></script>
+<script src="/calendar/cal_edit.js"></script>
+
+</body>
+</html>

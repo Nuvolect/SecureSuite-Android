@@ -121,6 +121,10 @@
             android:label="@string/app_name"  >
         </activity>
         <activity
+            android:name=".main.CalendarActivity"
+            android:label="@string/app_name"  >
+        </activity>
+        <activity
             android:name=".main.FinderActivity"
             android:label="@string/app_name"  >
         </activity>
