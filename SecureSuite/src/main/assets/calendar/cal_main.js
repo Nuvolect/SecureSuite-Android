@@ -1,5 +1,22 @@
+// Copyright (c) 2017. Nuvolect LLC
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+//
+// Contact legal@nuvolect.com for a less restrictive commercial license if you would like to use the
+// software without the GPLv3 restrictions.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+// even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License along with this program.  If not,
+//  see <http://www.gnu.org/licenses/>.
 
-app.controller('calController', function($scope, $http, uiCalendarConfig, $uibModal) {
+
+app.controller('calController',
+    function ($scope, $location, $http, calService, uiCalendarConfig, $uibModal) {
 
   $scope.year = new Date().getFullYear(); // footer copyright year
 
@@ -19,7 +36,7 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
             return "";
         }
     }
-    // Clears calendar evennts
+    // Clears calendar events
     function clearCalendar() {
         if (uiCalendarConfig.calendars.myCalendar != null) {
             uiCalendarConfig.calendars.myCalendar.fullCalendar('removeEvents');
@@ -82,33 +99,23 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
             resources: '/calendar/resources',
 
             select: function(start, end){
-                $scope.NewEvent = {
-                    id: 0,
-                    start: start,
-                    end: end,
-                    allDay: false,
-                    title: '',
-                    description: '',
-                    color: '#67C2E0',
-                    notifications:[
-                        {count: 30, units: 'minutes'}
-                    ]
-                }
+
+                $scope.createNewEvent( 0, start, end);
                 $scope.showModal();
             },
             eventClick: function (event) {
                 $scope.SelectedEvent = event;
 
-                $scope.NewEvent = {
-                    id: event.id,
-                    start: event.start,
-                    end: event.end,
-                    allDay: false,
-                    title: event.title,
-                    description: event.description,
-                    notifications : event.notifications,
-                    color : event.color
-                }
+                    $scope.NewEvent = {
+                        id: event.id,
+                        start: event.start,
+                        end: event.end,
+                        allDay: false,
+                        title: event.title,
+                        description: event.description,
+                        notifications : event.notifications,
+                        color : event.color
+                    }
                 $scope.showModal();
             },
             eventAfterAllRender: function () {
@@ -117,6 +124,22 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
                     isFirstTime = false;
                 }
             }
+        }
+    };
+
+    $scope.createNewEvent = function ( id, start, end) {
+
+        $scope.NewEvent = {
+            id: id,
+            start: start,
+            end: end,
+            allDay: false,
+            title: '',
+            description: '',
+            color: '#67C2E0',
+            notifications:[
+                    {count: 30, units: 'minutes'}
+                ]
         }
     };
 
@@ -170,8 +193,16 @@ app.controller('calController', function($scope, $http, uiCalendarConfig, $uibMo
 //            console.log('Modal dialog closed');
         })
     }
+    $scope.createEvent = function () {
 
-})
+        $scope.createNewEvent( 0, '', '');
+        // Save to be picked up in destination page controller
+        calService.set($scope.NewEvent);
+
+        $location.path('cal_edit');
+    }
+
+});
 
 app.controller('modalController',
             ['$scope','$location','calService','$uibModalInstance','NewEvent',

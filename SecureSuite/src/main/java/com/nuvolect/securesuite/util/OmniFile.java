@@ -212,7 +212,7 @@ public class OmniFile {
         if( m_isCryp )
             absolutePath = m_cry_file.getPath();
         else
-            absolutePath = m_std_file.getPath();//FIXME confirm works for private filesystem
+            absolutePath = m_std_file.getPath();
 
             String root = Omni.getRoot( this.m_volumeId);
             String path = ("/"+StringUtils.removeStart( absolutePath, root)).replace("//","/");

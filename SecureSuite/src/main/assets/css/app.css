@@ -10,16 +10,12 @@ body {
   line-height:32px;
   color: grey;
   margin-bottom: 0px;
-
-  float:none;
-  margin: 0 auto;
-  display: table;
-  table-layout: fixed;
   border: transparent;
 }
 .navbar-nav li > a {
   padding:0 15px;
   line-height:32px;
+  z-index: 1001;
 }
 .navbar-header a {
   padding:0 15px;
@@ -35,6 +31,18 @@ body {
   font-size: 1.3em !important;
   color: grey;
   line-height:32px;
+  background-color: white;
+  z-index: 1001;
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.calendar-padding{
+  padding: 15px;
 }
 
 table.card {
@@ -47,10 +55,6 @@ table.card {
       padding-bottom: 20px;
       padding-left: 25px;
 
-}
-
-.calendar-padding{
-  padding: 15px;
 }
 
 tr {

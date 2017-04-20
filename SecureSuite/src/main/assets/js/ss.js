@@ -1,4 +1,23 @@
 /**
+ * Copyright (c) 2017. Nuvolect LLC
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * Contact legal@nuvolect.com for a less restrictive commercial license if you would like to use the
+ * software without the GPLv3 restrictions.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not,
+ * see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/**
  * Reload the page.  This function is inside the global scope. The location.reload() method
  * cannot be called directly from within a function.
  */
@@ -300,7 +319,6 @@ function notifyJs( message, style ){
 function injectModal( htmTemplate){
 
     // document.getElementById("my_modal").innerHTML= htmTemplate;
-//debugger;
     $( "#my_modal" ).load( htmTemplate );
 }
 
@@ -433,13 +451,16 @@ function showFileUploadModal(){
 }
 
 $(function() {
+
 	// preload background images
 	$('a.themes').each(function() {
+
 		$('<img/>').attr('src', '/css/themes/' + $(this).data('theme') + '-bg.png');
 	});
 
 	// change theme by changing the path to the css stylesheet in the link element with id theme in the head
 	$('a.theme').click(function(e) {
+
 		e.preventDefault();
 
         var theme = $(this).data('theme');

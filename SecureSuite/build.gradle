@@ -21,13 +21,20 @@ apply plugin: 'com.android.application'
 
 def versionMajor = 1
 def versionMinor = 4
-def versionPatch = 1
+def versionPatch = 2
 def versionBuild = 1
 
 // Load keystore
-def keystorePropertiesFile = System.getProperty("user.home")+"/.gradle/keystore.properties"
 def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def keystorePropertiesPath = System.getProperty("user.home")+"/.gradle/keystore.properties"
+    try {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesPath))
+    } catch (FileNotFoundException exception) {
+        keystoreProperties.setProperty('SS_keyAlias','dummy')
+        keystoreProperties.setProperty('SS_storeFile','dummy')
+        keystoreProperties.setProperty('SS_storePassword','dummy')
+        keystoreProperties.setProperty('SS_keyPassword','dummy')
+    }
 
 android {
     signingConfigs {

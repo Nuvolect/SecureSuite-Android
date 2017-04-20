@@ -3,31 +3,38 @@
   ~ Copyright (c) 2017. Nuvolect LLC
   -->
 
-<div style="height:32px;">
+<nav style="height:32px;">
     <div class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
                 <a class="navbar-brand" href="/">
                     <img src="/img/icon_32.png" alt="SecureSuite logo" style="width:32px;height:32px;"></a>
             </div>
-            <ul class="nav navbar-nav navbar-left">
-                <li><a href="/list.htm" >Contacts</a></li>
-                <li><a href="/cal.htm" >Calendar</a></li>
-                <li><a href="/elFinder-2.1.24-nightly/finder.html">Finder</a></li>
-                <li>
-                    <div class="dropdown">
-                        <button
-                                class="btn btn-secondary-transparent dropdown-toggle"
-                                type="button" data-toggle="dropdown">Dev<span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="/crypto_performance.htm">Performance</a></li>
-                            <li><a href="/keystore.htm">Keystore</a></li>
-                            <li><a href="/developer.htm">Developer</a></li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-left">
+                    <li><a href="/list.htm" >Contacts</a></li>
+                    <li><a href="/cal.htm" >Calendar</a></li>
+                    <li><a href="/elFinder-2.1.24-nightly/finder.html">Finder</a></li>
+                    <li>
+                        <div class="dropdown">
+                            <button
+                                    class="btn btn-secondary-transparent dropdown-toggle"
+                                    type="button" data-toggle="dropdown">Dev<span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="/crypto_performance.htm">Performance</a></li>
+                                <li><a href="/keystore.htm">Keystore</a></li>
+                                <li><a href="/developer.htm">Developer</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
+</nav>
