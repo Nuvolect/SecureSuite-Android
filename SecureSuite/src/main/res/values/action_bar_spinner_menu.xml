@@ -24,6 +24,7 @@
     	<item>Contacts</item>
     	<item>Groups</item>
 		<item>Passwords</item>
+        <item>Calendar</item>
 		<item>Finder</item>
 		<item>Server</item>
 	</string-array>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2017. Nuvolect LLC
+  ~
+  ~ Calendar is implemented as a single page web app with two pages. This allows
+  ~ for sharing event data between pages.
+  ~ cal.htm - main page, all css and js includes
+  ~ cal_main.htm - body of the calendar, month, week, day, etc.
+  ~ cal_event.htm - page for editing a single event
+  -->
+
+<html ng-app="myApp" ng-controller="indexController">
+<head>
+    <title>SecureSuite</title>
+
+    <link href="/css/jquery-ui.min.css" rel="stylesheet">
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/css/fullcalendar.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/themes/blue_wheat.css" rel="stylesheet" id="theme">
+
+    <script src="/js/jquery-1.12.4.min.js"></script>
+    <script src="/js/ss.js"></script>
+    <script src="/js/angular.min.js"></script>
+    <script src="/js/angular-route.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/ui-bootstrap-tpls-2.5.0.min.js"></script>
+
+    <script src="/js/moment.js"></script>
+    <script src="/js/fullcalendar.js"></script>
+    <script src="/js/calendar.js"></script>
+    <script src="/js/angular-strap.min.js"></script>
+    <script src="/js/angular-strap.tpl.min.js"></script>
+
+</head>
+
+<body>
+
+<div ng-include="'/navbar.htm'"></div>
+
+    <div ng-view></div>
+
+<br>
+<br>
+<div ng-include="'/footer.htm'"></div>
+
+<script>
+
+var app = angular.module('myApp', [ 'ngRoute', 'ui.calendar', 'ui.bootstrap', 'mgcrea.ngStrap']);
+
+app.config(function($routeProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl : "cal_main.htm",
+        controller : "calController"
+    })
+    .when("/cal", {
+        templateUrl : "cal_main.htm",
+        controller : "calController"
+    })
+    .when("/cal_edit", {
+        templateUrl : "cal_edit.htm",
+        controller : "calEditController"
+    });
+});
+
+app.controller('indexController', ['$scope', function( $scope) {
+
+  $scope.year = new Date().getFullYear(); // footer copyright year
+}]);
+
+app.factory('calService', function() {
+
+    var savedData = {}
+
+    function set(data) {
+        savedData = data;
+    }
+
+    function get() {
+        return savedData;
+    }
+
+    return {
+        set: set,
+        get: get
+    }
+});
+
+
+</script>
+
+<script src="/calendar/cal_main.js"></script>
+<script src="/calendar/cal_edit.js"></script>
+
+</body>
+</html>

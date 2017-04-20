@@ -56,7 +56,7 @@ public class CConst {
     public static final int RESPONSE_CODE_SHARE_VCF               = 212;
 
     //** Must match order of: R.array.action_bar_spinner_menu) **/
-    public enum NavMenu {contacts, groups, passwords, finder, server }
+    public enum NavMenu {contacts, groups, passwords, calendar, finder, server }
 
     /** for communicating between services and activities or web server to refresh */
     public static final String UI_TYPE_KEY          = "ui_type_key";
@@ -78,6 +78,7 @@ public class CConst {
     public static final String ADDRESS              = DTab.address.toString();
     public static final String AUTHENTICATED        = "authenticated";
     public static final String BLOG_URL             = "https://nuvolect.com/blog";
+    public static final String CALENDAR_PAGE        = "/cal.htm";
     public static final String CHUNK                = "/chunk/";
     public static final String CMD                  = "cmd";
     public static final String COMMS_SELECT         = DTab.comms_select.toString();
@@ -88,7 +89,7 @@ public class CConst {
     public static final String CRYP_SYNC            = "cryp_sync";
     public static final String DATES                = DTab.date.toString();
     public static final String DISPLAY_NAME         = DTab.display_name.toString();
-    public static final String ELFINDER_PAGE        = "/elFinder-2.1.24-nightly/ss_finder.html";
+    public static final String ELFINDER_PAGE        = "/elFinder-2.1.24-nightly/finder.html";
     public static final String ELF_                 = "elf_";
     public static final String EMBEDDED_USER        = "embedded_user";
     public static final String EMAIL                = DTab.email.toString();

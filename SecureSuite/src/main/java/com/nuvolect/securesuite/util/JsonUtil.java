@@ -198,4 +198,22 @@ public class JsonUtil {
 
         return (String) item_keys.next();
     }
+
+    /**
+     * Build a json success object with conditional error message.
+     * @param success
+     * @param errorMessage
+     * @return
+     */
+    public static JSONObject successObj(boolean success, String errorMessage) {
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("success", success);
+            jsonObject.put("userErrorMessage", success ? "" : errorMessage);
+        } catch (JSONException e) {
+            LogUtil.logException( JsonUtil.class, e);
+        }
+        return jsonObject;
+    }
 }

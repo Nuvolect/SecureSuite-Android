@@ -240,6 +240,7 @@ public class ListHtm {
                 t.addBlock("account_select");
             }
             t.setVariable("finder_url", CConst.ELFINDER_PAGE);
+            t.setVariable("calendar_url", CConst.CALENDAR_PAGE);
 
             /**
              * Format the left side list of groups Title(count)

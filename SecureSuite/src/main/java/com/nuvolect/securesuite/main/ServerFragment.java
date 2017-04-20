@@ -141,9 +141,39 @@ public class ServerFragment extends DialogFragment {
                 return false;
             }
         });
+
         setDialogData();
 
         return rootView;
+    }
+
+    private void copyIpToPasteBuffer() {
+
+        // Gets a handle to the clipboard service.
+        ClipboardManager clipboard = (ClipboardManager)
+                getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+
+        String ipAddress = WebUtil.getServerUrl(getActivity());
+
+        // Creates a new text clip to put on the clipboard
+        ClipData clip = ClipData.newPlainText("App IP address", ipAddress);
+
+        // Set the clipboard's primary clip.
+        clipboard.setPrimaryClip(clip);
+
+        Toast.makeText(getActivity(), "IP address copied to paste buffer", Toast.LENGTH_SHORT).show();
+    }
+
+    private void browserChooser(){
+
+        Uri uri = Uri.parse( WebUtil.getServerUrl( getActivity()) );
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+
+        Intent chooser = Intent.createChooser( intent, "Choose browser");
+        // Verify the intent will resolve to at least one activity
+        if (chooser.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(chooser);
+        }
     }
 
     private void setDialogData(){
@@ -204,7 +234,6 @@ public class ServerFragment extends DialogFragment {
         public void onClick(View v) {
 
             CrypServer.enableServer(m_act, m_serverStateTb.isChecked());
-            Toast.makeText(m_act,"Please refresh",Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -226,33 +255,4 @@ public class ServerFragment extends DialogFragment {
             }
         }
     };
-
-    private void copyIpToPasteBuffer() {
-
-        // Gets a handle to the clipboard service.
-        ClipboardManager clipboard = (ClipboardManager)
-                getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-
-        String ipAddress = WebUtil.getServerUrl(getActivity());
-
-        // Creates a new text clip to put on the clipboard
-        ClipData clip = ClipData.newPlainText("App IP address", ipAddress);
-
-        // Set the clipboard's primary clip.
-        clipboard.setPrimaryClip(clip);
-
-        Toast.makeText(getActivity(), "IP address copied to paste buffer", Toast.LENGTH_SHORT).show();
-    }
-
-    private void browserChooser(){
-
-        Uri uri = Uri.parse( WebUtil.getServerUrl( getActivity()) );
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-
-        Intent chooser = Intent.createChooser( intent, "Choose browser");
-        // Verify the intent will resolve to at least one activity
-        if (chooser.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivity(chooser);
-        }
-    }
 }

@@ -272,6 +272,7 @@ public class DetailHtm {
                 t.addBlock("account_select");
             }
             t.setVariable("finder_url", CConst.ELFINDER_PAGE);
+            t.setVariable("calendar_url", CConst.CALENDAR_PAGE);
 
             // Show contact photo if they have one
             String encodedImage = SqlCipher.get(m_contact_id, DTab.photo);

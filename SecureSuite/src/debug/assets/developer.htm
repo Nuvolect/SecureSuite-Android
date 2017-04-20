@@ -2,46 +2,61 @@
 
 <!--
   ~ Copyright (c) 2017. Nuvolect LLC
-  ~
-  ~ This program is free software: you can redistribute it and/or modify it under the terms of the GNU
-  ~ General Public License as published by the Free Software Foundation, either version 3 of the License,
-  ~ or (at your option) any later version.
-  ~
-  ~ Contact legal@nuvolect.com for a less restrictive commercial license if you would like to use the
-  ~ software without the GPLv3 restrictions.
-  ~
-  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-  ~ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License along with this program.  If not,
-  ~ see <http://www.gnu.org/licenses/>.
-  ~
   -->
 
-<html ng-app="myApp" ng-controller="myController">
+<html ng-app="myApp" ng-controller="debugController">
 <head>
     <title>Developer</title>
 
-    <link href="/css/bootstrap.css" rel="stylesheet">
-    <link href="/css/app.css" rel="stylesheet">
-
-    <script src="/js/jquery-1.11.2.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
     <script src="/js/angular.min.js"></script>
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bootstrap-colorselector.min.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/themes/blue_wheat.css" rel="stylesheet" id="theme">
+    <link href="/css/probe.css" rel="stylesheet">
 
 </head>
 
 <body>
-
+<!-- Bootstrap core JavaScript -->
+<script src="/js/jquery-1.11.2.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/bootstrap-colorselector.min.js"></script>
 <div ng-include="'./navbar.htm'"></div>
 
+<h1 align="center">Developer</h1>
+<br>
+
 <div class="container">
+    <!-- https://github.com/flaute/bootstrap-colorselector-->
+    <div class="row">
+        <div class='col-sm-2'>
+            <h5>Event color</h5>
+        </div>
+        <div class='col-sm-8'>
+            <select id="colorselector">
+                <option value="106" data-color="#A0522D">sienna</option>
+                <option value="47" data-color="#CD5C5C" selected="selected">indianred</option>
+                <option value="87" data-color="#FF4500">orangered</option>
+                <option value="17" data-color="#008B8B">darkcyan</option>
+                <option value="18" data-color="#B8860B">darkgoldenrod</option>
+                <option value="68" data-color="#32CD32">limegreen</option>
+                <option value="42" data-color="#FFD700">gold</option>
+                <option value="77" data-color="#48D1CC">mediumturquoise</option>
+                <option value="107" data-color="#87CEEB">skyblue</option>
+                <option value="46" data-color="#FF69B4">hotpink</option>
+                <option value="47" data-color="#CD5C5C">indianred</option>
+                <option value="64" data-color="#87CEFA">lightskyblue</option>
+                <option value="13" data-color="#6495ED">cornflowerblue</option>
+                <option value="15" data-color="#DC143C">crimson</option>
+                <option value="24" data-color="#FF8C00">darkorange</option>
+                <option value="78" data-color="#C71585">mediumvioletred</option>
+                <option value="123" data-color="#000000">black</option>
+            </select>
+        </div>
+    </div>
 
-    <h1>Developer</h1>
-    <br>
-
-    <table align="left">
+    <table align="center">
 
         <tr>
             <td><button ng-click="runTest('encode_hash',encode_hash_data)">Encode hash</button></td>
@@ -84,10 +99,11 @@
 </div>
 <div class="container">
 
-    <h3>API</h3>
+    <hr color="navy" style="height: 2px">
+    <h3 align="center">API</h3>
+    <br>
 
-    <table align="left">
-
+    <table align="center">
         <tr>
             <th>API</th>
             <th>Result</th>
@@ -102,9 +118,11 @@
 
 <div class="container">
 
-    <h3>Device Sync</h3>
+    <hr color="navy" style="height: 2px">
+    <h3 align="center">Device Sync</h3>
+    <br>
 
-    <table align="left">
+    <table align="center">
 
         <tr>
             <th>Data</th>
@@ -138,9 +156,20 @@
 <script>
 
 var app = angular.module('myApp', []);
-app.controller('myController', function($scope, $http, $parse) {
+app.controller('debugController', function($scope, $http, $parse) {
 
-   $scope.year = new Date().getFullYear(); // footer copyright year
+  $scope.year = new Date().getFullYear(); // footer copyright year
+
+  $('#colorselector').colorselector();
+  $('#colorselector').colorselector('setColor', '#87CEFA');
+debugger;
+  $('#colorselector').colorselector({
+
+      callback: function (value, color, title) {
+
+         console.log('color: '+color);
+      }
+  });
 
    $scope.mySyncState = function(){
 
@@ -202,6 +231,7 @@ app.controller('myController', function($scope, $http, $parse) {
    $scope.angular_version = angular.version.full;
 
    $scope.mySyncState();
+
 
 });
 

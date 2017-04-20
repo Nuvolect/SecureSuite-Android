@@ -21,13 +21,20 @@ apply plugin: 'com.android.application'
 
 def versionMajor = 1
 def versionMinor = 4
-def versionPatch = 1
-def versionBuild = 0
+def versionPatch = 2
+def versionBuild = 1
 
 // Load keystore
-def keystorePropertiesFile = System.getProperty("user.home")+"/.gradle/keystore.properties"
 def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def keystorePropertiesPath = System.getProperty("user.home")+"/.gradle/keystore.properties"
+    try {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesPath))
+    } catch (FileNotFoundException exception) {
+        keystoreProperties.setProperty('SS_keyAlias','dummy')
+        keystoreProperties.setProperty('SS_storeFile','dummy')
+        keystoreProperties.setProperty('SS_storePassword','dummy')
+        keystoreProperties.setProperty('SS_keyPassword','dummy')
+    }
 
 android {
     signingConfigs {
@@ -89,6 +96,7 @@ dependencies {
     compile 'info.guardianproject.iocipher:IOCipher:0.4'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.googlecode.libphonenumber:libphonenumber:5.5'
+    compile 'joda-time:joda-time:2.9.9'
 
     // APACHE COMMONS LIBRARIES
     compile 'commons-cli:commons-cli:1.3.1'

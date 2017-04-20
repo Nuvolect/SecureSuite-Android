@@ -1,0 +1,206 @@
+<!--
+  ~ Copyright (c) 2017. Nuvolect LLC
+  -->
+
+<div class="container">
+
+    <br>
+    <button class="btn btn-danger" type="button" ng-click="save()">Save</button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+
+    <div class="row">
+        <h5>{{ alertMessage }}</h5>
+        <div class="col-xs-9">
+            <label for="eventTitle">Event title</label>
+            <input class="form-control" id="eventTitle" type="text" ng-model="event_title">
+        </div>
+    </div>
+    <br>
+
+    <div class="row">
+        <div class='col-sm-12'>
+            <form name="timepickerForm" class="form-inline" role="form">
+                <div class="form-group">
+                    <label class="control-label"><i class="fa fa-calendar"></i> Start</label><br>
+                    <div class="form-group">
+                        <input type="text" size="8" class="form-control" ng-model="sharedStartDate" data-autoclose="1" placeholder="Date" bs-datepicker>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" size="10" class="form-control" ng-model="sharedStartDate" data-time-format="h:mm:ss a" data-autoclose="1" placeholder="Time" bs-timepicker>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label"><i class="fa fa-calendar"></i> End</label><br>
+                    <div class="form-group">
+                        <input type="text" size="8" class="form-control" ng-model="sharedEndDate" data-autoclose="1" placeholder="Date" bs-datepicker>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" size="10" class="form-control" ng-model="sharedEndDate" data-time-format="h:mm:ss a" data-autoclose="1" placeholder="Time" bs-timepicker>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <div class="row" ng-show=false>//TODO remove ng-show, implement repeat
+        <div class='col-sm-6'>
+            <ul class="list-inline">
+                <li>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="">All day</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="checkbox">
+                        <label><input type="checkbox" ng-model="repeatCB" value="">Repeat...</label>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div ng-show="repeatCB">
+        <div class="row">
+            <div class='col-sm-2 vcenter' align="right">
+                <h5>Repeats:</h5>
+            </div>
+            <div class='col-sm-6 vcenter'>
+                <select ng-model="repeatName" ng-options="r for r in repeatNames"></select>
+            </div>
+        </div>
+        <div class="row">
+            <div class='col-sm-2' align="right">
+                <h5>Repeat on:</h5>
+            </div>
+            <div class='col-sm-6'>
+                <ul class="list-inline">
+                    <li>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">S</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">M</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">T</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">W</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">T</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">F</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="">S</label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class='col-sm-2' align="right">
+                <h5>Starts on:</h5>
+            </div>
+            <div class='col-sm-7'>
+                <div class="form-group">
+                    <input type="text" size="8" class="form-control" ng-model="repeatStartDate" data-autoclose="1" placeholder="Date" bs-datepicker>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class='col-sm-2' align="right">
+                <h5>Ends:</h5>
+            </div>
+            <div class='col-sm-6'>
+                <div class="radio">
+                    <label><input type="radio" name="optradio">Never</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="optradio">After</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="optradio">On</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class='col-sm-9'>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" rows="4" id="description" ng-model="event_description"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class='col-sm-2'>
+            <h5>Event color</h5>
+        </div>
+        <div class='col-sm-8'>
+            <div class="form-group form-inline" role="form">
+
+                <label class="btn btn-info" id="lab0">
+                    <input type="radio" name="event-color" id="color-0" value="#67C2E0" ng-model="colorData.color">
+                </label>
+
+                <label class="btn btn-success" id="lab1">
+                    <input type="radio" name="event-color" id="color-1" value="#66B95C" ng-model="colorData.color">
+                </label>
+
+                <label class="btn btn-primary" id="lab2">
+                    <input type="radio" name="event-color" id="color-2" value="#3F79B3" ng-model="colorData.color">
+                </label>
+
+                <label class="btn btn-warning" id="lab4">
+                    <input type="radio" name="event-color" id="color-4" value="#EDB246" ng-model="colorData.color">
+                </label>
+
+                <label class="btn btn-danger" id="lab5">
+                    <input type="radio" name="event-color" id="color-5" value="#D45552" ng-model="colorData.color">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!--https://www.w3schools.com/angular/angular_select.asp-->
+    <br>
+    <div class="row">
+        <div class='col-sm-2'>
+            <h5>Notifications</h5>
+        </div>
+        <div class='col-sm-9'>
+            <table >
+                <tr ng-repeat="n in notifications">
+                    <td><input style="text-align:right" size="6" ng-model="n.count" /></td>
+                    <td><select ng-model="n.units" ng-options="u for u in unitNames"></select></td>
+                    <td>
+                        <button type="button" class="btn btn-link"
+                            ng-click="remove( notifications, $index)">x</button>
+                    </td>
+                </tr>
+            </table>
+            <button type="button" class="btn btn-link"
+                    ng-click="addNotification()">Add a notification</button>
+        </div>
+    </div>
+
+</div>
