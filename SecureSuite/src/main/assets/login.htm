@@ -99,19 +99,20 @@
 				data: encodedString,
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 			})
-			.success(function(data, status, headers, config) {
+			.then(function( response ) {
 
-				if ( data.user_confirmed) {
-				    console.log("user confirmed");
+                console.log("user_confirmed: "+response.data.user_confirmed);
+
+				if ( response.data.user_confirmed) {
 					window.location.href = '/';
 				} else {
 
 					$scope.errorMsg = "Login not correct";
 				}
-			})
-			.error(function(data, status, headers, config) {
+			},
+			function( response ) {
 				$scope.errorMsg = 'Unable to submit form';
-			})
+			});
 		}
 	}]);
 

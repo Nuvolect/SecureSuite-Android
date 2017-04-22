@@ -30,7 +30,7 @@ import java.util.Map;
  * Dispatch to serve RESTful services.
  * This class will be expanded to serve the full set of elFinder commands.
  */
-public class ServeCmd {
+public class AdminCmd {
 
     private static boolean DEBUG = LogUtil.DEBUG;
 

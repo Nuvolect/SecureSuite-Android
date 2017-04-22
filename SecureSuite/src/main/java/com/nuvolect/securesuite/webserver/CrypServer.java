@@ -31,6 +31,7 @@ import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniHash;
 import com.nuvolect.securesuite.util.Passphrase;
 import com.nuvolect.securesuite.util.Util;
+import com.nuvolect.securesuite.webserver.admin.AdminCmd;
 import com.nuvolect.securesuite.webserver.connector.CmdUpload;
 
 import org.apache.commons.io.FilenameUtils;
@@ -420,6 +421,11 @@ public class CrypServer extends NanoHTTPD {
                         is = m_ctx.getAssets().open("login.htm");
                         return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
                     }
+                    if (uri.contentEquals("/footer.htm")) {
+                        log(LogUtil.LogType.CRYP_SERVER, "Serving footer.htm");
+                        is = m_ctx.getAssets().open("footer.htm");
+                        return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
+                    }
                     if (mAuthenticated) {
 
                         return serveAuthenticatedHtml(uri, uniqueId, params);
@@ -450,7 +456,7 @@ public class CrypServer extends NanoHTTPD {
                      */
                     if (params.containsKey("cmd") && params.get("cmd").contentEquals("login")) {
 
-                        is = com.nuvolect.securesuite.webserver.admin.ServeCmd.process(m_ctx, params);
+                        is = AdminCmd.process(m_ctx, params);
                         return new Response(Status.OK, MIME_JSON, is, -1);
                     }
                 }
@@ -461,7 +467,7 @@ public class CrypServer extends NanoHTTPD {
 
                             switch (ext) {
                                 case admin:
-                                    is = com.nuvolect.securesuite.webserver.admin.ServeCmd.process(m_ctx, params);
+                                    is = AdminCmd.process(m_ctx, params);
                                     return new Response(Status.OK, MIME_JSON, is, -1);
                                 case calendar:{
                                     String json = CalendarRest.process(m_ctx, params);

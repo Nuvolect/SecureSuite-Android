@@ -205,6 +205,9 @@ public class DeveloperDialog {
                             case Toggle_Verbose_LogCat:{
                                 LogUtil.setVerbose( ! LogUtil.VERBOSE);
                                 Toast.makeText(m_act, "Verbose LogCat: "+LogUtil.VERBOSE, Toast.LENGTH_SHORT).show();
+                                if( LogUtil.VERBOSE){
+                                    LogUtil.log(LogUtil.LogType.DEVELOPER_DIALOG, "Verbose logging active.");
+                                }
                                 break;
                             }
                             default:
