@@ -124,7 +124,6 @@ public class ContactListActivity extends FragmentActivity
 
     //    IncomingHandler mHandler = new IncomingHandler( this );
     private static Handler mainHandler = new Handler();
-    public static boolean m_appUpgraded = false;
     private String m_pendingImportSingleContactId;
 
     //
@@ -281,9 +280,9 @@ public class ContactListActivity extends FragmentActivity
         /**
          * Detect app upgrade and provide a placeholder for managing upgrades, database changes, etc.
          */
-        m_appUpgraded = LicenseUtil.appUpgraded(m_act);
+        boolean appUpgraded = LicenseUtil.appUpgraded(m_act);
 
-        if( m_appUpgraded ) {
+        if(appUpgraded) {
 
             Toast.makeText(getApplicationContext(), "Application upgraded", Toast.LENGTH_LONG).show();
 

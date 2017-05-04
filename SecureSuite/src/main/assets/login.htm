@@ -101,8 +101,6 @@
 			})
 			.then(function( response ) {
 
-                console.log("user_confirmed: "+response.data.user_confirmed);
-
 				if ( response.data.user_confirmed) {
 					window.location.href = '/';
 				} else {
