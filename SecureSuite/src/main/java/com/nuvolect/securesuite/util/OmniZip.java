@@ -22,9 +22,12 @@ package com.nuvolect.securesuite.util;//
 import android.content.Context;
 import android.media.MediaScannerConnection;
 
+import com.google.gson.JsonArray;
+
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,7 +41,7 @@ import java.util.zip.ZipOutputStream;
 //
 public class OmniZip {
 
-    public static boolean zipFiles(Context ctx, OmniFile[] files, OmniFile zipOmni, int destination) {
+    public static boolean zipFiles(Context ctx, Iterable<OmniFile> files, OmniFile zipOmni, int destination) {
 
         ZipOutputStream zos = null;
         LogUtil.log(LogUtil.LogType.OMNI_ZIP, "ZIPPING TO: " + zipOmni.getPath());
@@ -88,7 +91,7 @@ public class OmniZip {
         for (OmniFile file : files) {
 
             if (file.isDirectory()) {
-                String path = basePath + file.getName() + "/";
+                String path = basePath + file.getName() + File.separator;
                 zos.putNextEntry(new ZipEntry(path));
                 zipSubDirectory(ctx, path, file, zos);
                 zos.closeEntry();
@@ -137,7 +140,7 @@ public class OmniZip {
      * @return
      */
     public static boolean unzipFile (
-            OmniFile zipOmni, OmniFile targetDir, JSONArray added, String httpIpPort) {
+            OmniFile zipOmni, OmniFile targetDir, JsonArray added, String httpIpPort) {
 
         String volumeId = zipOmni.getVolumeId();
         String rootFolderPath = targetDir.getPath();
@@ -182,7 +185,7 @@ public class OmniZip {
                         LogUtil.log(LogUtil.LogType.OMNI_ZIP, "file created: "+file.getPath());
 
                     if( added != null)
-                        added.put(file.getFileObject(httpIpPort));
+                        added.add(file.getFileObject(httpIpPort));
                 }
             }
             zis.close();
@@ -196,7 +199,7 @@ public class OmniZip {
                  * can be set accurately.
                  */
                 for( OmniFile dir : directories)
-                    added.put(dir.getFileObject( httpIpPort ));
+                    added.add(dir.getFileObject( httpIpPort ));
             }
 
         } catch (IOException e) {

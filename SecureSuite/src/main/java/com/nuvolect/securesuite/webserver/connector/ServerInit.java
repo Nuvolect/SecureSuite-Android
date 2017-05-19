@@ -34,7 +34,5 @@ public class ServerInit {
          * Initialize application file system support
          */
         Omni.init( ctx );
-
-        CmdUpload.init( ctx );
     }
 }

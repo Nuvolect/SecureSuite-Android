@@ -19,19 +19,18 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniFiles;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
 import org.apache.commons.io.FilenameUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -70,14 +69,15 @@ import java.util.Map;
  * targets[]=c0_L3RtcC9EQ0lNL0NhbWVyYS9JTUdfMjAxNjAxMjZfMTEyNDIzLmpwZw
  * }
  */
-public class CmdDuplicate {
+public class CmdDuplicate extends ConnectorJsonCommand {
 
     private static boolean DEBUG = LogUtil.DEBUG;
 
-    public static InputStream go(Map<String, String> params) {
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
 
-        String httpIpPort = params.get("url");
-        ArrayList<String> targets = new ArrayList<>();
+        String url = params.get("url");
+        String suffix = "~";
 
         /**
          * Params only has the first element of the targets[] array.
@@ -86,76 +86,71 @@ public class CmdDuplicate {
          */
         String[] qps = params.get("queryParameterStrings").split("&");
 
-        for(String candidate : qps){
-
-            if( candidate.contains("targets")){
-                String[] parts = candidate.split("=");
-                targets.add( parts[1]);
+        JsonArray added = new JsonArray();
+        boolean hasFailed = false;
+        for (String candidate : qps) {
+            if (!candidate.contains("targets")) {
+                continue;
             }
-        }
-        String suffix = "~";
-        JSONArray added = new JSONArray();
-        boolean success = true;
 
-        /**
-         * Iterate over the target files to be duplicated.
-         * Duplicate each file and record file objects of files added.
-         */
-        for( int i = 0; i < targets.size(); i++){
+            String[] parts = candidate.split("=");
 
-            OmniFile fromFile = new OmniFile( targets.get(i));
+            OmniFile fromFile = new OmniFile(parts[1]);
             String toPath = fromFile.getPath();
             OmniFile toFile = null;
-            for( int dupCount = 0; dupCount < 10; dupCount++){ // add no more than 10 tilda
+            for (int dupCount = 0; dupCount < 10; dupCount++) { // add no more than 10 tilda
                 toFile = new OmniFile( fromFile.getVolumeId(), toPath);
 
-                if( ! toFile.exists())
+                if (!toFile.exists()) {
                     break;
+                }
 
                 String extension = FilenameUtils.getExtension( toPath);// add ~ to filename, keep extension
-                if( ! extension.isEmpty())
-                    extension = "."+extension;
-                toPath = FilenameUtils.removeExtension( toPath) + suffix;
+                if (!extension.isEmpty()) {
+                    extension = "." + extension;
+                }
+                toPath = FilenameUtils.removeExtension(toPath) + suffix;
                 toPath = toPath + extension;
             }
-            LogUtil.log(LogUtil.LogType.CMD_DUPLICATE, "file path: "+fromFile.getPath());
-            LogUtil.log(LogUtil.LogType.CMD_DUPLICATE, "file exists: "+fromFile.exists());
-            if( fromFile.isDirectory())
+            LogUtil.log(LogUtil.LogType.CMD_DUPLICATE, "file path: " + fromFile.getPath());
+            LogUtil.log(LogUtil.LogType.CMD_DUPLICATE, "file exists: " + fromFile.exists());
+
+            boolean success;
+            if (fromFile.isDirectory()) {
                 success = OmniFiles.copyDirectory(fromFile, toFile);
-            else
+            }
+            else {
                 success = OmniFiles.copyFile(fromFile, toFile);
+            }
+            /**
+             * If there's just only one fail, set this to include warning
+             */
+            hasFailed = hasFailed || !success;
 
             /**
              * Duplicate files have a new name, so update the modification time to present
              */
-            toFile.setLastModified(System.currentTimeMillis()/1000);
+            toFile.setLastModified(System.currentTimeMillis() / 1000);
 
-            if( success )
-                added.put( FileObj.makeObj(toFile, httpIpPort));// note: full depth of directory not added
-            else
-                LogUtil.log(LogUtil.LogType.CMD_DUPLICATE, "Duplicate failed: "+toFile.getPath());
-        }
-
-        try {
-            JSONObject wrapper = new JSONObject();
-            wrapper.put("added", added);
-
-            if( ! success){
-
-                JSONArray warning = new JSONArray();
-                warning.put("errPerm");
-                wrapper.put("warning", warning);
+            if (success) {
+                added.add( FileObj.makeObj(toFile, url));// note: full depth of directory not added
             }
-            if( DEBUG)
-                LogUtil.log(LogUtil.LogType.CMD_DUPLICATE, "json result: "+wrapper.toString(2));
-
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            else {
+                LogUtil.log(LogUtil.LogType.CMD_DUPLICATE, "Duplicate failed: "+toFile.getPath());
+            }
         }
-        return null;
+
+        JsonObject wrapper = new JsonObject();
+        if (hasFailed) {
+            JsonArray warning = new JsonArray();
+            warning.add("errPerm");
+            wrapper.add("warning", warning);
+        }
+
+        if (DEBUG) {
+            LogUtil.log(LogUtil.LogType.CMD_DUPLICATE, "json result: " + wrapper.toString());
+        }
+
+        return getInputStream(wrapper);
     }
 }

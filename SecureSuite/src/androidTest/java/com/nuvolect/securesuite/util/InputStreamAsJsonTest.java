@@ -17,28 +17,26 @@
  *
  */
 
-package com.nuvolect.securesuite.webserver.admin;//
+package com.nuvolect.securesuite.util;
 
-import android.support.annotation.NonNull;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 
-import com.google.gson.JsonObject;
-import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
-
+import java.io.BufferedReader;
 import java.io.InputStream;
-import java.util.Map;
+import java.io.InputStreamReader;
 
 /**
- * ping
- *
- * Respond with { timestamp: long}
+ * Created by serg on 19.05.17.
  */
-public class CmdPing extends ConnectorJsonCommand {
 
-    @Override
-    public InputStream go(@NonNull Map<String, String> params) {
-        JsonObject object = new JsonObject();
-        object.addProperty("timestamp", System.currentTimeMillis());
+public class InputStreamAsJsonTest {
 
-        return getInputStream(object);
+    public static JsonElement convert(InputStream is) {
+        JsonReader jsonReader = new JsonReader(new BufferedReader(new InputStreamReader(is)));
+        jsonReader.setLenient(true);
+        JsonParser parser = new JsonParser();
+        return parser.parse(jsonReader).getAsJsonObject();
     }
 }

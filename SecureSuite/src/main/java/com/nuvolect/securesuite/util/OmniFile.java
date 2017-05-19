@@ -19,6 +19,8 @@
 
 package com.nuvolect.securesuite.util;//
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.webserver.MimeUtil;
 import com.nuvolect.securesuite.webserver.connector.FileObj;
@@ -82,10 +84,10 @@ public class OmniFile {
 
     public void calcDebug(String myTag){
 
-            m_name = this.getName();
-            m_path = this.getPath();
-            m_absolutePath = this.getAbsolutePath();
-            m_lastModified = TimeUtil.friendlyTimeMDYM( this.lastModified());
+        m_name = this.getName();
+        m_path = this.getPath();
+        m_absolutePath = this.getAbsolutePath();
+        m_lastModified = TimeUtil.friendlyTimeMDYM( this.lastModified());
 //            LogUtil.log( OmniFile.class, myTag+ " OmniFile:  "+ m_name+" last modified: "+ m_lastModified);
     }
 
@@ -178,7 +180,7 @@ public class OmniFile {
             if( parent == null)
                 return null;
             else
-            return new OmniFile( m_volumeId, parent.getPath());
+                return new OmniFile( m_volumeId, parent.getPath());
         }
         else {
             if( m_isRoot)
@@ -214,9 +216,9 @@ public class OmniFile {
         else
             absolutePath = m_std_file.getPath();
 
-            String root = Omni.getRoot( this.m_volumeId);
-            String path = ("/"+StringUtils.removeStart( absolutePath, root)).replace("//","/");
-            return path;
+        String root = Omni.getRoot( this.m_volumeId);
+        String path = ("/"+StringUtils.removeStart( absolutePath, root)).replace("//","/");
+        return path;
     }
 
     public String getAbsolutePath() {
@@ -498,13 +500,13 @@ public class OmniFile {
      * @param httpIpPort
      * @return
      */
-    public JSONArray listFileObjects(String httpIpPort) {
+    public JsonArray listFileObjects(String httpIpPort) {
 
         if( DEBUG )
             LogUtil.log( OmniFile.class,"ListFileObjects from:  "+ this.getPath()
-                + ", hash: " + this.getHash());
+                    + ", hash: " + this.getHash());
 
-        JSONArray filesArray = new JSONArray();
+        JsonArray filesArray = new JsonArray();
         OmniFile[] files = this.listFiles();
         if( files == null || files.length == 0)
             return filesArray;
@@ -515,24 +517,20 @@ public class OmniFile {
 
         for( OmniFile file: files){
 
-            JSONObject fileObj = FileObj.makeObj(volumeId, file, httpIpPort);
-            filesArray.put( fileObj);
+            JsonObject fileObj = FileObj.makeObj(volumeId, file, httpIpPort);
+            filesArray.add( fileObj);
 
             String type = file.isDirectory()? " dir  ": " file ";
             if( DEBUG )
                 LogUtil.log( OmniFile.class,"ListFileObjects "+ indent + ++i + type + file.getName()
-                    + ", hash: " + file.getHash());
+                        + ", hash: " + file.getHash());
         }
 
         return filesArray;
     }
 
-    public JSONObject getFileObject(String httpIpPort) {
-
-        String volumeId = this.getVolumeId();
-        JSONObject fileObj = FileObj.makeObj(volumeId, this, httpIpPort);
-
-        return fileObj;
+    public JsonObject getFileObject(String url) {
+        return FileObj.makeObj(getVolumeId(), this, url);
     }
 
     /**
@@ -607,19 +605,11 @@ public class OmniFile {
      * @param httpIpPort
      * @return JSONObject
      */
-    public JSONObject getPsObject(String httpIpPort) {
-
-        JSONObject psObject = new JSONObject();
-
-        try {
-
-            psObject.put("name", this.getName());
-            psObject.put("src", httpIpPort+"/"+this.getHash());
-            OmniImage.addPsImageSize(this, psObject);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public JsonObject getPsObject(String httpIpPort) {
+        JsonObject psObject = new JsonObject();
+        psObject.addProperty("name", getName());
+        psObject.addProperty("src", httpIpPort + "/" + getHash());
+        OmniImage.addPsImageSize(this, psObject);
         return psObject;
     }
 }

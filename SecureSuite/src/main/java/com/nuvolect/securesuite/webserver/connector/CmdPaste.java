@@ -19,18 +19,18 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniFiles;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
 import org.apache.commons.io.FilenameUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -107,37 +107,25 @@ import java.util.Map;
  *
  * </pre>
  */
-public class CmdPaste {
+public class CmdPaste extends ConnectorJsonCommand {
 
-    public static ByteArrayInputStream go(Map<String, String> params) {
-
-
-        String httpIpPort = params.get("url");
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        String url = params.get("url");
         OmniFile dst = new OmniFile( params.get("dst"));
 
-        boolean cut = false;
-        if( params.containsKey("cut"))
-            cut = params.get("cut").contentEquals("1");
+        boolean cut = params.containsKey("cut") && params.get("cut").contentEquals("1");
 
         String suffix = params.get("suffix");
-        JSONArray added = new JSONArray();
-        JSONArray removed = new JSONArray();
+        JsonArray added = new JsonArray();
+        JsonArray removed = new JsonArray();
 
         /**
          * Params only has the first element of the targets[] array.
          * This is fine if there is only one target but an issue for multiple file operations.
          * Manually parse the query parameter strings to get all targets.
          */
-        ArrayList<String> sourceFiles = new ArrayList<>();
         String[] qps = params.get("queryParameterStrings").split("&");
-
-        for(String candidate : qps){
-
-            if( candidate.contains("targets")){
-                String[] parts = candidate.split("=");
-                sourceFiles.add(parts[1]);
-            }
-        }
 
         /**
          * Iterate over the source files and copy each to the destination folder.
@@ -145,54 +133,60 @@ public class CmdPaste {
          * different volume types, clear to encrypted, etc.
          * If the cut flag is set also delete each file.
          */
-        for( int i = 0; i < sourceFiles.size(); i++){
+        for (String candidate : qps) {
+            if(!candidate.contains("targets")) {
+                continue;
+            }
+            String[] parts = candidate.split("=");
 
-            OmniFile fromFile = new OmniFile( sourceFiles.get(i));
+            OmniFile fromFile = new OmniFile(parts[1]);
             String toPath = dst.getPath()+"/"+fromFile.getName();
             OmniFile toFile = null;
-            for( int dupCount = 0; dupCount < 10; dupCount++){ // add no more than 10 tilda
-                toFile = new OmniFile( dst.getVolumeId(), toPath);
 
-                if( ! toFile.exists())
+            // add no more than 10 tilda
+            for (int dupCount = 0; dupCount < 10; dupCount++) {
+                toFile = new OmniFile(dst.getVolumeId(), toPath);
+
+                if (!toFile.exists()) {
                     break;
+                }
 
-                String extension = FilenameUtils.getExtension( toPath);// add ~ to filename, keep extension
-                if( ! extension.isEmpty())
-                    extension = "."+extension;
+                // add ~ to filename, keep extension
+                String extension = FilenameUtils.getExtension( toPath);
+                if (!extension.isEmpty()) {
+                    extension = "." + extension;
+                }
                 toPath = FilenameUtils.removeExtension( toPath) + suffix;
                 toPath = toPath + extension;
             }
-            boolean success = true;
-            if( fromFile.isDirectory())
+
+            boolean success;
+            if (fromFile.isDirectory()) {
                 success = OmniFiles.copyDirectory(fromFile, toFile);
-            else
+            } else {
                 success = OmniFiles.copyFile(fromFile, toFile);
+            }
 
-            if( success )
-                added.put( FileObj.makeObj(toFile, httpIpPort));// note: full depth of directory not added
+            if (success) {
+                //note: full depth of directory not added
+                added.add(FileObj.makeObj(toFile, url));
+            }
 
-            if( success && cut){
-                if( fromFile.delete()){
-                    removed.put(FileObj.makeObj(fromFile, httpIpPort));
-                }else{
-                    LogUtil.log(LogUtil.LogType.CMD_PASTE, "File delete failure: "+ fromFile.getPath());
+            if (success && cut) {
+                if (fromFile.delete()) {
+                    removed.add(FileObj.makeObj(fromFile, url));
+                } else {
+                    LogUtil.log(LogUtil.LogType.CMD_PASTE, "File delete failure: " +
+                            fromFile.getPath());
                 }
             }
         }
-        JSONObject wrapper = new JSONObject();
 
-        try {
-            wrapper.put("added", added);
-            wrapper.put("removed", removed);
+        JsonObject wrapper = new JsonObject();
 
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
+        wrapper.add("added", added);
+        wrapper.add("removed", removed);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return getInputStream(wrapper);
     }
 }

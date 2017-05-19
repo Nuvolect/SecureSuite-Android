@@ -19,18 +19,19 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniUtil;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
+
+import info.guardianproject.iocipher.File;
 
 /**
  * Create a new blank file.
@@ -44,13 +45,12 @@ import java.util.Map;
  *
  * added : (Array) Array with a single object - a new file. Information about File/Directory
  */
-public class CmdMkfile {
+public class CmdMkfile extends ConnectorJsonCommand {
 
-    public static InputStream go(Map<String, String> params) {
-
-        String targetDirHash = "";// Target is a hashed volume and directory path
-        if( params.containsKey("target"))
-            targetDirHash = params.get("target");
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        // Target is a hashed volume and directory path
+        String targetDirHash = params.containsKey("target") ? params.get("target") : "";
 
         String serverUrl = params.get("url");
 
@@ -61,33 +61,20 @@ public class CmdMkfile {
         String volumeId = targetDir.getVolumeId();
         LogUtil.log(LogUtil.LogType.CMD_MKFILE, "Target dir" + targetDir.getPath());
 
-        String name = "";
-        if( params.containsKey("name"))
-            name = params.get("name");
+        String name = params.containsKey("name") ? params.get("name") : "";
 
         String path = targetDir.getPath();
 
-        OmniFile targetFile = new OmniFile(volumeId, path+"/"+name);
-        boolean success = targetFile.createNewFile();
+        OmniFile targetFile = new OmniFile(volumeId, path + File.separator + name);
 
-        JSONArray added = new JSONArray();
-        JSONObject wrapper = new JSONObject();
+        JsonArray added = new JsonArray();
+        JsonObject wrapper = new JsonObject();
 
-        try {
-
-            if( success ){
-                JSONObject newDir = FileObj.makeObj( volumeId, targetFile, serverUrl);
-                added.put( newDir);
-            }
-            wrapper.put("added", added);
-
-            return new ByteArrayInputStream(wrapper.toString(2).getBytes("UTF-8"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        if (targetFile.createNewFile()) {
+            added.add(FileObj.makeObj( volumeId, targetFile, serverUrl));
         }
-        return null;
+        wrapper.add("added", added);
+
+        return getInputStream(wrapper);
     }
 }

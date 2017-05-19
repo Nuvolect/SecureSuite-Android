@@ -20,24 +20,28 @@
 package com.nuvolect.securesuite.webserver.connector;//
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.FileUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniFiles;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
 import org.apache.commons.io.FilenameUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -158,7 +162,7 @@ import static com.nuvolect.securesuite.util.LogUtil.logException;
 
  * </pre>
  */
-public class CmdUpload {
+public class CmdUpload extends ConnectorJsonCommand {
 
     private static boolean DEBUG = LogUtil.DEBUG;
     /**
@@ -168,11 +172,20 @@ public class CmdUpload {
      * Count chunks matching the base filename to know when all chunks
      * are uploaded for a specific file.
      */
-    private static JSONObject m_fileUploads;
-    private static String m_chunkDirPath;
+    private JsonObject fileUploads;
+    private String chunkDirPath;
+    private String dataDir;
 
-    public static synchronized void init(Context ctx) {
+    private static CmdUpload instance;
 
+    public static CmdUpload getInstance(Context context) {
+        if (instance == null) {
+            instance = new CmdUpload(context);
+        }
+        return instance;
+    }
+
+    private CmdUpload(Context context) {
         /**
          * An object keyed by filename holds an objects of file chunks.
          * fileUploads
@@ -183,227 +196,205 @@ public class CmdUpload {
          *         chunk_2_5
          *         chunk_4_5
          */
-        m_fileUploads = new JSONObject();
-
-        m_chunkDirPath = ctx.getFilesDir() + CConst.CHUNK;
-
-        clearChunkFiles( ctx);
+        fileUploads = new JsonObject();
+        chunkDirPath = context.getFilesDir() + CConst.CHUNK;
+        dataDir = context.getApplicationInfo().dataDir;
+        clearChunkFiles();
     }
 
-    private static void clearChunkFiles(Context ctx){
-
-        String chunkDirPath = ctx.getFilesDir() + CConst.CHUNK;
-        File chunkDir = new File( m_chunkDirPath);
+    private void clearChunkFiles() {
+        File chunkDir = new File(chunkDirPath);
         chunkDir.mkdirs();
         File[] files = chunkDir.listFiles();
 
-        for(File file : files){
-
+        for (File file: files) {
             file.delete();
         }
     }
 
-    public static synchronized ByteArrayInputStream go(Context ctx, Map<String, String> params) {
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        OmniFile targetDirectory = new OmniFile(params.get("target"));
 
-        String httpIpPort = params.get("url");
-        String target = params.get("target");
-        String error = "";
+        if (!targetDirectory.isDirectory()) {
+            JsonArray warning = new JsonArray();
+            JsonObject errorObj = new JsonObject();
+            errorObj.addProperty("error", "Unable to upload files");
+            warning.add(errorObj);
+            JsonObject wrapper = new JsonObject();
+            wrapper.add("warning", warning);
 
-        // Get file to target directory
-        OmniFile targetDirectory = new OmniFile(target);
-        if (!targetDirectory.isDirectory())
-            error = "Unable to upload files";
-
-        String destPath = targetDirectory.getPath();
-        String targetVolumeId = targetDirectory.getVolumeId();
-        JSONArray added = new JSONArray();
-        JSONObject wrapper = new JSONObject();
+            return getInputStream(wrapper);
+        }
 
         /**
          * Non-chucked files are uploaded in a single upload.
          * Chunked files are broken into parts.
          */
         if (!params.containsKey("chunk")) {
-
-            /**
-             * Parse the uploads array and copy from temporary storage each
-             * file to the destination folder.
-             */
-            try {
-                JSONArray postUploads = null;
-                postUploads = new JSONArray(params.get("post_uploads"));
-
-                for (int i = 0; i < postUploads.length(); i++) {
-
-                    JSONObject postUpload = postUploads.getJSONObject(i);
-                    String uploadFileName = postUpload.getString(CConst.FILE_NAME);
-                    String filePath = postUpload.getString(CConst.FILE_PATH);
-
-                    /**
-                     * When filePath is empty, a file with zero bytes was uploaded.
-                     */
-                    if( filePath.isEmpty()){
-
-                        filePath = ctx.getApplicationInfo().dataDir+"/.empty_file.txt";
-                        File emptyFile = new File( filePath);
-                        FileUtil.writeFile( emptyFile, "");
-                    }
-
-                    File srcFile = new File(filePath);
-                    OmniFile destFile = new OmniFile(targetVolumeId, destPath + "/" + uploadFileName);
-
-                    error = OmniFiles.copyFile(srcFile, destFile) ? "" : "File copy failure";
-                    if (!error.isEmpty())
-                        break;
-
-                    JSONObject fileObj = FileObj.makeObj(targetVolumeId, destFile, httpIpPort);
-                    added.put(fileObj);
-                    LogUtil.log(LogUtil.LogType.CMD_UPLOAD, "File upload success: " + destFile.getPath());
-                }
-
-                wrapper.put("added", added);
-
-                if (!error.isEmpty()) {
-
-                    JSONArray warning = new JSONArray();
-                    JSONObject errorObj = new JSONObject();
-                    errorObj.put("error", error);
-                    warning.put(errorObj);
-                    wrapper.put("warning", warning);
-                }
-
-                return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
-
-            } catch (JSONException | UnsupportedEncodingException e) {
-                logException(CmdUpload.class, e);
-            }
-
+            return singleUpload(params, targetDirectory);
         }
-/**
- * Collect chunk data until last chuck is received, then assemble the uploaded file.
- *
- * EXAMPLE, 60.3MB file:
- * "cmd" -> "upload"
- * "mtime[]" -> "1489684754"
- * "cid" -> "697767115"
- * "upload_path[]" -> "l0_L3Rlc3QvdG1w"
- * "range" -> "0,10485760,60323475"
- x "post_uploads" -> "[{"file_path":"\/data\/user\/0\/com.nuvolect.securesuite.debug\/cache\/NanoHTTPD-340250228","file_name":"blob"}]"
- * "dropWith" -> "0"
- * "chunk" -> "kepler_7_weeks.mp4.0_5.part"
- x "target" -> "l0_L3Rlc3QvdG1w"
- * "unique_id" -> "1489174097708"
- * "upload[]" -> "blob"
- * "queryParameterStrings" -> "cmd=ls&target=l0_L3Rlc3QvdG1w&intersect%5B%5D=kepler_7_weeks.mp4&_=1489697705506"
- * "uri" -> "/connector"
- */
 
-        String chunk = "";
-        int chunkNumber = 0;
-        int chunkMax = 0;
-        String[] parts = new String[0];
+        return chunksUpload(params, targetDirectory);
+    }
 
-        chunk = params.get("chunk");
-        parts = chunk.split(Pattern.quote("."));
-        String countOfMax = parts[parts.length - 2];
-        String[] twoNumbers = countOfMax.split("_");
-        chunkNumber = Integer.valueOf(twoNumbers[0]);
-        chunkMax = Integer.valueOf(twoNumbers[1]);
-
-        String targetFilename = parts[0] + "." + parts[1];
-        JSONObject fileChunks = new JSONObject(); // Chunks for the target file
-
+    /**
+     * Parse the uploads array and copy from temporary storage each
+     * file to the destination folder.
+     */
+    private InputStream singleUpload(@NonNull Map<String, String> params, OmniFile targetDirectory) {
+        String url = params.get("url");
+        String targetVolumeId = targetDirectory.getVolumeId();
+        String destPath = targetDirectory.getPath();
+        JsonObject wrapper = new JsonObject();
+        JsonArray added = new JsonArray();
         try {
-
-            /**
-             * Parse the uploads array and collect specific of the current chunk.
-             * Metadata for each chunk is saved in a JSONObject using the chunk filename as the key.
-             * Move each chunk from the app:/cache folder to app:/chunk.
-             * When all chunks are uploaded, the target is assembled and chunks deleted.
-             */
             JSONArray postUploads = new JSONArray(params.get("post_uploads"));
-            error = "";
 
             for (int i = 0; i < postUploads.length(); i++) {
-
                 JSONObject postUpload = postUploads.getJSONObject(i);
-                String cachePath = postUpload.getString(CConst.FILE_PATH); // app: /cache/xxx
-                File cacheFile = new File( cachePath);
-
-                String chunkPath = m_chunkDirPath + FilenameUtils.getName( cachePath);
-                File chunkFile = new File(chunkPath);
+                String uploadFileName = postUpload.getString(CConst.FILE_NAME);
+                String filePath = postUpload.getString(CConst.FILE_PATH);
 
                 /**
-                 * Move the chunk, otherwise Nanohttpd will delete it.
+                 * When filePath is empty, a file with zero bytes was uploaded.
                  */
-                cacheFile.renameTo( chunkFile);
-
-                JSONObject chunkObj = new JSONObject();
-                chunkObj.put("filepath", chunkPath);
-                chunkObj.put("range", params.get("range"));
-
-                if( m_fileUploads.has( targetFilename)){
-
-                    fileChunks = m_fileUploads.getJSONObject( targetFilename);
-                }else{
-
-                    fileChunks = new JSONObject();
+                if ( filePath.isEmpty()) {
+                    filePath = dataDir + File.separator + ".empty_file.txt";
+                    File emptyFile = new File( filePath);
+                    FileUtil.writeFile( emptyFile, "");
                 }
-                fileChunks.put(chunk, chunkObj);
-                m_fileUploads.put( targetFilename, fileChunks);
+
+                File srcFile = new File(filePath);
+                OmniFile destFile = new OmniFile(targetVolumeId, destPath + "/" + uploadFileName);
+
+                if (OmniFiles.copyFile(srcFile, destFile)) {
+                    JsonArray warning = new JsonArray();
+                    JsonObject errorObj = new JsonObject();
+                    errorObj.addProperty("error", "File copy failure");
+                    warning.add(errorObj);
+                    wrapper.add("warning", warning);
+                }
+
+                JsonObject fileObj = FileObj.makeObj(targetVolumeId, destFile, url);
+                added.add(fileObj);
+                LogUtil.log(LogUtil.LogType.CMD_UPLOAD, "File upload success: " + destFile.getPath());
             }
+
+            wrapper.add("added", added);
+
+            return getInputStream(wrapper);
+
+        } catch (JSONException e) {
+            logException(CmdUpload.class, e);
+        }
+        return null;
+    }
+
+
+    /**
+     * Collect chunk data until last chuck is received, then assemble the uploaded file.
+     *
+     * EXAMPLE, 60.3MB file:
+     * "cmd" -> "upload"
+     * "mtime[]" -> "1489684754"
+     * "cid" -> "697767115"
+     * "upload_path[]" -> "l0_L3Rlc3QvdG1w"
+     * "range" -> "0,10485760,60323475"
+     x "post_uploads" -> "[{"file_path":"\/data\/user\/0\/com.nuvolect.securesuite.debug\/cache\/NanoHTTPD-340250228","file_name":"blob"}]"
+     * "dropWith" -> "0"
+     * "chunk" -> "kepler_7_weeks.mp4.0_5.part"
+     x "target" -> "l0_L3Rlc3QvdG1w"
+     * "unique_id" -> "1489174097708"
+     * "upload[]" -> "blob"
+     * "queryParameterStrings" -> "cmd=ls&target=l0_L3Rlc3QvdG1w&intersect%5B%5D=kepler_7_weeks.mp4&_=1489697705506"
+     * "uri" -> "/connector"
+     */
+    private InputStream chunksUpload(@NonNull Map<String, String> params, OmniFile targetDirectory) {
+        String url = params.get("url");
+        String targetVolumeId = targetDirectory.getVolumeId();
+
+        JsonObject wrapper = new JsonObject();
+        String chunk = params.get("chunk");
+        String[] parts = chunk.split(Pattern.quote("."));
+        String[] twoNumbers = parts[parts.length - 2].split("_");
+        int chunkMax = Integer.valueOf(twoNumbers[1]);
+        String targetFilename = parts[0] + "." + parts[1];
+        JsonObject fileChunks = new JsonObject(); // Chunks for the target file
+
+        /**
+         * Parse the uploads array and collect specific of the current chunk.
+         * Metadata for each chunk is saved in a JSONObject using the chunk filename as the key.
+         * Move each chunk from the app:/cache folder to app:/chunk.
+         * When all chunks are uploaded, the target is assembled and chunks deleted.
+         */
+        JsonParser parser = new JsonParser();
+        JsonArray postUploads = parser.parse(params.get("post_uploads")).getAsJsonArray();
+
+        for (int i = 0; i < postUploads.size(); i++) {
+            JsonObject postUpload = postUploads.get(i).getAsJsonObject();
+            //app: /cache/xxx
+            String cachePath = postUpload.get(CConst.FILE_PATH).getAsString();
+            File cacheFile = new File(cachePath);
+
+            String chunkPath = chunkDirPath + FilenameUtils.getName(cachePath);
+            File chunkFile = new File(chunkPath);
 
             /**
-             * If not complete, return with intermediate results
+             * Move the chunk, otherwise Nanohttpd will delete it.
              */
-            if ( fileChunks.length() <= chunkMax) {
+            cacheFile.renameTo( chunkFile);
 
-                wrapper.put("added", new JSONArray());
-                if (!error.isEmpty()){
+            JsonObject chunkObj = new JsonObject();
+            chunkObj.addProperty("filepath", chunkPath);
+            chunkObj.addProperty("range", params.get("range"));
 
-                    wrapper.put("error", error);
-                    LogUtil.log(LogUtil.LogType.CMD_UPLOAD, "File upload error: " + error);
-                }
-                return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
+            if (fileUploads.has( targetFilename)) {
+                fileChunks = fileUploads.get(targetFilename).getAsJsonObject();
+            } else {
+                fileChunks = new JsonObject();
             }
-
-        } catch (JSONException | UnsupportedEncodingException e) {
-            error = "Error parsing file chunks";
+            fileChunks.add(chunk, chunkObj);
+            fileUploads.add( targetFilename, fileChunks);
         }
 
-        if (!error.isEmpty()){
+        /**
+         * If not complete, return with intermediate results
+         */
+        if (fileChunks.size() <= chunkMax) {
+            wrapper.add("added", new JsonArray());
 
-            return null;
+            return getInputStream(wrapper);
         }
 
         try {
-
             int totalSize = 0;
             /**
              * All chunks are uploaded.  Iterate over the chunk meta data and assemble the file.
              * Open the target file.
              */
-            OmniFile destFile = new OmniFile(targetVolumeId, targetDirectory.getPath() + "/" + targetFilename);
+            OmniFile destFile = new OmniFile(targetVolumeId, targetDirectory.getPath()
+                    + File.separator + targetFilename);
             OutputStream destOutputStream = destFile.getOutputStream();
+            String error = null;
 
             for (int i = 0; i <= chunkMax; i++) {
-
                 String chunkKey = targetFilename + "." + i + "_" + chunkMax + ".part";
 
                 if (!fileChunks.has(chunk)) {
-
                     error = "Missing chunk: " + chunkKey;
                     break;
                 }
 
-                JSONObject chunkObj = fileChunks.getJSONObject(chunkKey);
-                String chunkPath = chunkObj.getString("filepath");
+                JsonObject chunkObj = fileChunks.get(chunkKey).getAsJsonObject();
+                String chunkPath = chunkObj.get("filepath").getAsString();
                 File sourceFile = new File(chunkPath);
-                if( sourceFile.exists()) {
-                    LogUtil.log(LogUtil.LogType.CMD_UPLOAD, "File exists: " + sourceFile.getPath());
-                }
-                else{
-                    LogUtil.log(LogUtil.LogType.CMD_UPLOAD, "File NOT exists: "+sourceFile.getPath());
+                if (sourceFile.exists()) {
+                    LogUtil.log(LogUtil.LogType.CMD_UPLOAD, "File exists: " +
+                            sourceFile.getPath());
+                } else {
+                    LogUtil.log(LogUtil.LogType.CMD_UPLOAD, "File NOT exists: " +
+                            sourceFile.getPath());
                     break;
                 }
 
@@ -418,11 +409,11 @@ public class CmdUpload {
 
                 totalSize += bytesCopied;
 
-                LogUtil.log(LogUtil.LogType.CMD_UPLOAD, "Bytes copied, total: " + bytesCopied + ", " + totalSize);
+                LogUtil.log(LogUtil.LogType.CMD_UPLOAD, "Bytes copied, total: " +
+                        bytesCopied + ", " + totalSize);
 
                 // Delete temp file
                 if (!sourceFile.delete()) {
-
                     error = "Delete temp file failed : " + sourceFile.getPath();
                     LogUtil.log(LogUtil.LogType.CMD_UPLOAD, error);
                     break;
@@ -434,25 +425,25 @@ public class CmdUpload {
             destOutputStream.close();
 
             // Done with this file, clean up.
-            m_fileUploads.remove( targetFilename);
+            fileUploads.remove( targetFilename);
 
-            if( error.isEmpty()){
-
-                JSONObject fileObj = FileObj.makeObj(targetVolumeId, destFile, httpIpPort);
-                added.put(fileObj);
-                wrapper.put("added", added);
+            JsonArray added = new JsonArray();
+            if (error == null) {
+                JsonObject fileObj = FileObj.makeObj(targetVolumeId, destFile, url);
+                added.add(fileObj);
+                wrapper.add("added", added);
                 LogUtil.log(LogUtil.LogType.CMD_UPLOAD, "File upload success: " + destFile.getPath());
-
-            }else{
-
-                wrapper = Util.errorWrapper( error);
+            } else {
+                JsonArray warning = new JsonArray();
+                warning.add(error);
+                wrapper.add("warning", warning);
             }
 
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
+            return getInputStream(wrapper);
 
-        } catch ( IOException | JSONException e) {
+        } catch ( IOException e) {
             logException(CmdUpload.class, e);
-            clearChunkFiles( ctx);
+            clearChunkFiles();
         }
         return null;
     }

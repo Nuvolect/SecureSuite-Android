@@ -21,16 +21,22 @@ package com.nuvolect.securesuite.webserver.connector;
 
 import android.content.Context;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.main.CConst;
+import com.nuvolect.securesuite.util.InputStreamAsJsonTest;
+import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Omni;
 import com.nuvolect.securesuite.util.OmniFile;
+import com.nuvolect.securesuite.util.TestFilesHelper;
 import com.nuvolect.securesuite.webserver.WebUtil;
 
 import org.junit.Test;
 
-import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
@@ -51,92 +57,59 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class CmdRmFileTest {
 
-    private int filesCount = 0;
-
-    private void createDirRecursively(Context ctx, String rootPath, String name) throws Exception {
-        createDir(ctx, rootPath, name);
-
-        int level = rootPath.split("/").length;
-        if (level < 3) {
-            createDir(ctx, rootPath + name + "/", "subdir");
-        }
-    }
-
-    private OmniFile createDir(Context ctx, String rootPath, String name) throws Exception {
-        String volumeId = Omni.userVolumeId;
-
-        OmniFile targetDir = new OmniFile(volumeId, rootPath + name);
-        if (targetDir.exists()) {
-            targetDir.delete();
-        }
-
-        Map<String, String> params = new HashMap<>();
-        params.put(CConst.TARGET, targetDir.getParentFile().getHash());// root hash
-        params.put(CConst.NAME, name);
-        params.put(CConst.URL, WebUtil.getServerUrl( ctx ));
-
-        InputStream inputStream = CmdMkdir.go(params);
-        byte[] b = new byte[4096];
-        int bytes = inputStream.read( b );
-        assertThat( bytes > 0, is( true));
-
-        assertThat( targetDir.exists(), is( true ));
-
-        for (int i = 0; i < 100; i++) {
-            createFile(ctx, rootPath + name, "testFile" + i);
-        }
-
-        filesCount++;
-
-        return targetDir;
-    }
-
-    private void createFile(Context ctx, String rootPath, String name) throws Exception {
-        String volumeId = Omni.userVolumeId;
-
-        OmniFile targetFile = new OmniFile(volumeId, rootPath + "/" + name);
-        if (targetFile.exists()) {
-            targetFile.delete();
-        }
-
-        Map<String, String> params = new HashMap<>();
-        params.put(CConst.TARGET, targetFile.getParentFile().getHash());// root hash
-        params.put(CConst.NAME, name);
-        params.put(CConst.URL, WebUtil.getServerUrl( ctx ));
-
-        InputStream inputStream = CmdMkfile.go(params);
-        byte[] b = new byte[4096];
-        int bytes = inputStream.read( b );
-        assertThat( bytes > 0, is( true));
-
-        assertThat( targetFile.exists(), is( true ));
-
-        filesCount++;
-    }
-
     @Test
     public void go() throws Exception {
-
         Context ctx = getTargetContext();
-        SqlCipher.getInstance( ctx );
 
-        assertThat ( Omni.init( ctx), is( true ));
+        SqlCipher.getInstance(ctx);
 
-        OmniFile baseDir = createDir(ctx, "/", "CmdRmFileTest");
-        for (int i = 0; i < 10; i++) {
-            createDirRecursively(ctx, "/CmdRmFileTest/", "Subdir" + i);
-        }
+        assertThat(Omni.init(ctx), is(true));
 
-        long startTime = System.currentTimeMillis();
+        TestFilesHelper testFilesCreator = new TestFilesHelper(ctx, 3, 100);
+        testFilesCreator.createDirRecursively("/", "CmdRmFileTest");
+
+        OmniFile baseDir = testFilesCreator.getBaseDir();
+        ArrayList<String> fileHashes = testFilesCreator.getFileHashes();
+        int filesCount = fileHashes.size();
+
         Map<String, String> params = new HashMap<>();
         params.put("targets[]", baseDir.getHash());
         params.put("queryParameterStrings", "cmd=rm&targets%5B%5D=" + baseDir.getHash());
         params.put("cmd", "rm");
         params.put("uri", "/connector");
-        params.put(CConst.URL, WebUtil.getServerUrl( ctx ));
-        CmdRm.go(ctx, params);
+        params.put(CConst.URL, WebUtil.getServerUrl(ctx));
+
+        long startTime = System.currentTimeMillis();
+
+        JsonObject response = InputStreamAsJsonTest.convert(new CmdRm(ctx).go(params))
+                .getAsJsonObject();
+
+        /**
+         * Expect to get json object with json array "removed", containing all the deleted
+         * file hashes
+         */
+        assertThat(response.has("removed"), is(true));
+        assertThat(response.get("removed").isJsonArray(), is(true));
+        assertThat(response.get("removed").getAsJsonArray().size(), is(filesCount));
+        for (JsonElement element: response.get("removed").getAsJsonArray()) {
+            assertThat(element.isJsonPrimitive(), is(true));
+            String hash = element.getAsString();
+            assertThat(fileHashes.contains(hash), is(true));
+        }
+
         double timeTaken = (double)(System.currentTimeMillis() - startTime) / 1000;
 
-        System.out.println(String.format("time taken to delete %d files: %2$,.2fs. (%3$,.2f per second)", filesCount, timeTaken, filesCount / timeTaken));
+        LogUtil.log(String.format(Locale.getDefault(), "time taken to delete %d files: " +
+                        "%2$,.2fs. (%3$,.2f per second)",
+                filesCount, timeTaken, filesCount / timeTaken));
+
+        /**
+         * Run the command with invalid params (the directory has already been deleted)
+         * Expect to get empty json object
+         */
+        response = InputStreamAsJsonTest.convert(new CmdRm(ctx).go(params))
+                .getAsJsonObject();
+        assertThat(response.isJsonObject(), is(true));
+        assertThat(response.getAsJsonObject().entrySet().size(), is(0));
     }
 }

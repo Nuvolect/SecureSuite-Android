@@ -19,16 +19,16 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniHash;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -44,23 +44,24 @@ import java.util.Map;
  *
  * files: (Array of data) places directories info data Information about File/Directory
  */
-public class CmdInfo {
+public class CmdInfo extends ConnectorJsonCommand {
 
     private static boolean DEBUG = LogUtil.DEBUG;
 
-    public static ByteArrayInputStream go(Map<String, String> params) {
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        String url = params.get("url");
 
-        String httpIpPort = params.get("url");
-
-        String[] targets = new String[ 100 ];
-        if (params.containsKey("targets[]"))
-            targets[0] = params.get("targets[]");
+        String target = "";
+        if (params.containsKey("targets[]")) {
+            target = params.get("targets[]");
+        }
 
         /**
          * A non-empty targets is a hashed path starting with with the volume
          * followed by a encoded relative path.
          */
-        String segments[] = targets[0].split("_");
+        String segments[] = target.split("_");
         String volumeId = segments[0] + "_";
 
         String path = OmniHash.decode(segments[1]);
@@ -68,26 +69,19 @@ public class CmdInfo {
 
         LogUtil.log(LogUtil.LogType.CMD_INFO, "volumeId: " + volumeId + ", relativePath: " + path);
 
-        try {
-            JSONArray files = new JSONArray();
+        JsonArray files = new JsonArray();
 
-            files.put(FileObj.makeObj(volumeId, targetFile, httpIpPort));
-            LogUtil.log(LogUtil.LogType.INFO, "File " + targetFile.getName());
+        files.add(FileObj.makeObj(volumeId, targetFile, url));
 
-            JSONObject wrapper = new JSONObject();
-            wrapper.put("files", files);
+        LogUtil.log(LogUtil.LogType.INFO, "File " + targetFile.getName());
 
-            if( DEBUG)
-                LogUtil.log(LogUtil.LogType.CMD_PARENTS, wrapper.toString(2));
+        JsonObject wrapper = new JsonObject();
+        wrapper.add("files", files);
 
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        if (DEBUG) {
+            LogUtil.log(LogUtil.LogType.CMD_PARENTS, wrapper.toString());
         }
 
-        return null;
+        return getInputStream(wrapper);
     }
 }

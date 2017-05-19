@@ -19,15 +19,15 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -47,49 +47,25 @@ import java.util.Map;
  * Example:
  * cmd=put&target=l3_VEVTVC50eHQ&content=ZZZZZZZZ+and+more
  */
-public class CmdPut {
+public class CmdPut extends ConnectorJsonCommand {
 
-    public static ByteArrayInputStream go(Map<String, String> params) {
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        String target = params.containsKey("target") ? params.get("target") : "";
+        String url = params.get("url");
+        String content = params.containsKey("content") ? params.get("content") : "";
 
+        OmniFile targetFile = new OmniFile(target);
 
-        String target="";
-        if (params.containsKey("target"))
-            target = params.get("target");
-
-        String httpIpPort = params.get("url");
-
-        String content="";
-        if (params.containsKey("content"))
-            content = params.get("content");
-
-        OmniFile targetFile = new OmniFile( target );
-        boolean success = targetFile.writeFile( content);
-
-        JSONArray changed = new JSONArray();
-        JSONObject wrapper = new JSONObject();
-        String error = "";
-        try {
-            if( success)
-                changed.put( targetFile.getFileObject(httpIpPort));
-
-            wrapper.put("changed", changed);
-
-            LogUtil.log(LogUtil.LogType.CMD_PUT, targetFile.getName()+" updated: "+success);
-
-            return new ByteArrayInputStream(wrapper.toString(2).getBytes("UTF-8"));
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            error = "UnsupportedEncodingException error";
-        } catch (JSONException e) {
-            e.printStackTrace();
-            error = "JSONException error";
+        JsonArray changed = new JsonArray();
+        JsonObject wrapper = new JsonObject();
+        if (targetFile.writeFile(content)) {
+            changed.add(targetFile.getFileObject(url));
         }
-        try {
-            return new ByteArrayInputStream(error.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
+        LogUtil.log(LogUtil.LogType.CMD_PUT, targetFile.getName() +
+                " updated: " + (changed.size() > 0));
+        wrapper.add("changed", changed);
+
+        return getInputStream(wrapper);
     }
 }

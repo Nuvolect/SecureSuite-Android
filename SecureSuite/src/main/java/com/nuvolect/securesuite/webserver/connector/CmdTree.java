@@ -19,14 +19,20 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -43,49 +49,40 @@ import java.util.Map;
  *
  * tree : (Array) Folders list. Information about File/Directory
  */
-public class CmdTree {
+public class CmdTree extends ConnectorJsonCommand {
 
-    public static ByteArrayInputStream go(Map<String, String> params) {
-
-        String httpIpPort = params.get("url");
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        String url = params.get("url");
 
         String target = params.get("target");
         OmniFile targetFile = new OmniFile( target );
         String volumeId = targetFile.getVolumeId();
 
-        LogUtil.log(LogUtil.LogType.CMD_TREE, "volumeId: "+volumeId+", path: "+targetFile.getPath());
+        LogUtil.log(LogUtil.LogType.CMD_TREE, "volumeId: " + volumeId +
+                ", path: " + targetFile.getPath());
 
-        try {
-            JSONArray tree = new JSONArray();
-            tree.put(FileObj.makeObj(volumeId, targetFile, httpIpPort));
+        JsonArray tree = new JsonArray();
+        tree.add(FileObj.makeObj(volumeId, targetFile, url));
 
-            int i=0;
-            OmniFile[] files = targetFile.listFiles();
-            if( files == null)
-                files = new OmniFile[0];
+        int i = 0;
+        OmniFile[] files = targetFile.listFiles();
 
-
-                for( OmniFile file: files){
-
-                    if( file.isDirectory()){
-
-                        tree.put(FileObj.makeObj(volumeId, file, httpIpPort));
-                        LogUtil.log(LogUtil.LogType.CMD_TREE, "File "+ ++i +", "+file.getName());
-                    }
-                }
-
-            JSONObject wrapper = new JSONObject();
-            wrapper.put("tree", tree);
-            String result = wrapper.toString(2);
-
-            return new ByteArrayInputStream(result.getBytes("UTF-8"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        if (files == null) {
+            files = new OmniFile[0];
         }
 
-        return null;
+        for (OmniFile file: files) {
+            if (file.isDirectory()) {
+                tree.add(FileObj.makeObj(volumeId, file, url));
+                LogUtil.log(LogUtil.LogType.CMD_TREE, "File " + (++i) +
+                        ", " + file.getName());
+            }
+        }
+
+        JsonObject wrapper = new JsonObject();
+        wrapper.add("tree", tree);
+
+        return getInputStream(wrapper);
     }
 }

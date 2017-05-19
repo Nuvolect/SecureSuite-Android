@@ -19,63 +19,51 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Omni;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniUtil;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 //TODO create class description
 //
-public class CmdRename {
+public class CmdRename extends ConnectorJsonCommand {
 
-    public static InputStream go(Map<String, String> params) {
-
-        String target = "";// Target is a hashed volume and path
-        if( params.containsKey("target"))
-            target = params.get("target");
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        //Target is a hashed volume and path
+        String target = params.containsKey("target") ? params.get("target") : "" ;
+        String url = params.get("url");
 
         OmniFile targetFile = OmniUtil.getFileFromHash(target);
         LogUtil.log(LogUtil.LogType.CMD_RENAME, "Target " + targetFile.getPath());
 
-        String name = "";
-        if( params.containsKey("name"))
-            name = params.get("name");
+        String name = params.containsKey("name") ? params.get("name") : "";
 
         String volumeId = Omni.getVolumeId(target);
-        String newPath = targetFile.getParentFile().getPath()+"/"+name;
+        String newPath = targetFile.getParentFile().getPath() + File.separator + name;
         OmniFile newFile = new OmniFile(volumeId, newPath);
+        JsonArray added = new JsonArray();
+        JsonArray removed = new JsonArray();
+        JsonObject wrapper = new JsonObject();
 
-        boolean success = targetFile.renameFile( newFile );
-
-        JSONArray added = new JSONArray();
-        JSONArray removed = new JSONArray();
-        JSONObject wrapper = new JSONObject();
-
-        try {
-
-            if( success ){
-                added.put( newFile);
-                removed.put( targetFile);
-            }
-            wrapper.put("added", added);
-            wrapper.put("removed", removed);
-
-            return new ByteArrayInputStream(wrapper.toString(2).getBytes("UTF-8"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        /**
+         * Need to return actual file urls, not the objects
+         */
+        if (targetFile.renameFile(newFile)) {
+            added.add(newFile.getFileObject(url));
+            removed.add(targetFile.getFileObject(url));
         }
-        return null;
+        wrapper.add("added", added);
+        wrapper.add("removed", removed);
+        return getInputStream(wrapper);
     }
 }

@@ -19,18 +19,24 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.main.App;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Omni;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.webserver.WebUtil;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -108,12 +114,12 @@ import java.util.Map;
  *     }
  * </pre>
  */
-public class CmdOpen {
+public class CmdOpen extends ConnectorJsonCommand {
 
     static boolean DEBUG = true; //LogUtil.DEBUG;
 
-    public static ByteArrayInputStream go(Map<String, String> params) {
-
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
         long startTime = System.currentTimeMillis();
         /**
          init : (true|false|not set), optional parameter.
@@ -130,35 +136,30 @@ public class CmdOpen {
 
          tree : (true|false), optional. If true, response must contain subfolders trees of roots directories.
          */
-        boolean init = false;
-        if( params.containsKey("init"))
-            init = params.get("init").contentEquals("1");
+        boolean init = params.containsKey("init") && params.get("init").contentEquals("1");
 
         /**
          * target : (string) Hash of directory to open. Required if init == false or init is not set
          */
         OmniFile targetFile;
-        String target = "";
-        if( params.containsKey("target"))
-            target = params.get("target");
+        String target = params.containsKey("target") ? params.get("target") : "";
 
         /**
          * tree : (true|false), optional. If true, response must contain subfolders trees of roots directories.
          */
-        boolean tree = false;
-        if( params.containsKey("tree"))
-            tree = params.get("tree").contentEquals("1");
+        boolean tree = params.containsKey("tree") && params.get("tree").contentEquals("1");
 
-        String httpIpPort;
-        if( params.containsKey("url")){
-            httpIpPort = params.get("url");
-        }else{
-            httpIpPort = WebUtil.getServerUrl(App.getContext());
+        String url;
+        if (params.containsKey("url")) {
+            url = params.get("url");
+        } else {
+            url = WebUtil.getServerUrl(App.getContext());
         }
 
-        String volumeId = "";
-        JSONObject wrapper = new JSONObject();
-        JSONArray uiCmdMap = new JSONArray();
+        String volumeId;
+        JsonObject wrapper = new JsonObject();
+        JsonArray uiCmdMap = new JsonArray();
+
         /**
          * files : (Array) array of objects - files and directories in current directory.
          * If parameter tree == true, then added to the folder of the directory tree to a given depth.
@@ -167,227 +168,222 @@ public class CmdOpen {
          * Note you must include the top-level volume objects here as well
          * (i.e. cwd is repeated here, in addition to other volumes) Information * about File/Directory
          */
-        JSONArray fileObjects;
+        JsonArray fileObjects;
+        if (init) {
+            /**
+             * api : (Number) The version number of the protocol, must be >= 2.1,
+             * ATTENTION - return api ONLY for init request!
+             */
+            wrapper.addProperty("api", "2.1");
+        }
 
-        try {
-
-            if( init ){
-
-                /**
-                 * api : (Number) The version number of the protocol, must be >= 2.1,
-                 * ATTENTION - return api ONLY for init request!
-                 */
-                wrapper.put("api","2.1");
+        /**
+         * An empty target defaults to the root of the default volume otherwise
+         * a non-empty target uses a hashed file volume and path.
+         * The path starts with the volume appended with an encoded path.
+         */
+        if (target.isEmpty()) {
+            volumeId = Omni.getDefaultVolumeId();
+            targetFile = new OmniFile(volumeId, CConst.ROOT);
+            if (DEBUG) {
+                LogUtil.log(LogUtil.LogType.CMD_OPEN,"Target empty: " + targetFile.getPath());
             }
-
+        } else {
             /**
-             * An empty target defaults to the root of the default volume otherwise
-             * a non-empty target uses a hashed file volume and path.
-             * The path starts with the volume appended with an encoded path.
+             * A non-empty target is a hashed path starting with with the volume
+             * followed by a encoded relative path.
              */
-            if( target.isEmpty()){
-                volumeId = Omni.getDefaultVolumeId();
-                targetFile = new OmniFile(volumeId, CConst.ROOT);
-                if( DEBUG)
-                    LogUtil.log(LogUtil.LogType.CMD_OPEN,"Target empty: "+targetFile.getPath());
-            }else {
-                /**
-                 * A non-empty target is a hashed path starting with with the volume
-                 * followed by a encoded relative path.
-                 */
-                targetFile = new OmniFile( target );
-                volumeId = targetFile.getVolumeId();
-                if( DEBUG)
-                    LogUtil.log(LogUtil.LogType.CMD_OPEN,"Target: "+targetFile.getPath());
+            targetFile = new OmniFile(target);
+            volumeId = targetFile.getVolumeId();
+            if (DEBUG) {
+                LogUtil.log(LogUtil.LogType.CMD_OPEN,"Target: " + targetFile.getPath());
             }
-            /**
-             * Make sure the thumbnail directory exists
-             */
-            new OmniFile( volumeId, Omni.THUMBNAIL_FOLDER_PATH).mkdirs();
-            /**
-             * Add files that are in the target directory
-             *
-             * files : (Array) array of objects - files and directories in current directory.
-             * If parameter tree == true, then added to the folder of the directory tree to a given depth.
-             * The order of files is not important.
-             *
-             * Note you must include the top-level volume objects here as well (i.e. cwd is repeated here,
-             * in addition to other volumes) Information about File/Directory
-             */
-            fileObjects = targetFile.listFileObjects(httpIpPort);
+        }
 
-            /**
-             * The current working directory is always a directory and never a file.
-             * If the target is a file the cwd is the file's parent directory.
-             */
-            JSONObject cwd;
-            if( targetFile.isDirectory())
-                cwd = FileObj.makeObj( volumeId, targetFile, httpIpPort);
-            else
-                cwd = FileObj.makeObj( volumeId, targetFile.getParentFile(), httpIpPort);
+        /**
+         * Make sure the thumbnail directory exists
+         */
+        new OmniFile(volumeId, Omni.THUMBNAIL_FOLDER_PATH).mkdirs();
+        /**
+         * Add files that are in the target directory
+         *
+         * files : (Array) array of objects - files and directories in current directory.
+         * If parameter tree == true, then added to the folder of the directory tree to a given depth.
+         * The order of files is not important.
+         *
+         * Note you must include the top-level volume objects here as well (i.e. cwd is repeated here,
+         * in addition to other volumes) Information about File/Directory
+         */
+        fileObjects = targetFile.listFileObjects(url);
 
-            // cwd is like a volume file with the addition of the root element
-            cwd.put("root", cwd.get("hash"));
-            wrapper.put("cwd", cwd);
+        /**
+         * The current working directory is always a directory and never a file.
+         * If the target is a file the cwd is the file's parent directory.
+         */
+        JsonObject cwd;
+        if (targetFile.isDirectory()) {
+            cwd = FileObj.makeObj(volumeId, targetFile, url);
+        } else {
+            cwd = FileObj.makeObj(volumeId, targetFile.getParentFile(), url);
+        }
 
-            if( DEBUG)
-                LogUtil.log(LogUtil.LogType.CMD_OPEN,
+        //cwd is like a volume file with the addition of the root element
+        cwd.add("root", cwd.get("hash"));
+        wrapper.add("cwd", cwd);
+
+        if (DEBUG) {
+            LogUtil.log(LogUtil.LogType.CMD_OPEN,
                     "CWD  name: "+targetFile.getName()
-                    +", path: "+targetFile.getPath()
-                    +", hash: "+targetFile.getHash());
+                            +", path: "+targetFile.getPath()
+                            +", hash: "+targetFile.getHash());
+        }
 
-            /**
-             * Add additional file volumes
-             */
+        /**
+         * Add additional file volumes
+         */
+        if (tree) {
+            String volumeIds[] = Omni.getActiveVolumeIds();
 
-            if( tree){
+            for (String thisVolumeId : volumeIds) {
+                OmniFile thisRootFile = new OmniFile( thisVolumeId, CConst.ROOT);
+                JsonObject thisRootFileObject = thisRootFile.getFileObject(url);
+                // Only the root objects get this
+                thisRootFileObject.addProperty("csscls", "elfinder-navbar-root-local");
 
-                String volumeIds[] = Omni.getActiveVolumeIds();
+                // Add the root volume
+                fileObjects.add(thisRootFileObject);
 
-                for(String thisVolumeId : volumeIds){
+                /**
+                 * For each volume, get objects for each directory 1 level deep
+                 */
+                OmniFile[] files = thisRootFile.listFiles();
 
-                    OmniFile thisRootFile = new OmniFile( thisVolumeId, CConst.ROOT);
-                    JSONObject thisRootFileObject = thisRootFile.getFileObject(httpIpPort);
-                    // Only the root objects get this
-                    thisRootFileObject.put("csscls", "elfinder-navbar-root-local");
-
-                    // Add the root volume
-                    fileObjects.put( thisRootFileObject);
-
-                    /**
-                     * For each volume, get objects for each directory 1 level deep
-                     */
-                    OmniFile[] files = thisRootFile.listFiles();
-
-                    for( OmniFile file : files){
-
-                        if( file.isDirectory())
-                            fileObjects.put( file.getFileObject(httpIpPort));
+                for (OmniFile file: files) {
+                    if (file.isDirectory()) {
+                        fileObjects.add(file.getFileObject(url));
                     }
                 }
             }
-
-            wrapper.put("files", fileObjects);
-
-            /**
-             * Optional
-             */
-            wrapper.put("uplMaxSize", "100M");
-            wrapper.put("uplMaxFile", "100");
-
-            // Remove leading slash from the path
-            JSONObject options = new JSONObject();
-            String path = targetFile.getPath();
-            if( path.startsWith("/"))
-                path = path.substring(1);
-            options.put("path", path);
-
-            /**
-             * Using the optional 'url' creates odd results.
-             * From elFinder, Get info, link: produces a link combining the hashed path and a clear text filename
-             *
-             * Omitting the 'url' prodduces a link that is only a hashed url and this is desired,
-             * So don't use the 'url' option.
-             */
-//            options.put("url", httpIpPort +"/"+ targetFile.getHash()+"/");
-            /**
-             * Normally the client uses this URL as a base to fetch thumbnails,
-             * a clear text filename would be added to perform a GET.
-             * This works fine for single volume, however to support multiple volumes
-             * the volumeId is required. We just set the url to root and use the
-             * same volumeId+hash system to fetch thumbnails.
-             */
-            options.put("tmbUrl", httpIpPort + "/");
-
-            options.put("separator", CConst.SLASH);
-//            options.put("dispInlineRegex","^(?:(?:image|text)|application/x-shockwave-flash$)");
-            options.put("dispInlineRegex","^(?:image|text/plain$)");
-            JSONArray disabled = new JSONArray();
-            options.put("disabled",disabled);
-            options.put("copyOverwrite",1);
-            options.put("uploadOverwrite",1);
-            options.put("uploadMaxSize", 2000000000); // 2GB
-            options.put("jpgQuality",100);
-
-            /**
-             * Of the archivers, "create" and "extract" are JSONArray.
-             * "createext" is a JSONObject that also provides a file extension.
-             */
-            JSONObject archivers = new JSONObject();
-            JSONArray create = new JSONArray();
-//            create.put("application/x-tar");
-//            create.put("application/x-gzip");
-//            create.put("application/x-bzip2");
-//            create.put("application/x-xz");
-            create.put("application/zip");
-//            create.put("application/x-7z-compressed");
-
-            JSONObject createext = new JSONObject();
-//            createext.put("application/x-tar", "tar");
-//            createext.put("application/x-gzip", "tgz");
-//            createext.put("application/x-bzip2", "tbz");
-//            createext.put("application/x-xz", "xz");
-            createext.put("application/zip", "zip");
-//            createext.put("application/x-7z-compressed", "7z");
-
-            JSONArray extract = new JSONArray();
-//            extract.put("application/x-tar");
-//            extract.put("application/x-gzip");
-//            extract.put("application/x-bzip2");
-//            extract.put("application/x-xz");
-            extract.put("application/zip");
-//            extract.put("application/x-7z-compressed");
-
-            archivers.put("create",create);
-            archivers.put("createext",createext);
-            archivers.put("extract",extract);
-            options.put("archivers",archivers);
-
-
-            options.put("uiCmdMap",uiCmdMap);
-            options.put("syncChkAsTs",1);
-            options.put("syncMinMs", 30000);
-            wrapper.put("options", options);
-
-            if( init){
-
-                JSONArray netDriversArray = new JSONArray();
-//                netDriversArray.put("ftp");//TODO add netdrivers for FTP, others?
-                wrapper.put("netDrivers", netDriversArray);
-
-                JSONObject debug = new JSONObject();
-                debug.put("connector","java");
-                debug.put("time",(System.currentTimeMillis() - startTime)/1000.0);
-                debug.put("memory","3348Kb / 2507Kb / 128M");// FIXME user real memory figures
-
-                JSONArray volumes = new JSONArray();
-                JSONObject volume = new JSONObject();
-                volume.put("id",volumeId);
-                volume.put("driver","localfilesystem");
-                volume.put("mimeDetect","internal");
-                debug.put("volumes",volumes);
-
-                JSONArray mountErrors = new JSONArray();
-                debug.put("mountErrors", mountErrors);
-
-                wrapper.put("debug",debug);
-            }
-
-            if( DEBUG){
-
-                LogUtil.log(LogUtil.LogType.CMD_OPEN, wrapper.toString());
-                LogUtil.log(LogUtil.LogType.CMD_OPEN, "After wrapper");
-            }
-
-            String result = wrapper.toString();
-            return new ByteArrayInputStream(result.getBytes("UTF-8"));
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
-        return null;
+        wrapper.add("files", fileObjects);
+
+        /**
+         * Optional
+         */
+        wrapper.addProperty("uplMaxSize", "100M");
+        wrapper.addProperty("uplMaxFile", "100");
+
+        //Remove leading slash from the path
+        JsonObject options = new JsonObject();
+        String path = targetFile.getPath();
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        options.addProperty("path", path);
+
+        /**
+         * Using the optional 'url' creates odd results.
+         * From elFinder, Get info, link: produces a link combining the hashed path and a clear text filename
+         *
+         * Omitting the 'url' prodduces a link that is only a hashed url and this is desired,
+         * So don't use the 'url' option.
+         */
+        //options.addProperty("url", url + "/" + targetFile.getHash() + "/");
+        /**
+         * Normally the client uses this URL as a base to fetch thumbnails,
+         * a clear text filename would be added to perform a GET.
+         * This works fine for single volume, however to support multiple volumes
+         * the volumeId is required. We just set the url to root and use the
+         * same volumeId+hash system to fetch thumbnails.
+         */
+        options.addProperty("tmbUrl", url + "/");
+
+        options.addProperty("separator", CConst.SLASH);
+        //options.put("dispInlineRegex","^(?:(?:image|text)|application/x-shockwave-flash$)");
+        options.addProperty("dispInlineRegex","^(?:image|text/plain$)");
+        JsonArray disabled = new JsonArray();
+        options.add("disabled",disabled);
+        options.addProperty("copyOverwrite",1);
+        options.addProperty("uploadOverwrite",1);
+        options.addProperty("uploadMaxSize", 2000000000); // 2GB
+        options.addProperty("jpgQuality",100);
+
+        /**
+         * Of the archivers, "create" and "extract" are JSONArray.
+         * "createext" is a JSONObject that also provides a file extension.
+         */
+        JsonObject archivers = new JsonObject();
+        JsonArray create = new JsonArray();
+
+            /*create.add("application/x-tar");
+            create.add("application/x-gzip");
+            create.add("application/x-bzip2");
+            create.add("application/x-xz");*/
+
+        create.add("application/zip");
+        //create.add("application/x-7z-compressed");
+
+        JsonObject createext = new JsonObject();
+
+            /*createext.addProperty("application/x-tar", "tar");
+            createext.addProperty("application/x-gzip", "tgz");
+            createext.addProperty("application/x-bzip2", "tbz");
+            createext.addProperty("application/x-xz", "xz");*/
+
+        createext.addProperty("application/zip", "zip");
+        //createext.put("application/x-7z-compressed", "7z");
+
+        JsonArray extract = new JsonArray();
+
+            /*extract.add("application/x-tar");
+            extract.add("application/x-gzip");
+            extract.add("application/x-bzip2");
+            extract.add("application/x-xz");*/
+
+        extract.add("application/zip");
+        //extract.add("application/x-7z-compressed");
+
+        archivers.add("create", create);
+        archivers.add("createext", createext);
+        archivers.add("extract", extract);
+        options.add("archivers", archivers);
+
+
+        options.add("uiCmdMap",uiCmdMap);
+        options.addProperty("syncChkAsTs",1);
+        options.addProperty("syncMinMs", 30000);
+        wrapper.add("options", options);
+
+        if (init) {
+
+            JsonArray netDriversArray = new JsonArray();
+            //netDriversArray.put("ftp");//TODO add netdrivers for FTP, others?
+            wrapper.add("netDrivers", netDriversArray);
+
+            JsonObject debug = new JsonObject();
+            debug.addProperty("connector","java");
+            debug.addProperty("time",(System.currentTimeMillis() - startTime)/1000.0);
+            debug.addProperty("memory","3348Kb / 2507Kb / 128M");// FIXME user real memory figures
+
+            JsonArray volumes = new JsonArray();
+            JsonObject volume = new JsonObject();
+            volume.addProperty("id", volumeId);
+            volume.addProperty("driver", "localfilesystem");
+            volume.addProperty("mimeDetect", "internal");
+            debug.add("volumes", volumes);
+
+            JsonArray mountErrors = new JsonArray();
+            debug.add("mountErrors", mountErrors);
+
+            wrapper.add("debug",debug);
+        }
+
+        if (DEBUG) {
+            LogUtil.log(LogUtil.LogType.CMD_OPEN, wrapper.toString());
+            LogUtil.log(LogUtil.LogType.CMD_OPEN, "After wrapper");
+        }
+
+        return getInputStream(wrapper);
     }
 }

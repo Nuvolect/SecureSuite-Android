@@ -33,11 +33,13 @@ import com.nuvolect.securesuite.util.Passphrase;
 import com.nuvolect.securesuite.util.Util;
 import com.nuvolect.securesuite.webserver.admin.AdminCmd;
 import com.nuvolect.securesuite.webserver.connector.CmdUpload;
+import com.nuvolect.securesuite.webserver.connector.ServeCmd;
 
 import org.apache.commons.io.FilenameUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.nanohttpd.protocols.http.ClientHandler;
 import org.nanohttpd.protocols.http.IHTTPSession;
 import org.nanohttpd.protocols.http.NanoHTTPD;
 import org.nanohttpd.protocols.http.content.CookieHandler;
@@ -50,6 +52,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -121,6 +124,11 @@ public class CrypServer extends NanoHTTPD {
     private static IHTTPSession m_session = null;
     public static boolean mAuthenticated = false;
 
+    /**
+     * Keep the file hash from CmdZipdl so we can delete it when the request finishes
+     */
+    private String zipDownloadFileHash;
+
     private enum EXT {
         js, css, map, png, jpg, gif, ico, ttf, woff, woff2, invalid, htm, html,
         // RESTFull services
@@ -184,6 +192,25 @@ public class CrypServer extends NanoHTTPD {
         ListHtm.init(m_ctx);
     }
 
+    @Override
+    protected ClientHandler createClientHandler(final Socket finalAccept,
+                                                final InputStream inputStream) {
+        return new ClientHandler(this, inputStream, finalAccept) {
+            @Override
+            public void run() {
+                super.run();
+
+                if (zipDownloadFileHash != null) {
+                    OmniFile zipDownloadFile = new OmniFile(zipDownloadFileHash);
+                    zipDownloadFileHash = null;
+                    if (zipDownloadFile.exists()) {
+                        zipDownloadFile.delete();
+                    }
+                }
+            }
+        };
+    }
+
     /**
      * Check if the web server is enabled.  By default it is disabled.
      * Update the member variable used to ensure server requests are rejected
@@ -218,10 +245,12 @@ public class CrypServer extends NanoHTTPD {
     @Override
     public Response serve(IHTTPSession session) {
 
-        if( ! m_serverEnabled){
+        if( ! m_serverEnabled) {
 
             return null;
         }
+
+        Map<String, List<String>> paramsMultiple = session.getParameters();
 
         m_session = session;
 
@@ -266,7 +295,6 @@ public class CrypServer extends NanoHTTPD {
                 || get(uniqueId, CConst.AUTHENTICATED, "0").contentEquals( "1");
 
         Method method = session.getMethod();
-        Map<String, List<String>> paramsMultiple = session.getParameters();
         Map<String, String> params = new HashMap<String, String>();
 
 
@@ -463,51 +491,57 @@ public class CrypServer extends NanoHTTPD {
                 case calendar:
                 case connector:
                 case sync: {
-                        if ( passSecurityCheck( uri, headers )) {
+                    if ( passSecurityCheck( uri, headers )) {
 
-                            switch (ext) {
-                                case admin:
-                                    is = AdminCmd.process(m_ctx, params);
-                                    return new Response(Status.OK, MIME_JSON, is, -1);
-                                case calendar:{
-                                    String json = CalendarRest.process(m_ctx, params);
-                                    return new Response(Status.OK, MIME_JSON, json);
-                                }
-                                case connector:{
-
-                                    String mime = MIME_JSON;
-                                    if( params.get("cmd").contentEquals("upload")){
-                                        loadUploadParams( files, params);
-                                    }
-                                    else if( params.get("cmd").contentEquals("file")){
-
-                                        OmniFile omniFile = new OmniFile( params.get("target") );
-                                        mime = omniFile.getMime();
-                                    }
-                                    is = com.nuvolect.securesuite.webserver.connector.ServeCmd.process(m_ctx, params);
-                                    return new Response(Status.OK, mime, is, -1);
-                                }
-                                case sync:
-                                    String json = SyncRest.process(m_ctx, params);
-                                    return new Response(Status.OK, MIME_PLAINTEXT, json);
+                        switch (ext) {
+                            case admin:
+                                is = AdminCmd.process(m_ctx, params);
+                                return new Response(Status.OK, MIME_JSON, is, -1);
+                            case calendar:{
+                                String json = CalendarRest.process(m_ctx, params);
+                                return new Response(Status.OK, MIME_JSON, json);
                             }
-                        } else {
-                            /**
-                             * The security token can be temporarily disabled during companion pairing.
-                             */
-                            boolean hostVerifierDisabled = !WebUtil.NullHostNameVerifier.getInstance().m_hostVerifierEnabled;
-                            if (ext == EXT.sync && hostVerifierDisabled &&  params.containsKey(CConst.CMD)
-                                    && (params.get(CConst.CMD).contentEquals(SyncRest.CMD.register_companion_device.toString())
-                                    || params.get(CConst.CMD).contentEquals(SyncRest.CMD.companion_ip_test.toString()))) {
+                            case connector:{
 
-                                log(LogUtil.LogType.CRYP_SERVER, "sec_tok test skipped");
+                                String mime = MIME_JSON;
+                                if( params.get("cmd").contentEquals("upload")){
+                                    loadUploadParams( files, params);
+                                }
+                                else if( params.get("cmd").contentEquals("file")){
+
+                                    OmniFile omniFile = new OmniFile( params.get("target") );
+                                    mime = omniFile.getMime();
+                                }
+
+                                if (params.get("cmd").equals("zipdl") &&
+                                        params.containsKey("download") &&
+                                        params.get("download").equals("1")) {
+                                    zipDownloadFileHash = params.get("targets[]_2");
+                                }
+                                ServeCmd serveCmd = new ServeCmd(m_ctx, params);
+                                return new Response(Status.OK, mime, serveCmd.process(), -1);
+                            }
+                            case sync:
                                 String json = SyncRest.process(m_ctx, params);
                                 return new Response(Status.OK, MIME_PLAINTEXT, json);
-                            } else {
+                        }
+                    } else {
+                        /**
+                         * The security token can be temporarily disabled during companion pairing.
+                         */
+                        boolean hostVerifierDisabled = !WebUtil.NullHostNameVerifier.getInstance().m_hostVerifierEnabled;
+                        if (ext == EXT.sync && hostVerifierDisabled &&  params.containsKey(CConst.CMD)
+                                && (params.get(CConst.CMD).contentEquals(SyncRest.CMD.register_companion_device.toString())
+                                || params.get(CConst.CMD).contentEquals(SyncRest.CMD.companion_ip_test.toString()))) {
 
-                                log(LogUtil.LogType.CRYP_SERVER, "Authentication ERROR: "+params);
-                                return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Authentication error: " + uri);
-                            }
+                            log(LogUtil.LogType.CRYP_SERVER, "sec_tok test skipped");
+                            String json = SyncRest.process(m_ctx, params);
+                            return new Response(Status.OK, MIME_PLAINTEXT, json);
+                        } else {
+
+                            log(LogUtil.LogType.CRYP_SERVER, "Authentication ERROR: "+params);
+                            return new Response(Status.UNAUTHORIZED, MIME_PLAINTEXT, "Authentication error: " + uri);
+                        }
                     }
                 }
                 case invalid:

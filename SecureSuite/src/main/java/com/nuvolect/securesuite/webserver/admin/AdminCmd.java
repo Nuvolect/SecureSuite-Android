@@ -56,8 +56,7 @@ public class AdminCmd {
         }
         InputStream inputStream = null;
 
-        switch ( cmd){
-
+        switch (cmd) {
             case debug:
                 inputStream = CmdDebug.go(ctx, params);
                 break;
@@ -68,7 +67,7 @@ public class AdminCmd {
                 inputStream = CmdLogout.go(ctx, params);
                 break;
             case ping:
-                inputStream = CmdPing.go(params);
+                inputStream = new CmdPing().go(params);
                 break;
             case test:
                 inputStream = CmdTest.go(ctx, params);
