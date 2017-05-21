@@ -19,19 +19,20 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniUtil;
 import com.nuvolect.securesuite.util.OmniZip;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
 import org.apache.commons.io.FilenameUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
@@ -49,28 +50,28 @@ import java.util.Map;
  * added : (Array) Information about File/Directory of extracted items
  *
  */
-public class CmdExtract {
+public class CmdExtract extends ConnectorJsonCommand {
 
     private static boolean DEBUG = LogUtil.DEBUG;
 
-    public static InputStream go(Map<String, String> params) {
-
-        String httpIpPort = params.get("url");
-
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        String url = params.get("url");
         OmniFile zipFile = new OmniFile(params.get("target"));
         String volumeId = zipFile.getVolumeId();
         OmniFile destinationFolder = zipFile.getParentFile();
-        JSONArray added = new JSONArray();
+        JsonArray added = new JsonArray();
 
         /**
          * Get the parent directory and inside it create a new directory
          */
-        if( params.containsKey("makedir") &&
-                params.get("makedir").contentEquals("1")){
+        if (params.containsKey("makedir") &&
+                params.get("makedir").contentEquals("1")) {
 
-            String dirName = FilenameUtils.getBaseName( zipFile.getName());
-            if( dirName == null || dirName.isEmpty())
+            String dirName = FilenameUtils.getBaseName(zipFile.getName());
+            if (dirName == null || dirName.isEmpty()) {
                 dirName = "Archive";
+            }
 
             /**
              * Create a new directory.
@@ -82,29 +83,21 @@ public class CmdExtract {
             destinationFolder.mkdir();
 
             // Record addition of the new directory
-            added.put( destinationFolder.getFileObject(httpIpPort));
+            added.add(destinationFolder.getFileObject(url));
         }
 
-        try {
+        /**
+         * Unzip files and directories and record additions to 'added'
+         */
+        OmniZip.unzipFile(zipFile, destinationFolder, added, url);
 
-            /**
-             * Unzip files and directories and record additions to 'added'
-             */
-            OmniZip.unzipFile( zipFile, destinationFolder, added, httpIpPort);
+        JsonObject wrapper = new JsonObject();
+        wrapper.add("added", added);
 
-            JSONObject wrapper = new JSONObject();
-            wrapper.put("added",added);
-
-            if( DEBUG)
-                LogUtil.log(LogUtil.LogType.CMD_EXTRACT, "json result: "+wrapper.toString(2));
-
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        if (DEBUG) {
+            LogUtil.log(LogUtil.LogType.CMD_EXTRACT, "json result: " + wrapper.toString());
         }
-        return null;
+
+        return getInputStream(wrapper);
     }
 }

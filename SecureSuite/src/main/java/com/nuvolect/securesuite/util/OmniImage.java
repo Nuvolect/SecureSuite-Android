@@ -24,6 +24,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,7 +48,7 @@ public class OmniImage {
         OmniFile thumbnailFile = getThumbnailFile( file );
         if( thumbnailFile.exists()){
             if( DEBUG )
-               LogUtil.log(LogUtil.LogType.OMNI_IMAGE,"Thumb exists: "+thumbnailFile.getPath());
+                LogUtil.log(LogUtil.LogType.OMNI_IMAGE,"Thumb exists: "+thumbnailFile.getPath());
             return thumbnailFile;
         }
 
@@ -367,7 +369,7 @@ public class OmniImage {
         // Update the modified time and thumbnail
         file.setLastModified();
 
-       boolean del =  OmniImage.deleteThumbnail(file);
+        boolean del =  OmniImage.deleteThumbnail(file);
         LogUtil.log(LogUtil.LogType.OMNI_IMAGE, "delete thumbnail: "+del);
 
         return file;
@@ -387,14 +389,14 @@ public class OmniImage {
         return width+"x"+height;
     }
 
-    public static void addPsImageSize(OmniFile omniFile, JSONObject psObject) throws JSONException {
+    public static void addPsImageSize(OmniFile omniFile, JsonObject psObject) {
 
         options.inJustDecodeBounds = true;
 
         //Returns null, sizes are in the options variable
         BitmapFactory.decodeStream(omniFile.getFileInputStream(), null, options);
-        psObject.put("h", options.outHeight);
-        psObject.put("w", options.outWidth);
+        psObject.addProperty("h", options.outHeight);
+        psObject.addProperty("w", options.outWidth);
     }
 
     public static boolean isImage(OmniFile f) {

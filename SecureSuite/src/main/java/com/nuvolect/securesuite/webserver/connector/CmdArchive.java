@@ -20,17 +20,16 @@
 package com.nuvolect.securesuite.webserver.connector;//
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniZip;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -58,23 +57,19 @@ import java.util.Map;
    &type=application%2Fzip
    &_=1460671443521
  */
-public class CmdArchive {
+public class CmdArchive extends ConnectorJsonCommand {
 
-    public static InputStream go(Context ctx, Map<String, String> params) {
+    private Context context;
 
-        String httpIpPort = params.get("url");
-        /**
-         * Create a file for the target archive.
-         * Assume the file does not already exist.
-         * "target" is the folder containing the zip
-         * "name" is the name of the zip file
-         */
-        OmniFile parentOmniFile = new OmniFile(params.get("target"));
-        String volumeId = parentOmniFile.getVolumeId();
-        String zipPath = parentOmniFile.getPath()+"/"+params.get("name");
-        OmniFile zipOmniFile = new OmniFile( volumeId, zipPath);
+    public CmdArchive(@NonNull Context context) {
+        this.context = context;
+    }
 
-        ArrayList<String> targetsArrayList = new ArrayList<>();
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        String url = params.get("url");
+        String target = params.get("target");
+        String name = params.get("name");
 
         /**
          * Params only has the first element of the targets[] array.
@@ -83,43 +78,37 @@ public class CmdArchive {
          */
         String[] qps = params.get("queryParameterStrings").split("&");
 
-        for(String candidate : qps){
 
-            if( candidate.contains("targets")){
+        /**
+         * Create a file for the target archive.
+         * Assume the file does not already exist.
+         * "target" is the folder containing the zip
+         * "name" is the name of the zip file
+         */
+        OmniFile parentFile = new OmniFile(target);
+        String zipPath = parentFile.getPath() + File.separator + name;
+        OmniFile zipFile = new OmniFile(parentFile.getVolumeId(), zipPath);
+
+        ArrayList<OmniFile> files = new ArrayList<>();
+        for (String candidate: qps) {
+            if (candidate.contains("targets")) {
                 String[] parts = candidate.split("=");
-                targetsArrayList.add( parts[1]);
+                files.add(new OmniFile(parts[1]));
             }
         }
 
-        OmniFile[] targets = new OmniFile[ targetsArrayList.size()];
-        for( int i = 0; i < targetsArrayList.size(); i++){
+        JsonObject wrapper = new JsonObject();
+        if (!OmniZip.zipFiles(context, files, zipFile, 0)) {
+            JsonArray warning = new JsonArray();
+            warning.add("errPerm");
+            wrapper.add("warning", warning);
 
-            targets[i] = new OmniFile( targetsArrayList.get( i ));
+            return getInputStream(wrapper);
         }
+        JsonArray added = new JsonArray();
+        added.add(zipFile.getFileObject(url));
+        wrapper.add("added", added);
 
-        boolean success = OmniZip.zipFiles(ctx, targets, zipOmniFile, 0);
-
-        try {
-            JSONArray added = new JSONArray();
-            added.put( zipOmniFile.getFileObject(httpIpPort));
-
-            JSONObject wrapper = new JSONObject();
-            wrapper.put("added", added);
-
-            if( ! success){
-
-                JSONArray warning = new JSONArray();
-                warning.put("errPerm");
-                wrapper.put("warning", warning);
-            }
-
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return getInputStream(wrapper);
     }
 }

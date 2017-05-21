@@ -17,28 +17,20 @@
  *
  */
 
-package com.nuvolect.securesuite.webserver.admin;//
+package com.nuvolect.securesuite.webserver.connector.base;
 
 import android.support.annotation.NonNull;
-
-import com.google.gson.JsonObject;
-import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
 import java.io.InputStream;
 import java.util.Map;
 
 /**
- * ping
- *
- * Respond with { timestamp: long}
+ * Created by serg on 17.05.17.
  */
-public class CmdPing extends ConnectorJsonCommand {
 
-    @Override
-    public InputStream go(@NonNull Map<String, String> params) {
-        JsonObject object = new JsonObject();
-        object.addProperty("timestamp", System.currentTimeMillis());
-
-        return getInputStream(object);
-    }
+/**
+ * Any command must receive Map of params, Context for some related things and return InputStream
+ */
+public interface ConnectorCommand {
+    InputStream go(@NonNull Map<String, String> params);
 }

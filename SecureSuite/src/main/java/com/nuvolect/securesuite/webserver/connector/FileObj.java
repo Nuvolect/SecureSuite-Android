@@ -20,15 +20,14 @@
 package com.nuvolect.securesuite.webserver.connector;//
 
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniImage;
 import com.nuvolect.securesuite.webserver.MimeUtil;
 
 import org.apache.commons.io.FilenameUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Locale;
 
@@ -57,8 +56,7 @@ import java.util.Locale;
  */
 public class FileObj {
 
-    static JSONArray uiCmdMap = new JSONArray();
-    static private boolean DEBUG = false;
+    private static boolean DEBUG = false;
 
     /**
      * Create and return an elFinder file object.
@@ -66,8 +64,7 @@ public class FileObj {
      * @param httpIpPort
      * @return
      */
-    public static JSONObject makeObj(OmniFile file, String httpIpPort){
-
+    public static JsonObject makeObj(OmniFile file, String httpIpPort) {
         String volumeId = file.getVolumeId();
 
         return makeObj(volumeId, file, httpIpPort);
@@ -77,12 +74,11 @@ public class FileObj {
      * Create and return an elFinder file object.
      * @param volumeId
      * @param file
-     * @param httpIpPort
+     * @param url
      * @return
      */
-    public static JSONObject makeObj(String volumeId, OmniFile file, String httpIpPort){
-
-        JSONObject obj = new JSONObject();
+    public static JsonObject makeObj(String volumeId, OmniFile file, String url) {
+        JsonObject obj = new JsonObject();
 
         /**
          * Look for the root path.  If so there is no parent.
@@ -93,91 +89,81 @@ public class FileObj {
         /**
          * The root file path is everything up to the root slash "/".
          */
-        if( ! file.isRoot())
+        if (!file.isRoot()) {
             parentFile = file.getParentFile();
+        }
+        /**
+         * Start with the file parameters
+         */
+        obj.addProperty("hash", file.getHash());
+        obj.addProperty("isowner", false);//TODO confirm necessary, isowner is not documented
+        obj.addProperty("locked", file.canWrite() ?  0 : 1);
+        if (file.isDirectory()) {
+            obj.addProperty("volumeid", volumeId);
+        }
 
-        try {
-            /**
-             * Start with the file parameters
-             */
-            obj.put("hash", file.getHash());
-            obj.put("isowner", false);//TODO confirm necessary, isowner is not documented
-            obj.put("locked", file.canWrite()? 0 : 1);
-            if( file.isDirectory())
-                obj.put("volumeid", volumeId);
+        String name = file.getName();
+        obj.addProperty("name", name);
+        boolean isImage = MimeUtil.isImage(
+                FilenameUtils.getExtension(name).toLowerCase(Locale.US));
 
-            String name = file.getName();
-            obj.put("name", name);
-            boolean isImage = MimeUtil.isImage(
-                    FilenameUtils.getExtension( name ).toLowerCase(Locale.US));
+        String mime = file.getMime();
+        obj.addProperty("mime", mime);
 
-            String mime = file.getMime();
-            obj.put("mime", mime);
+        if (parentFile != null) {
+            obj.addProperty("phash", parentFile.getHash());
+        }
 
-            if( parentFile != null)
-                obj.put("phash", parentFile.getHash());
+        obj.addProperty("read", file.canRead()? 1: 0);
+        obj.addProperty("size", file.length());
+        long timeStamp = file.lastModified() / 1000;
+        if(DEBUG && timeStamp < 0) {
+            LogUtil.log(LogUtil.LogType.FILE_OBJ,
+                    "Negative timestamp: "+ timeStamp +" for file: "+file.getName());
+        }
+        obj.addProperty("ts", timeStamp);
+        obj.addProperty("write", file.canWrite() ? 1 : 0);
+        /**
+         * Normally the client uses this URL as a base to fetch thumbnails,
+         * a clear text filename would be added to perform a GET.
+         * This works fine for single volume, however to support multiple volumes
+         * the volumeId is required. We just set the url to root and use the
+         * same volumeId+hash system to fetch thumbnails.
+         */
+        obj.addProperty("tmbUrl", url + "/");
 
-            obj.put("read", file.canRead()? 1: 0);
-            obj.put("size", file.length());
-            long timeStamp = file.lastModified() / 1000;
-            if( DEBUG ){
-                if( timeStamp < 0)
-                    LogUtil.log(LogUtil.LogType.FILE_OBJ,
-                        "Negative timestamp: "+ timeStamp +" for file: "+file.getName());
-            }
-            obj.put("ts", timeStamp);
-            obj.put("write", file.canWrite()? 1: 0);
-            /**
-             * Normally the client uses this URL as a base to fetch thumbnails,
-             * a clear text filename would be added to perform a GET.
-             * This works fine for single volume, however to support multiple volumes
-             * the volumeId is required. We just set the url to root and use the
-             * same volumeId+hash system to fetch thumbnails.
-             */
-            obj.put("tmbUrl", httpIpPort + "/");
+        obj.add("disabled", new JsonArray());
 
-            JSONArray disabled = new JSONArray();
-            obj.put("disabled",disabled);
+        if (isImage) {
+            OmniFile thumbnailFile = OmniImage.makeThumbnail(file);
+            obj.addProperty("tmb", thumbnailFile.getHash());
 
-            if( isImage){
-                OmniFile thumbnailFile = OmniImage.makeThumbnail( file);
-                obj.put("tmb", thumbnailFile.getHash());
-
-                String dim = OmniImage.getDim( file);
-                obj.put("dim", dim);
-            }
-            /**
-             * Add parameters for "directory" and "volume"
-             */
-            if( file.isDirectory()){
-
-                // Check if directory has any subdirectories
-                boolean dirs = false;
-                OmniFile[] files = file.listFiles();
-                for( OmniFile afile : files){
-                    if( afile.isDirectory()){
-
-                        dirs = true;
-                        break;
-                    }
+            String dim = OmniImage.getDim( file);
+            obj.addProperty("dim", dim);
+        }
+        /**
+         * Add parameters for "directory" and "volume"
+         */
+        if (file.isDirectory()) {
+            // Check if directory has any subdirectories
+            boolean dirs = false;
+            OmniFile[] files = file.listFiles();
+            for (OmniFile afile: files) {
+                if (afile.isDirectory()) {
+                    dirs = true;
+                    break;
                 }
-                obj.put("dirs",dirs?"1":0);
-                obj.put("volumeid",volumeId);
-
-                if( file.isRoot()){
-
-                    // Volume has uiCmdMap, directory does not
-                    obj.put("uiCmdMap", uiCmdMap);
-                }else{
-
-                }
-//                TODO test - provide url for custom directory icon.
-//                 Directory has custom icon, volume does not
-//                obj.put("icon", httpIpPort+"/elFinder/img/diricon.png");
             }
+            obj.addProperty("dirs",dirs?"1":"0");
+            obj.addProperty("volumeid",volumeId);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+            if (file.isRoot()) {
+                // Volume has uiCmdMap, directory does not
+                obj.add("uiCmdMap", new JsonArray());
+            }
+            /*TODO test - provide url for custom directory icon.
+            Directory has custom icon, volume does not
+            obj.put("icon", httpIpPort+"/elFinder/img/diricon.png");*/
         }
 
         return obj;

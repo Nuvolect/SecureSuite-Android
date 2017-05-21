@@ -22,19 +22,11 @@ package com.nuvolect.securesuite.webserver.connector;
 import android.content.Context;
 
 import com.nuvolect.securesuite.data.SqlCipher;
-import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.Omni;
 import com.nuvolect.securesuite.util.OmniFile;
-import com.nuvolect.securesuite.webserver.WebUtil;
+import com.nuvolect.securesuite.util.TestFilesHelper;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static org.hamcrest.CoreMatchers.is;
@@ -49,46 +41,12 @@ public class CmdMkfileTest {
     public void go() throws Exception {
 
         Context ctx = getTargetContext();
-        SqlCipher.getInstance( ctx );
+        SqlCipher.getInstance(ctx);
 
-        assertThat ( Omni.init( ctx), is( true ));
+        assertThat (Omni.init(ctx), is(true));
 
-        String volumeId = Omni.userVolumeId;
-        String rootPath = "/";
-        String uniqueFilename = ".filenameNeverGuessZez";
-
-        OmniFile targetFile = new OmniFile( volumeId, rootPath + uniqueFilename);
-        if( targetFile.exists())
-            targetFile.delete();
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(CConst.TARGET, targetFile.getParentFile().getHash());// root hash
-        params.put(CConst.NAME, uniqueFilename);
-        params.put(CConst.URL, WebUtil.getServerUrl( ctx ));
-
-        InputStream inputStream = CmdMkfile.go( params);
-
-        try {
-
-            byte[] b = new byte[4096];
-            int bytes = inputStream.read( b );
-            assertThat( bytes > 0, is( true));
-
-            JSONObject jsonWrapper = new JSONObject( new String( b ));
-            JSONArray jsonArray = jsonWrapper.getJSONArray("added");
-            JSONObject jsonObject = jsonArray.getJSONObject( 0 );
-
-            boolean hasName = jsonObject.has("name");
-            assertThat( hasName, is( true ));
-            boolean nameMatch = jsonObject.getString("name").contentEquals(uniqueFilename);
-            assertThat(nameMatch, is( true ));
-
-            assertThat( targetFile.exists(), is( true ));
-            assertThat( targetFile.delete(), is( true ));
-            assertThat( targetFile.exists(), is( false ));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        OmniFile targetFile = TestFilesHelper.createFile(ctx, "/", ".filenameNeverGuessZez");
+        assertThat(targetFile.delete(), is(true));
+        assertThat( targetFile.exists(), is(false));
     }
 }

@@ -19,17 +19,17 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniUtil;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
@@ -46,47 +46,40 @@ import java.util.Map;
  * added : (Array) Array with a single object - a new directory. Information about File/Directory
  * hashes : (Object) Object of the hash value as a key to the given path in the dirs[]
  */
-public class CmdMkdir {
+public class CmdMkdir extends ConnectorJsonCommand {
 
-    public static InputStream go(Map<String, String> params) {
-
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
         String target = "";// Target is a hashed volume and path
-        if( params.containsKey("target"))
+        if (params.containsKey("target")) {
             target = params.get("target");
+        }
 
-        String httpIpPort = params.get("url");
+        String url = params.get("url");
 
         OmniFile targetFile = OmniUtil.getFileFromHash(target);
+
         LogUtil.log(LogUtil.LogType.CMD_MKDIR, "Target " + targetFile.getPath());
 
         String name = "";
-        if( params.containsKey("name"))
+        if (params.containsKey("name")) {
             name = params.get("name");
+        }
 
         String volumeId = targetFile.getVolumeId();
         String path = targetFile.getPath();
 
-        OmniFile file = new OmniFile(volumeId, path+"/"+name);
-        boolean success = file.mkdir();
+        OmniFile file = new OmniFile(volumeId, path + File.separator + name);
 
-        JSONArray added = new JSONArray();
-        JSONObject wrapper = new JSONObject();
+        JsonArray added = new JsonArray();
+        JsonObject wrapper = new JsonObject();
 
-        try {
-
-            if( success ) {
-                JSONObject newDir = FileObj.makeObj(volumeId, file, httpIpPort);
-                added.put(newDir);
-            }
-            wrapper.put("added", added);
-
-            return new ByteArrayInputStream(wrapper.toString(2).getBytes("UTF-8"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        if (file.mkdir()) {
+            JsonObject newDir = FileObj.makeObj(volumeId, file, url);
+            added.add(newDir);
         }
-        return null;
+        wrapper.add("added", added);
+
+        return getInputStream(wrapper);
     }
 }

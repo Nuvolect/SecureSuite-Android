@@ -19,15 +19,15 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -76,59 +76,56 @@ import java.util.Map;
  *           /dir2
  *         /root2
  */
-public class CmdParents {
+public class CmdParents extends ConnectorJsonCommand {
 
     private static boolean DEBUG = false; //LogUtil.DEBUG;
 
-    public static ByteArrayInputStream go(Map<String, String> params) {
-
-        String httpIpPort = params.get("url");
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        String url = params.get("url");
 
         String target = params.get("target");
-        OmniFile targetFile = new OmniFile( target );
+        OmniFile targetFile = new OmniFile(target);
         String volumeId = targetFile.getVolumeId();
 
-        if( DEBUG )
-            LogUtil.log(LogUtil.LogType.CMD_PARENTS, "volumeId: "+volumeId+", path: "+targetFile.getPath());
+        if (DEBUG) {
+            LogUtil.log(LogUtil.LogType.CMD_PARENTS, "volumeId: " +
+                    volumeId + ", path: " + targetFile.getPath());
+        }
+        JsonArray treeArray = new JsonArray();
 
-        try {
-            JSONArray treeArray = new JSONArray();
+        /**
+         * Iterate upward and capture all parent and parent sibling
+         * (aunts and uncles) directories
+         */
+        while (!targetFile.isRoot()) {
+            targetFile = targetFile.getParentFile();
+            if (targetFile == null) {
+                break;
+            }
+            if (DEBUG) {
+                LogUtil.log(LogUtil.LogType.CMD_PARENTS, "folder scan: " +
+                        targetFile.getPath());
+            }
 
-            /**
-             * Iterate upward and capture all parent and parent sibling (aunts and uncles) directories
-             */
-
-             while( targetFile != null && ! targetFile.isRoot()){
-
-                targetFile = targetFile.getParentFile();
-                if( targetFile == null)
-                    break;
-                if( DEBUG )
-                    LogUtil.log(LogUtil.LogType.CMD_PARENTS, "folder scan:  "+targetFile.getPath());
-
-                for( OmniFile file: targetFile.listFiles()){
-
-                    if( file.isDirectory()){
-
-                        treeArray.put(FileObj.makeObj(volumeId, file, httpIpPort));
-                        if( DEBUG )
-                            LogUtil.log(LogUtil.LogType.CMD_PARENTS, "tree put: "+file.getPath());
+            for (OmniFile file: targetFile.listFiles()) {
+                if (file.isDirectory()) {
+                    treeArray.add(FileObj.makeObj(volumeId, file, url));
+                    if (DEBUG) {
+                        LogUtil.log(LogUtil.LogType.CMD_PARENTS, "tree put: " +
+                                file.getPath());
                     }
                 }
             }
-
-            JSONObject tree = new JSONObject();
-            tree.put("tree", treeArray);
-
-            if( DEBUG)
-                LogUtil.log(LogUtil.LogType.CMD_PARENTS, tree.toString(2));
-
-            return new ByteArrayInputStream(tree.toString().getBytes("UTF-8"));
-
-        } catch (JSONException | UnsupportedEncodingException e) {
-            LogUtil.logException(LogUtil.LogType.CMD_PARENTS, e);
         }
 
-        return null;
+        JsonObject tree = new JsonObject();
+        tree.add("tree", treeArray);
+
+        if (DEBUG) {
+            LogUtil.log(LogUtil.LogType.CMD_PARENTS, tree.toString());
+        }
+
+        return getInputStream(tree);
     }
 }

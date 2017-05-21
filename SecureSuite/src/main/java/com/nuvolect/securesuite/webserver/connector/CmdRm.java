@@ -21,18 +21,16 @@ package com.nuvolect.securesuite.webserver.connector;//
 
 import android.content.Context;
 import android.media.MediaScannerConnection;
+import android.support.annotation.NonNull;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniImage;
 import com.nuvolect.securesuite.util.OmniUtil;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -61,7 +59,7 @@ import java.util.Map;
  *
  *</pre>
  */
-public class CmdRm {
+public class CmdRm extends ConnectorJsonCommand {
 
     private Context context;
     private ArrayList<OmniFile> removedFiles = new ArrayList<>();
@@ -70,19 +68,8 @@ public class CmdRm {
         this.context = context;
     }
 
-    public static InputStream go(Context ctx, Map<String, String> params) {
-        CmdRm instance = new CmdRm(ctx);
-        return instance.deleteFiles(params);
-    }
-
-    public static boolean delete(Context context, OmniFile omniFile) {
-        CmdRm instance = new CmdRm(context);
-        return instance.delete(omniFile, true);
-    }
-
-    private InputStream deleteFiles(Map<String, String> params) {
-        ArrayList<String> targets = new ArrayList<>();
-
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
         /**
          * Params only has the first element of the targets[] array.
          * This is fine if there is only one target but an issue for multiple file operations.
@@ -90,57 +77,52 @@ public class CmdRm {
          */
         String[] qps = params.get("queryParameterStrings").split("&");
 
-        for(String candidate : qps){
-
-            if( candidate.contains("targets")){
-                String[] parts = candidate.split("=");
-                targets.add( parts[1]);
-            }
-        }
-
         boolean success = true;
+        for (String candidate : qps) {
+            if (!candidate.contains("targets")) {
+                continue;
+            }
+            String[] parts = candidate.split("=");
 
-        for (String target : targets) {
-
-            OmniFile targetFile = OmniUtil.getFileFromHash(target);
+            OmniFile targetFile = OmniUtil.getFileFromHash(parts[1]);
 
             /**
              * Recursively delete files and folders adding each delete to an arraylist.
              */
             success = delete(targetFile, false);
-            if(! success)
+            if (!success) {
                 break;
+            }
         }
 
-        JSONObject wrapper = new JSONObject();
+        JsonObject wrapper = new JsonObject();
 
-        try {
-            if (success) {
-                JSONArray removed = new JSONArray();
-                ArrayList<String> pathsToScan = new ArrayList<>();
-                for (OmniFile file: removedFiles) {
-                    removed.put(file.getHash());
-                    if (needScanFile(file)) {
-                        pathsToScan.add(file.getAbsolutePath());
-                    }
+        if (success) {
+            JsonArray removed = new JsonArray();
+            ArrayList<String> pathsToScan = new ArrayList<>();
+            for (OmniFile file: removedFiles) {
+                removed.add(file.getHash());
+                if (needScanFile(file)) {
+                    pathsToScan.add(file.getAbsolutePath());
                 }
-                if (pathsToScan.size() > 0) {
-                    MediaScannerConnection.scanFile(
-                            context,
-                            pathsToScan.toArray(new String[pathsToScan.size()]),
-                            null,
-                            null);
-                }
-
-                wrapper.put("removed", removed);
+            }
+            if (pathsToScan.size() > 0) {
+                MediaScannerConnection.scanFile(
+                        context,
+                        pathsToScan.toArray(new String[pathsToScan.size()]),
+                        null,
+                        null);
             }
 
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
-
-        } catch (JSONException | UnsupportedEncodingException e) {
-            e.printStackTrace();
+            wrapper.add("removed", removed);
         }
-        return null;
+
+        return getInputStream(wrapper);
+    }
+
+    public static boolean delete(Context context, OmniFile omniFile) {
+        CmdRm instance = new CmdRm(context);
+        return instance.delete(omniFile, true);
     }
 
     /**

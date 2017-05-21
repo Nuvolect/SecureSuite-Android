@@ -19,16 +19,16 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniImage;
 import com.nuvolect.securesuite.util.OmniUtil;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -66,84 +66,50 @@ import java.util.Map;
  * _=1459286749082,
  * }
  */
-public class CmdResize {
+public class CmdResize extends ConnectorJsonCommand {
 
-    public static InputStream go(Map<String, String> params) {
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        String url = params.get("url");
+        // Target is a hashed volume and path
+        String target = params.containsKey("target") ? params.get("target") : null;
 
-        String httpIpPort = params.get("url");
-        String target = "";// Target is a hashed volume and path
-
-        if( params.containsKey("target"))
-            target = params.get("target");
         OmniFile targetFile = OmniUtil.getFileFromHash(target);
         LogUtil.log(LogUtil.LogType.CMD_RESIZE, "Target " + targetFile.getPath());
 
-        String mode = "";
-        if( params.containsKey("mode"))
-            mode = params.get("mode");
-
-        int x = 0;
-        if( params.containsKey("x"))
-            x = Integer.valueOf( params.get("x"));
-
-        int y = 0;
-        if( params.containsKey("y"))
-            y = Integer.valueOf( params.get("y"));
-
-        float degree = 0.0F;
-        if( params.containsKey("degree"))
-            degree = Float.valueOf( params.get("degree"));
-
-        int height = 0;
-        if( params.containsKey("height"))
-            height = Integer.valueOf( params.get("height"));
-
-        int width = 0;
-        if( params.containsKey("width"))
-            width = Integer.valueOf( params.get("width"));
-
-        int quality = 100;
-        if( params.containsKey("quality"))
-            quality = Integer.valueOf( params.get("quality"));
+        String mode = params.containsKey("mode") ? params.get("mode") : "";
+        int x = params.containsKey("x") ? Integer.valueOf( params.get("x")) : 0;
+        int y = params.containsKey("y") ? Integer.valueOf(params.get("y")) : 0;
+        float degree = params.containsKey("degree") ? Float.valueOf(params.get("degree")) : 0.0f;
+        int height = params.containsKey("height") ? Integer.valueOf(params.get("height")) : 0;
+        int width = params.containsKey("width") ? Integer.valueOf(params.get("width")) : 0;
+        int quality = params.containsKey("quality") ? Integer.valueOf(params.get("quality")) : 100;
+        JsonArray changed = new JsonArray();
 
         try {
-            JSONArray changed = new JSONArray();
-
-            if( mode.contains("rotate")){
-
-                OmniFile image = OmniImage.rotateImage( targetFile, degree, quality);
+            OmniFile image = null;
+            if (mode.contains("rotate")) {
+                image = OmniImage.rotateImage(targetFile, degree, quality);
                 LogUtil.log(LogUtil.LogType.CMD_RESIZE,
-                        "rotation complete degree: "+degree+", quality: "+quality );
-
-                changed.put( image.getFileObject( httpIpPort ));
-            }else
-            if( mode.contains("crop")){
-
-                OmniFile image = OmniImage.cropImage( targetFile, x, y, width, height, quality);
+                        "rotation complete degree: " + degree + ", quality: " + quality );
+            } else if (mode.contains("crop")) {
+                image = OmniImage.cropImage(targetFile, x, y, width, height, quality);
                 LogUtil.log(LogUtil.LogType.CMD_RESIZE,
-                        "crop complete: "+x+", "+y+", "+width+", "+height );
-
-                changed.put( image.getFileObject( httpIpPort ));
-            } else
-            if( mode.contains("resize")){
-
-                OmniFile image = OmniImage.resizeImage( targetFile, width, height, quality);
+                        "crop complete: " + x + ", " + y + ", " + width + ", "+height );
+            } else if (mode.contains("resize")) {
+                image = OmniImage.resizeImage(targetFile, width, height, quality);
                 LogUtil.log(LogUtil.LogType.CMD_RESIZE,
-                        "resize complete: "+x+", "+y+", "+width+", "+height );
-
-                changed.put( image.getFileObject( httpIpPort ));
+                        "resize complete: " + x + ", " + y + ", " + width + ", " + height);
             }
-            JSONObject wrapper = new JSONObject();
-            wrapper.put("changed", changed);
-
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
-
+            if (image != null) {
+                changed.add(image.getFileObject(url));
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+            LogUtil.log(LogUtil.LogType.CMD_RESIZE, "resize failed: " + e.getMessage());
         }
+        JsonObject wrapper = new JsonObject();
+        wrapper.add("changed", changed);
 
-        return null;
+        return getInputStream(wrapper);
     }
 }

@@ -20,9 +20,11 @@
 package com.nuvolect.securesuite.webserver.connector;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.webserver.admin.CmdPing;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorCommand;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -33,14 +35,17 @@ import java.util.Map;
  */
 public class ServeCmd {
 
-    private static boolean DEBUG = LogUtil.DEBUG;
+    private static final String CMD_PARAM = "cmd";
+
+    private Context context;
+    private Map<String, String> params;
 
     private enum CMD {
         // elFinder commands in documentation order
         open,      // open directory and initializes data when no directory is defined (first iteration)
         file,      // output file contents to the browser (download/preview)
         tree,      // return child directories
-        parents,   // return parent directories and its subdirectory childs
+        parents,   // return parent directories and its subdirectory children
         ls,        // list files in directory
         tmb,       // create thumbnails for selected files
         size,      // return size for selected files or total folder(s) size
@@ -65,98 +70,81 @@ public class ServeCmd {
         zipdl,     // zip and download files
     }
 
-    public static InputStream process(Context ctx, Map<String, String> params) {
+    public ServeCmd(@NonNull Context context, @NonNull Map<String, String> params) {
+        this.context = context;
+        this.params = params;
+    }
 
-        String error = "";
+    public InputStream process() {
+        String commandStr = params.get(CMD_PARAM);
+        CMD cmd;
 
-        CMD cmd = null;
         try {
-            cmd = CMD.valueOf(params.get("cmd"));
+            cmd = CMD.valueOf(commandStr);
         } catch (IllegalArgumentException e) {
-            error = "Error, invalid command: "+params.get("cmd");
+            LogUtil.log(LogUtil.LogType.CONNECTOR_SERVE_CMD, "Illegal command: " + commandStr);
+            return null;
         }
-        InputStream inputStream = null;
 
-        switch ( cmd){
+        ConnectorCommand command = getConnectorCommand(cmd);
+        /**
+         * If command wasn't implemented
+         */
+        if (command == null) {
+            return null;
+        }
 
+        return command.go(params);
+    }
+
+    private ConnectorCommand getConnectorCommand(CMD cmd) {
+        switch (cmd) {
             case archive:
-                inputStream = CmdArchive.go(ctx, params);
-                break;
-            case dim:
-                break;
+                return new CmdArchive(context);
             case duplicate:
-                inputStream = CmdDuplicate.go(params);
-                break;
+                return new CmdDuplicate();
             case extract:
-                inputStream = CmdExtract.go(params);
-                break;
+                return new CmdExtract();
             case file:
-                inputStream = CmdFile.go(params);
-                break;
+                return new CmdFile();
             case get:
-                inputStream = CmdGet.go(params);
-                break;
+                return new CmdGet();
             case info:
-                inputStream = CmdInfo.go(params);
-                break;
+                return new CmdInfo();
             case ls:
-                inputStream = CmdLs.go(params);
-                break;
+                return new CmdLs();
             case mkdir:
-                inputStream = CmdMkdir.go(params);
-                break;
+                return new CmdMkdir();
             case mkfile:
-                inputStream = CmdMkfile.go(params);
-                break;
-            case netmount:
-                break;
+                return new CmdMkfile();
             case open:
-                inputStream = CmdOpen.go(params);
-                break;
+                return new CmdOpen();
             case parents:
-                inputStream = CmdParents.go(params);
-                break;
+                return new CmdParents();
             case paste:
-                inputStream = CmdPaste.go(params);
-                break;
+                return new CmdPaste();
             case ping:
-                inputStream = CmdPing.go(params);
-                break;
+                return new CmdPing();
             case put:
-                inputStream = CmdPut.go(params);
-                break;
+                return new CmdPut();
             case size:
-                inputStream = CmdSize.go(params);
-                break;
-            case tmb:
-                break;
+                return new CmdSize();
             case tree:
-                inputStream = CmdTree.go(params);
-                break;
+                return new CmdTree();
             case rename:
-                inputStream = CmdRename.go(params);
-                break;
+                return new CmdRename();
             case resize:
-                inputStream = CmdResize.go(params);
-                break;
+                return new CmdResize();
             case rm:
-                inputStream = CmdRm.go(ctx, params);
-                break;
+                return new CmdRm(context);
             case search:
-                inputStream = CmdSearch.go(params);
-                break;
+                return new CmdSearch();
             case upload:
-                inputStream = CmdUpload.go(ctx, params);
-                break;
-            case url:
-                break;
+                return CmdUpload.getInstance(context);
             case zipdl:
-                inputStream = CmdZipdl.go(ctx, params);
-                break;
+                return new CmdZipdl(context);
             default:
-                LogUtil.log(LogUtil.LogType.CONNECTOR_SERVE_CMD, "Invalid connector command: "+error);
+                return null;
         }
-
-        return inputStream;
     }
 }

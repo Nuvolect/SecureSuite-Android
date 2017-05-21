@@ -17,16 +17,22 @@
  *
  */
 
-package com.nuvolect.securesuite.webserver.connector;//
+package com.nuvolect.securesuite.webserver.connector;
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -61,11 +67,11 @@ import java.util.Map;
  }
  * </pre>
  */
-public class CmdLs {
+public class CmdLs extends ConnectorJsonCommand {
 
-    public static ByteArrayInputStream go(Map<String, String> params) {
-
-        String httpIpPort = params.get("url");
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        String url = params.get("url");
         String target = params.get("target");
         ArrayList<String> intersects = new ArrayList<>();
 
@@ -76,77 +82,61 @@ public class CmdLs {
          */
         String[] qps = params.get("queryParameterStrings").split("&");
 
-        for(String candidate : qps){
-
-            if( candidate.contains("intersect")){
+        for(String candidate : qps) {
+            if (candidate.contains("intersect")) {
                 String[] parts = candidate.split("=");
-                intersects.add( parts[1]);
+                intersects.add(parts[1]);
             }
         }
 
         OmniFile targetFile = new OmniFile( target);
         String volumeId = targetFile.getVolumeId();
         OmniFile[] files = targetFile.listFiles();
-        JSONArray list = new JSONArray();
-        String hit;
 
-        try {
-
-            if( intersects.isEmpty()){
-                /**
-                 * Build a list of all files in the target folder.
-                 */
-                for(OmniFile file : files){
-
-                    list.put( FileObj.makeObj(volumeId, file, httpIpPort));
-                }
-            }else{
-
-                /**
-                 * Build a list of intersect files that exist in the target folder.
-                 *
-                 * Iterate over all the files looking for intersects.
-                 * When an intersect is found, remove it from consideration.
-                 */
-                for(OmniFile file : files){
-
-                    hit = "";
-
-                    for(String intersect : intersects){
-
-                        if( file.getName().contentEquals( intersect )){
-
-                            list.put( FileObj.makeObj(volumeId, file, httpIpPort));
-                            LogUtil.log(LogUtil.LogType.CMD_LS, "File hit: " + intersect);
-                            hit = intersect;
-                        }
-                    }
-                    // Remove it from the list to speed the search
-                    if( ! hit.isEmpty())
-                        intersects.remove(hit);
-                    // Quit early when all intersects are satisfied
-                    if( intersects.isEmpty())
-                        break;
-                }
-
+        JsonArray list = new JsonArray();
+        JsonObject wrapper = new JsonObject();
+        if (intersects.isEmpty()) {
+            /**
+             * Build a list of all files in the target folder.
+             */
+            for (OmniFile file: files) {
+                list.add(FileObj.makeObj(volumeId, file, url));
             }
-            if( LogUtil.DEBUG){
+            wrapper.add("list", list);
+            return getInputStream(wrapper);
 
-                LogUtil.log(LogUtil.LogType.CMD_LS, "list: " + list.toString(2));
-                if( !intersects.isEmpty() && list.length() == 0)
-                    LogUtil.log(LogUtil.LogType.CMD_LS, "File MISS: " + intersects.get(0));
+        }
+        /**
+         * Build a list of intersect files that exist in the target folder.
+         *
+         * Iterate over all the files looking for intersects.
+         * When an intersect is found, remove it from consideration.
+         */
+        for (OmniFile file: files) {
+            int intersectIndex = intersects.indexOf(file.getName());
+            if (intersectIndex > -1) {
+                String intersect = intersects.get(intersectIndex);
+                list.add(FileObj.makeObj(volumeId, file, url));
+                LogUtil.log(LogUtil.LogType.CMD_LS, "File hit: " + intersect);
             }
-            JSONObject wrapper = new JSONObject();
-            wrapper.put("list", list);
-
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
-
-        } catch (JSONException e) {
-            LogUtil.logException( CmdLs.class, e);
-        } catch (UnsupportedEncodingException e) {
-            LogUtil.logException( CmdLs.class, e);
+            // Remove it from the list to speed the search
+            if (intersectIndex > -1) {
+                intersects.remove(intersectIndex);
+                // Quit early when all intersects are satisfied
+                if (intersects.isEmpty()) {
+                    break;
+                }
+            }
         }
 
-        return null;
+        if (LogUtil.DEBUG) {
+            LogUtil.log(LogUtil.LogType.CMD_LS, "list: " + list.toString());
+            if (!intersects.isEmpty() && list.size() == 0) {
+                LogUtil.log(LogUtil.LogType.CMD_LS, "File MISS: " + intersects.get(0));
+            }
+        }
+        wrapper.add("list", list);
+
+        return getInputStream(wrapper);
     }
 }

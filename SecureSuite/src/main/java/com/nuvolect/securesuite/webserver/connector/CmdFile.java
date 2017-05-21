@@ -19,9 +19,12 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniUtil;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorCommand;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,43 +45,43 @@ import java.util.Map;
  * May need to set Content-Disposition, Content-Location and Content-Transfer-Encoding.
  * Content-Disposition should have 'inline' for preview action or 'attachments' for download.
  */
-public class CmdFile {
-    public static InputStream go(Map<String, String> params) {
+public class CmdFile implements ConnectorCommand {
 
-        String target = "";// Target is a hashed volume and path
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        String target;// Target is a hashed volume and path
+        InputStream is = null;
+
         if (params.containsKey("target")) {
             target = params.get("target");
 
             OmniFile targetFile = OmniUtil.getFileFromHash(target);
             LogUtil.log(LogUtil.LogType.CMD_FILE, "Target " + targetFile.getPath());
 
-            InputStream is = null;
             try {
-
-                if (targetFile.isCryp())
+                if (targetFile.isCryp()) {
                     is = new info.guardianproject.iocipher.FileInputStream(
                             targetFile.getCryFile());
-                else
-                    is = new java.io.FileInputStream(
-                            targetFile.getStdFile());
+                }
+                else {
+                    is = new java.io.FileInputStream(targetFile.getStdFile());
+                }
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
             return is;
         }
-        if (params.containsKey("path")) {
 
-            String path  = params.get("path");
-            InputStream is = null;
+        if (params.containsKey("path")) {
+            String path = params.get("path");
             try {
                 File file = new File( path );
                 is = new java.io.FileInputStream( file );
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            return is;
         }
-        return null;
+        return is;
     }
 }

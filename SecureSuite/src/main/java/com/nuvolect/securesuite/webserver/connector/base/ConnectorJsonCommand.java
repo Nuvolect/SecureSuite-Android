@@ -17,28 +17,22 @@
  *
  */
 
-package com.nuvolect.securesuite.webserver.connector;
+package com.nuvolect.securesuite.webserver.connector.base;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonElement;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 /**
- * Utility methods to support finder commands
+ * Created by serg on 17.05.17.
  */
-class Util {
 
-    public static JSONObject errorWrapper(String error) {
+public abstract class ConnectorJsonCommand implements ConnectorCommand {
 
-        JSONArray warning = new JSONArray();
-        warning.put( error );
-        JSONObject wrapper = new JSONObject();
-        try {
-            wrapper.put( "warning", warning);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return wrapper;
+    protected InputStream getInputStream(@NonNull JsonElement jsonElement) {
+        return new ByteArrayInputStream(jsonElement.toString().getBytes());
     }
 }

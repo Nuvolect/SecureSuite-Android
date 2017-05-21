@@ -19,19 +19,18 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Omni;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniUtil;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 
@@ -49,13 +48,13 @@ import java.util.Map;
  *
  * GET '/servlet/connector' {_=1459337627027, q=rose, cmd=search, target=l0_L3N0b3JhZ2UvZW11bGF0ZWQvMA}
  */
-public class CmdSearch {
+public class CmdSearch extends ConnectorJsonCommand {
 
     public static boolean DEBUG = LogUtil.DEBUG;
 
-    public static InputStream go(Map<String, String> params) {
-
-        String httpIpPort = params.get("url");
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        String url = params.get("url");
         /**
          * //TODO offer elFinder documentation
          * Target is one of:
@@ -63,47 +62,39 @@ public class CmdSearch {
          * 2. Empty: meaning to search all volumes
          */
         String target = params.get("target");
-
         String SearchStr = params.get("q");
 
-        if( DEBUG )
-            LogUtil.log(LogUtil.LogType.CMD_SEARCH, "Target: " + target+", search: "+SearchStr);
+        if (DEBUG) {
+            LogUtil.log(LogUtil.LogType.CMD_SEARCH, "Target: " +
+                    target + ", search: " + SearchStr);
+        }
 
         /**
          * Files contains a list of search results
          */
-        JSONArray files = new JSONArray();
+        JsonArray files = new JsonArray();
 
-        if( target.isEmpty()){
-
-            for(String volumeId : Omni.getActiveVolumeIds()) {
-
+        if (target.isEmpty()) {
+            for (String volumeId: Omni.getActiveVolumeIds()) {
                 // Search all volumes
                 OmniFile targetFile = new OmniFile( volumeId, CConst.ROOT);
-                searchTarget( SearchStr, targetFile, files, httpIpPort);
+                searchTarget( SearchStr, targetFile, files, url);
             }
             
-        }else {
-            
+        } else {
             // Search a directory
             OmniFile targetFile = OmniUtil.getFileFromHash(target);
-            searchTarget( SearchStr, targetFile, files, httpIpPort);
-        }
-        try {
-            JSONObject wrapper = new JSONObject();
-            wrapper.put("files", files);
-            
-            if( DEBUG )
-                LogUtil.log(LogUtil.LogType.CMD_SEARCH, wrapper.toString(2));
-                
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            searchTarget( SearchStr, targetFile, files, url);
         }
 
-        return null;
+        JsonObject wrapper = new JsonObject();
+        wrapper.add("files", files);
+
+        if (DEBUG) {
+            LogUtil.log(LogUtil.LogType.CMD_SEARCH, wrapper.toString());
+        }
+
+        return getInputStream(wrapper);
     }
 
     /**
@@ -113,29 +104,30 @@ public class CmdSearch {
      * @param SearchStr
      * @param targetFile
      * @param files
-     * @param httpIpPort
+     * @param url
      */
-    private static void searchTarget(
-            String SearchStr, OmniFile targetFile, JSONArray files, String httpIpPort) {
+    private void searchTarget(
+            String SearchStr, OmniFile targetFile, JsonArray files, String url) {
 
-        if( DEBUG )
-            LogUtil.log(LogUtil.LogType.CMD_SEARCH, "Search target: "+targetFile.getPath());
+        if (DEBUG) {
+            LogUtil.log(LogUtil.LogType.CMD_SEARCH, "Search target: "
+                    + targetFile.getPath());
+        }
 
-        if( targetFile.getName().contains( SearchStr))
-            files.put( targetFile.getFileObject( httpIpPort));
+        if (targetFile.getName().contains( SearchStr)) {
+            files.add(targetFile.getFileObject(url));
+        }
         
-        for( OmniFile file : targetFile.listFiles()){
-            
-            if( file.isDirectory()){
-
+        for (OmniFile file: targetFile.listFiles()) {
+            if (file.isDirectory()) {
                 /**
                  * Recurse on each directory
                  */
-                searchTarget( SearchStr, file, files, httpIpPort);
-            }else{
-
-                if( file.getName().contains( SearchStr))
-                    files.put( file.getFileObject( httpIpPort));
+                searchTarget( SearchStr, file, files, url);
+            } else {
+                if (file.getName().contains(SearchStr)) {
+                    files.add(file.getFileObject(url));
+                }
             }
         }
     }

@@ -23,21 +23,21 @@ package com.nuvolect.securesuite.webserver.connector;//
 //
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.OmniUtil;
 import com.nuvolect.securesuite.util.OmniZip;
 import com.nuvolect.securesuite.webserver.MimeUtil;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
 import org.apache.commons.io.FilenameUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -136,37 +136,23 @@ import java.util.Map;
  ~~~~
  */
 
-public class CmdZipdl {
+public class CmdZipdl extends ConnectorJsonCommand {
 
-    private static boolean download_ready = false;
-    private static OmniFile zipOmniFile = null;
-    public static String zipdlFilename = "download_multiple.zip";// temp name, always overwritten
+    private Context context;
 
-    public static InputStream go(Context ctx, Map<String, String> params) {
+    public CmdZipdl(Context context) {
+        this.context = context;
+    }
 
-        if( download_ready ){
-
-            InputStream is = null;
-            try {
-
-                if( zipOmniFile.isCryp())
-                    is = new info.guardianproject.iocipher.FileInputStream(
-                            zipOmniFile.getCryFile());
-                else
-                    is = new java.io.FileInputStream(
-                            zipOmniFile.getStdFile());
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            LogUtil.log(LogUtil.LogType.CMD_ZIPDL, "second request");
-            download_ready = false; // setup for next use
-            return is;
+    @Override
+    public InputStream go(@NonNull Map<String, String> params) {
+        if (params.containsKey("download") && params.get("download").equals("1")) {
+            return downloadFile(params);
         }
+        return archiveFiles(params);
+    }
 
-//        String httpIpPort = params.get("url");
-        ArrayList<String> targetsArrayList = new ArrayList<>();
-
+    private InputStream archiveFiles(@NonNull Map<String, String> params) {
         /**
          * Params only has the first element of the targets[] array.
          * This is fine if there is only one target but an issue for multiple file operations.
@@ -174,59 +160,63 @@ public class CmdZipdl {
          */
         String[] qps = params.get("queryParameterStrings").split("&");
 
+        ArrayList<OmniFile> files = new ArrayList<>();
         for (String candidate : qps) {
-
             if (candidate.contains("targets")) {
                 String[] parts = candidate.split("=");
-                targetsArrayList.add(parts[1]);
-            }
-        }
 
-        OmniFile[] targets = new OmniFile[ targetsArrayList.size()];
-        for( int i = 0; i < targetsArrayList.size(); i++){
+                String target = parts[1];
+                files.add(new OmniFile(target));
 
-            targets[i] = new OmniFile( targetsArrayList.get( i ));
-
-            if(LogUtil.DEBUG){
-                LogUtil.log(LogUtil.LogType.CMD_ZIPDL, targetsArrayList.get( i ));
+                if (LogUtil.DEBUG) {
+                    LogUtil.log(LogUtil.LogType.CMD_ZIPDL, target);
+                }
             }
         }
 
         /**
          * Create a file for the target archive in the directory of the first target file.
          */
-        String volumeId = targets[0].getVolumeId();
-        zipdlFilename = "Archive.zip";
-        String zipPath = targets[0].getParentFile().getPath()+"/"+ zipdlFilename;
-        zipOmniFile = new OmniFile( volumeId, zipPath);
-        zipOmniFile = OmniUtil.makeUniqueName(zipOmniFile);// Add '~' to make unique
+        String volumeId = files.get(0).getVolumeId();
+        String zipFileName = "Archive.zip";
+        String zipPath = files.get(0).getParentFile().getPath() + File.separator + zipFileName;
+        OmniFile zipFile = OmniUtil.makeUniqueName(new OmniFile(volumeId, zipPath));
 
-        zipdlFilename = FilenameUtils.getName(zipOmniFile.getPath()); // Filename may have changed
+        // Filename may have changed
+        zipFileName = FilenameUtils.getName(zipFile.getPath());
 
-        JSONObject zipdl = new JSONObject();
-        JSONObject wrapper = new JSONObject();
+        JsonObject zipdl = new JsonObject();
+        JsonObject wrapper = new JsonObject();
+
+        zipdl.addProperty("file", zipFile.getHash());
+        zipdl.addProperty("name", zipFileName);
+        zipdl.addProperty("mime", MimeUtil.MIME_ZIP);
+        wrapper.add("zipdl", zipdl);
+
+        if (!OmniZip.zipFiles(context, files, zipFile, 0)) {
+            return null;
+        }
+
+        LogUtil.log(LogUtil.LogType.CMD_ZIPDL, "first request");
+        LogUtil.log(LogUtil.LogType.CMD_ZIPDL, wrapper.toString());
+
+        return getInputStream(wrapper);
+    }
+
+    private InputStream downloadFile(@NonNull Map<String, String> params) {
+        OmniFile file = new OmniFile(params.get("targets[]_2"));
+        LogUtil.log(LogUtil.LogType.CMD_ZIPDL, "second request");
         try {
-            zipdl.put("file", zipOmniFile.getHash());
-            zipdl.put("name", zipdlFilename);
-            zipdl.put("mime", MimeUtil.MIME_ZIP);
-            wrapper.put("zipdl", zipdl);
+            if (file.isCryp()) {
+                return new info.guardianproject.iocipher.FileInputStream(file.getCryFile());
+            }
+            else {
+                return new java.io.FileInputStream(file.getStdFile());
+            }
 
-            boolean success = OmniZip.zipFiles(ctx, targets, zipOmniFile, 0);
-            if( ! success)
-                return null;
-
-            download_ready = true;
-            LogUtil.log(LogUtil.LogType.CMD_ZIPDL, "first request");
-            LogUtil.log(LogUtil.LogType.CMD_ZIPDL, wrapper.toString(4));
-
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         return null;
-
     }
 }

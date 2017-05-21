@@ -19,14 +19,14 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.nuvolect.securesuite.webserver.connector.base.ConnectorCommand;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
@@ -51,40 +51,24 @@ import java.util.Map;
  * GET '/servlet/connector'
  * { * cmd=get, conv=1, target=c0_L2NyeXAgZm9sZGVyL3RzIHRlc3QudHh0, * _=1459292135837, }
  */
-public class CmdGet {
+public class CmdGet implements ConnectorCommand {
 
-    public static ByteArrayInputStream go(Map<String, String> params) {
+    @Override
+    public ByteArrayInputStream go(@NonNull  Map<String, String> params) {
+        String target = "";
 
-        String target="";
-        if (params.containsKey("target"))
+        if (params.containsKey("target")) {
             target = params.get("target");
+        }
 
-        OmniFile targetFile = new OmniFile( target );
+        OmniFile targetFile = new OmniFile(target);
 
         String content = targetFile.readFile();
-        String error = "";
+        JsonObject wrapper = new JsonObject();
+        wrapper.addProperty("content", content);
 
-        JSONObject wrapper = new JSONObject();
-        try {
+        LogUtil.log(LogUtil.LogType.CMD_GET, targetFile.getName() + " fetched");
 
-            wrapper.put("content", content);
-
-            LogUtil.log(LogUtil.LogType.CMD_GET, targetFile.getName()+" fetched");
-
-            return new ByteArrayInputStream(wrapper.toString().getBytes("UTF-8"));
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            error = "UnsupportedEncodingException error";
-        } catch (JSONException e) {
-            e.printStackTrace();
-            error = "JSONException error";
-        }
-        try {
-            return new ByteArrayInputStream(error.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return new ByteArrayInputStream(wrapper.toString().getBytes());
     }
 }
