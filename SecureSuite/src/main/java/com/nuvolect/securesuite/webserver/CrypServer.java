@@ -69,6 +69,7 @@ import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_JSON;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_PNG;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_TTF;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_WOFF;
+import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_ZIP;
 import static java.util.Locale.US;
 
 /**<pre>
@@ -508,18 +509,24 @@ public class CrypServer extends NanoHTTPD {
                                     loadUploadParams( files, params);
                                 }
                                 else if( params.get("cmd").contentEquals("file")){
-
                                     OmniFile omniFile = new OmniFile( params.get("target") );
                                     mime = omniFile.getMime();
                                 }
 
-                                if (params.get("cmd").equals("zipdl") &&
-                                        params.containsKey("download") &&
-                                        params.get("download").equals("1")) {
-                                    zipDownloadFileHash = params.get("targets[]_2");
-                                }
                                 ServeCmd serveCmd = new ServeCmd(m_ctx, params);
-                                return new Response(Status.OK, mime, serveCmd.process(), -1);
+
+                                boolean zipDl = params.get("cmd").equals("zipdl") &&
+                                        params.containsKey("download") &&
+                                        params.get("download").equals("1");
+                                if (zipDl) {
+                                    zipDownloadFileHash = params.get("targets[]_2");
+                                    mime = MIME_ZIP;
+                                }
+                                Response response = new Response(Status.OK, mime, serveCmd.process(), -1);
+                                if (zipDl) {
+                                    response.addHeader("Content-disposition", "attachment;filename=\"Archive.zip\"");
+                                }
+                                return response;
                             }
                             case sync:
                                 String json = SyncRest.process(m_ctx, params);
