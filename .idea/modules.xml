@@ -5,7 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/SecureSuite/SecureSuite.iml" filepath="$PROJECT_DIR$/SecureSuite/SecureSuite.iml" />
       <module fileurl="file://$PROJECT_DIR$/SecureSuite.iml" filepath="$PROJECT_DIR$/SecureSuite.iml" />
       <module fileurl="file://$PROJECT_DIR$/SecureSuite/SecureSuite-SecureSuite.iml" filepath="$PROJECT_DIR$/SecureSuite/SecureSuite-SecureSuite.iml" />
-      <module fileurl="file://$PROJECT_DIR$/test2.iml" filepath="$PROJECT_DIR$/test2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test.iml" filepath="$PROJECT_DIR$/test.iml" />
     </modules>
   </component>
 </project>

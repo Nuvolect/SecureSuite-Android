@@ -3,30 +3,30 @@
 
     <item
         is-multidex="false"
-        jar="/home/svechnikov/Development/Android/Projects/test2/SecureSuite/libs/commons-codec.jar"
+        jar="/home/serg/Development/Android/projects/test/SecureSuite/libs/commons-codec.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.2"
         sha1="fd32786786e2adb664d5ecc965da47629dca14ba">
-        <dex dex="/home/svechnikov/Development/Android/Projects/test2/SecureSuite/build/intermediates/pre-dexed/debug/commons-codec_e75eeb789717603f5d0fc6134bb290857f671b02.jar" />
+        <dex dex="/home/serg/Development/Android/projects/test/SecureSuite/build/intermediates/pre-dexed/debug/commons-codec_a26654562d98dc6a47dac1ee32d6cae93dc94c3a.jar" />
     </item>
     <item
         is-multidex="false"
-        jar="/home/svechnikov/Development/Android/Projects/test2/SecureSuite/libs/ez-vcard-0.9.6.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.2"
-        sha1="5ced3b1423487d3fdf7270715522326a941a9f1a">
-        <dex dex="/home/svechnikov/Development/Android/Projects/test2/SecureSuite/build/intermediates/pre-dexed/debug/ez-vcard-0.9.6_a5c02b23188274f23e30b974eb1589e09ea04ffe.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/home/svechnikov/Development/Android/Projects/test2/SecureSuite/libs/jackson-core-2.3.3.jar"
+        jar="/home/serg/Development/Android/projects/test/SecureSuite/libs/jackson-core-2.3.3.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.2"
         sha1="7d8c5d79cc99995e21e6f955857312d8409f02a1">
-        <dex dex="/home/svechnikov/Development/Android/Projects/test2/SecureSuite/build/intermediates/pre-dexed/debug/jackson-core-2.3.3_93b7c9d6573b3f2be494e8c601985eeac172e94b.jar" />
+        <dex dex="/home/serg/Development/Android/projects/test/SecureSuite/build/intermediates/pre-dexed/debug/jackson-core-2.3.3_5f9460e69f236fa239e267641b951850c6857335.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/serg/Development/Android/projects/test/SecureSuite/libs/ez-vcard-0.9.6.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="5ced3b1423487d3fdf7270715522326a941a9f1a">
+        <dex dex="/home/serg/Development/Android/projects/test/SecureSuite/build/intermediates/pre-dexed/debug/ez-vcard-0.9.6_f45f43be2b7855fff6a9698a068dbbfd3334c385.jar" />
     </item>
 
 </items>

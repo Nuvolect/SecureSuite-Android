@@ -268,7 +268,7 @@ public class CmdUpload extends ConnectorJsonCommand {
                 File srcFile = new File(filePath);
                 OmniFile destFile = new OmniFile(targetVolumeId, destPath + "/" + uploadFileName);
 
-                if (OmniFiles.copyFile(srcFile, destFile)) {
+                if (!OmniFiles.copyFile(srcFile, destFile)) {
                     JsonArray warning = new JsonArray();
                     JsonObject errorObj = new JsonObject();
                     errorObj.addProperty("error", "File copy failure");
