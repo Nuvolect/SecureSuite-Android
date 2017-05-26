@@ -26,10 +26,6 @@ import com.google.gson.JsonElement;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-/**
- * Created by serg on 17.05.17.
- */
-
 public abstract class ConnectorJsonCommand implements ConnectorCommand {
 
     protected InputStream getInputStream(@NonNull JsonElement jsonElement) {

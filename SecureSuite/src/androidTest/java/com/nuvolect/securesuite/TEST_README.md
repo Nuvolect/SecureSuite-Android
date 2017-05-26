@@ -3,6 +3,8 @@
 Note that MyGroupsTest.java deletes and recreates the database.
 All contacts in the database will be lost.
 
+Add new tests to UnitTestSuite.
+
 
 ## Backlog
 

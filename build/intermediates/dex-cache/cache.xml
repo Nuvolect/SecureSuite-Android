@@ -2,31 +2,247 @@
 <items version="2" >
 
     <item
-        is-multidex="false"
-        jar="/home/serg/Development/Android/projects/test/SecureSuite/libs/commons-codec.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
         optimize="true"
-        revision="25.0.2"
+        revision="25.0.3"
+        sha1="caff8e51a24901cfc9cd7e1cf83d84f4cb0c103b">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_d2929da6a02ef68022c363bec2f7decd0ee34ba0/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/libs/commons-codec.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
         sha1="fd32786786e2adb664d5ecc965da47629dca14ba">
-        <dex dex="/home/serg/Development/Android/projects/test/SecureSuite/build/intermediates/pre-dexed/debug/commons-codec_a26654562d98dc6a47dac1ee32d6cae93dc94c3a.jar" />
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/2/commons-codec_4aaf199aafc94a49985de67fdbfd137f4efe5c52/classes.dex" />
     </item>
     <item
         is-multidex="false"
-        jar="/home/serg/Development/Android/projects/test/SecureSuite/libs/jackson-core-2.3.3.jar"
+        jar="/Users/mattkraus/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp/okhttp/2.3.0/2e7bc7033dc2c8423e661224171b3133fb155b28/okhttp-2.3.0.jar"
         jumboMode="false"
         optimize="true"
-        revision="25.0.2"
+        revision="25.0.3"
+        sha1="2e7bc7033dc2c8423e661224171b3133fb155b28">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/okhttp-2.3.0_b149d5b334ec5f30e35a98ef6e3dc3c0e3c5ee7e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.android/build-cache/1fdc736117a7a8ae03b56ea98b90eb37722b65cd/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="6ef31f1555bb4cc513ec8d52711365a8b89f3600">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/classes_e4bdfdc70a573d49e72ae5bcd53c9f3652b3ac4a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/20.0/89507701249388e1ed5ddcf8c41f4ce1be7831ef/guava-20.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="89507701249388e1ed5ddcf8c41f4ce1be7831ef">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/guava-20.0_4c65fd84d9ac6bd237771458c7d626c2e71deb67.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/libs/commons-codec.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="fd32786786e2adb664d5ecc965da47629dca14ba">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/commons-codec_4aaf199aafc94a49985de67fdbfd137f4efe5c52.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.gradle/caches/modules-2/files-2.1/com.googlecode.libphonenumber/libphonenumber/5.5/396b88c5437090abca48ba681991aa625460a0ca/libphonenumber-5.5.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="396b88c5437090abca48ba681991aa625460a0ca">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/libphonenumber-5.5_4df54c7a8eada2b558d72a2ef028c0007ffa527f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp/okhttp-urlconnection/2.3.0/4f12ec1e1455909e1f0b8530c719c90b2d01745/okhttp-urlconnection-2.3.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="04f12ec1e1455909e1f0b8530c719c90b2d01745">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/okhttp-urlconnection-2.3.0_64855adef616f0a092567d2a44c88fefddbc8957.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.7/751f548c85fa49f330cecbb1875893f971b33c4e/gson-2.7.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="751f548c85fa49f330cecbb1875893f971b33c4e">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/gson-2.7_e50f515ce586157f8e64ab86d8bd84d7aae4e5aa.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.android/build-cache/14e6ec53c9acad82f2a376b79d691a37f38ee0c1/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="da27a32db6af8954ee8061537c7d476fcb1df46f">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/classes_99c4913f94ec3873321db9fbd9b8a785b14ae56e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/libs/jackson-core-2.3.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
         sha1="7d8c5d79cc99995e21e6f955857312d8409f02a1">
-        <dex dex="/home/serg/Development/Android/projects/test/SecureSuite/build/intermediates/pre-dexed/debug/jackson-core-2.3.3_5f9460e69f236fa239e267641b951850c6857335.jar" />
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/jackson-core-2.3.3_f9ab15a0ed23e2a507c64d57357dc54c9d390b32.jar" />
     </item>
     <item
         is-multidex="false"
-        jar="/home/serg/Development/Android/projects/test/SecureSuite/libs/ez-vcard-0.9.6.jar"
+        jar="/Users/mattkraus/.android/build-cache/4c41d4a0b3fe4fb52783d82cd4093a54bc825106/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
-        revision="25.0.2"
+        revision="25.0.3"
+        sha1="310bcc4b2dbdddf4b2200e84b32a05b00e5f7ba4">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/classes_cfa1ddf2e8043c8496ab6e7f0be7e59e09c707b0.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.gradle/caches/modules-2/files-2.1/joda-time/joda-time/2.9.9/f7b520c458572890807d143670c9b24f4de90897/joda-time-2.9.9.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="f7b520c458572890807d143670c9b24f4de90897">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/joda-time-2.9.9_a4cf875497f86eeed98f6b124bc80ec6e4e81b07.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/libs/jackson-core-2.3.3.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="7d8c5d79cc99995e21e6f955857312d8409f02a1">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/2/jackson-core-2.3.3_f9ab15a0ed23e2a507c64d57357dc54c9d390b32/classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.android/build-cache/a530efefa36a663eab79c1b25eb49ef4a06a3618/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="45f697922e6f072daa12f8a2995dc77ab03c11da">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/classes_212b5299c5c5c9e5ed204993f353790b4ec5758f.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/libs/ez-vcard-0.9.6.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
         sha1="5ced3b1423487d3fdf7270715522326a941a9f1a">
-        <dex dex="/home/serg/Development/Android/projects/test/SecureSuite/build/intermediates/pre-dexed/debug/ez-vcard-0.9.6_f45f43be2b7855fff6a9698a068dbbfd3334c385.jar" />
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/2/ez-vcard-0.9.6_e936d2bcb3327b6c25cdb4f506f9d0c2909af625/classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.3.0/1b355f73402020c5a0dcca58affc3ec3dfeabac1/okio-1.3.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="1b355f73402020c5a0dcca58affc3ec3dfeabac1">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/okio-1.3.0_2af0fa556f20ba2296b71e90f2365f1fafed9286.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/libs/ez-vcard-0.9.6.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="5ced3b1423487d3fdf7270715522326a941a9f1a">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/ez-vcard-0.9.6_e936d2bcb3327b6c25cdb4f506f9d0c2909af625.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.5/2852e6e05fbb95076fc091f6d1780f1f8fe35e0f/commons-io-2.5.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="2852e6e05fbb95076fc091f6d1780f1f8fe35e0f">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/commons-io-2.5_d1b7982135cef44cbe9ab6f9af03265caade47a6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.android/build-cache/4eb535a9f49b61f32f8d0913d282246b64983f0c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="2d150b5c5343bb9ed5ad5c13461e06a6b25c191d">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/classes_d4ee1b38a7a62c78cbf086451deb212c58c627c6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.android/build-cache/370131eae746e9ff8a573e701fe6087bcf2b4f87/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="4a26a1154d053ab11aaf4c3967c42a4d66390991">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/classes_9b54c37f4699e7f75d6db96e1467c8e9b97b83b9.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.android/build-cache/5a18cdeb50cc50c946529f5b7831732a43d713c9/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="052f5f840f21174a3ecf6544130194e2652cbb73">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/classes_f2e97ee9e61348092c93f8050d6d454daa92abc8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.android/build-cache/ebe5c2f9e42b2b58aa5f24cbf111d3b3f6d5923e/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/classes_4baef6ccc05b4d7d31317d9667bb5f067e4886dd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Developer/android-sdk-macosx/extras/android/m2repository/com/android/support/support-annotations/25.3.1/support-annotations-25.3.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="bf8841d29fa39e077730e7a91222c2ce269fa7c9">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/support-annotations-25.3.1_4b11a9092aa821b6ec809660255b4e8a3d475b7a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.0/8873bd0bb5cb9ee37f1b04578eb7e26fcdd44cb0/commons-lang3-3.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="8873bd0bb5cb9ee37f1b04578eb7e26fcdd44cb0">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/commons-lang3-3.0_2c138800d0be439cfd0f9d4ac3086eeda28810ef.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="221e160e7a6062291d61ef6732583acdc410fddc">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_3316ce593f04ed4dab43894e0290ef785716018b/classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mattkraus/.gradle/caches/modules-2/files-2.1/commons-cli/commons-cli/1.3.1/1303efbc4b181e5a58bf2e967dc156a3132b97c0/commons-cli-1.3.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="1303efbc4b181e5a58bf2e967dc156a3132b97c0">
+        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/commons-cli-1.3.1_3a68b0b1e88949d0ec558ade36ab9323c05ff5ee.jar" />
     </item>
 
 </items>

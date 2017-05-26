@@ -44,10 +44,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * Created by serg on 13.05.17.
- */
-
-/**
  * Exercise the connector "rm" command, {@link CmdRm}
  *
  * The test creates a directory called CmdRmFileTest and makes 10 subdirectories inside it.

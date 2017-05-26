@@ -21,7 +21,10 @@ package com.nuvolect.securesuite.testsuite;
 
 import com.nuvolect.securesuite.util.KeystoreUtilTest;
 import com.nuvolect.securesuite.util.OmniTest;
+import com.nuvolect.securesuite.webserver.connector.CmdArchiveTest;
+import com.nuvolect.securesuite.webserver.connector.CmdExtractTest;
 import com.nuvolect.securesuite.webserver.connector.CmdMkfileTest;
+import com.nuvolect.securesuite.webserver.connector.CmdRmFileTest;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -36,6 +39,9 @@ import org.junit.runners.Suite;
                 // MyGroupsTest.class, // Will wipe contacts database
                 OmniTest.class,
                 CmdMkfileTest.class,
+                CmdRmFileTest.class,
+                CmdArchiveTest.class,
+                CmdExtractTest.class,
         }
 )
 public class UnitTestSuite {

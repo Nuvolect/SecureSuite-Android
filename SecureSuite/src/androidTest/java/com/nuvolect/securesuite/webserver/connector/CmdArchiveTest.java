@@ -23,6 +23,7 @@ import android.content.Context;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.InputStreamAsJsonTest;
 import com.nuvolect.securesuite.util.Omni;
@@ -39,15 +40,13 @@ import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-/**
- * Created by serg on 19.05.17.
- */
-
 public class CmdArchiveTest {
 
     @Test
     public void go() throws Exception {
         Context ctx = getTargetContext();
+
+        SqlCipher.getInstance(ctx);
 
         assertThat (Omni.init(ctx), is(true));
 

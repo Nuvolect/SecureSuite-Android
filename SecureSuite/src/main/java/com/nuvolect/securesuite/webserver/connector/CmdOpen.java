@@ -31,13 +31,7 @@ import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.webserver.WebUtil;
 import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
@@ -116,7 +110,7 @@ import java.util.Map;
  */
 public class CmdOpen extends ConnectorJsonCommand {
 
-    static boolean DEBUG = true; //LogUtil.DEBUG;
+    static boolean DEBUG = LogUtil.DEBUG;
 
     @Override
     public InputStream go(@NonNull Map<String, String> params) {
@@ -379,10 +373,9 @@ public class CmdOpen extends ConnectorJsonCommand {
             wrapper.add("debug",debug);
         }
 
-        if (DEBUG) {
-            LogUtil.log(LogUtil.LogType.CMD_OPEN, wrapper.toString());
-            LogUtil.log(LogUtil.LogType.CMD_OPEN, "After wrapper");
-        }
+//        if (DEBUG) {
+//            LogUtil.log(LogUtil.LogType.CMD_OPEN, wrapper.toString());
+//        }
 
         return getInputStream(wrapper);
     }

@@ -38,10 +38,6 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-/**
- * Created by serg on 19.05.17.
- */
-
 public class TestFilesHelper {
 
     private ArrayList<String> fileHashes = new ArrayList<>();

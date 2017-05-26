@@ -25,10 +25,6 @@ import java.io.InputStream;
 import java.util.Map;
 
 /**
- * Created by serg on 17.05.17.
- */
-
-/**
  * Any command must receive Map of params, Context for some related things and return InputStream
  */
 public interface ConnectorCommand {

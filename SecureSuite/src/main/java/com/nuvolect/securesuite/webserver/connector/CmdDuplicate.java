@@ -145,6 +145,8 @@ public class CmdDuplicate extends ConnectorJsonCommand {
             JsonArray warning = new JsonArray();
             warning.add("errPerm");
             wrapper.add("warning", warning);
+        }else{
+            wrapper.add("added", added);
         }
 
         if (DEBUG) {

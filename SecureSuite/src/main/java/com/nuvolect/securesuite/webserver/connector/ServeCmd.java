@@ -143,8 +143,17 @@ public class ServeCmd {
                 return CmdUpload.getInstance(context);
             case zipdl:
                 return new CmdZipdl(context);
-            default:
+            /**
+             * Commands not supported
+             */
+            case tmb:
+            case dim:
+            case url:
+            case netmount:
+            default: {
+                LogUtil.log(LogUtil.LogType.SERVE_CMD, "Cmd not supported: "+cmd);
                 return null;
+            }
         }
     }
 }

@@ -43,10 +43,6 @@ import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-/**
- * Created by serg on 19.05.17.
- */
-
 public class CmdExtractTest {
 
     @Test

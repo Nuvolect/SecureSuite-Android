@@ -132,7 +132,7 @@ public class LogUtil {
         WEB_UTIL,
         WHATS_NEW,
         WIFI_BROADCAST_RECEIVER,
-        WORKER, CAL_REST,
+        WORKER, CAL_REST, SERVE_CMD,
     }
 
     public static void setVerbose(boolean verbose){

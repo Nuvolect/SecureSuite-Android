@@ -68,6 +68,7 @@ import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_JPG;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_JSON;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_PNG;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_TTF;
+import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_WAV;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_WOFF;
 import static com.nuvolect.securesuite.webserver.MimeUtil.MIME_ZIP;
 import static java.util.Locale.US;
@@ -131,7 +132,7 @@ public class CrypServer extends NanoHTTPD {
     private String zipDownloadFileHash;
 
     private enum EXT {
-        js, css, map, png, jpg, gif, ico, ttf, woff, woff2, invalid, htm, html,
+        css, gif, htm, html, ico, invalid, jpg, js, map, png, ttf, wav, woff, woff2,
         // RESTFull services
         admin, calendar, connector, sync, omni,
     }
@@ -439,6 +440,9 @@ public class CrypServer extends NanoHTTPD {
                 case ttf:
                     is = m_ctx.getAssets().open(uri.substring(1));
                     return new Response(Status.OK, MIME_TTF, is, -1);
+                case wav:
+                    is = m_ctx.getAssets().open(uri.substring(1));
+                    return new Response(Status.OK, MIME_WAV, is, -1);
                 case woff:
                 case woff2:
                     is = m_ctx.getAssets().open(uri.substring(1));
@@ -711,7 +715,8 @@ public class CrypServer extends NanoHTTPD {
             case group_edit_modal_filled: {
                 log(LogUtil.LogType.CRYP_SERVER, "Serving file: "+uri);
                 try {
-                    File file = new File(m_ctx.getFilesDir() + uri);
+                    String uri2 = uri.replaceFirst("/files","");
+                    File file = new File(m_ctx.getFilesDir() + uri2);
                     InputStream is = new FileInputStream(file);
                     return new Response(Status.OK, MimeUtil.MIME_HTML, is, -1);
 

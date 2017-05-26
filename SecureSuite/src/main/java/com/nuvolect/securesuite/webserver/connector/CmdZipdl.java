@@ -19,9 +19,6 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
-//TODO create class description
-//
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -36,17 +33,13 @@ import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * ZipDl - zip multiple files to "Archive.zip", download and delete(FUTURE) "Archive.zip".
- * TODO delete zip archive
+ * ZipDl - zip multiple files to "Archive.zip", download and delete.
  *
- * zipdl
-
  1st request to make temporary archive file on server side
 
  Arguments:
@@ -206,17 +199,7 @@ public class CmdZipdl extends ConnectorJsonCommand {
     private InputStream downloadFile(@NonNull Map<String, String> params) {
         OmniFile file = new OmniFile(params.get("targets[]_2"));
         LogUtil.log(LogUtil.LogType.CMD_ZIPDL, "second request");
-        try {
-            if (file.isCryp()) {
-                return new info.guardianproject.iocipher.FileInputStream(file.getCryFile());
-            }
-            else {
-                return new java.io.FileInputStream(file.getStdFile());
-            }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return file.getFileInputStream();
     }
 }
