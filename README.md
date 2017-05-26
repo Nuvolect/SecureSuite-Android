@@ -44,7 +44,7 @@ For troubleshooting and support information, please visit the wiki.
 <https://github.com/teamnuvolect/securesuite/wiki>
 
 For general questions and discussion about features, visit the forum.
-<a href="https://nuvolect.freeforums.net/board/1/general-discussion">
+<a href="http://nuvolect.freeforums.net/board/3/discussion-securesuite">
 <img src="https://securesuite.org/img/forum_join_chat.png"  height="50" width="134"></a> 
 
 # Legal things  
