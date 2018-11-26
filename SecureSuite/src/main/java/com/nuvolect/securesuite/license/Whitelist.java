@@ -51,5 +51,6 @@ public class Whitelist {
         add("bfdcdf9d4013bd90"); // matt.kraus@nuvolect.coms nexus 9
 		add("c1e933593df14675"); // matt.kraus@nuvolect.coms nexus 5
 		add("d5e36d9ee98729a6"); // matt.kraus@nuvolect.com galaxy s2
+		add("57a5e554cc870407"); // matt.kraus@nuvolect.com moto x4
 	}};
 }

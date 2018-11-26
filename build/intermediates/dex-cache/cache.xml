@@ -2,24 +2,6 @@
 <items version="2" >
 
     <item
-        is-multidex="true"
-        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.3"
-        sha1="caff8e51a24901cfc9cd7e1cf83d84f4cb0c103b">
-        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_d2929da6a02ef68022c363bec2f7decd0ee34ba0/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/libs/commons-codec.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.3"
-        sha1="fd32786786e2adb664d5ecc965da47629dca14ba">
-        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/2/commons-codec_4aaf199aafc94a49985de67fdbfd137f4efe5c52/classes.dex" />
-    </item>
-    <item
         is-multidex="false"
         jar="/Users/mattkraus/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp/okhttp/2.3.0/2e7bc7033dc2c8423e661224171b3133fb155b28/okhttp-2.3.0.jar"
         jumboMode="false"
@@ -119,15 +101,6 @@
         <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/joda-time-2.9.9_a4cf875497f86eeed98f6b124bc80ec6e4e81b07.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/libs/jackson-core-2.3.3.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.3"
-        sha1="7d8c5d79cc99995e21e6f955857312d8409f02a1">
-        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/2/jackson-core-2.3.3_f9ab15a0ed23e2a507c64d57357dc54c9d390b32/classes.dex" />
-    </item>
-    <item
         is-multidex="false"
         jar="/Users/mattkraus/.android/build-cache/a530efefa36a663eab79c1b25eb49ef4a06a3618/output/jars/classes.jar"
         jumboMode="false"
@@ -135,15 +108,6 @@
         revision="25.0.3"
         sha1="45f697922e6f072daa12f8a2995dc77ab03c11da">
         <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/classes_212b5299c5c5c9e5ed204993f353790b4ec5758f.jar" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/libs/ez-vcard-0.9.6.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.3"
-        sha1="5ced3b1423487d3fdf7270715522326a941a9f1a">
-        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/2/ez-vcard-0.9.6_e936d2bcb3327b6c25cdb4f506f9d0c2909af625/classes.dex" />
     </item>
     <item
         is-multidex="false"
@@ -225,15 +189,6 @@
         revision="25.0.3"
         sha1="8873bd0bb5cb9ee37f1b04578eb7e26fcdd44cb0">
         <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/pre-dexed/release/commons-lang3-3.0_2c138800d0be439cfd0f9d4ac3086eeda28810ef.jar" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.3"
-        sha1="221e160e7a6062291d61ef6732583acdc410fddc">
-        <dex dex="/Users/mattkraus/AndroidstudioProjects/SecureSuite/SecureSuite/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_3316ce593f04ed4dab43894e0290ef785716018b/classes.dex" />
     </item>
     <item
         is-multidex="false"
