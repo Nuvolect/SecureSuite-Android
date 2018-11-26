@@ -23,12 +23,12 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.nuvolect.securesuite.webserver.WebUtil;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.Cryp;
-import com.nuvolect.securesuite.util.Passphrase;
+import com.nuvolect.securesuite.util.PassphraseManager;
 import com.nuvolect.securesuite.util.TimeUtil;
 import com.nuvolect.securesuite.util.WorkerCommand;
+import com.nuvolect.securesuite.webserver.WebUtil;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -169,13 +169,13 @@ public class SqlIncSync {
     public void crypSync(Context ctx, String key){
 
         if( mSyncEnabled) {
-            if (key.contentEquals(Passphrase.PASSWORD_GEN_HISTORY))
+            if (key.contentEquals(PassphraseManager.PASSWORD_GEN_HISTORY))
                 SqlCipher.putIncSync(INC_SYNC_TYPE.PASSWORD_GEN_HISTORY.ordinal(), 0);
-            if (key.contentEquals(Passphrase.PASSWORD_TARGET))
+            if (key.contentEquals(PassphraseManager.PASSWORD_TARGET))
                 SqlCipher.putIncSync(INC_SYNC_TYPE.PASSWORD_TARGET.ordinal(), 0);
-            if (key.contentEquals(Passphrase.PASSWORD_LENGTH))
+            if (key.contentEquals(PassphraseManager.PASSWORD_LENGTH))
                 SqlCipher.putIncSync(INC_SYNC_TYPE.PASSWORD_LENGTH.ordinal(), 0);
-            if (key.contentEquals(Passphrase.PASSWORD_GEN_MODE))
+            if (key.contentEquals(PassphraseManager.PASSWORD_GEN_MODE))
                 SqlCipher.putIncSync(INC_SYNC_TYPE.PASSWORD_GEN_MODE.ordinal(), 0);
 
             if (!mSyncSuspended)

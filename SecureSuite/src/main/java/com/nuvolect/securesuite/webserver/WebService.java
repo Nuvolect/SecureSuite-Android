@@ -70,14 +70,6 @@ public class WebService extends Service {
     private static SSLContext sslContext;
     private static OkHttpClient okHttpClient = null;
 
-    /**
-     * Keystore is valid for 25 years from 4/21/16, expiring April 21, 2041
-     * The passPhrase is used to confirm the validity of the keystore
-     */
-    private static String keyFile = "/assets/keystore.bks";
-    private static char[] keystoreValidationKey = "27@NDMQu0cLY".toCharArray();
-    public static String CERTIFICATE_DETAILS = "Issued to: CN=Nuvolect LLC,OU=Development,O=Nuvolect LLC,L=Orlando,ST=FL,C=US;";
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -114,7 +106,14 @@ public class WebService extends Service {
         try {
             okHttpClient = null;
 
-            configureSSL(keyFile, keystoreValidationKey);
+            // Create a self signed certificate and put it in a BKS keystore
+            String keystoreFilename = "VazanKeystore.bks";
+            File file = new File( ctx.getFilesDir(), keystoreFilename);
+            String absolutePath = file.getAbsolutePath();
+
+            KeystoreVazen.makeKeystore( ctx, absolutePath, false);
+
+            sslServerSocketFactory = SSLUtil.configureSSLPath( ctx, absolutePath);
 
             server.makeSecure( sslServerSocketFactory, null);
             server.start();

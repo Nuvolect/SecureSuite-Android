@@ -33,7 +33,7 @@ import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.Cryp;
 import com.nuvolect.securesuite.util.JsonUtil;
 import com.nuvolect.securesuite.util.LogUtil;
-import com.nuvolect.securesuite.util.Passphrase;
+import com.nuvolect.securesuite.util.PassphraseManager;
 import com.nuvolect.securesuite.util.Safe;
 import com.nuvolect.securesuite.util.StringUtil;
 import com.nuvolect.securesuite.util.Util;
@@ -525,9 +525,9 @@ public class ListHtm {
                     CrypServer.put(uniqueId, "password", password);
                     log(LogUtil.LogType.LIST_HTM, "new password : " + password);
 
-                    Passphrase.setPasswordGenMode(m_ctx, mode);
-                    Passphrase.setPasswordLength(m_ctx, length);
-                    Passphrase.appendPasswordHistory(m_ctx, password);
+                    PassphraseManager.setPasswordGenMode(m_ctx, mode);
+                    PassphraseManager.setPasswordLength(m_ctx, length);
+                    PassphraseManager.appendPasswordHistory(m_ctx, password);
 
                     // Update modal for next usage
                     PasswordModal.buildPasswordModal(m_ctx, false);

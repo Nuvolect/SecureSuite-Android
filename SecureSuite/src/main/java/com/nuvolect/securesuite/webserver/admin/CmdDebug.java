@@ -93,13 +93,13 @@ public class CmdDebug {
 
                     case create_key:{
 
-                        JSONObject result = KeystoreUtil.createKey( m_ctx, params.get("key_alias"));
+                        JSONObject result = KeystoreUtil.createKey( m_ctx, params.get("key_alias"), true);
                         wrapper.put("result",result);
                         break;
                     }
                     case delete_key:{
 
-                        JSONObject result = KeystoreUtil.deleteKey( m_ctx, params.get("key_alias"));
+                        JSONObject result = KeystoreUtil.deleteKey( m_ctx, params.get("key_alias"), true);
                         wrapper.put("result",result);
                         break;
                     }
@@ -107,7 +107,7 @@ public class CmdDebug {
 
                         String key_alias = params.get("key_alias");
                         String clear_text = params.get("cleartext");
-                        JSONObject result = KeystoreUtil.encrypt( key_alias, clear_text);
+                        JSONObject result = KeystoreUtil.encrypt( key_alias, clear_text.toCharArray(), true);
                         wrapper.put("result",result);
                         break;
                     }
@@ -115,7 +115,7 @@ public class CmdDebug {
 
                         String key_alias = params.get("key_alias");
                         String cipher_text_b64 = params.get("ciphertext");
-                        JSONObject result = KeystoreUtil.decrypt( key_alias, cipher_text_b64);
+                        JSONObject result = KeystoreUtil.decrypt( key_alias, cipher_text_b64, true);
                         wrapper.put("result",result);
                         break;
                     }

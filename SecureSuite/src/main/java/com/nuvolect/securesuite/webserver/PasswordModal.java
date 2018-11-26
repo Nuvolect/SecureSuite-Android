@@ -23,6 +23,7 @@ import android.content.Context;
 
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Passphrase;
+import com.nuvolect.securesuite.util.PassphraseManager;
 import com.nuvolect.securesuite.util.Util;
 
 import java.io.File;
@@ -55,18 +56,18 @@ public class PasswordModal {
 
             MiniTemplator t = new MiniTemplator(WebService.assetsDirPath+"/password_modal.htm");
 
-            int mode = Passphrase.getPasswordGenMode(ctx);
-            int len  = Passphrase.getPasswordLength(ctx);
+            int mode = PassphraseManager.getPasswordGenMode(ctx);
+            int len  = PassphraseManager.getPasswordLength(ctx);
             // Inflate list of current and past passwords
-            String[] history = Passphrase.getPasswordGenHistory(ctx);
+            String[] history = PassphraseManager.getPasswordGenHistory(ctx);
             /**
              * Check for first use.  If so generate a password with defaults, save it and use it
              */
             if( history.length == 0){
 
                 String first = Passphrase.generateRandomString(len, mode);
-                Passphrase.appendPasswordHistory(ctx, first);
-                history = Passphrase.getPasswordGenHistory(ctx);
+                PassphraseManager.appendPasswordHistory(ctx, first);
+                history = PassphraseManager.getPasswordGenHistory(ctx);
             }
             t.setVariable("newest_password", history[0]);
 

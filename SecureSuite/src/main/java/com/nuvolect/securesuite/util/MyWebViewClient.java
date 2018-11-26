@@ -25,7 +25,6 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.nuvolect.securesuite.webserver.WebService;
 import com.nuvolect.securesuite.webserver.WebUtil;
 
 
@@ -60,7 +59,6 @@ public class MyWebViewClient extends WebViewClient {
 
             String certificate = error.getCertificate().toString();
             LogUtil.log(LogUtil.LogType.MY_WEB_VIEW_CLIENT, "SSL certificate : "+certificate);
-            LogUtil.log(LogUtil.LogType.MY_WEB_VIEW_CLIENT, "My Certificate  : "+ WebService.CERTIFICATE_DETAILS);
 
             LogUtil.log(LogUtil.LogType.MY_WEB_VIEW_CLIENT, "Url: "+url);
         }

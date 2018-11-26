@@ -76,6 +76,7 @@ public class CConst {
     public static final String ACCOUNT_NAME         = ATab.account_name.toString();
     public static final String ACCOUNT_TYPE         = ATab.account_type.toString();
     public static final String ADDRESS              = DTab.address.toString();
+    public static final String APP_KEY_ALIAS        = "app_key_alias";
     public static final String AUTHENTICATED        = "authenticated";
     public static final String BLOG_URL             = "https://nuvolect.com/blog";
     public static final String CALENDAR_PAGE        = "/cal.htm";
@@ -88,6 +89,7 @@ public class CConst {
     public static final String COUNTS               = "counts";
     public static final String CRYP_SYNC            = "cryp_sync";
     public static final String DATES                = DTab.date.toString();
+    public static final String DEFAULT_PASSPHRASE   = "WhenAllElseFails";
     public static final String DISPLAY_NAME         = DTab.display_name.toString();
     public static final String ELFINDER_PAGE        = "/elFinder-2.1.42/finder.html";// also navbar.htm, lobby.htm {release, debug}
     public static final String ELF_                 = "elf_";
@@ -134,6 +136,7 @@ public class CConst {
     public static final String ROOT                 = "/";
     public static final String SLASH                = "/";
     public static final String SEC_TOK              = "sec_tok";
+    public static final String SELFSIGNED_KS_KEY    = "selfsigned_ks_key";
     public static final String SERVER_ENABLED       = "server_enabled";
     public static final String SUBSCRIBER           = "subscriber";
     public static final String TARGET               = "target";

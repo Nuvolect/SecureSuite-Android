@@ -45,8 +45,9 @@ import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Passphrase;
+import com.nuvolect.securesuite.util.PassphraseManager;
 
-import static com.nuvolect.securesuite.util.Passphrase.getPasswordGenHistory;
+import static com.nuvolect.securesuite.util.PassphraseManager.getPasswordGenHistory;
 
 public class PasswordFragment extends DialogFragment {
 
@@ -130,7 +131,7 @@ public class PasswordFragment extends DialogFragment {
         }
 
         // Get the current persisted set of password generation parameters
-        setGenPassMode(rootView, Passphrase.getPasswordGenMode(m_act));
+        setGenPassMode(rootView, PassphraseManager.getPasswordGenMode(m_act));
 
         // Create the spinner that maintains a history of passwords
         createPasswordSpinner( rootView );
@@ -143,7 +144,7 @@ public class PasswordFragment extends DialogFragment {
         Spinner pw_length_spinner = (Spinner) rootView.findViewById(R.id.password_length_spinner);
         pw_length_spinner.setAdapter(pw_length_adapter);
         // No passwords shorter than 4
-        pw_length_spinner.setSelection( Passphrase.getPasswordLength(m_act)-4, true);
+        pw_length_spinner.setSelection( PassphraseManager.getPasswordLength(m_act)-4, true);
 
         pw_length_spinner.setOnItemSelectedListener( new OnItemSelectedListener( ) {
 
@@ -152,7 +153,7 @@ public class PasswordFragment extends DialogFragment {
 
                 // Capture the password length from the spinner
                 // No passwords shorter than 4
-                Passphrase.setPasswordLength(m_act, position+4);
+                PassphraseManager.setPasswordLength(m_act, position+4);
             }
 
             @Override
@@ -199,7 +200,7 @@ public class PasswordFragment extends DialogFragment {
                     return;
                 }
                 // Capture the password from the spinner
-                Passphrase.setGenPassword(m_act, m_password_list[position]);
+                PassphraseManager.setGenPassword(m_act, m_password_list[position]);
             }
 
             @Override
@@ -221,13 +222,13 @@ public class PasswordFragment extends DialogFragment {
                     return;
                 }
                 randomPassword = Passphrase.generateRandomString(
-                        Passphrase.getPasswordLength(m_act), mode);
+                        PassphraseManager.getPasswordLength(m_act), mode);
             } catch (Exception e) {
                 LogUtil.logException(m_act, LogUtil.LogType.SECURE, e);
                 Toast.makeText(m_act, "Internal error", Toast.LENGTH_SHORT).show();
             }
-            Passphrase.appendPasswordHistory(m_act, randomPassword);
-            Passphrase.setGenPassword(m_act, randomPassword);
+            PassphraseManager.appendPasswordHistory(m_act, randomPassword);
+            PassphraseManager.setGenPassword(m_act, randomPassword);
             createPasswordSpinner(v.getRootView());
         }
     };
@@ -236,7 +237,7 @@ public class PasswordFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
 
-            Passphrase.setPasswordGenMode(m_act, getGenPassMode(v.getRootView()));
+            PassphraseManager.setPasswordGenMode(m_act, getGenPassMode(v.getRootView()));
         }
     };
 
@@ -287,7 +288,7 @@ public class PasswordFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
 
-            String password = Passphrase.getGenPassword(m_act);
+            String password = PassphraseManager.getGenPassword(m_act);
             if (password.isEmpty()) {
 
                 Toast.makeText(m_act, "Password is empty", Toast.LENGTH_SHORT).show();
@@ -312,7 +313,7 @@ public class PasswordFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
 
-            Passphrase.clearPasswordGenHistory(m_act);
+            PassphraseManager.clearPasswordGenHistory(m_act);
 
             // Clear in-memory list
             createPasswordSpinner(v.getRootView());
@@ -341,7 +342,7 @@ public class PasswordFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
 
-            m_listener.passwordApply(Passphrase.getGenPassword(m_act));
+            m_listener.passwordApply(PassphraseManager.getGenPassword(m_act));
         }
     };
 

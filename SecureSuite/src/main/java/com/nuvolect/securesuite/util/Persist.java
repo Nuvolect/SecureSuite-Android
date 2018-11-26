@@ -21,11 +21,22 @@ package com.nuvolect.securesuite.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
 
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.main.GroupListActivity.GLA_RIGHT_FRAGMENT;
 
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
 import java.util.Locale;
+
+import javax.crypto.NoSuchPaddingException;
 
 public class Persist {
 
@@ -54,15 +65,6 @@ public class Persist {
     public static void clearAll(Context ctx) {
         final SharedPreferences pref = ctx.getSharedPreferences( PERSIST_NAME, Context.MODE_PRIVATE);
         pref.edit().clear().commit();
-    }
-
-    public static void setEncryptedPassphrase(Context ctx, String passphrase){
-        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME,  Context.MODE_PRIVATE);
-        pref.edit().putString(PASSPHRASE, passphrase).commit();
-    }
-    public static String getEncryptedPassphrase(Context ctx){
-        final SharedPreferences pref = ctx.getSharedPreferences( PERSIST_NAME, Context.MODE_PRIVATE);
-        return pref.getString(PASSPHRASE, CConst.NO_PASSPHRASE);
     }
 
     public static void setNavChoice(Context ctx, int navMenuPosition, String navMenuTitle) {
@@ -179,5 +181,69 @@ public class Persist {
     public static long getEmptyContactId(Context ctx) {
         final SharedPreferences pref = ctx.getSharedPreferences( PERSIST_NAME, Context.MODE_PRIVATE);
         return pref.getLong( EMPTY_CONTACT_ID, 0);
+    }
+
+    /**
+     * Encrypt clear char[] data with an app wide private key, then persist the encrypted results.
+     *
+     * @param ctx
+     * @param persistKey
+     * @param clearChar
+     * @throws CertificateException
+     * @throws InvalidKeyException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     * @throws NoSuchPaddingException
+     * @throws UnrecoverableEntryException
+     * @throws IOException
+     */
+    public static void putEncrypt(Context ctx, String persistKey, char[] clearChar)
+            throws CertificateException, InvalidKeyException, NoSuchAlgorithmException,
+            KeyStoreException, NoSuchPaddingException, UnrecoverableEntryException, IOException,
+            NoSuchProviderException, InvalidAlgorithmParameterException {
+
+        byte[] clearBytes = Passphrase.toBytes( clearChar);
+        byte[] cryptBytes = KeystoreUtil.encrypt( ctx, CConst.APP_KEY_ALIAS, clearBytes);
+        String cryptString = Base64.encodeToString( cryptBytes, Base64.NO_WRAP);
+
+        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME,  Context.MODE_PRIVATE);
+        pref.edit().putString( persistKey, cryptString).commit();
+    }
+
+
+    /**
+     * Read encrypted data, decrypt it with an app wide private key and return clear results.
+     *
+     * @param ctx
+     * @return
+     * @throws CertificateException
+     * @throws InvalidKeyException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     * @throws NoSuchPaddingException
+     * @throws UnrecoverableEntryException
+     * @throws IOException
+     */
+    public static char[] getDecrypt(Context ctx, String persistKey)
+            throws CertificateException, InvalidKeyException, NoSuchAlgorithmException,
+            KeyStoreException, NoSuchPaddingException, UnrecoverableEntryException, IOException {
+
+        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME, Context.MODE_PRIVATE);
+
+        String encryptString = pref.getString( persistKey, CConst.NO_PASSPHRASE);
+        byte[] encryptBytes = Base64.decode( encryptString, Base64.DEFAULT);
+        byte[] clearBytes = KeystoreUtil.decrypt( CConst.APP_KEY_ALIAS, encryptBytes);
+        char[] clearChars = Passphrase.toChars( clearBytes);
+
+        return clearChars;
+    }
+
+    public static void setEncryptedPassphrase(Context ctx, String passphrase){
+        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME,  Context.MODE_PRIVATE);
+        pref.edit().putString(PASSPHRASE, passphrase).commit();
+    }
+    public static String getEncryptedPassphrase(Context ctx){
+        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME, Context.MODE_PRIVATE);
+        return pref.getString(PASSPHRASE, CConst.NO_PASSPHRASE);
     }
 }

@@ -29,7 +29,7 @@ import com.nuvolect.securesuite.util.DbPassphrase;
 import com.nuvolect.securesuite.util.JsonUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.LogUtil.LogType;
-import com.nuvolect.securesuite.util.Passphrase;
+import com.nuvolect.securesuite.util.PassphraseManager;
 import com.nuvolect.securesuite.util.Persist;
 
 import net.sqlcipher.Cursor;
@@ -1957,14 +1957,14 @@ public class SqlCipher {
                 String key = decodeBase64(cryp, ACTab.key.toString());
                 String value = decodeBase64(cryp, ACTab.value.toString());
 
-                if( key.contentEquals(Passphrase.PASSWORD_GEN_HISTORY))
-                    Cryp.put(Passphrase.PASSWORD_GEN_HISTORY, value);
-                if( key.contentEquals(Passphrase.PASSWORD_TARGET))
-                    Cryp.put(Passphrase.PASSWORD_TARGET, value);
-                if( key.contentEquals(Passphrase.PASSWORD_LENGTH))
-                    Cryp.put(Passphrase.PASSWORD_LENGTH, value);
-                if( key.contentEquals(Passphrase.PASSWORD_GEN_MODE))
-                    Cryp.put(Passphrase.PASSWORD_GEN_MODE, value);
+                if( key.contentEquals(PassphraseManager.PASSWORD_GEN_HISTORY))
+                    Cryp.put(PassphraseManager.PASSWORD_GEN_HISTORY, value);
+                if( key.contentEquals(PassphraseManager.PASSWORD_TARGET))
+                    Cryp.put(PassphraseManager.PASSWORD_TARGET, value);
+                if( key.contentEquals(PassphraseManager.PASSWORD_LENGTH))
+                    Cryp.put(PassphraseManager.PASSWORD_LENGTH, value);
+                if( key.contentEquals(PassphraseManager.PASSWORD_GEN_MODE))
+                    Cryp.put(PassphraseManager.PASSWORD_GEN_MODE, value);
                 source_id_processed.add(_id);
             }
 

@@ -21,22 +21,18 @@ package com.nuvolect.securesuite.util;
 
 import android.content.Context;
 
-import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.license.LicenseUtil;
 import com.nuvolect.securesuite.main.CConst;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.nuvolect.securesuite.util.Passphrase.HEX;
-import static com.nuvolect.securesuite.util.Passphrase.generateRandomString;
-
 /**
  * The passphrase is encrypted/decrypted with a public/private key
  * from the android keystore. AES symmetric encryption is used as a fallback
  * if the device Keystore is not capable.
  */
-public class DbPassphrase {
+public class DbPassphrase {//FIXME confirm database password is encrypted with the Android keystore
 
     private static String KEY_ALIAS = "db_key_alias";
     private static String CIPHERTEXT = "ciphertext";
@@ -50,6 +46,8 @@ public class DbPassphrase {
      */
     public static String getDbPassphrase(Context ctx) {
 
+        //FIXME use a random password and store it in Android keystore
+
         String clearPassphrase = "";
         boolean success = false;
         String cryptPassphrase = Persist.getEncryptedPassphrase(ctx);
@@ -57,7 +55,8 @@ public class DbPassphrase {
         if( cryptPassphrase.equals(CConst.NO_PASSPHRASE)){
 
             // First time, create a random passcode, encrypt and save it
-            clearPassphrase = generateRandomString( 32, HEX);
+            //NEXT-SPRINT use char[] for password, zero it when complete
+            clearPassphrase = Passphrase.generateRandomPassword( 32, Passphrase.HEX).toString();
             success = setDbPassphrase(ctx, clearPassphrase);
 
             assert success;
@@ -70,7 +69,7 @@ public class DbPassphrase {
              * If that fails attempt AES symmetric decryption.
              */
             try {
-                JSONObject jsonObject = KeystoreUtil.decrypt(KEY_ALIAS, cryptPassphrase);
+                JSONObject jsonObject = KeystoreUtil.decrypt(KEY_ALIAS, cryptPassphrase, true);
                 if( jsonObject.getString("success").contentEquals("true")){
 
                     clearPassphrase = jsonObject.getString( CLEARTEXT );
@@ -82,12 +81,12 @@ public class DbPassphrase {
 
             if( ! success ){
 
+                //NEXT-SPRINT remove fallback alltogether
                 /**
                  * Keystore failed. Fallback and use symmetric encryption.
-                 * Create a 32 hex char key by combining a random key with the users account.
+                 * Use a static 32 hex char static key.
                  */
-                String account = LicensePersist.getLicenseAccount(ctx);
-                String md5Key = LicenseUtil.md5( CConst.RANDOM_EDGE+account);
+                String md5Key = LicenseUtil.md5( CConst.RANDOM_EDGE);
                 clearPassphrase = SymmetricCrypto.decrypt( md5Key, cryptPassphrase);
             }
 
@@ -104,13 +103,13 @@ public class DbPassphrase {
      * @param clearPassphrase
      * @return
      */
-    public static boolean setDbPassphrase(Context ctx, String clearPassphrase){
+    public static boolean setDbPassphrase(Context ctx, String clearPassphrase){//NEXT-SPRINT use char[] for password
 
         boolean success = true;
         String cryptPassphrase="";
         try {
 
-            JSONObject jsonObject = KeystoreUtil.encrypt(KEY_ALIAS, clearPassphrase );
+            JSONObject jsonObject = KeystoreUtil.encrypt(KEY_ALIAS, clearPassphrase.getBytes("UTF-8"), true);
             if( jsonObject.getString("success").contentEquals("true")){
 
                 cryptPassphrase = jsonObject.getString(CIPHERTEXT);
@@ -122,8 +121,7 @@ public class DbPassphrase {
              */
             if( cryptPassphrase.isEmpty()){
 
-                String account = LicensePersist.getLicenseAccount(ctx);
-                String md5Key = LicenseUtil.md5( CConst.RANDOM_EDGE+account);
+                String md5Key = LicenseUtil.md5( CConst.RANDOM_EDGE);
                 cryptPassphrase = SymmetricCrypto.encrypt( md5Key, clearPassphrase);
             }
 

@@ -33,7 +33,7 @@ import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.main.SettingsActivity;
 import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.LogUtil;
-import com.nuvolect.securesuite.util.Passphrase;
+import com.nuvolect.securesuite.util.PassphraseManager;
 import com.nuvolect.securesuite.util.Safe;
 import com.nuvolect.securesuite.util.StringUtil;
 
@@ -687,13 +687,13 @@ public class DetailHtm {
                     break;
                 }
                 case password_mode:
-                    Passphrase.setPasswordGenMode(m_ctx, Integer.valueOf(value));
+                    PassphraseManager.setPasswordGenMode(m_ctx, Integer.valueOf(value));
                     break;
                 case password_length:
-                    Passphrase.setPasswordLength(m_ctx, Integer.valueOf(value.trim()));
+                    PassphraseManager.setPasswordLength(m_ctx, Integer.valueOf(value.trim()));
                     break;
                 case password:
-                    Passphrase.appendPasswordHistory(m_ctx, value);
+                    PassphraseManager.appendPasswordHistory(m_ctx, value);
                     break;
                 case theme:{
 
