@@ -115,4 +115,7 @@ dependencies {
     testImplementation 'com.android.support.test:runner:1.0.2'
     testImplementation 'com.android.support.test:rules:1.0.2'
     testImplementation 'org.testng:testng:6.9.6'
+    androidTestImplementation 'junit:junit:4.12'
+
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }

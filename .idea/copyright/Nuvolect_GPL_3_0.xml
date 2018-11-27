@@ -1,7 +1,0 @@
-<component name="CopyrightManager">
-  <copyright>
-    <option name="allowReplaceKeyword" value="Nuvolect" />
-    <option name="myName" value="Nuvolect GPL-3.0" />
-    <option name="notice" value="Copyright (c) &amp;#36;today.year. Nuvolect LLC &#10;&#10;This program is free software: you can redistribute it and/or modify it under the terms of the GNU&#10;General Public License as published by the Free Software Foundation, either version 3 of the License,&#10;or (at your option) any later version.&#10;&#10;Contact legal@nuvolect.com for a less restrictive commercial license if you would like to use the&#10;software without the GPLv3 restrictions.&#10;                            &#10;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without&#10;even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&#10;GNU General Public License for more details.&#10;&#10;You should have received a copy of the GNU General Public License along with this program.  If not,&#10;see &lt;http://www.gnu.org/licenses/&gt;.&#10;                           " />
-  </copyright>
-</component>
