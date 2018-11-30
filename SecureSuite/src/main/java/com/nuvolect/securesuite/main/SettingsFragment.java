@@ -519,7 +519,7 @@ public class SettingsFragment extends PreferenceFragment
             builder.setMessage("Copy your current passphrase, or enter a new passphrase");
 
             m_passphraseEt = new EditText(m_act);
-            String cleartextPassphrase = DbPassphrase.getDbPassphrase(m_act);
+            String cleartextPassphrase = DbPassphrase.getDbPassphrase(m_act);//SPRINT use char[] password
             m_passphraseEt.setText(cleartextPassphrase);
             builder.setView(m_passphraseEt);
 

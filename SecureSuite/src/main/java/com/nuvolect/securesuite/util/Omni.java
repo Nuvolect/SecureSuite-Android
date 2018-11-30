@@ -109,7 +109,7 @@ public class Omni {
          */
         String FILESYSTEM_NAME = "/cryp_filesystem";
         DbPassphrase.createDbKeystore( ctx);
-        String password32 = DbPassphrase.getDbPassphrase( ctx);//TODO consider returning byte[32]
+        String password32 = DbPassphrase.getDbPassphrase( ctx);//SPRINT return byte[32]
         boolean failure = false;
 
         String path = ctx.getDir("vfs", Context.MODE_PRIVATE).getAbsolutePath() + FILESYSTEM_NAME;

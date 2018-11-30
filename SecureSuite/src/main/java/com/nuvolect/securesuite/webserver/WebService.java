@@ -206,7 +206,7 @@ public class WebService extends Service {
      *
      * Pass a KeyStore resource with your certificate and passphrase
      */
-    public static void configureSSL(String keyAndTrustStoreClasspathPath, char[] passphrase) throws IOException {
+    public static void configureSSL(String keyAndTrustStoreClasspathPath, char[] passphrase) throws IOException {//SPRINT remove
 
         try {
             // Android does not have the default jks but uses bks

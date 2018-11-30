@@ -59,7 +59,7 @@ public class Cryp {
      */
     public static String get(String key, String defValue) {
 
-        String value = SqlCipher.getCryp(key);
+        String value = SqlCipher.getCryp(key);//SPRINT use char[]
 
         if( value == null || value.isEmpty()){
 

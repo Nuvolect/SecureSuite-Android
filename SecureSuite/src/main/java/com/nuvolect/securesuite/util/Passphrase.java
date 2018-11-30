@@ -7,18 +7,13 @@
 
 package com.nuvolect.securesuite.util;
 
-import android.content.Context;
-
-import com.nuvolect.securesuite.license.LicenseUtil;
-import com.nuvolect.securesuite.main.CConst;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-public class Passphrase {//FIXME refactor Passphrase and PassphraseManager to have logical separation
+public class Passphrase {
 
     public static int ALPHA_UPPER = 1;
     public static int ALPHA_LOWER = 2;
@@ -27,113 +22,55 @@ public class Passphrase {//FIXME refactor Passphrase and PassphraseManager to ha
     public static int HEX         = 16;
     public static int SYSTEM_MODE = ALPHA_UPPER | ALPHA_LOWER | NUMERIC;
 
+    /**
+     * Generate a random password of the specific length using a variety of character types.
+     * Does not guarantee each variety of character types is used.
+     * @param length
+     * @param mode
+     * @return
+     */
     public static char[] generateRandomPassword(int length, int mode) {
 
-        StringBuffer buffer = new StringBuffer();
-        String characters = "";
+        StringBuffer sourceBuffer = new StringBuffer( 0 );
 
         if( (mode & ALPHA_UPPER) > 0)
-            characters += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            sourceBuffer.append("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
         if( (mode & ALPHA_LOWER) > 0)
-            characters += "abcdefghijklmnopqrstuvwxyz";
+            sourceBuffer.append("abcdefghijklmnopqrstuvwxyz");
         if( (mode & NUMERIC) > 0)
-            characters += "0123456789";
+            sourceBuffer.append("0123456789");
         if( (mode & SPECIAL) > 0)
-            characters += "!$%@#";
+            sourceBuffer.append("!$%@#");
         if( (mode & HEX) > 0)
-            characters += "0123456789abcdef";
+            sourceBuffer.append("0123456789abcdef");
 
-        if( characters.isEmpty())
-            characters = "0123456789";
+        if( sourceBuffer.length() == 0)
+            sourceBuffer.append("0123456789");
 
-        int charactersLength = characters.length();
+        int sourceLength = sourceBuffer.length();
 
         char[] ranChars = new char[ length];
 
         for (int i = 0; i < length; i++) {
-            double index = Math.random() * charactersLength;
-            ranChars[i] = characters.charAt((int) index);
+            double index = Math.random() * sourceLength;
+            ranChars[i] = sourceBuffer.charAt((int) index);
         }
+        sourceBuffer.delete( 0, sourceLength);
+
         return ranChars;
     }
 
+    /**
+     * Generate a random password of the specific length using a variety of character types.
+     * Does not guarantee each variety of character types is used.
+     *
+     * @param length
+     * @param mode
+     * @return
+     */
     public static String generateRandomString(int length, int mode) {
 
-        StringBuffer buffer = new StringBuffer();
-        String characters = "";
-
-        if( (mode & ALPHA_UPPER) > 0)
-            characters += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        if( (mode & ALPHA_LOWER) > 0)
-            characters += "abcdefghijklmnopqrstuvwxyz";
-        if( (mode & NUMERIC) > 0)
-            characters += "0123456789";
-        if( (mode & SPECIAL) > 0)
-            characters += "!$%@#";
-        if( (mode & HEX) > 0)
-            characters += "0123456789abcdef";
-
-        if( characters.isEmpty())
-            characters = "0123456789";
-
-        int charactersLength = characters.length();
-
-        for (int i = 0; i < length; i++) {
-            double index = Math.random() * charactersLength;
-            buffer.append(characters.charAt((int) index));
-        }
-        return buffer.toString();
-    }
-
-    /** Decrypt the passphrase and return it as a string */
-    public static String getDbPassphrase(Context ctx) {
-
-        String clearPassphrase = "";
-        String cryptPassphrase = Persist.getEncryptedPassphrase(ctx);
-
-        if( cryptPassphrase.equals(CConst.DEFAULT_PASSPHRASE)){
-
-            // First time, create a random passcode, encrypt and save it
-            //FIXME use char[], zero it when complete
-            clearPassphrase = generateRandomPassword( 32, HEX).toString();
-            boolean success = putDbPassphrase(ctx, clearPassphrase);
-
-            assert success;
-
-            return clearPassphrase;
-        }
-        try {
-
-            /**
-             * Create a 32 hex char key
-             */
-            String uniqueInstallId = DeviceInfo.getUniqueInstallId(ctx);
-            String md5Key = LicenseUtil.md5(CConst.RANDOM_EDGE + uniqueInstallId);
-            clearPassphrase = SymmetricCrypto.decrypt( md5Key, cryptPassphrase);
-
-        } catch (Exception e) {
-            LogUtil.logException(ctx, LogUtil.LogType.CRYPT, e);
-        }
-        return clearPassphrase;
-    }
-
-    /** Encrypt the passphrase and save it to persist */
-    public static boolean putDbPassphrase(Context ctx, String passphrase){
-
-        boolean success = true;
-        try {
-
-            String uniqueInstallId = DeviceInfo.getUniqueInstallId(ctx);
-            String md5Key = LicenseUtil.md5( CConst.RANDOM_EDGE + uniqueInstallId);
-            String cryptPassphrase = SymmetricCrypto.encrypt( md5Key, passphrase);
-            Persist.setEncryptedPassphrase(ctx, cryptPassphrase);
-
-        } catch (Exception e) {
-            LogUtil.logException(ctx, LogUtil.LogType.CRYPT, e);
-            success = false;
-        }
-
-        return success;
+        return generateRandomString( length, mode).toString();
     }
 
     public static byte[] toBytes(char[] chars) {
@@ -155,5 +92,40 @@ public class Passphrase {//FIXME refactor Passphrase and PassphraseManager to ha
             LogUtil.log(" Exception in toChars");
         }
         return chars;
+    }
+
+    /**
+     * Clear an array changing the contents to zero then changing the
+     * array size to zero.
+     *
+     * @param dirtyArray
+     */
+    public static char[] cleanArray(char[] dirtyArray) {
+
+        for(int i = 0; i< dirtyArray.length; i++){
+
+            dirtyArray[i] = 0;//Clear contents.
+        }
+        dirtyArray = new char[0];//Don't save the size
+
+        return dirtyArray;
+    }
+
+    /**
+     * Clear an array changing the contents to zero then changing the
+     * array size to zero.
+     *
+     * @param dirtyArray
+     * @return
+     */
+    public static byte[] cleanArray(byte[] dirtyArray) {
+
+        for(int i = 0; i< dirtyArray.length; i++){
+
+            dirtyArray[i] = 0;//Clear contents.
+        }
+        dirtyArray = new byte[0];//Don't save the size
+
+        return dirtyArray;
     }
 }

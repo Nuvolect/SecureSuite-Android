@@ -299,7 +299,7 @@ public class SqlCipher {
 
         boolean success = true;
         try {
-            String oldKey = DbPassphrase.getDbPassphrase(m_ctx);
+            String oldKey = DbPassphrase.getDbPassphrase(m_ctx);//SPRINT use char[] password
 
             String sql = "PRAGMA key ='"+oldKey+"'";
             account_db.execSQL( sql );
@@ -331,7 +331,7 @@ public class SqlCipher {
      * @param mNewDbPassphrase
      * @return
      */
-    public static synchronized boolean testPassphrase(Context ctx, String mNewDbPassphrase) {
+    public static synchronized boolean testPassphrase(Context ctx, String mNewDbPassphrase) {//SPRINT use char[] password
 
         try {
             SQLiteDatabase.loadLibs(m_ctx);
@@ -2153,7 +2153,7 @@ public class SqlCipher {
      * @param value
      * @return
      */
-    public static synchronized int putCryp(String key, String value){
+    public static synchronized int putCryp(String key, String value){//SPRINT use char[]
 
         String where = ACTab.key+"=?";
         String[] args = new String[]{ key };
@@ -2195,7 +2195,7 @@ public class SqlCipher {
      * @param key
      * @return value or empty string if key is not found
      */
-    public static synchronized String getCryp(String key){
+    public static synchronized String getCryp(String key){//SPRINT use char[]
 
         try {
             if( key == null || key.isEmpty())

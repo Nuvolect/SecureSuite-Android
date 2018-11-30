@@ -121,7 +121,7 @@ public class CrypServer extends NanoHTTPD {
     /**
      * System wide security token.
      */
-    private static String m_sec_tok = "";
+    private static String m_sec_tok = "";//SPRINT use char[] security token
     private static boolean m_serverEnabled = false;
     private static IHTTPSession m_session = null;
     public static boolean mAuthenticated = false;
@@ -184,7 +184,7 @@ public class CrypServer extends NanoHTTPD {
          * Configure the security token. The token is generated on first use and
          * cached in a member variable.
          */
-        m_sec_tok = "";
+        m_sec_tok = "";//SPRINT use char[]
         getSecTok(); // Configure security token and set member variable.
         /**
          * All RESTful access to this IP is blocked unless it is the companion device.
@@ -617,7 +617,7 @@ public class CrypServer extends NanoHTTPD {
         if( mAuthenticated)
             return true;
 
-        if (headers.containsKey(CConst.SEC_TOK) && headers.get(CConst.SEC_TOK).contentEquals(m_sec_tok)) {
+        if (headers.containsKey(CConst.SEC_TOK) && headers.get(CConst.SEC_TOK).contentEquals(m_sec_tok)) {//SPRINT use char[]
             return true;
         }
 
@@ -978,7 +978,7 @@ public class CrypServer extends NanoHTTPD {
      * Get the system wide security token
      * @return
      */
-    public static String getSecTok() {
+    public static String getSecTok() {//SPRINT use char[]
 
         if( m_sec_tok.isEmpty())
             m_sec_tok = Cryp.get(CConst.SEC_TOK, Passphrase.generateRandomString(32, Passphrase.SYSTEM_MODE));

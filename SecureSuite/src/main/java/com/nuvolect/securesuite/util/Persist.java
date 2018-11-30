@@ -208,6 +208,8 @@ public class Persist {
 
         final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME,  Context.MODE_PRIVATE);
         pref.edit().putString( persistKey, cryptString).commit();
+
+        Passphrase.cleanArray( clearBytes);
     }
 
 
@@ -235,14 +237,16 @@ public class Persist {
         byte[] clearBytes = KeystoreUtil.decrypt( CConst.APP_KEY_ALIAS, encryptBytes);
         char[] clearChars = Passphrase.toChars( clearBytes);
 
+        Passphrase.cleanArray( clearBytes);
+
         return clearChars;
     }
 
-    public static void setEncryptedPassphrase(Context ctx, String passphrase){
+    public static void setEncryptedPassphrase(Context ctx, String passphrase){//SPRINT remove
         final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME,  Context.MODE_PRIVATE);
         pref.edit().putString(PASSPHRASE, passphrase).commit();
     }
-    public static String getEncryptedPassphrase(Context ctx){
+    public static String getEncryptedPassphrase(Context ctx){//SPRINT remove
         final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME, Context.MODE_PRIVATE);
         return pref.getString(PASSPHRASE, CConst.NO_PASSPHRASE);
     }

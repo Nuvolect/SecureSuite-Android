@@ -46,16 +46,21 @@ public class DbPassphrase {//FIXME confirm database password is encrypted with t
      */
     public static String getDbPassphrase(Context ctx) {
 
-        //FIXME use a random password and store it in Android keystore
+        //SPRINT use a random password and store it in Android keystore
+
+        /**
+         * Check if user is using the old encryption method. If so, decrypt with the old method
+         * and re-encrypt with the new method.
+         */
 
         String clearPassphrase = "";
         boolean success = false;
-        String cryptPassphrase = Persist.getEncryptedPassphrase(ctx);
+        String cryptPassphrase = Persist.getEncryptedPassphrase(ctx);//SPRINT use char[] password
 
         if( cryptPassphrase.equals(CConst.NO_PASSPHRASE)){
 
             // First time, create a random passcode, encrypt and save it
-            //NEXT-SPRINT use char[] for password, zero it when complete
+            //SPRINT use char[] for password, zero it when complete
             clearPassphrase = Passphrase.generateRandomPassword( 32, Passphrase.HEX).toString();
             success = setDbPassphrase(ctx, clearPassphrase);
 
@@ -125,7 +130,7 @@ public class DbPassphrase {//FIXME confirm database password is encrypted with t
                 cryptPassphrase = SymmetricCrypto.encrypt( md5Key, clearPassphrase);
             }
 
-            Persist.setEncryptedPassphrase(ctx, cryptPassphrase);
+            Persist.setEncryptedPassphrase(ctx, cryptPassphrase);//SPRINT use char[] password
 
         } catch (Exception e) {
             LogUtil.logException(ctx, LogUtil.LogType.CRYPT, e);
