@@ -23,41 +23,51 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
 
-import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.main.GroupListActivity.GLA_RIGHT_FRAGMENT;
 
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
 import java.util.Locale;
-
-import javax.crypto.NoSuchPaddingException;
 
 public class Persist {
 
+    /**
+     * Persist data to Android app private storage.
+     *
+     * DESIGN PATTERN TO PERSIST ENCRYPTED STRING DATA:
+     * 1. Convert string data to a byte[], no encoding required
+     * 2. Encrypt the byte[], creating a new byte[]
+     * 3. Create a string for storage by encoding the byte[] with Base64
+     * 4. Persist the string
+     * 5. Clean up any clear text data
+     *
+     * RETRIEVE AND RESTORE PERSISTED AND ENCRYPTED STRING DATA:
+     * 1. Read persisted data into a string
+     * 2. Decode the string back into a byte[] using Base64 decode
+     * 3. Decrypt the byte[], creating a new byte[]
+     * 4. Decode the byte[] into a string with UTF-8.
+     * 5. Clean up any clear text data
+     */
+
     private static final String PERSIST_NAME           = "ss_persist";
 
-    // Persist keys
-    private static final String ACCOUNT_NAME           = "account_name";
-    private static final String ACCOUNT_TYPE           = "account_type";
-    private static final String CURRENT_CONTACT_ID     = "contact_id";
-    private static final String CURRENT_ACCOUNT_TYPE   = "account_type";
-    private static final String EMPTY_CONTACT_ID       = "empty_contact_id";
-    private static final String GLA_FRAGMENT_ENUM      = "gla_fragment_enum";
-    private static final String IMPORT_IN_PROGRESS     = "import_in_progress";
-    private static final String NAV_MENU_CHOICE 	   = "nav_menu_choice";
-    private static final String NAV_MENU_TITLE 		   = "nav_menu_title";
-    private static final String NEXT_EXPORT_VCF        = "next_export_vcf";
-    private static final String PASSPHRASE 			   = "passphrase";
-    private static final String PROFILE_ID             = "profile_id";
-    private static final String PROGRESS_BAR_ACTIVE    = "progress_bar_active";
-    private static final String STARTING_UP            = "starting_up";
+    // Persist keys, some calling methods pass their own keys, be sure to avoid conflicts
+    public static final String ACCOUNT_NAME           = "account_name";
+    public static final String ACCOUNT_TYPE           = "account_type";
+    public static final String CURRENT_CONTACT_ID     = "contact_id";
+    public static final String CURRENT_ACCOUNT_TYPE   = "account_type";
+    public static final String EMPTY_CONTACT_ID       = "empty_contact_id";
+    public static final String GLA_FRAGMENT_ENUM      = "gla_fragment_enum";
+    public static final String IMPORT_IN_PROGRESS     = "import_in_progress";
+    public static final String NAV_MENU_TITLE 		  = "nav_menu_title";
+    public static final String NEXT_EXPORT_VCF        = "next_export_vcf";
+    public static final String PROFILE_ID             = "profile_id";
+    public static final String PROGRESS_BAR_ACTIVE    = "progress_bar_active";
+    public static final String STARTING_UP            = "starting_up";
+    public static final String NAV_MENU_CHOICE 	      = "nav_menu_choice";
 
+    public static final String CIPHER_VFS_PASSWORD    = "cipher_vfs_password";// Encrypted, string
+    public static final String SQL_DB_PASSWORD        = "sql_db_password";    // Encrypted, string
+    public static final String PORT_NUMBER            = "port_number";        // Encrypted, int
+    public static final String SELFSIGNED_KS_KEY      = "selfsigned_ks_key";  // Encrypted, string
 
     /**
      * Remove all persistent data.
@@ -65,6 +75,18 @@ public class Persist {
     public static void clearAll(Context ctx) {
         final SharedPreferences pref = ctx.getSharedPreferences( PERSIST_NAME, Context.MODE_PRIVATE);
         pref.edit().clear().commit();
+    }
+
+    /**
+     * Check if a specific key is persisted.
+     * @param ctx
+     * @param persistKey
+     * @return
+     */
+    public static boolean keyExists(Context ctx, String persistKey) {
+
+        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME, Context.MODE_PRIVATE);
+        return pref.contains( persistKey);
     }
 
     public static void setNavChoice(Context ctx, int navMenuPosition, String navMenuTitle) {
@@ -110,12 +132,21 @@ public class Persist {
     }
 
     public static void setCurrentContactId(Context ctx, long contact_id) {
+
+        if( contact_id == -1)
+            throw new IllegalArgumentException("SecureSuite Persist.setCurrentContactId contact_id == -1");
+
         final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME,  Context.MODE_PRIVATE);
         pref.edit().putLong( CURRENT_CONTACT_ID, contact_id).commit();
     }
     public static long getCurrentContactId(Context ctx) {
         final SharedPreferences pref = ctx.getSharedPreferences( PERSIST_NAME, Context.MODE_PRIVATE);
-        return pref.getLong( CURRENT_CONTACT_ID, 0);
+        long contact_id = pref.getLong( CURRENT_CONTACT_ID, 0);
+
+        if( contact_id == -1)
+            throw new IllegalArgumentException("SecureSuite Persist.getCurrentContactId contact_id == -1");
+
+        return  contact_id;
     }
 
     /** Return the next filename in sequence */
@@ -184,70 +215,253 @@ public class Persist {
     }
 
     /**
-     * Encrypt clear char[] data with an app wide private key, then persist the encrypted results.
-     *
+     * Delete a specific key.
      * @param ctx
-     * @param persistKey
-     * @param clearChar
-     * @throws CertificateException
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
-     * @throws KeyStoreException
-     * @throws NoSuchPaddingException
-     * @throws UnrecoverableEntryException
-     * @throws IOException
+     * @param keyToDelete
+     * @return
      */
-    public static void putEncrypt(Context ctx, String persistKey, char[] clearChar)
-            throws CertificateException, InvalidKeyException, NoSuchAlgorithmException,
-            KeyStoreException, NoSuchPaddingException, UnrecoverableEntryException, IOException,
-            NoSuchProviderException, InvalidAlgorithmParameterException {
+    public static boolean deleteKey(Context ctx, String keyToDelete){
 
-        byte[] clearBytes = Passphrase.toBytes( clearChar);
-        byte[] cryptBytes = KeystoreUtil.encrypt( ctx, CConst.APP_KEY_ALIAS, clearBytes);
-        String cryptString = Base64.encodeToString( cryptBytes, Base64.NO_WRAP);
-
-        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME,  Context.MODE_PRIVATE);
-        pref.edit().putString( persistKey, cryptString).commit();
-
-        Passphrase.cleanArray( clearBytes);
+        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME, Context.MODE_PRIVATE);
+        return pref.edit().remove( keyToDelete).commit();
     }
 
+    /**
+     * Simple get.  Return empty string if not found
+     * @param ctx
+     * @param key
+     * @return
+     */
+    public static String get(Context ctx, String key) {
+
+        final SharedPreferences pref = ctx.getSharedPreferences( PERSIST_NAME, Context.MODE_PRIVATE);
+        return pref.getString(key, "");
+    }
+    /**
+     * Simple get.  Return default string if not found
+     * @param ctx
+     * @param key
+     * @return
+     */
+    public static String get(Context ctx, String key, String defaultString) {
+
+        final SharedPreferences pref = ctx.getSharedPreferences( PERSIST_NAME, Context.MODE_PRIVATE);
+        return pref.getString(key, defaultString);
+    }
 
     /**
-     * Read encrypted data, decrypt it with an app wide private key and return clear results.
+     * Simple put value with the given key.
+     * Return true if successful, otherwise false.
+     * @param ctx
+     * @param key
+     * @param value
+     */
+    public static boolean put(Context ctx, String key, String value){
+        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME,  Context.MODE_PRIVATE);
+        return pref.edit().putString(key, value).commit();
+    }
+
+    public static void putPort(Context ctx, int port) {
+
+        byte[] crypBytes = new byte[0];
+        try {
+            crypBytes = CrypUtil.encryptInt( port);
+            String crypString = Base64.encodeToString(crypBytes, Base64.DEFAULT);
+
+            put( ctx, PORT_NUMBER, crypString);
+        } catch (Exception e) {
+            LogUtil.logException(LogUtil.LogType.PERSIST, e);
+        }
+    }
+
+    public static int getPort(Context ctx, int default_port) {
+
+        if( ! keyExists( ctx, PORT_NUMBER))
+            return default_port;
+
+        try {
+            String crypString = get( ctx, PORT_NUMBER);
+            final byte[] crypBytes = CrypUtil.toBytesUTF8( crypString);
+
+            return CrypUtil.decryptInt( crypBytes);
+        } catch (Exception e) {
+            LogUtil.logException(LogUtil.LogType.PERSIST, e);
+        }
+        return default_port;
+    }
+
+    /**
+     * Put a new cipher virtual file system password.
+     *
+     * Note that CipherVfsPassword and DbSqlPassword need to be separate methods.
+     * While it is tempting to combine these methods, only the SQL DB can be
+     * rekeyed at this time. If the SQL DB is rekeyed then the CIPHER VFS will
+     * have an invalid password. Revisit this subject when the CIPHER VFS can
+     * be rekeyed.
+     *
+     * @param ctx
+     * @param clearBytes
+     */
+    public static void putCipherVfsPassword(Context ctx, byte[] clearBytes) {
+
+        try {
+            // Encrypt the byte array, creating a new byte array
+            byte[] crypBytes = CrypUtil.encrypt( clearBytes);
+
+            // Encode the array for storage
+            String crypEncodedString = CrypUtil.encodeToB64( crypBytes);
+
+            // Store it as a string
+            put( ctx, CIPHER_VFS_PASSWORD, crypEncodedString);
+
+        } catch (Exception e) {
+            LogUtil.logException(LogUtil.LogType.PERSIST, e);
+        }
+    }
+
+    /**
+     * Get the cipher virtual file system password.
+     * If the password does not exist, create it and save it.
      *
      * @param ctx
      * @return
-     * @throws CertificateException
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
-     * @throws KeyStoreException
-     * @throws NoSuchPaddingException
-     * @throws UnrecoverableEntryException
-     * @throws IOException
      */
-    public static char[] getDecrypt(Context ctx, String persistKey)
-            throws CertificateException, InvalidKeyException, NoSuchAlgorithmException,
-            KeyStoreException, NoSuchPaddingException, UnrecoverableEntryException, IOException {
+    public static byte[] getCipherVfsPassword(Context ctx) {
 
-        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME, Context.MODE_PRIVATE);
+        byte[] clearBytes = new byte[0];
 
-        String encryptString = pref.getString( persistKey, CConst.NO_PASSPHRASE);
-        byte[] encryptBytes = Base64.decode( encryptString, Base64.DEFAULT);
-        byte[] clearBytes = KeystoreUtil.decrypt( CConst.APP_KEY_ALIAS, encryptBytes);
-        char[] clearChars = Passphrase.toChars( clearBytes);
+        if (!keyExists(ctx, CIPHER_VFS_PASSWORD)) {
 
-        Passphrase.cleanArray( clearBytes);
+            clearBytes = Passphrase.generateRandomPasswordBytes(32, Passphrase.SYSTEM_MODE);
+            putCipherVfsPassword(ctx, clearBytes);
+
+        } else {
+
+            // Get the encoded and encrypted string
+            String crypEncodedString = get(ctx, CIPHER_VFS_PASSWORD);
+
+            // Decode the string back into a byte array using Base64 decode
+            byte[] crypBytes = CrypUtil.decodeFromB64(crypEncodedString);
+
+            // Decrypt the byte array, creating a new byte array
+            try {
+                clearBytes = CrypUtil.decrypt(crypBytes);
+            } catch (Exception e) {
+                LogUtil.logException(LogUtil.LogType.PERSIST, e);
+            }
+        }
+        return clearBytes;
+    }
+
+    /**
+     * Put a new DB password. This is only done when called by getDbPassword and
+     * the password is crated and when the database is re-keyed from settings.
+     *
+     * Note that CipherVfsPassword and DbSqlPassword need to be separate methods.
+     * While it is tempting to combine these methods, only the SQL DB can be
+     * rekeyed at this time. If the SQL DB is rekeyed then the CIPHER VFS will
+     * have an invalid password. Revisit this subject when the CIPHER VFS can
+     * be rekeyed.
+     *
+     * @param ctx
+     * @param clearBytes
+     */
+    public static void putSqlDbPassword(Context ctx, byte[] clearBytes) {
+
+        try {
+            // Encrypt the byte array, creating a new byte array
+            byte[] crypBytes = CrypUtil.encrypt( clearBytes);
+
+            // Encode the array for storage
+            String crypEncodedString = CrypUtil.encodeToB64( crypBytes);
+
+            // Store it as a string
+            put( ctx, SQL_DB_PASSWORD, crypEncodedString);
+
+        } catch (Exception e) {
+            LogUtil.logException(LogUtil.LogType.PERSIST, e);
+        }
+    }
+
+    /**
+     * Get the database password.
+     * If the password does not exist, create it and save it.
+     *
+     * @param ctx
+     * @return
+     */
+    public static byte[] getSqlDbPassword(Context ctx) {
+
+        byte[] clearBytes = new byte[0];
+
+        if( ! keyExists( ctx, SQL_DB_PASSWORD)){
+
+            clearBytes = Passphrase.generateRandomPasswordBytes(32, Passphrase.SYSTEM_MODE);
+            putSqlDbPassword( ctx, clearBytes);
+
+        }else{
+
+            // Get the encoded and encrypted string
+            String crypEncodedString = get( ctx, SQL_DB_PASSWORD);
+
+            // Decode the string back into a byte array using Base64 decode
+            byte[] crypBytes = CrypUtil.decodeFromB64( crypEncodedString);
+
+            // Decrypt the byte array, creating a new byte array
+            try {
+                clearBytes = CrypUtil.decrypt( crypBytes);
+            } catch (Exception e) {
+                LogUtil.logException(LogUtil.LogType.PERSIST, e);
+            }
+        }
+        return clearBytes;
+    }
+
+    public static void putSelfsignedKsKey(Context ctx, char[] clearChars) {
+
+        // Convert it to bytes, no encoding yet
+        byte[] clearBytes = CrypUtil.toBytesUTF8( clearChars);
+        String encryptedEncodedString = null;
+
+        try {
+            // Encrypt the byte array, creating a new byte array
+            byte[] encryptedBytes = CrypUtil.encrypt(clearBytes);
+
+            // Prepare for storage by converting the byte array to a Base64 encoded string
+            encryptedEncodedString = CrypUtil.encodeToB64( encryptedBytes );
+        } catch (Exception e) {
+            LogUtil.logException(LogUtil.LogType.PERSIST, e);
+        }
+
+        // Store it as a string
+        put( ctx, SELFSIGNED_KS_KEY, encryptedEncodedString);
+
+        // Clean up
+        clearBytes = CrypUtil.cleanArray( clearBytes);
+    }
+
+    public static char[] getSelfsignedKsKey(Context ctx) {
+
+        // Get the encoded and encrypted string
+        String cryptedEncodedString = get( ctx, SELFSIGNED_KS_KEY);
+
+        // Decode the string back into a byte array using Base64 decode
+        byte[] crypBytes = CrypUtil.decodeFromB64(cryptedEncodedString);
+
+        // Decrypt the byte array, creating a new byte array
+        byte[] clearBytes = new byte[0];
+        try {
+            clearBytes = CrypUtil.decrypt( crypBytes);
+        } catch (Exception e) {
+            LogUtil.logException(LogUtil.LogType.PERSIST, e);
+        }
+
+        // Decode the byte array creating a new String using UTF-8 encoding
+        char[] clearChars = CrypUtil.toChar( clearBytes);
+
+        // Clean up
+        clearBytes = CrypUtil.cleanArray( clearBytes);
 
         return clearChars;
-    }
-
-    public static void setEncryptedPassphrase(Context ctx, String passphrase){//SPRINT remove
-        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME,  Context.MODE_PRIVATE);
-        pref.edit().putString(PASSPHRASE, passphrase).commit();
-    }
-    public static String getEncryptedPassphrase(Context ctx){//SPRINT remove
-        final SharedPreferences pref = ctx.getSharedPreferences(PERSIST_NAME, Context.MODE_PRIVATE);
-        return pref.getString(PASSPHRASE, CConst.NO_PASSPHRASE);
     }
 }

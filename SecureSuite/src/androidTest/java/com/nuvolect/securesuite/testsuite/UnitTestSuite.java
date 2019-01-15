@@ -19,8 +19,13 @@
 
 package com.nuvolect.securesuite.testsuite;
 
+import com.nuvolect.securesuite.data.CryptoDbTest;
+import com.nuvolect.securesuite.data.CryptoFilesystemTest;
+import com.nuvolect.securesuite.data.MyGroupsTest;
+import com.nuvolect.securesuite.util.CrypUtilTest;
 import com.nuvolect.securesuite.util.KeystoreUtilTest;
 import com.nuvolect.securesuite.util.OmniTest;
+import com.nuvolect.securesuite.util.PersistTest;
 import com.nuvolect.securesuite.webserver.connector.CmdArchiveTest;
 import com.nuvolect.securesuite.webserver.connector.CmdExtractTest;
 import com.nuvolect.securesuite.webserver.connector.CmdMkfileTest;
@@ -36,7 +41,11 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses(
         {
                 KeystoreUtilTest.class,
-                // MyGroupsTest.class, // Will wipe contacts database
+                PersistTest.class,
+                MyGroupsTest.class, // Change testEnabled = true, to run full test
+                CrypUtilTest.class,
+                CryptoFilesystemTest.class,
+                CryptoDbTest.class,
                 OmniTest.class,
                 CmdMkfileTest.class,
                 CmdRmFileTest.class,

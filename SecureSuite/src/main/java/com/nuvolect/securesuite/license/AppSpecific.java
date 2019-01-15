@@ -19,6 +19,8 @@
 
 package com.nuvolect.securesuite.license;
 
+import com.nuvolect.securesuite.R;
+
 /**
  * Details of the license specific to this app. Keep separate from other license classes
  * to enable plug-in-play ease of maintenance.
@@ -29,6 +31,7 @@ public class AppSpecific {
 
     public static final String APP_CRYP_SEED_HEX          = "34694f5f7969cac1750e084dace6b6c3";
 
+    public final static int SMALL_ICON                    = R.drawable.icon_64;
     public final static String TOC_HREF_URL               = "<a href='https://securesuite.org/terms.htm'>Terms and Conditions</a>";
     public final static String PP_HREF_URL                = "<a href='https://securesuite.org/privacy.htm'>Privacy Policy</a>";
 

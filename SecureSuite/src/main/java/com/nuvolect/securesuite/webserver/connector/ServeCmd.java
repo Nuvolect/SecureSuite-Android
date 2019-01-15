@@ -20,7 +20,6 @@
 package com.nuvolect.securesuite.webserver.connector;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.webserver.admin.CmdPing;
@@ -28,6 +27,8 @@ import com.nuvolect.securesuite.webserver.connector.base.ConnectorCommand;
 
 import java.io.InputStream;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 /**
  * Dispatch to serve RESTful services.

@@ -39,9 +39,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
-import static org.hamcrest.CoreMatchers.is;
+import static androidx.test.InstrumentationRegistry.getTargetContext;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 /**
  * Exercise the connector "rm" command, {@link CmdRm}

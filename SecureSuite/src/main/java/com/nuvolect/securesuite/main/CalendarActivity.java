@@ -20,14 +20,16 @@
 package com.nuvolect.securesuite.main;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.webserver.CrypServer;
 import com.nuvolect.securesuite.webserver.WebUtil;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 
 /**
@@ -64,8 +66,7 @@ public class CalendarActivity extends FragmentActivity {
         WebFragment webFragment = new WebFragment().newInstance(url);
         String fragmentTag = "webFragmentTag";
 
-        android.support.v4.app.FragmentTransaction ft
-                = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         ft.replace(R.id.finder_webview, webFragment, fragmentTag);
         ft.addToBackStack(null);

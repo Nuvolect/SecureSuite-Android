@@ -89,7 +89,6 @@ public class CConst {
     public static final String COUNTS               = "counts";
     public static final String CRYP_SYNC            = "cryp_sync";
     public static final String DATES                = DTab.date.toString();
-    public static final String DEFAULT_PASSPHRASE   = "WhenAllElseFails";
     public static final String DISPLAY_NAME         = DTab.display_name.toString();
     public static final String ELFINDER_PAGE        = "/elFinder-2.1.42/finder.html";// also navbar.htm, lobby.htm {release, debug}
     public static final String ELF_                 = "elf_";
@@ -130,13 +129,11 @@ public class CConst {
     public static final String PHONETIC_GIVEN       = KvTab.phonetic_given.toString();
     public static final String PHONETIC_MIDDLE      = KvTab.phonetic_middle.toString();
     public static final String PHOTO                = DTab.photo.toString();
-    public static final String QUERY_PARAMETER_STRINGS  = "queryParameterStrings";
     public static final String RELATION             = DTab.relation.toString();
     public static final String RESPONSE_CODE        = "response_code";
     public static final String ROOT                 = "/";
     public static final String SLASH                = "/";
     public static final String SEC_TOK              = "sec_tok";
-    public static final String SELFSIGNED_KS_KEY    = "selfsigned_ks_key";
     public static final String SERVER_ENABLED       = "server_enabled";
     public static final String SUBSCRIBER           = "subscriber";
     public static final String TARGET               = "target";

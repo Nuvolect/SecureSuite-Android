@@ -22,6 +22,7 @@ public class Passphrase {
     public static int HEX         = 16;
     public static int SYSTEM_MODE = ALPHA_UPPER | ALPHA_LOWER | NUMERIC;
 
+
     /**
      * Generate a random password of the specific length using a variety of character types.
      * Does not guarantee each variety of character types is used.
@@ -29,7 +30,7 @@ public class Passphrase {
      * @param mode
      * @return
      */
-    public static char[] generateRandomPassword(int length, int mode) {
+    public static char[] generateRandomPasswordChars(int length, int mode) {
 
         StringBuffer sourceBuffer = new StringBuffer( 0 );
 
@@ -68,12 +69,37 @@ public class Passphrase {
      * @param mode
      * @return
      */
-    public static String generateRandomString(int length, int mode) {
+    public static byte[] generateRandomPasswordBytes(int length, int mode) {
 
-        return generateRandomString( length, mode).toString();
+        char[] chars = generateRandomPasswordChars( length, mode);
+        byte[] bytes = toBytes( chars);
+        chars = cleanArray( chars);
+        return bytes;
     }
 
-    public static byte[] toBytes(char[] chars) {
+    /**
+     * Generate a random password of the specific length using a variety of character types.
+     * Does not guarantee each variety of character types is used.
+     *
+     * @param length
+     * @param mode
+     * @return
+     */
+    public static String generateRandomString(int length, int mode) {
+
+        char[] chars = generateRandomPasswordChars( length, mode);
+        String string = chars.toString();
+        chars = CrypUtil.cleanArray( chars);
+
+        return string;
+    }
+
+    /**
+     * Convert a char array to a byte array.
+     * @param chars
+     * @return
+     */
+    public static byte[] toBytes(char[] chars) {//FIXME remove duplicate methods into new class
         CharBuffer charBuffer = CharBuffer.wrap(chars);
         ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
         byte[] bytes = Arrays.copyOfRange(byteBuffer.array(),
@@ -82,6 +108,11 @@ public class Passphrase {
         return bytes;
     }
 
+    /**
+     * Convert a byte array to a char array.
+     * @param bytes
+     * @return
+     */
     public static char[] toChars(byte[] bytes){
 
         char chars[] = new char[0];

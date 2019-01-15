@@ -19,7 +19,6 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
-import android.support.annotation.NonNull;
 
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
@@ -30,6 +29,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 /**
  * file

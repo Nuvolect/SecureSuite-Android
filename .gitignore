@@ -3,6 +3,8 @@
 .gradle
 /.idea/libraries
 /.idea/workspace.xml
+/.idea/caches/
+/.idea/codeStyles/
 /captures
 /local.properties
 /SecureSuite/build/

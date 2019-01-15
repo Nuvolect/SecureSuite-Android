@@ -22,15 +22,24 @@ package com.nuvolect.securesuite.webserver.connector;
 import android.content.Context;
 
 import com.nuvolect.securesuite.data.SqlCipher;
+import com.nuvolect.securesuite.main.CConst;
+import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Omni;
 import com.nuvolect.securesuite.util.OmniFile;
-import com.nuvolect.securesuite.util.TestFilesHelper;
+import com.nuvolect.securesuite.webserver.WebUtil;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
-import static org.hamcrest.CoreMatchers.is;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import static androidx.test.InstrumentationRegistry.getTargetContext;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 /**
  * Exercise the connector "mkfile" command, {@link CmdMkfile}
@@ -41,12 +50,46 @@ public class CmdMkfileTest {
     public void go() throws Exception {
 
         Context ctx = getTargetContext();
-        SqlCipher.getInstance(ctx);
 
-        assertThat (Omni.init(ctx), is(true));
+        SqlCipher.getInstance( ctx );
+        assertThat ( ServerInit.init( ctx ), is( true ));
 
-        OmniFile targetFile = TestFilesHelper.createFile(ctx, "/", ".filenameNeverGuessZez");
-        assertThat(targetFile.delete(), is(true));
-        assertThat( targetFile.exists(), is(false));
+        String volumeId = Omni.userVolumeId_0;
+        String rootPath = "/";
+        String uniqueFilename = ".filenameNeverGuessZez";
+
+        OmniFile targetFile = new OmniFile( volumeId, rootPath + uniqueFilename);
+        boolean deleted = targetFile.delete();
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(CConst.TARGET, targetFile.getParentFile().getHash());// root hash
+        params.put(CConst.NAME, uniqueFilename);
+        params.put(CConst.URL, WebUtil.getServerUrl( ctx ));
+
+        InputStream inputStream = new CmdMkfile().go( params );
+
+        try {
+
+            byte[] bytes = new byte[4096];
+            int numBytes = inputStream.read(bytes);
+            assertThat( numBytes > 0, is( true));
+
+            JSONObject jsonWrapper = new JSONObject( new String(bytes));
+            JSONArray jsonArray = jsonWrapper.getJSONArray("added");
+            assertThat( jsonArray.length() > 0, is( true ));
+            JSONObject jsonObject = jsonArray.getJSONObject( 0 );
+
+            boolean hasName = jsonObject.has("name");
+            assertThat( hasName, is( true ));
+            boolean nameMatch = jsonObject.getString("name").contentEquals(uniqueFilename);
+            assertThat(nameMatch, is( true ));
+
+            assertThat( targetFile.exists(), is( true ));
+            assertThat( targetFile.delete(), is( true ));
+            assertThat( targetFile.exists(), is( false ));
+
+        } catch (IOException e) {
+            LogUtil.logException(CmdMkfileTest.class, e);
+        }
     }
 }

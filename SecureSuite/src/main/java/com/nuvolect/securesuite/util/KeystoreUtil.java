@@ -23,6 +23,8 @@ import android.content.Context;
 import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
 
+import com.nuvolect.securesuite.main.CConst;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,10 +41,11 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
-import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -75,6 +78,30 @@ public class KeystoreUtil {
     private static SecureRandom random = new SecureRandom();
 
     /**
+     * Initaliaze the Android keystore. Return false if there are issues otherwise true;
+     *
+     * @param ctx
+     * @return
+     */
+    public static boolean init( Context ctx){
+
+        boolean success = false;
+
+        if( ! keyExists(CConst.APP_KEY_ALIAS)){
+
+            try {
+                createKey( ctx, CConst.APP_KEY_ALIAS);
+                success = true;
+            } catch (Exception e) {
+                LogUtil.logException( KeystoreUtil.class, e);
+            }
+        }
+        else
+            success = true;
+
+        return  success;
+    }
+    /**
      * Test if the Android system lockscreen is enabled by creating a keystore item.
      * Creating the item will fail if the lockscreen is not enabled.
      *
@@ -93,12 +120,15 @@ public class KeystoreUtil {
 
                 lockscreenEnabled = "disabled";
             }else
-            if( result.getString("success").contentEquals("true"))
+            if( result.getString("success").contentEquals("true")){
+
                 lockscreenEnabled = "enabled";
+                deleteKey( LOCKSCREEN_TEST);
+            }
 
             result.put(LOCKSCREEN_TEST,lockscreenEnabled);
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             LogUtil.logException( KeystoreUtil.class, e);
         }
         return result;
@@ -229,10 +259,12 @@ public class KeystoreUtil {
             ks.load(null);
             if( ks.containsAlias( key_alias)){
 
-                KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry( key_alias, null);
-                RSAPublicKey publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
+//                KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry( key_alias, null);
+//                RSAPublicKey publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
 
-//                Cipher rsaCipher = Cipher.getInstance( CIPHER_ALGORITHM, "AndroidOpenSSL"); //AndroidOpenSSL is deprecated
+                PrivateKey privateKey = (PrivateKey) ks.getKey(key_alias, null);
+                PublicKey publicKey = ks.getCertificate(key_alias).getPublicKey();
+
                 Cipher rsaCipher = Cipher.getInstance( CIPHER_ALGORITHM );
                 rsaCipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
@@ -242,6 +274,7 @@ public class KeystoreUtil {
                 cipherOutputStream.close();
 
                 byte [] cipherBytes = outputStream.toByteArray();
+                outputStream.close();
                 cipherTextB64 = Base64.encodeToString(cipherBytes, BASE64);
 
             }else{
@@ -301,8 +334,11 @@ public class KeystoreUtil {
             createKey( ctx, key_alias);
         }
 
-        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry( key_alias, null);
-        RSAPublicKey publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
+//        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry( key_alias, null);
+//        RSAPublicKey publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
+
+        PrivateKey privateKey = (PrivateKey) ks.getKey(key_alias, null);
+        PublicKey publicKey = ks.getCertificate(key_alias).getPublicKey();
 
         Cipher rsaCipher = Cipher.getInstance( CIPHER_ALGORITHM );
         rsaCipher.init(Cipher.ENCRYPT_MODE, publicKey);
@@ -313,6 +349,48 @@ public class KeystoreUtil {
         cipherOutputStream.close();
 
         cipherBytes = outputStream.toByteArray();
+        outputStream.close();
+
+        return cipherBytes;
+    }
+
+    /**
+     * Basic KeyStore encryption. Assumes key has already been created.
+     *
+     * @param key_alias
+     * @param clearBytes
+     * @return
+     * @throws KeyStoreException
+     * @throws CertificateException
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     * @throws UnrecoverableEntryException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeyException
+     */
+    public static byte[] encrypt(String key_alias, byte[] clearBytes)
+            throws KeyStoreException, CertificateException, NoSuchAlgorithmException,
+            IOException, UnrecoverableEntryException, NoSuchPaddingException,
+            InvalidKeyException {
+
+        byte[] cipherBytes = new byte[0];
+
+        KeyStore ks = KeyStore.getInstance(KEYSTORE_PROVIDER_ANDROID_KEYSTORE);
+        ks.load(null);
+
+        PrivateKey privateKey = (PrivateKey) ks.getKey(key_alias, null);
+        PublicKey publicKey = ks.getCertificate(key_alias).getPublicKey();
+
+        Cipher rsaCipher = Cipher.getInstance( CIPHER_ALGORITHM );
+        rsaCipher.init(Cipher.ENCRYPT_MODE, publicKey);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        CipherOutputStream cipherOutputStream = new CipherOutputStream( outputStream, rsaCipher);
+        cipherOutputStream.write(clearBytes);
+        cipherOutputStream.close();
+
+        cipherBytes = outputStream.toByteArray();
+        outputStream.close();
 
         return cipherBytes;
     }
@@ -337,15 +415,22 @@ public class KeystoreUtil {
         byte[] decryptBuffer = new byte[2048];
         byte[] decryptedResult = new byte[0];
 
+        if( key_alias == null || key_alias.length() == 0)
+            throw new IllegalArgumentException("key alias null or length zero");
+
+        if( cipherBytes == null || cipherBytes.length == 0)
+            throw new IllegalArgumentException("cipher bytes null or length zero");
+
         KeyStore ks = KeyStore.getInstance(KEYSTORE_PROVIDER_ANDROID_KEYSTORE);
         ks.load(null);
 
         if( ks.containsAlias( key_alias)){
 
-            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry( key_alias, null);
+            PrivateKey privateKey = (PrivateKey) ks.getKey(key_alias, null);
+            PublicKey publicKey = ks.getCertificate(key_alias).getPublicKey();
 
             Cipher cipher = Cipher.getInstance( CIPHER_ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new ByteArrayInputStream(cipherBytes), cipher);
@@ -360,6 +445,9 @@ public class KeystoreUtil {
             if( bytesRead != -1)
                 outputStream.write(decryptBuffer, 0, bytesRead);
             decryptedResult = outputStream.toByteArray();
+
+            cipherInputStream.close();
+            outputStream.close();
         }
         else{
             throw new IllegalArgumentException("key not found");
@@ -367,6 +455,7 @@ public class KeystoreUtil {
 
         return decryptedResult;
     }
+
 
     /**
      * Use a private key indexed by an alias to decrypt text.
@@ -386,11 +475,11 @@ public class KeystoreUtil {
             ks.load(null);
             if( ks.containsAlias( key_alias)){
 
-                KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry( key_alias, null);
-                privateKeyEntryString = privateKeyEntry.toString();
+                PrivateKey privateKey = (PrivateKey) ks.getKey(key_alias, null);
+                PublicKey publicKey = ks.getCertificate(key_alias).getPublicKey();
 
                 Cipher cipher = Cipher.getInstance( CIPHER_ALGORITHM);
-                cipher.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
+                cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
                 CipherInputStream cipherInputStream = new CipherInputStream(
                         new ByteArrayInputStream(Base64.decode( cipherTextB64, BASE64)), cipher);
@@ -401,6 +490,7 @@ public class KeystoreUtil {
                 while ((nextByte = cipherInputStream.read()) != -1) {
                     values.add((byte)nextByte);
                 }
+                cipherInputStream.close();
 
                 byte[] bytes = new byte[values.size()];
                 for(int i = 0; i < bytes.length; i++) {
@@ -526,11 +616,13 @@ public class KeystoreUtil {
 
                 JSONObject obj = new JSONObject();
                 String key_alias = ksEnumeration.nextElement();
+                LogUtil.log(KeystoreUtil.class, "keystore key: "+key_alias);
                 obj.put("alias", key_alias);
 
-                KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry( key_alias, null);
+                PrivateKey privateKey = (PrivateKey) ks.getKey(key_alias, null);
+                PublicKey publicKey = ks.getCertificate(key_alias).getPublicKey();
 
-                String s = privateKeyEntry.getCertificate().toString();
+                String s = privateKey.toString();
 
                 obj.put("certificate", s);
 
@@ -546,6 +638,26 @@ public class KeystoreUtil {
     }
 
     /**
+     * Test of android keystore key exists.
+     * @param keyAlias
+     * @return
+     */
+    public static boolean keyExists( String keyAlias) {
+
+        KeyStore ks = null;
+        try {
+            ks = KeyStore.getInstance(KEYSTORE_PROVIDER_ANDROID_KEYSTORE);
+            ks.load(null);
+
+            return ks.containsAlias( keyAlias);
+
+        } catch (Exception e) {
+            LogUtil.logException(KeystoreUtil.class, e);
+        }
+        return false;
+    }
+
+    /**
      * Create a public/private key if it does not already exist.
      *
      * @param ctx
@@ -554,28 +666,44 @@ public class KeystoreUtil {
      */
     public static boolean createKeyNotExists(Context ctx, String keyAlias) {
 
-        KeyStore ks = null;
         boolean keyCreated = false;
         try {
 
-            ks = KeyStore.getInstance(KEYSTORE_PROVIDER_ANDROID_KEYSTORE);
-            ks.load(null);
-            if( ks.containsAlias( keyAlias))
+            if( keyExists( keyAlias))
                 return false;
 
             /**
-             * Key does not exist.
-             * Create the key.
+             * Key does not exist. Create the key.
              */
             JSONObject jsonObject = createKey( ctx, keyAlias, true);
             keyCreated = jsonObject.getString( "success").contentEquals( "true");
 
-        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException |
-                IOException | JSONException e) {
+        } catch ( Exception e) {
 
             LogUtil.logException(KeystoreUtil.class, e);
         }
 
         return keyCreated;
+    }
+
+    public static void dumpToLog(Context ctx) {
+
+        JSONArray keys = getKeys();
+
+        for( int i = 0; i < keys.length(); i++){
+
+            try {
+                JSONObject object = keys.getJSONObject( i );
+
+                String alias = object.getString("alias");
+                String certificate = object.getString("certificate");
+
+                LogUtil.log(KeystoreUtil.class, "alias: "+alias);
+                LogUtil.log(KeystoreUtil.class, "certificate: "+certificate);
+            } catch (JSONException e) {
+                LogUtil.logException(KeystoreUtil.class, e);
+            }
+
+        }
     }
 }

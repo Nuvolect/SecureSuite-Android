@@ -36,9 +36,9 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
-import static org.hamcrest.CoreMatchers.is;
+import static androidx.test.InstrumentationRegistry.getTargetContext;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class CmdArchiveTest {
 

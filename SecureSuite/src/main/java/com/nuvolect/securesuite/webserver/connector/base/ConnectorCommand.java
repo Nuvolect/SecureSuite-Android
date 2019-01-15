@@ -19,10 +19,11 @@
 
 package com.nuvolect.securesuite.webserver.connector.base;
 
-import android.support.annotation.NonNull;
 
 import java.io.InputStream;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 /**
  * Any command must receive Map of params, Context for some related things and return InputStream

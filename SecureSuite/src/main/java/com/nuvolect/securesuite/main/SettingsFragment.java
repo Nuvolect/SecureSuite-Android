@@ -58,12 +58,13 @@ import com.nuvolect.securesuite.license.AppSpecific;
 import com.nuvolect.securesuite.license.LicensePersist;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
-import com.nuvolect.securesuite.util.DbPassphrase;
+import com.nuvolect.securesuite.util.CrypUtil;
 import com.nuvolect.securesuite.util.DeviceInfo;
 import com.nuvolect.securesuite.util.DialogUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.PermissionManager;
 import com.nuvolect.securesuite.util.PermissionUtil;
+import com.nuvolect.securesuite.util.Persist;
 import com.nuvolect.securesuite.util.Util;
 import com.nuvolect.securesuite.webserver.Comm;
 import com.nuvolect.securesuite.webserver.CrypServer;
@@ -73,6 +74,7 @@ import com.nuvolect.securesuite.webserver.WebUtil;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Locale;
@@ -519,7 +521,8 @@ public class SettingsFragment extends PreferenceFragment
             builder.setMessage("Copy your current passphrase, or enter a new passphrase");
 
             m_passphraseEt = new EditText(m_act);
-            String cleartextPassphrase = DbPassphrase.getDbPassphrase(m_act);//SPRINT use char[] password
+            byte[] cleartextBytes = Persist.getSqlDbPassword( m_act);
+            String cleartextPassphrase = CrypUtil.toStringUTF8( cleartextBytes);
             m_passphraseEt.setText(cleartextPassphrase);
             builder.setView(m_passphraseEt);
 
@@ -535,7 +538,15 @@ public class SettingsFragment extends PreferenceFragment
                         return;
                     }
 
-                    Boolean success = SqlCipher.rekey(m_act, newPassphrase);
+                    Boolean success = false;
+                    byte[] newPassBytes = new byte[0];
+                    try {
+                        newPassBytes = CrypUtil.toBytesUTF8( newPassphrase);
+                        success = SqlCipher.rekey(m_act, newPassBytes);
+                    } catch (UnsupportedEncodingException e) {
+                        LogUtil.logException(LogUtil.LogType.SETTINGS, e);
+                    }
+                    newPassBytes = CrypUtil.cleanArray( newPassBytes);
 
                     if (success)
                         Toast.makeText(m_act, "Passphrase changed", Toast.LENGTH_SHORT).show();

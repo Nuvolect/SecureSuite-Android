@@ -43,8 +43,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -67,8 +65,9 @@ import com.nuvolect.securesuite.license.LicenseUtil;
 import com.nuvolect.securesuite.util.ActionBarUtil;
 import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.Cryp;
-import com.nuvolect.securesuite.util.DbPassphrase;
+import com.nuvolect.securesuite.util.CrypUtil;
 import com.nuvolect.securesuite.util.FileBrowserDbRestore;
+import com.nuvolect.securesuite.util.KeystoreUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.LogUtil.LogType;
 import com.nuvolect.securesuite.util.PermissionUtil;
@@ -81,11 +80,17 @@ import com.nuvolect.securesuite.webserver.CrypServer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 /**
+ * This is the main entry point for the app.
+ *
  * An activity representing a list of Contacts. This activity has different
  * presentations for handset and tablet-size devices. On handsets, the activity
  * presents a list of items, which when touched, lead to a
@@ -139,6 +144,9 @@ public class ContactListActivity extends FragmentActivity
         m_ctx = getApplicationContext();
         m_savedInstanceState = savedInstanceState;
 
+        // Make sure app level encryption key is in place.
+        KeystoreUtil.init( m_ctx);
+
         mTwoPane = false;
 
         // Action bar progress setup.  Needs to be called before setting the content view
@@ -148,9 +156,9 @@ public class ContactListActivity extends FragmentActivity
         setContentView(R.layout.contact_list_activity);
 
         /**
-         * Kick off the license manager.  Among other tasks, the license manager captures
-         * a license account.  The license account is used as part of the database encryption key.
-         * Consequently, do not initialize the database prior to capturing the license account.
+         * Kick off the license manager.
+         * The calling method will use callbacks to receive the results of user decisions.
+         * The webserver is restarted if it was previously enabled.
          */
         LicenseManager.getInstance(m_act).checkLicense(m_act, mLicenseManagerListener);
     }
@@ -773,17 +781,9 @@ public class ContactListActivity extends FragmentActivity
                         a = BackupRestore.renameDbTemp(m_ctx, SqlCipher.ACCOUNT_DB_NAME);
                         b = BackupRestore.renameDbTemp(m_ctx, SqlCipher.DETAIL_DB_NAME);
 
-                        // Check if database is CrypSafe or SecureSuite app
-                        if( BackupRestore.testCrypSafeRestore(m_ctx, mNewDbPath)){
-
-                            // Copy CrypSafe database files to the app
-                            BackupRestore.copyCrypSafeDbToApp( m_ctx, mNewDbPath, "crypsafe1_db");
-                            BackupRestore.copyCrypSafeDbToApp( m_ctx, mNewDbPath, "crypsafe2_db");
-                        }else{
-                            // Copy the database files to the app
-                            BackupRestore.copyDbToApp( m_ctx, mNewDbPath, SqlCipher.ACCOUNT_DB_NAME);
-                            BackupRestore.copyDbToApp( m_ctx, mNewDbPath, SqlCipher.DETAIL_DB_NAME);
-                        }
+                        // Copy the database files to the app
+                        BackupRestore.copyDbToApp( m_ctx, mNewDbPath, SqlCipher.ACCOUNT_DB_NAME);
+                        BackupRestore.copyDbToApp( m_ctx, mNewDbPath, SqlCipher.DETAIL_DB_NAME);
 
                     } catch (IOException e) {
                         LogUtil.logException(m_ctx, LogType.RESTORE_DB, e);
@@ -795,7 +795,14 @@ public class ContactListActivity extends FragmentActivity
                         LogUtil.log("Restore backup success");
 
                         //Save the passphrase, cleanup old database, inform user and restart
-                        DbPassphrase.setDbPassphrase(m_ctx, mNewDbPassphrase);
+                        byte[] passBytes = new byte[0];
+                        try {
+                            passBytes = CrypUtil.getBytes( mNewDbPassphrase);
+                        } catch (UnsupportedEncodingException e) {
+                            LogUtil.logException(m_ctx, LogType.RESTORE_DB, e);
+                        }
+                        Persist.putSqlDbPassword( m_ctx, passBytes);
+                        passBytes = CrypUtil.cleanArray( passBytes);
                         BackupRestore.deleteDbTemp(m_ctx, a);
                         BackupRestore.deleteDbTemp(m_ctx, b);
                         Toast.makeText(m_act, "Restore successful", Toast.LENGTH_LONG).show();

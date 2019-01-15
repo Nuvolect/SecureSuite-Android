@@ -59,7 +59,7 @@ public class Cryp {
      */
     public static String get(String key, String defValue) {
 
-        String value = SqlCipher.getCryp(key);//SPRINT use char[]
+        String value = SqlCipher.getCryp(key);//TODO use char[]
 
         if( value == null || value.isEmpty()){
 
@@ -112,24 +112,24 @@ public class Cryp {
      */
     public static int getInt(Context ctx, String key, int defInt) {
 
-        String v = get( key);
-        if( v.isEmpty()) {
+        String value = get( key);
+        if( value.isEmpty()) {
             putInt(ctx, key, defInt);
             return defInt;
         }
         else
-            return Integer.valueOf( v );
+            return Integer.valueOf(value);
     }
 
     /**
      * Persist the value referenced by a key.  Return the number of
      * records updated: 0, first time update, 1, value updated, 2+ error.
      * @param key
-     * @param val
+     * @param intValue
      */
-    public static int putInt(Context ctx, String key, int val) {
+    public static int putInt(Context ctx, String key, int intValue) {
 
-        return put(key, String.valueOf(val));
+        return put(key, String.valueOf(intValue));
     }
 
     /**

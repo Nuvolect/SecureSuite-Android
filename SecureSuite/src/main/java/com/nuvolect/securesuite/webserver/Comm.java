@@ -130,7 +130,7 @@ public class Comm {
              * Causes exception, can only read the response body 1 time
              * https://github.com/square/okhttp/issues/1240
              */
-//            LogUtil.log(LogUtil.LogType.REST, response.body().string());
+//            LogUtil.log(LogUtil.LogType.COMM, response.body().string());
 
         } catch (IOException e) {
             listener.fail("IOException: "+e.getLocalizedMessage());
@@ -169,8 +169,8 @@ public class Comm {
             @Override
             public void onFailure(Request request, IOException e) {
 
-                LogUtil.log("okHttpClient.netCall.onFailure");
-                LogUtil.logException(LogUtil.LogType.REST, e);
+                LogUtil.log(Comm.class, "okHttpClient.netCall.onFailure");
+                LogUtil.logException(LogUtil.LogType.COMM, e);
             }
 
             @Override

@@ -227,16 +227,9 @@ public class FileBrowserDbRestore extends Activity {
                     if(DEBUG)LogUtil.log("Path selected: "+path);
 
                     File f1 = new File( path + "/" + SqlCipher.ACCOUNT_DB_NAME);
-                    File f2 = new File( path + "/" + DETAIL_DB_NAME);
+                    File f2 = new File( path + "/" + SqlCipher.DETAIL_DB_NAME);
 
                     boolean validBackup = f1.exists() && f1.canRead() && f2.exists() && f2.canRead();
-
-                    if( ! validBackup) {
-                        f1 = new File(path + "/" + "crypsafe1_db");// TODO Remove after upgrade period
-                        f2 = new File(path + "/" + "crypsafe2_db");
-
-                        validBackup = f1.exists() && f1.canRead() && f2.exists() && f2.canRead();
-                    }
 
                     if( validBackup ){
 

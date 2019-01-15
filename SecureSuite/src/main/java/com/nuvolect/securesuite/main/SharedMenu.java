@@ -28,7 +28,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.Settings;
-import android.support.v4.content.ContextCompat;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -54,6 +53,8 @@ import com.nuvolect.securesuite.util.Util;
 import com.nuvolect.securesuite.util.WorkerCommand;
 
 import net.sqlcipher.Cursor;
+
+import androidx.core.content.ContextCompat;
 
 import static android.Manifest.permission.GET_ACCOUNTS;
 import static android.Manifest.permission.READ_CONTACTS;

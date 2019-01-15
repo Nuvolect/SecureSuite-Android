@@ -26,10 +26,14 @@ import android.widget.Toast;
 import com.nuvolect.securesuite.main.App;
 import com.nuvolect.securesuite.main.CConst;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
@@ -40,7 +44,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  * It provides methods that can operate between clear-text and encrypted files.
  * It provides an abstraction for the root path of a file system.
  *
- * An physical file path is derived from two parts, a volumeId and a path.
+ * A physical file path is derived from two parts, a volumeId and a path.
  * The volumeId represents root of the path upto the root '/';
  * The path is appended to the root to make the full physical path.
  *
@@ -81,14 +85,14 @@ public class Omni {
     private static JSONObject volHash; // key: vHash, value: vId
 
     public static String localVolumeId = "l0"; // Local Volume 0, sdcard on Android, root on Linux
-    public static String userVolumeId = "u0"; // User Volume 0, relative to user file
+    public static String userVolumeId_0 = "u0"; // User Volume 0, restricted to user file
+    public static String userVolumeId_1 = "u1"; // User Volume 1, restricted to user file
     public static String cryptoVolumeId = "c0"; // Encrypted Volume 0
-    /**
-     * Give the user three volumes, the SDCARD a private volume and an encrypted volume
-     */
-    private  static String[] activeVolumeIds = { localVolumeId, userVolumeId, cryptoVolumeId};
+    public static String externalVolumeId = "x0"; // Removable volume 0
+    public static String APP_STORAGE_NAME_PREFIX = "app_";
+    private static List<String> activeVolumeIds;
     public static String localRoot;
-    public static String userRoot;
+    public static String userRoot_0;
     public static String crypRoot;
     public static final String THUMBNAIL_FOLDER_PATH = "/.tmb/";
 
@@ -99,44 +103,39 @@ public class Omni {
      */
     public static boolean init(Context ctx) {
 
-        if( ! App.hasPermission( WRITE_EXTERNAL_STORAGE)){
+        // Create if necessary the main application encryption key.
+        KeystoreUtil.createKeyNotExists( ctx, CConst.APP_KEY_ALIAS);
 
-            activeVolumeIds = new String[] { userVolumeId, cryptoVolumeId};
+        activeVolumeIds = new ArrayList<String>();
+
+        if( App.hasPermission( WRITE_EXTERNAL_STORAGE)) {
+
+            activeVolumeIds.add( localVolumeId);
+        }else{
+            String s = "Access to local storage denied";
+            if( ! LogUtil.DEBUG)
+                Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show();
+            LogUtil.log( LogUtil.LogType.OMNI, s + " : "+localVolumeId);
         }
+        activeVolumeIds.add( userVolumeId_0);
 
         /**
          * Create the virtual file system and keep a reference too it.
          */
-        String FILESYSTEM_NAME = "/cryp_filesystem";
-        DbPassphrase.createDbKeystore( ctx);
-        String password32 = DbPassphrase.getDbPassphrase( ctx);//SPRINT return byte[32]
-        boolean failure = false;
+        boolean cryptoMounted = false;
 
-        String path = ctx.getDir("vfs", Context.MODE_PRIVATE).getAbsolutePath() + FILESYSTEM_NAME;
         try {
-            StorageManager.mountStorage( ctx, path, password32.getBytes());
+            cryptoMounted = CryptoVolume.mountStorage( ctx);
         } catch (Exception e) {
-            failure = true;
+            LogUtil.logException( LogUtil.LogType.OMNI, e);
         }
-        /**
-         * Failure can be a beta database or failed keystore encryption.
-         */
-        if( failure ){
 
-            try {
-                password32 = CConst.STRING32;
-                StorageManager.mountStorage( ctx, path, password32.getBytes());
-            } catch (Exception e) {
-                Toast.makeText( ctx, "Unable to mount Crypto volume",Toast.LENGTH_LONG).show();
-                LogUtil.logException( Omni.class, e);
-            }
-        }
         /**
          * Each root starts and ends with SLASH
          */
         crypRoot = CConst.ROOT;
         localRoot = Environment.getExternalStorageDirectory().getAbsolutePath()+"/";
-        userRoot = ctx.getApplicationInfo().dataDir+"/omni/";
+        userRoot_0 = ctx.getApplicationInfo().dataDir+"/omni/";
 
         boolean success = true;
         volRoot = new JSONObject();
@@ -145,31 +144,63 @@ public class Omni {
 
         try {
             volRoot.put( localVolumeId,  localRoot);
-            volRoot.put( userVolumeId,   userRoot);
-            volRoot.put( cryptoVolumeId, crypRoot);
+            volRoot.put( userVolumeId_0, userRoot_0);
 
             volName.put( localVolumeId,  "sdcard");
-            volName.put( userVolumeId,   "private");
-            volName.put( cryptoVolumeId, "crypto");
+            volName.put( userVolumeId_0, APP_STORAGE_NAME_PREFIX +"0");
 
             volHash.put( localVolumeId  + "_" + OmniHash.encode( CConst.ROOT), localVolumeId);
-            volHash.put( userVolumeId   + "_" + OmniHash.encode( CConst.ROOT), userVolumeId);
-            volHash.put( cryptoVolumeId + "_" + OmniHash.encode( CConst.ROOT), cryptoVolumeId);
+            volHash.put( userVolumeId_0 + "_" + OmniHash.encode( CConst.ROOT), userVolumeId_0);
+
+            if( cryptoMounted){
+
+                volRoot.put( cryptoVolumeId, crypRoot);
+                volName.put( cryptoVolumeId, "crypto");
+                volHash.put( cryptoVolumeId + "_" + OmniHash.encode( CConst.ROOT), cryptoVolumeId);
+                activeVolumeIds.add( cryptoVolumeId);
+            }
+
+            JSONArray privateStorage = AppStorage.getAppStorage(ctx);
+            if( privateStorage.length() > 1){
+
+                JSONObject priv_1 = privateStorage.getJSONObject(1);
+                String userRoot_1 = priv_1.getString( "path")+"/omni/";
+                volRoot.put( userVolumeId_1, userRoot_1);
+                volName.put( userVolumeId_1, APP_STORAGE_NAME_PREFIX+"1");
+                volHash.put( userVolumeId_1 + "_" + OmniHash.encode( CConst.ROOT), userVolumeId_1);
+
+                activeVolumeIds.add( userVolumeId_1);
+            }
+
+            File removableStorage = StorageUtil.getRemovableStorage( ctx);
+            if( removableStorage != null) {
+
+                volRoot.put( externalVolumeId, removableStorage.getAbsolutePath()+"/");
+                volName.put( externalVolumeId, "ext");
+                volHash.put( externalVolumeId + "_" + OmniHash.encode( CConst.ROOT), externalVolumeId);
+                activeVolumeIds.add( externalVolumeId);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
             success = false;
         }
 
+        /**
+         * Iterate over writable volumes and create thumbnail folders
+         */
         for( String volumeId : activeVolumeIds){
 
-            OmniFile f = new OmniFile( volumeId, THUMBNAIL_FOLDER_PATH);
+            OmniFile root = new OmniFile( volumeId, CConst.ROOT);
+            if( ! root.canWrite())
+                continue;
 
+            OmniFile f = new OmniFile( volumeId, THUMBNAIL_FOLDER_PATH);
             boolean folderCreated = f.mkdirs();
             if( folderCreated)
-                LogUtil.log( Omni.class, "Thumbnail folder created: "+volumeId + f.getPath());
+                LogUtil.log( LogUtil.LogType.OMNI, "Thumbnail folder created: "+volumeId + f.getPath());
             else
-                LogUtil.log( Omni.class, "Thumbnail folder exists: " +volumeId+ f.getPath());
+                LogUtil.log( LogUtil.LogType.OMNI, "Thumbnail folder exists: " +volumeId+ f.getPath());
 
             if( ! f.exists()){
                 success = false;
@@ -186,7 +217,10 @@ public class Omni {
      */
     public static String[] getActiveVolumeIds() {
 
-        return activeVolumeIds;
+        String[] stringArray = new String[ activeVolumeIds.size()];
+        stringArray = activeVolumeIds.toArray( stringArray);
+
+        return stringArray;
     }
 
     /**
@@ -371,7 +405,11 @@ public class Omni {
         return path;
     }
 
-    public static String getDefaultVolumeId() { //TODO confirm correct volumeId is returned.
-        return localVolumeId;
+    /**
+     * Return a default volume ID, the volume that the app uses for its storage.
+     * @return
+     */
+    public static String getDefaultVolumeId() {
+        return userVolumeId_0;
     }
 }

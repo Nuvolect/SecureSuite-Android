@@ -25,7 +25,6 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -34,6 +33,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.nuvolect.securesuite.R;
+
+import androidx.core.content.ContextCompat;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.READ_CONTACTS;

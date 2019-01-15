@@ -20,19 +20,20 @@
 package com.nuvolect.securesuite.data;
 
 import android.content.Context;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
+import androidx.test.filters.SmallTest;
+import androidx.test.runner.AndroidJUnit4;
+
 import static com.nuvolect.securesuite.data.MyGroups.mGroupTitle;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import static androidx.test.InstrumentationRegistry.getTargetContext;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 
 
 /**
@@ -44,6 +45,8 @@ import static org.junit.Assert.assertThat;
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class MyGroupsTest {
+
+    private boolean testEnabled = false;// change to true to run full test and wipe database
 
     private String testGroupTitle;
     private String testAccount;
@@ -67,50 +70,58 @@ public class MyGroupsTest {
     @Test
     public void initGroupMemory() throws Exception {
 
-        /**
-         * Create an empty database.
-         * Initialize in memory group cache.
-         * Create a group instance in database and cache.
-         */
-        Context ctx = getTargetContext();
+        if( testEnabled) {
 
-        /**
-         * This test will wipe the database clean.
-         * Comment out this line to run test.
-         */
-        assertThat( true , is( false ));
 
-        SqlCipher.deleteDatabases(ctx);
-        SqlCipher.getInstance(ctx); // Force db creation
+            /**
+             * Create an empty database.
+             * Initialize in memory group cache.
+             * Create a group instance in database and cache.
+             */
+            Context ctx = getTargetContext();
 
-        MyGroups.initGroupMemory();
+            /**
+             * This test will wipe the database clean.
+             * Comment out this line to run test.
+             */
+            assertThat(true, is(false));
 
-        assertThat(MyGroups.mGroupAccount.size(), is(0));
-        assertThat(mGroupTitle.size(), is(0));
-        assertThat(MyGroups.mGroupCount.size(), is(0));
-        assertThat(MyGroups.mCloudRemapGroupId.size(), is(0));
-        assertThat(MyGroups.mGroupIdByAccountPlusTitle.size(), is(0));
+            SqlCipher.deleteDatabases(ctx);
+            SqlCipher.getInstance(ctx); // Force db creation
 
-        int newId =
-               MyGroups.addGroup( ctx, this.testGroupTitle, this.testAccount, this.testAccountType);
-        assertThat( newId, not(0));
-        assertThat( newId, not(-1));
-        assertThat( newId, not(-2));
+            MyGroups.initGroupMemory();
 
-        assertThat(MyGroups.mGroupAccount.size(), is(1));
-        assertThat(mGroupTitle.size(), is(1));
-        assertThat(MyGroups.mGroupCount.size(), is(1));
-        assertThat(MyGroups.mCloudRemapGroupId.size(), is(0));
-        assertThat(MyGroups.mGroupIdByAccountPlusTitle.size(), is(0));
+            assertThat(MyGroups.mGroupAccount.size(), is(0));
+            assertThat(mGroupTitle.size(), is(0));
+            assertThat(MyGroups.mGroupCount.size(), is(0));
+            assertThat(MyGroups.mCloudRemapGroupId.size(), is(0));
+            assertThat(MyGroups.mGroupIdByAccountPlusTitle.size(), is(0));
 
-        int cachedId = MyGroups.getGroupId( this.testAccount, this.testGroupTitle);
-        assertThat( newId, is( cachedId));
+            int newId =
+                    MyGroups.addGroup(ctx, this.testGroupTitle, this.testAccount, this.testAccountType);
+            assertThat(newId, not(0));
+            assertThat(newId, not(-1));
+            assertThat(newId, not(-2));
 
-        MyGroups.deleteGroup( ctx, newId, false);
-        assertThat(MyGroups.mGroupAccount.size(), is(0));
-        assertThat(mGroupTitle.size(), is(0));
-        assertThat(MyGroups.mGroupCount.size(), is(0));
-        assertThat(MyGroups.mCloudRemapGroupId.size(), is(0));
-        assertThat(MyGroups.mGroupIdByAccountPlusTitle.size(), is(0));
+            assertThat(MyGroups.mGroupAccount.size(), is(1));
+            assertThat(mGroupTitle.size(), is(1));
+            assertThat(MyGroups.mGroupCount.size(), is(1));
+            assertThat(MyGroups.mCloudRemapGroupId.size(), is(0));
+            assertThat(MyGroups.mGroupIdByAccountPlusTitle.size(), is(0));
+
+            int cachedId = MyGroups.getGroupId(this.testAccount, this.testGroupTitle);
+            assertThat(newId, is(cachedId));
+
+            MyGroups.deleteGroup(ctx, newId, false);
+            assertThat(MyGroups.mGroupAccount.size(), is(0));
+            assertThat(mGroupTitle.size(), is(0));
+            assertThat(MyGroups.mGroupCount.size(), is(0));
+            assertThat(MyGroups.mCloudRemapGroupId.size(), is(0));
+            assertThat(MyGroups.mGroupIdByAccountPlusTitle.size(), is(0));
+        }else{
+
+            assertThat( true, is( true));
+            return;
+        }
     }
 }

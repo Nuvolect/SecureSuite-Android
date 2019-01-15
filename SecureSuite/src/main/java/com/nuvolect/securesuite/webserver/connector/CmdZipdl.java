@@ -20,7 +20,6 @@
 package com.nuvolect.securesuite.webserver.connector;//
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -36,6 +35,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 /**
  * ZipDl - zip multiple files to "Archive.zip", download and delete.

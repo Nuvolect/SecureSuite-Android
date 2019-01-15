@@ -19,10 +19,15 @@
 
 package com.nuvolect.securesuite.webserver;//
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -31,6 +36,7 @@ import android.util.Log;
 
 import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.data.SqlCipher;
+import com.nuvolect.securesuite.license.AppSpecific;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Util;
 import com.nuvolect.securesuite.webserver.connector.ServerInit;
@@ -38,19 +44,17 @@ import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
-import java.security.KeyStore;
 import java.util.concurrent.Semaphore;
 
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
+
+import androidx.core.app.NotificationCompat;
 
 import static com.nuvolect.securesuite.util.LogUtil.log;
 
@@ -73,6 +77,11 @@ public class WebService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            startMyOwnForeground();
+        else
+            startForeground(1,new Notification());
 
         Context ctx = getApplicationContext();
         /**
@@ -107,11 +116,11 @@ public class WebService extends Service {
             okHttpClient = null;
 
             // Create a self signed certificate and put it in a BKS keystore
-            String keystoreFilename = "VazanKeystore.bks";
+            String keystoreFilename = "SelfSigned.bks";
             File file = new File( ctx.getFilesDir(), keystoreFilename);
             String absolutePath = file.getAbsolutePath();
 
-            KeystoreVazen.makeKeystore( ctx, absolutePath, false);
+            SelfSignedCertificate.makeKeystore( ctx, absolutePath, false);
 
             sslServerSocketFactory = SSLUtil.configureSSLPath( ctx, absolutePath);
 
@@ -123,6 +132,30 @@ public class WebService extends Service {
         }
         mIpAddress = wifiIpAddress(ctx);
         log(LogUtil.LogType.WEB_SERVICE, "Server started: " + mIpAddress + ":" + WebUtil.getPort(ctx));
+    }
+
+    private void startMyOwnForeground(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+
+            String NOTIFICATION_CHANNEL_ID = "com.nuvolect.securesuite";
+            String channelName = "My Background Service";
+            NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
+            chan.setLightColor(Color.BLUE);
+            chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            assert manager != null;
+            manager.createNotificationChannel(chan);
+
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+            Notification notification = notificationBuilder.setOngoing(true)
+                    .setSmallIcon(AppSpecific.SMALL_ICON)
+                    .setContentTitle("App is running in background")
+                    .setPriority(NotificationManager.IMPORTANCE_MIN)
+                    .setCategory(Notification.CATEGORY_SERVICE)
+                    .build();
+            startForeground(2, notification);
+        }
     }
 
     private class WebServiceThread extends Thread {
@@ -199,33 +232,6 @@ public class WebService extends Service {
         }
 
         return ipAddressString;
-    }
-
-    /**
-     * Creates an SSLSocketFactory for HTTPS.
-     *
-     * Pass a KeyStore resource with your certificate and passphrase
-     */
-    public static void configureSSL(String keyAndTrustStoreClasspathPath, char[] passphrase) throws IOException {//SPRINT remove
-
-        try {
-            // Android does not have the default jks but uses bks
-            KeyStore keystore = KeyStore.getInstance("BKS");
-            InputStream keystoreStream = WebService.class.getResourceAsStream(keyAndTrustStoreClasspathPath);
-            keystore.load(keystoreStream, passphrase);
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init(keystore);
-
-            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            keyManagerFactory.init(keystore, passphrase);
-            sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
-            sslServerSocketFactory = sslContext.getServerSocketFactory();
-            sslSocketFactory = sslContext.getSocketFactory();
-
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
-        }
     }
 
     public static OkHttpClient getOkHttpClient() {

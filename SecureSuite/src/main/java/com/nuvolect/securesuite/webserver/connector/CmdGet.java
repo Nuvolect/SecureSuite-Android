@@ -19,7 +19,6 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
-import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -28,6 +27,8 @@ import com.nuvolect.securesuite.webserver.connector.base.ConnectorCommand;
 
 import java.io.ByteArrayInputStream;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 /**
  * get
@@ -54,7 +55,7 @@ import java.util.Map;
 public class CmdGet implements ConnectorCommand {
 
     @Override
-    public ByteArrayInputStream go(@NonNull  Map<String, String> params) {
+    public ByteArrayInputStream go(@NonNull Map<String, String> params) {
         String target = "";
 
         if (params.containsKey("target")) {

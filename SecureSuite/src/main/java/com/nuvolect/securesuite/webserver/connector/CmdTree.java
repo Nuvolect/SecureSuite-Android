@@ -19,7 +19,6 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
-import android.support.annotation.NonNull;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -27,14 +26,10 @@ import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 /**
  * tree

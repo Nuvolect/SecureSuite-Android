@@ -20,7 +20,6 @@
 package com.nuvolect.securesuite.webserver.connector;//
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -44,6 +43,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import androidx.annotation.NonNull;
 
 import static com.nuvolect.securesuite.util.LogUtil.logException;
 

@@ -27,6 +27,7 @@ import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.InputStreamAsJsonTest;
+import com.nuvolect.securesuite.util.KeystoreUtil;
 import com.nuvolect.securesuite.util.Omni;
 import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.TestFilesHelper;
@@ -39,16 +40,17 @@ import java.util.Map;
 
 import info.guardianproject.iocipher.File;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
-import static org.hamcrest.CoreMatchers.is;
+import static androidx.test.InstrumentationRegistry.getTargetContext;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class CmdExtractTest {
 
     @Test
     public void go() throws Exception {
-        Context ctx = getTargetContext();
 
+        Context ctx = getTargetContext();
+        KeystoreUtil.init( ctx);
         SqlCipher.getInstance(ctx);
 
         assertThat(Omni.init(ctx), is(true));
@@ -125,7 +127,7 @@ public class CmdExtractTest {
             assertThat(new OmniFile(hash).exists(), is(true));
         }
 
-        OmniFile unpackDir = new OmniFile(Omni.userVolumeId, File.separator + dirName);
+        OmniFile unpackDir = new OmniFile(Omni.userVolumeId_0, File.separator + dirName);
         assertThat(unpackDir.exists(), is(true));
         TestFilesHelper.removeDir(ctx, unpackDir);
         assertThat(unpackDir.exists(), is(false));

@@ -28,11 +28,11 @@ import com.nuvolect.securesuite.util.Omni;
  */
 public class ServerInit {
 
-    public static void init(Context ctx){
+    public static boolean init(Context ctx){
 
         /**
          * Initialize application file system support
          */
-        Omni.init( ctx );
+        return Omni.init( ctx );
     }
 }

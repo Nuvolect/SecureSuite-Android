@@ -247,57 +247,6 @@ public class BackupRestore {
         LogUtil.log("File restored: "+ targetDbFilename);
     }
 
-    /**
-     * Restore a database that was saved in CrypSafe
-     * TODO purge this method when upgrade period is over
-     * @param ctx
-     * @param sourceDbPath
-     * @param sourceDbFilename
-     * @throws IOException
-     */
-    public static boolean copyCrypSafeDbToApp(Context ctx, String sourceDbPath, String sourceDbFilename)
-            throws IOException {
-
-        // Get the file and path to the database
-        String targetDbFilename="";
-        if( sourceDbFilename.contentEquals("crypsafe1_db"))
-            targetDbFilename = "detail_db";
-        if( sourceDbFilename.contentEquals("crypsafe2_db"))
-            targetDbFilename = "account_db";
-        if( targetDbFilename.isEmpty())
-            return false;
-
-        File targetFile = ctx.getDatabasePath(targetDbFilename);
-        String outPathWithName = targetFile.getPath();
-
-        //Open storage db as the input stream
-        String inPathWithName = sourceDbPath +"/"+ sourceDbFilename;
-        File dbFile = new File(inPathWithName);
-        FileInputStream fis = new FileInputStream(dbFile);
-
-        //Open the target db as the output stream and delete it
-        if( targetFile.delete())
-            LogUtil.log("file deleted: "+ targetDbFilename);
-        else
-            LogUtil.log("ERROR, file NOT deleted: "+ targetDbFilename);
-
-        OutputStream outputStream = new FileOutputStream(outPathWithName);
-
-        //transfer bytes from the inputfile to the outputfile
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = fis.read(buffer))>0){
-            outputStream.write(buffer, 0, length);
-        }
-        //Close the streams
-        outputStream.flush();
-        outputStream.close();
-        fis.close();
-        LogUtil.log("File restored: "+ targetDbFilename);
-
-        return true;
-    }
-
     public static void backupToEmail(Activity act){
 
             String version = "";
@@ -339,28 +288,5 @@ public class BackupRestore {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-    }
-
-    /**
-     * Simple test for identifying a CrypSafe named database
-     * @param ctx
-     * @param mNewDbPath
-     * @return
-     */
-    public static boolean testCrypSafeRestore(Context ctx, String mNewDbPath) {
-
-        boolean found1 = false, found2=false;
-
-        File[] files = new File(mNewDbPath).listFiles();
-
-        for( File f : files){
-
-            if( f.getName().contentEquals("crypsafe1_db"))
-                found1 = true;
-            if( f.getName().contentEquals("crypsafe2_db"))
-                found2 = true;
-        }
-
-        return found1 && found2;
     }
 }

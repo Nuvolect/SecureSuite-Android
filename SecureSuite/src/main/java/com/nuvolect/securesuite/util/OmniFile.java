@@ -27,9 +27,6 @@ import com.nuvolect.securesuite.webserver.connector.FileObj;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.FileFilter;
@@ -404,10 +401,17 @@ public class OmniFile {
         try {
             if( m_isCryp )
                 return m_cry_file.createNewFile();
-            else
+            else{
+                boolean exists = m_std_file.exists();
+                boolean isDir = m_std_file.isDirectory();
+                String absPath = m_std_file.getAbsolutePath();
+                String name = m_std_file.getName();
+                String parent = m_std_file.getParent();
+
                 return m_std_file.createNewFile();
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtil.logException(OmniFile.class, e);
         }
         return false;
     }
@@ -452,7 +456,7 @@ public class OmniFile {
                 return new java.io.FileInputStream( m_std_file );
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LogUtil.logException(OmniFile.class, e);
         }
         return null;
     }
@@ -559,7 +563,7 @@ public class OmniFile {
         } catch (FileNotFoundException e) {
             LogUtil.logException(OmniFile.class, e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtil.logException(OmniFile.class, e);
         }
 
         return fileContents;

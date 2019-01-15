@@ -22,10 +22,11 @@ package com.nuvolect.securesuite.main;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
 
 import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.util.LogUtil;
+
+import androidx.core.content.ContextCompat;
 
 /**
  * Provide an ability to get a context without

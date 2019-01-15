@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.Cryp;
-import com.nuvolect.securesuite.util.DbPassphrase;
+import com.nuvolect.securesuite.util.CrypUtil;
 import com.nuvolect.securesuite.util.JsonUtil;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.LogUtil.LogType;
@@ -165,29 +165,37 @@ public class SqlCipher {
     public static synchronized void initializeSQLCipher() {
 
         SQLiteDatabase.loadLibs(m_ctx);
-        File detail_databaseFile = m_ctx.getDatabasePath(DETAIL_DB_NAME);
-        File account_databaseFile = m_ctx.getDatabasePath(ACCOUNT_DB_NAME);
+        File detail_dbFile = m_ctx.getDatabasePath(DETAIL_DB_NAME);
+        File account_dbFile = m_ctx.getDatabasePath(ACCOUNT_DB_NAME);
 
-        boolean newInstall = !detail_databaseFile.exists();
+        boolean newInstall = ! detail_dbFile.exists();
 
         if( newInstall ){
 
-            detail_databaseFile.mkdirs();
-            detail_databaseFile.delete();
-            account_databaseFile.mkdirs();
-            account_databaseFile.delete();
+            detail_dbFile.mkdirs();
+            detail_dbFile.delete();
+            account_dbFile.mkdirs();
+            account_dbFile.delete();
         }
 
-        DbPassphrase.createDbKeystore( m_ctx);
-        String passphrase = DbPassphrase.getDbPassphrase(m_ctx);
-        try {
-            detail_db = SQLiteDatabase.openOrCreateDatabase(detail_databaseFile, passphrase, null);
-            account_db = SQLiteDatabase.openOrCreateDatabase(account_databaseFile, passphrase, null);
-        } catch (Exception e) {
-            LogUtil.logException(LogType.SQLCIPHER, e);
+        // Contain the scope on cleartext passphrase
+        {
+            byte[] passBytes = Persist.getSqlDbPassword(m_ctx);
+
+            if( passBytes == null || passBytes.length == 0 )
+                throw new IllegalArgumentException("db pass null or length 0");
+
+            char[] passphrase = CrypUtil.toChar( passBytes);
+            try {
+                detail_db = SQLiteDatabase.openOrCreateDatabase(detail_dbFile.getAbsolutePath(), passphrase, null);
+                account_db = SQLiteDatabase.openOrCreateDatabase(account_dbFile.getAbsolutePath(), passphrase, null);
+            } catch (Exception e) {
+                LogUtil.logException(LogType.SQLCIPHER, e);
+            }
+            passphrase = CrypUtil.cleanArray(passphrase);
+            passBytes = CrypUtil.cleanArray( passBytes);
         }
         if( ! newInstall) {
-//            account_db.delete( CALENDAR_TABLE, null, null);//mkk
             dbExpansion();
         }
 
@@ -291,16 +299,19 @@ public class SqlCipher {
 
     /**
      * Apply a new passphrase to each database,
+     * //TODO build an automated test to rekey a database
      * @param ctx
-     * @param newKey
+     * @param newKeyBytes
      * @return
      */
-    public static synchronized boolean rekey(Context ctx, String newKey){
+    public static synchronized boolean rekey(Context ctx, byte[] newKeyBytes){
 
         boolean success = true;
-        try {
-            String oldKey = DbPassphrase.getDbPassphrase(m_ctx);//SPRINT use char[] password
+            byte[] oldKeyBytes = Persist.getSqlDbPassword( m_ctx);
+            String oldKey = CrypUtil.toStringUTF8( oldKeyBytes);
+            String newKey = CrypUtil.toStringUTF8( newKeyBytes);
 
+        try {
             String sql = "PRAGMA key ='"+oldKey+"'";
             account_db.execSQL( sql );
 
@@ -320,7 +331,11 @@ public class SqlCipher {
         }
 
         if( success)
-            DbPassphrase.setDbPassphrase(m_ctx, newKey);
+            Persist.putSqlDbPassword( m_ctx, newKeyBytes);
+
+        oldKeyBytes = CrypUtil.cleanArray( oldKeyBytes);
+        oldKey = ""; //Not much security can be done, String is immutable
+        newKey = ""; //Not much security can be done, String is immutable
 
         return success;
     }
@@ -331,7 +346,7 @@ public class SqlCipher {
      * @param mNewDbPassphrase
      * @return
      */
-    public static synchronized boolean testPassphrase(Context ctx, String mNewDbPassphrase) {//SPRINT use char[] password
+    public static synchronized boolean testPassphrase(Context ctx, String mNewDbPassphrase) {//NEXTSPRINT use char[] password
 
         try {
             SQLiteDatabase.loadLibs(m_ctx);
@@ -2153,7 +2168,7 @@ public class SqlCipher {
      * @param value
      * @return
      */
-    public static synchronized int putCryp(String key, String value){//SPRINT use char[]
+    public static synchronized int putCryp(String key, String value){//TODO use char[]
 
         String where = ACTab.key+"=?";
         String[] args = new String[]{ key };
@@ -2195,7 +2210,7 @@ public class SqlCipher {
      * @param key
      * @return value or empty string if key is not found
      */
-    public static synchronized String getCryp(String key){//SPRINT use char[]
+    public static synchronized String getCryp(String key){//TODO use char[]
 
         try {
             if( key == null || key.isEmpty())
@@ -3336,7 +3351,7 @@ public class SqlCipher {
 
     public static synchronized JSONObject putEvent(int id, long start, long end, String event) {
 
-        account_db.beginTransaction();//mkk
+        account_db.beginTransaction();
         boolean success = true;
 
         ContentValues cv = new ContentValues();
@@ -3401,20 +3416,6 @@ public class SqlCipher {
         }
         c.close();
         return jsonArray;
-
-//        JSONArray jsonArray = new JSONArray();
-//        JSONObject j1 = new JSONObject(
-//                "{ \"id\": 51347, \"title\": \"Apr12\", \"description\": \"description about my event\", \"start\": \"2017-04-12\", \"end\": \"2017-04-12\", \"allDay\": false, \"recurring\": true }"
-//        );
-//
-//        JSONObject j2 = new JSONObject(
-//            "{ \"id\": 51347, \"title\": \"Apr13\", \"description\": \"description about my event\", \"start\": \"2017-04-13\", \"end\": \"2017-04-13\", \"allDay\": false, \"recurring\": true }"
-//        );
-//
-//        jsonArray.put(j1);
-//        jsonArray.put(j2);
-//
-//        return jsonArray;
     }
 
     /**
@@ -3422,7 +3423,7 @@ public class SqlCipher {
      * @param id
      * @return
      */
-    public static synchronized JSONObject deleteEvent(int id) {//mkk
+    public static synchronized JSONObject deleteEvent(int id) {
 
         boolean success = true;
         String where = CALTab._id+"=?";

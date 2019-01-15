@@ -19,12 +19,13 @@
 
 package com.nuvolect.securesuite.webserver.connector.base;
 
-import android.support.annotation.NonNull;
 
 import com.google.gson.JsonElement;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
+import androidx.annotation.NonNull;
 
 public abstract class ConnectorJsonCommand implements ConnectorCommand {
 

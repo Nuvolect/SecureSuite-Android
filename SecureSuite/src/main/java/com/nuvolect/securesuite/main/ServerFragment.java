@@ -42,14 +42,8 @@ import android.widget.ToggleButton;
 import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.util.AppTheme;
 import com.nuvolect.securesuite.util.Cryp;
-import com.nuvolect.securesuite.util.LogUtil;
-import com.nuvolect.securesuite.webserver.Comm;
 import com.nuvolect.securesuite.webserver.CrypServer;
-import com.nuvolect.securesuite.webserver.SyncRest;
 import com.nuvolect.securesuite.webserver.WebUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Support a dialog to see status and control the embedded server
@@ -180,35 +174,11 @@ public class ServerFragment extends DialogFragment {
 
         boolean serverEnabled = CrypServer.isServerEnabled();
         m_serverStateTb.setChecked( serverEnabled);
-        m_ipAddressTv.setText( WebUtil.getServerUrl(m_act) + " OFFLINE");
 
-        if (serverEnabled && !WebUtil.getServerIpPort(m_act).contentEquals(
-                App.DEFAULT_IP_PORT)) {
-
-            final String thisDeviceUrl = WebUtil.getServerUrl(m_act, CConst.SYNC);
-            Map<String, String> params = new HashMap<String, String>();
-            params.put( CConst.CMD,     SyncRest.CMD.self_ip_test.toString());
-            params.put( CConst.IP_PORT, WebUtil.getServerIpPort(m_act));
-
-            LogUtil.log("thisDeviceUrl: " + thisDeviceUrl);
-
-            Comm.sendPostUi(m_act, thisDeviceUrl, params, new Comm.CommPostCallbacks() {
-                @Override
-                public void success(String jsonString) {
-
-                    if (WebUtil.responseMatch(jsonString, CConst.RESPONSE_CODE_SUCCESS_100)) {
-
-                        m_ipAddressTv.setText( WebUtil.getServerUrl(m_act) + " ONLINE");
-                    }
-                }
-
-                @Override
-                public void fail(String error) {
-
-                    m_ipAddressTv.setText( WebUtil.getServerUrl(m_act) + " OFFLINE");
-                }
-            });
-        }
+        if( serverEnabled)
+            m_ipAddressTv.setText( WebUtil.getServerUrl(m_act) + " ONLINE");
+        else
+            m_ipAddressTv.setText( WebUtil.getServerUrl(m_act) + " OFFLINE");
 
         if ( ! Cryp.getLockCode(m_act).isEmpty())
             m_lockStatusTv.setText("Password secured");
@@ -234,6 +204,7 @@ public class ServerFragment extends DialogFragment {
         public void onClick(View v) {
 
             CrypServer.enableServer(m_act, m_serverStateTb.isChecked());
+            setDialogData();
         }
     };
 

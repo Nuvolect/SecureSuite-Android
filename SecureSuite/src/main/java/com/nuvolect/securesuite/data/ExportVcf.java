@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.widget.Toast;
 
@@ -49,6 +48,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import androidx.core.content.FileProvider;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.parameter.AddressType;

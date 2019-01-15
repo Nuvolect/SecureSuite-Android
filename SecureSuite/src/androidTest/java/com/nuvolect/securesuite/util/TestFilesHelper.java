@@ -85,7 +85,7 @@ public class TestFilesHelper {
     }
 
     public static OmniFile createFile(Context context, String rootPath, String name) throws Exception {
-        String volumeId = Omni.userVolumeId;
+        String volumeId = Omni.userVolumeId_0;
         OmniFile targetFile = new OmniFile(volumeId, rootPath + "/" + name);
 
         if (targetFile.exists()) {
@@ -115,7 +115,7 @@ public class TestFilesHelper {
     }
 
     private OmniFile createDir(String rootPath, String name) throws Exception {
-        String volumeId = Omni.userVolumeId;
+        String volumeId = Omni.userVolumeId_0;
         OmniFile targetDir = new OmniFile(volumeId, rootPath + name);
 
         if (targetDir.exists()) {

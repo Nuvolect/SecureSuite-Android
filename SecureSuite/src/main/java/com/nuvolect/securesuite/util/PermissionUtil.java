@@ -26,12 +26,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 
 import com.nuvolect.securesuite.main.CConst;
 
 import java.util.ArrayList;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 

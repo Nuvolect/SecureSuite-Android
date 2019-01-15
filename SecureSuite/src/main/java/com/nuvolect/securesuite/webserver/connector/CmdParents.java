@@ -19,7 +19,6 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
-import android.support.annotation.NonNull;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -29,6 +28,8 @@ import com.nuvolect.securesuite.webserver.connector.base.ConnectorJsonCommand;
 
 import java.io.InputStream;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 /**
  *

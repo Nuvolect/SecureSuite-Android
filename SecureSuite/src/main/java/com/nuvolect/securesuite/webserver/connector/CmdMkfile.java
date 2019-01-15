@@ -19,8 +19,6 @@
 
 package com.nuvolect.securesuite.webserver.connector;//
 
-import android.support.annotation.NonNull;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.nuvolect.securesuite.util.LogUtil;
@@ -47,8 +45,11 @@ import info.guardianproject.iocipher.File;
  */
 public class CmdMkfile extends ConnectorJsonCommand {
 
+    public CmdMkfile() {
+    }
+
     @Override
-    public InputStream go(@NonNull Map<String, String> params) {
+    public InputStream go( Map<String, String> params) {
         // Target is a hashed volume and directory path
         String targetDirHash = params.containsKey("target") ? params.get("target") : "";
 
@@ -66,6 +67,7 @@ public class CmdMkfile extends ConnectorJsonCommand {
         String path = targetDir.getPath();
 
         OmniFile targetFile = new OmniFile(volumeId, path + File.separator + name);
+        boolean deleted = targetFile.delete();
 
         JsonArray added = new JsonArray();
         JsonObject wrapper = new JsonObject();

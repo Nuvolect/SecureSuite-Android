@@ -22,10 +22,11 @@ package com.nuvolect.securesuite.util;
 import com.nuvolect.securesuite.main.App;
 import com.nuvolect.securesuite.main.CConst;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static androidx.test.InstrumentationRegistry.getTargetContext;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -35,10 +36,16 @@ import static org.hamcrest.core.Is.is;
  */
 public class OmniTest {
 
+    @Before
+    public void setup(){
+        boolean setupOk = Omni.init( getTargetContext());
+        assertThat( setupOk, is( true ));
+    }
+
     @Test
     public void testUserStorage() throws  Exception {
 
-        testStorage( Omni.userVolumeId);
+        testStorage( Omni.userVolumeId_0);
     }
 
     @Test
@@ -61,12 +68,12 @@ public class OmniTest {
     
     public void testStorage(String volumeId) throws Exception {
 
-        Omni.init( getTargetContext());
-
         OmniFile rootFolder = new OmniFile( volumeId, CConst.ROOT);
+        rootFolder.mkdirs();
         String absRoot = rootFolder.getAbsolutePath()+"/";
         absRoot = absRoot.replace("//","/");
-        assertThat(absRoot, is( Omni.getRoot( volumeId)));
+        String getRoot = Omni.getRoot( volumeId);
+        assertThat(absRoot.contentEquals( getRoot), is( true));
         String path = rootFolder.getPath();
         assertThat(path, is( CConst.ROOT));
 
@@ -76,23 +83,26 @@ public class OmniTest {
         boolean isCrypt = volumeId.contentEquals( Omni.cryptoVolumeId);
         assertThat( rootFolder.isCryp(), is( isCrypt));
 
-        OmniFile rootFile = new OmniFile( volumeId, "/.rootFileZz");
+        OmniFile fileInRootDir = new OmniFile( volumeId, "/.rootFileZz");
 
-        if( rootFile.exists())
-            rootFile.delete();
+        if( fileInRootDir.exists())
+            fileInRootDir.delete();
 
-        assertThat( rootFile.exists(), is( false ));
-        assertThat( rootFile.isRoot(), is( false ));
-        assertThat( rootFile.isDirectory(), is( false ));
-        assertThat( rootFile.isCryp(), is( isCrypt));
-        assertThat( rootFile.writeFile("0123456789"), is( true));
-        assertThat( rootFile.exists(), is( true));
+        assertThat( fileInRootDir.exists(), is( false ));
+        assertThat( fileInRootDir.isRoot(), is( false ));
+        assertThat( fileInRootDir.isDirectory(), is( false ));
+        assertThat( fileInRootDir.isCryp(), is( isCrypt));
+        assertThat( fileInRootDir.writeFile("0123456789"), is( true));
+        assertThat( fileInRootDir.exists(), is( true));
 
-        long localRootFileSize = rootFile.length();
+        String readString = fileInRootDir.readFile();
+        assertThat( readString.contentEquals("0123456789"), is( true ));
+
+        long localRootFileSize = fileInRootDir.length();
         assertThat( localRootFileSize, is( 10L ));
 
-        assertThat( rootFile.delete(), is( true ));
-        assertThat( rootFile.exists(), is( false ));
+        assertThat( fileInRootDir.delete(), is( true ));
+        assertThat( fileInRootDir.exists(), is( false ));
 
         String[] vIds = Omni.getActiveVolumeIds();
         for( String vId : vIds){

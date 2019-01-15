@@ -21,13 +21,18 @@ package com.nuvolect.securesuite.util;
 
 import android.content.Context;
 
+import com.nuvolect.securesuite.main.CConst;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
-import static org.hamcrest.CoreMatchers.is;
+import java.io.UnsupportedEncodingException;
+
+import static androidx.test.InstrumentationRegistry.getTargetContext;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 
 /**
@@ -36,7 +41,21 @@ import static org.hamcrest.core.IsNot.not;
 public class KeystoreUtilTest {
 
     private String testKeyAlias = "testKeyAlias";
-    private String clearTextToEncrypt = "clear text to encrypt";
+    private byte[] clearBytesToEncrypt;
+
+    @Before
+    public void getReady() {
+
+        try {
+            Context ctx = getTargetContext();
+            KeystoreUtil.init( ctx );
+
+            clearBytesToEncrypt = "clear text to encrypt".getBytes("UTF-8");
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void createKey() throws Exception {
@@ -49,29 +68,34 @@ public class KeystoreUtilTest {
     }
 
     @Test
-    public void encrypt() throws Exception {
+    public void encryptDecrypt() throws Exception {
+
+        LogUtil.log( KeystoreUtilTest.class, "encryptDecrypt test starting");
 
         KeystoreUtil.createKeyNotExists( getTargetContext(), this.testKeyAlias);
 
-        JSONObject cipherObj = KeystoreUtil.encrypt( this.testKeyAlias, this.clearTextToEncrypt.toCharArray(), true);
+        JSONObject cipherObj = KeystoreUtil.encrypt( this.testKeyAlias, this.clearBytesToEncrypt, true);
         assertThat( cipherObj.getString("error"), is(""));
         assertThat( cipherObj.getString("success"), is("true"));
         assertThat( cipherObj.getString("ciphertext"), not(""));
-        assertThat( cipherObj.getString("ciphertext"), not(this.clearTextToEncrypt));
+        assertThat( cipherObj.getString("ciphertext"), not(this.clearBytesToEncrypt.toString()));
         assertThat( cipherObj.getString("ciphertext"), not(this.testKeyAlias));
 
         JSONObject clearTextObj = KeystoreUtil.decrypt( this.testKeyAlias, cipherObj.getString("ciphertext"), true);
         assertThat( clearTextObj.getString("error"), is(""));
         assertThat( clearTextObj.getString("success"), is("true"));
-        assertThat( clearTextObj.getString("cleartext"), is( this.clearTextToEncrypt));
+        assertThat( clearTextObj.getString("cleartext"), is( new String(this.clearBytesToEncrypt)));
 
         KeystoreUtil.deleteKey( getTargetContext(), this.testKeyAlias, true);
+
+        LogUtil.log( KeystoreUtilTest.class, "encryptDecrypt test ending");
     }
 
     @Test
     public void deleteKey() throws Exception {
 
         Context ctx = getTargetContext();
+        KeystoreUtil.deleteKey( this.testKeyAlias);
         boolean keyCreated = KeystoreUtil.createKeyNotExists( ctx, this.testKeyAlias);
         assertThat( keyCreated, is( true ));
 
@@ -142,5 +166,18 @@ public class KeystoreUtilTest {
         assertThat( indexKey1, is(-1));
         assertThat( indexKey2, is(-1));
         assertThat( indexKey3, is(-1));
+    }
+
+    @Test
+    public void scenario1() throws Exception{
+
+        Context ctx = getTargetContext();
+        String s = "the quick brown fox jumped over the lazy dog";
+
+        byte[] cipherBytes = KeystoreUtil.encrypt(ctx, CConst.APP_KEY_ALIAS, s.getBytes());
+        byte[] clearBytes = KeystoreUtil.decrypt(CConst.APP_KEY_ALIAS, cipherBytes);
+        String result = new String( clearBytes);
+        assertThat( "encryption end to end", result.contentEquals( s));
+        assertThat( result, is(s));
     }
 }
