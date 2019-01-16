@@ -36,6 +36,8 @@ public class CryptoFilesystemTest {
 
         {
             VirtualFileSystem vfs = VirtualFileSystem.get();
+            if( vfs.isMounted()) // Perhaps from an earlier test
+                vfs.unmount();
             vfs.createNewContainer(dbFile.getAbsolutePath(), passwordBytes);
             assertThat( dbFile.exists(), is( true ));
 
