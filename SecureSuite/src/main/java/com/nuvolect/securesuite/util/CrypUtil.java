@@ -198,6 +198,25 @@ public class CrypUtil {
         return charBuffer;
     }
 
+
+    /**
+     * Return a string from a char array. Assumes that the
+     * char array is already UTF8 decided.
+     * 
+     * @param chars
+     * @return
+     */
+    public static String toString(char[] chars){
+        
+        return new String( chars);
+    }
+
+    /**
+     * Convert a UTF8 encoded byte array to a string.
+     * 
+     * @param bytesUTF8
+     * @return
+     */
     public static String toStringUTF8(byte[] bytesUTF8) {
 
         char[] chars = toChar(bytesUTF8);

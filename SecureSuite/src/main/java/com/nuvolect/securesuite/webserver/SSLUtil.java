@@ -71,12 +71,11 @@ public class SSLUtil {
             char[] passphrase = Persist.getSelfsignedKsKey( ctx);
 
             File loadFile = new File(absolutePath);
-            assert loadFile != null;
-            assert loadFile.exists();
-            assert loadFile.canRead();
-            assert loadFile.length() > 0;
-
-            LogUtil.log( SSLUtil.class, "Certificate length: "+loadFile.length());
+//            assert loadFile != null;
+//            assert loadFile.exists();
+//            assert loadFile.canRead();
+//            assert loadFile.length() > 0;
+//            LogUtil.log( SSLUtil.class, "Certificate length: "+loadFile.length());
 
             InputStream keystoreStream = new java.io.FileInputStream( loadFile );
             keystore.load(keystoreStream, passphrase);

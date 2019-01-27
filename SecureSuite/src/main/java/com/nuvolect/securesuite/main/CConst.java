@@ -134,6 +134,7 @@ public class CConst {
     public static final String ROOT                 = "/";
     public static final String SLASH                = "/";
     public static final String SEC_TOK              = "sec_tok";
+    public static final String SELF_SIGNED_NAME     = "selfsigned.p12";
     public static final String SERVER_ENABLED       = "server_enabled";
     public static final String SUBSCRIBER           = "subscriber";
     public static final String TARGET               = "target";

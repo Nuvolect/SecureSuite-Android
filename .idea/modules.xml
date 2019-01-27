@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SecureSuite.iml" filepath="$PROJECT_DIR$/SecureSuite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AndroidstudioProjects-SecureSuite.iml" filepath="$PROJECT_DIR$/AndroidstudioProjects-SecureSuite.iml" />
       <module fileurl="file://$PROJECT_DIR$/SecureSuite/SecureSuite-SecureSuite.iml" filepath="$PROJECT_DIR$/SecureSuite/SecureSuite-SecureSuite.iml" />
     </modules>
   </component>

@@ -37,6 +37,7 @@ import android.util.Log;
 import com.nuvolect.securesuite.data.MyGroups;
 import com.nuvolect.securesuite.data.SqlCipher;
 import com.nuvolect.securesuite.license.AppSpecific;
+import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.util.LogUtil;
 import com.nuvolect.securesuite.util.Util;
 import com.nuvolect.securesuite.webserver.connector.ServerInit;
@@ -116,7 +117,7 @@ public class WebService extends Service {
             okHttpClient = null;
 
             // Create a self signed certificate and put it in a BKS keystore
-            String keystoreFilename = "SelfSigned.bks";
+            String keystoreFilename = CConst.SELF_SIGNED_NAME;
             File file = new File( ctx.getFilesDir(), keystoreFilename);
             String absolutePath = file.getAbsolutePath();
 

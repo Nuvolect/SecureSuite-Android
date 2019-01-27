@@ -155,6 +155,8 @@ public class Comm {
             postBody += entry.getValue();
             amphersand = "&";
         }
+        LogUtil.log(Comm.class, "Post request to url: "+url);
+        LogUtil.log(Comm.class, "Post body : "+postBody);
 
         Request request = new Request.Builder()
                 .url( url )

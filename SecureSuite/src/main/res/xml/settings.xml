@@ -50,8 +50,8 @@
         />
     <CheckBoxPreference
         android:key="notify_incoming_call"
-        android:title="Notify Incoming Call"
-        android:summary="When enabled, display notifications for incoming phone calls."
+        android:title="Lookup Incoming Calls"
+        android:summary="When enabled, display contact name for incoming phone calls."
         android:defaultValue="true"
         />
     <Preference
