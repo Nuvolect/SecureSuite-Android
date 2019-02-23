@@ -18,7 +18,7 @@ import java.io.File;
 
 import javax.net.ssl.SSLServerSocketFactory;
 
-import static androidx.test.InstrumentationRegistry.getTargetContext;
+import static com.nuvolect.securesuite.main.App.getContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -32,7 +32,7 @@ public class SelfSignedKeystoreTest {
     public void createCertTest(){
 
         LogUtil.log( KeystoreUtilTest.class, CrypUtilTest.class.getCanonicalName()+" test starting");
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
 
         // Create a self signed certificate and put it in a BKS keystore
         String keystoreFilename = "SelfSignedKeystoreTest.bks";
@@ -50,7 +50,7 @@ public class SelfSignedKeystoreTest {
         assertThat( Persist.keyExists(ctx, Persist.SELFSIGNED_KS_KEY), is( true));
 
         try {
-            SSLServerSocketFactory sslServerSocketFactory = SSLUtil.configureSSLPath(ctx, absolutePath);
+            SSLServerSocketFactory sslServerSocketFactory = SSLUtil.configureSSL(ctx, absolutePath);
             String[] suites = sslServerSocketFactory.getSupportedCipherSuites();
             assertThat( suites.length > 0, is( true));
 

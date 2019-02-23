@@ -56,10 +56,10 @@ public class SqlSyncTest {
     public static final Integer MAX_PING_PONG_TESTS = 40;
     int ping_counter = 0;
     int pong_counter = 0;
-    static int MIN_PAYLOAD_SIZE =  50000;
-    static int MAX_PAYLOAD_SIZE = 1000000;
-    int payloadSize = 0;
-    int payloadIncrement = MIN_PAYLOAD_SIZE;
+    static int MIN_PAYLOAD_SIZE =  50000;  // 50KB
+    static int MAX_PAYLOAD_SIZE = 1000000; // 1MB
+    int payloadSize = 0; // Starting payload test plus first increment
+    int payloadIncrement = 50000; // Increment each test by this number of bytes
     private Activity m_pingPongCallbacksAct;
     private PingPongCallbacks m_pingPongCallbacks = null;
     private boolean m_continueTest = true;
@@ -91,7 +91,7 @@ public class SqlSyncTest {
      * Test the network performance between this device and a companion device.
      * CONCEPT:
      * A package is constructed of minimal size and sent to the companion device.
-     * The companion tests the package for integrity and if successful, creates a larger package and sends it back.
+     * The companion inspects the package for integrity and if successful, creates a larger package and sends it back.
      * The process is continued until communications fail.
      *
      * TODO complete ping pong test.  Show running data rate, success and failure.
@@ -313,7 +313,8 @@ public class SqlSyncTest {
 
         String title = "Pyramid comm test with companion device" ;
         String message = "This is a non-destructive network performance test. "
-                +"Payload size is incrementally increased.";
+                +"Payload size is incrementally increased. "
+                +"Start companion device and enable server. ";
 
         AlertDialog.Builder builder = new AlertDialog.Builder(act);
         builder.setTitle(title);

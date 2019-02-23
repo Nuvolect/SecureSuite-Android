@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 
-import static androidx.test.InstrumentationRegistry.getTargetContext;
+import static com.nuvolect.securesuite.main.App.getContext;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -47,7 +47,7 @@ public class KeystoreUtilTest {
     public void getReady() {
 
         try {
-            Context ctx = getTargetContext();
+            Context ctx = getContext();
             KeystoreUtil.init( ctx );
 
             clearBytesToEncrypt = "clear text to encrypt".getBytes("UTF-8");
@@ -60,7 +60,7 @@ public class KeystoreUtilTest {
     @Test
     public void createKey() throws Exception {
 
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
         boolean keyCreated = KeystoreUtil.createKeyNotExists( ctx, this.testKeyAlias);
         assertThat( keyCreated, is( true ));
 
@@ -72,7 +72,7 @@ public class KeystoreUtilTest {
 
         LogUtil.log( KeystoreUtilTest.class, "encryptDecrypt test starting");
 
-        KeystoreUtil.createKeyNotExists( getTargetContext(), this.testKeyAlias);
+        KeystoreUtil.createKeyNotExists( getContext(), this.testKeyAlias);
 
         JSONObject cipherObj = KeystoreUtil.encrypt( this.testKeyAlias, this.clearBytesToEncrypt, true);
         assertThat( cipherObj.getString("error"), is(""));
@@ -86,7 +86,7 @@ public class KeystoreUtilTest {
         assertThat( clearTextObj.getString("success"), is("true"));
         assertThat( clearTextObj.getString("cleartext"), is( new String(this.clearBytesToEncrypt)));
 
-        KeystoreUtil.deleteKey( getTargetContext(), this.testKeyAlias, true);
+        KeystoreUtil.deleteKey( getContext(), this.testKeyAlias, true);
 
         LogUtil.log( KeystoreUtilTest.class, "encryptDecrypt test ending");
     }
@@ -94,17 +94,17 @@ public class KeystoreUtilTest {
     @Test
     public void deleteKey() throws Exception {
 
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
         KeystoreUtil.deleteKey( this.testKeyAlias);
         boolean keyCreated = KeystoreUtil.createKeyNotExists( ctx, this.testKeyAlias);
         assertThat( keyCreated, is( true ));
 
-        JSONObject obj = KeystoreUtil.deleteKey( getTargetContext(), this.testKeyAlias, true);
+        JSONObject obj = KeystoreUtil.deleteKey( getContext(), this.testKeyAlias, true);
         assertThat( obj.getString("error"), is(""));
 
 
         // Try to delete it a second time, should be gone
-        obj = KeystoreUtil.deleteKey( getTargetContext(), this.testKeyAlias, true);
+        obj = KeystoreUtil.deleteKey( getContext(), this.testKeyAlias, true);
         assertThat( obj.getString("error"), not(""));
 
         boolean notFound = obj.getString("error").contains("not found");
@@ -117,9 +117,9 @@ public class KeystoreUtilTest {
         int indexKey1 = -1, indexKey2 = -1, indexKey3 = -1;
 
         // Create 3 keys
-        KeystoreUtil.createKeyNotExists( getTargetContext(), "jibberishKey1");
-        KeystoreUtil.createKeyNotExists( getTargetContext(), "jibberishKey2");
-        KeystoreUtil.createKeyNotExists( getTargetContext(), "jibberishKey3");
+        KeystoreUtil.createKeyNotExists( getContext(), "jibberishKey1");
+        KeystoreUtil.createKeyNotExists( getContext(), "jibberishKey2");
+        KeystoreUtil.createKeyNotExists( getContext(), "jibberishKey3");
 
         JSONArray keys = KeystoreUtil.getKeys();
 
@@ -145,9 +145,9 @@ public class KeystoreUtilTest {
         assertThat( indexKey1, not( indexKey3));
         assertThat( indexKey2, not( indexKey3));
 
-        KeystoreUtil.deleteKey( getTargetContext(), "jibberishKey1", true);
-        KeystoreUtil.deleteKey( getTargetContext(), "jibberishKey2", true);
-        KeystoreUtil.deleteKey( getTargetContext(), "jibberishKey3", true);
+        KeystoreUtil.deleteKey( getContext(), "jibberishKey1", true);
+        KeystoreUtil.deleteKey( getContext(), "jibberishKey2", true);
+        KeystoreUtil.deleteKey( getContext(), "jibberishKey3", true);
 
         indexKey1 = -1; indexKey2 = -1; indexKey3 = -1;
         keys = KeystoreUtil.getKeys();
@@ -171,7 +171,7 @@ public class KeystoreUtilTest {
     @Test
     public void scenario1() throws Exception{
 
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
         String s = "the quick brown fox jumped over the lazy dog";
 
         byte[] cipherBytes = KeystoreUtil.encrypt(ctx, CConst.APP_KEY_ALIAS, s.getBytes());

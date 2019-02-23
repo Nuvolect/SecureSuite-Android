@@ -14,8 +14,8 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static androidx.test.InstrumentationRegistry.getTargetContext;
 import static com.nuvolect.securesuite.data.SqlCipher.ACCOUNT_CRYP_TABLE;
+import static com.nuvolect.securesuite.main.App.getContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -31,7 +31,7 @@ public class CryptoDbTest {
     public void dbCreateTest() {
 
 
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
 
         SQLiteDatabase.loadLibs(ctx);
         File dbFile = ctx.getDatabasePath(TEST_DB_NAME);

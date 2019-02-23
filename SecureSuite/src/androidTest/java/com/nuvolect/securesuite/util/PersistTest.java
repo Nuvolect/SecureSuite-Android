@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static androidx.test.InstrumentationRegistry.getTargetContext;
+import static com.nuvolect.securesuite.main.App.getContext;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -27,7 +27,7 @@ public class PersistTest {
     @Test
     public void persistKeyCreateDelete(){
 
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
 
         // Clean up any failed test
         if( Persist.keyExists(ctx, testKey))
@@ -46,7 +46,7 @@ public class PersistTest {
     public void encryptTest(){
 
         try {
-            Context ctx = getTargetContext();
+            Context ctx = getContext();
             KeystoreUtil.init( ctx);
 
             // Create test data and convert it to bytes, no encoding required yet
@@ -96,7 +96,7 @@ public class PersistTest {
     @Test
     public void selfSignedKeystoreStorageTest(){
 
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
 
         boolean ksKeyExists = Persist.keyExists( ctx, Persist.SELFSIGNED_KS_KEY);
         String selfsignedKsKey = null;

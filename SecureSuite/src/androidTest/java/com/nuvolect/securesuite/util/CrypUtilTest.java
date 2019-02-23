@@ -14,7 +14,7 @@ import org.junit.Test;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-import static androidx.test.InstrumentationRegistry.getTargetContext;
+import static com.nuvolect.securesuite.main.App.getContext;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -81,7 +81,7 @@ public class CrypUtilTest {
     @Test
     public void encrypt() throws Exception {
 
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
 
         boolean keyCreated = KeystoreUtil.createKeyNotExists( ctx, this.testKeyAlias);
 
@@ -91,13 +91,13 @@ public class CrypUtilTest {
         assertThat( noMatch, is( false ));
         assertThat( crypBytes.length > 0, is( true ));
 
-        KeystoreUtil.deleteKey( getTargetContext(), this.testKeyAlias, true);
+        KeystoreUtil.deleteKey( getContext(), this.testKeyAlias, true);
     }
     @Test
     public void decrypt() throws Exception {
 
         LogUtil.log( CrypUtilTest.class, CrypUtilTest.class.getCanonicalName()+" test starting");
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
         KeystoreUtil.createKeyNotExists( ctx, this.testKeyAlias);
 
         byte[] crypBytes = new byte[0];
@@ -116,7 +116,7 @@ public class CrypUtilTest {
 
         assertThat( Arrays.equals( clearBytes, clearTextToEncrypt), is(true));
 
-        KeystoreUtil.deleteKey( getTargetContext(), this.testKeyAlias, true);
+        KeystoreUtil.deleteKey( getContext(), this.testKeyAlias, true);
         
         LogUtil.log( CrypUtilTest.class, CrypUtilTest.class.getCanonicalName()+" test ending");
     }
@@ -124,7 +124,7 @@ public class CrypUtilTest {
     @Test
     public void testInt() throws Exception {
 
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
         KeystoreUtil.createKeyNotExists( ctx, this.testKeyAlias);
 
         int testInt = 123;
@@ -134,7 +134,7 @@ public class CrypUtilTest {
         int resultInt = CrypUtil.decryptInt( cryptInt);
         assertThat(resultInt == testInt, is( true ));
 
-        KeystoreUtil.deleteKey( getTargetContext(), this.testKeyAlias, true);
+        KeystoreUtil.deleteKey( getContext(), this.testKeyAlias, true);
     }
 
     @Test

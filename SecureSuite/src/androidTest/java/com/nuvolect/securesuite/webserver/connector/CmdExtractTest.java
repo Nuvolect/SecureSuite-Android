@@ -40,7 +40,7 @@ import java.util.Map;
 
 import info.guardianproject.iocipher.File;
 
-import static androidx.test.InstrumentationRegistry.getTargetContext;
+import static com.nuvolect.securesuite.main.App.getContext;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -49,7 +49,7 @@ public class CmdExtractTest {
     @Test
     public void go() throws Exception {
 
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
         KeystoreUtil.init( ctx);
         SqlCipher.getInstance(ctx);
 

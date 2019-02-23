@@ -44,7 +44,6 @@ import com.nuvolect.securesuite.webserver.connector.ServerInit;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -121,15 +120,27 @@ public class WebService extends Service {
             File file = new File( ctx.getFilesDir(), keystoreFilename);
             String absolutePath = file.getAbsolutePath();
 
+            // Create the certificate in a keystore, recreate: true means do it every time
+            // A random password is secured with Android keystore
             SelfSignedCertificate.makeKeystore( ctx, absolutePath, false);
 
-            sslServerSocketFactory = SSLUtil.configureSSLPath( ctx, absolutePath);
-
+            // Configure SSL layer 
+            sslServerSocketFactory = SSLUtil.configureSSL( ctx, absolutePath);
+            
+            /**
+             * Save the context and socket factory used to create secure connections
+             * @see #getOkHttpClient() 
+             */
+            sslContext = SSLUtil.sslContext;
+            sslSocketFactory = sslContext.getSocketFactory();
+            
+            getOkHttpClient();// Build client
+            
             server.makeSecure( sslServerSocketFactory, null);
             server.start();
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogUtil.logException(ctx, LogUtil.LogType.WEB_SERVICE, e);
         }
         mIpAddress = wifiIpAddress(ctx);
         log(LogUtil.LogType.WEB_SERVICE, "Server started: " + mIpAddress + ":" + WebUtil.getPort(ctx));
@@ -213,7 +224,7 @@ public class WebService extends Service {
      * @param context
      * @return
      */
-    protected String wifiIpAddress(Context context) {
+    public static String wifiIpAddress(Context context) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
         int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
 

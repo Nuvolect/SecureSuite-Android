@@ -48,6 +48,11 @@
         android:title="Companion Device IP Address"
         android:summary="When enabled, use a companion device on your local area network for backup."
         />
+    <Preference
+        android:key="export_certificate"
+        android:title="Export Security Certificate"
+        android:summary="Export the security certificate to crypto/deepdive_cert.pem."
+        />
     <CheckBoxPreference
         android:key="notify_incoming_call"
         android:title="Lookup Incoming Calls"

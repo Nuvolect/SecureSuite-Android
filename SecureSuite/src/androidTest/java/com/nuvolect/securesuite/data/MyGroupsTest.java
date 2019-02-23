@@ -24,13 +24,11 @@ import android.content.Context;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import androidx.test.filters.SmallTest;
-import androidx.test.runner.AndroidJUnit4;
 
 import static com.nuvolect.securesuite.data.MyGroups.mGroupTitle;
-import static androidx.test.InstrumentationRegistry.getTargetContext;
+import static com.nuvolect.securesuite.main.App.getContext;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -40,9 +38,8 @@ import static org.hamcrest.core.IsNot.not;
  * {@link MyGroups} utility class tests.
  * Also tests {@link SqlCipher} database delete and creation.
  *
- * WARNING!!!   TEST WILL WIPE THE DATABASE CLEAN.
+ * WARNING!!!   If Enabled, TEST WILL WIPE THE DATABASE CLEAN.
  */
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class MyGroupsTest {
 
@@ -78,7 +75,7 @@ public class MyGroupsTest {
              * Initialize in memory group cache.
              * Create a group instance in database and cache.
              */
-            Context ctx = getTargetContext();
+            Context ctx = getContext();
 
             /**
              * This test will wipe the database clean.

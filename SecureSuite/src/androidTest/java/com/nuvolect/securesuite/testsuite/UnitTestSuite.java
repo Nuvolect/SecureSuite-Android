@@ -42,7 +42,7 @@ import org.junit.runners.Suite;
         {
                 KeystoreUtilTest.class,
                 PersistTest.class,
-                MyGroupsTest.class, // Change testEnabled = true, to run full test
+                MyGroupsTest.class, // Change testEnabled = true, to run full destructive test
                 CrypUtilTest.class,
                 CryptoFilesystemTest.class,
                 CryptoDbTest.class,
@@ -54,4 +54,5 @@ import org.junit.runners.Suite;
         }
 )
 public class UnitTestSuite {
+        
 }

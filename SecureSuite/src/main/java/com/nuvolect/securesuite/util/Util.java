@@ -43,6 +43,8 @@ import com.nuvolect.securesuite.main.CConst;
 import com.nuvolect.securesuite.main.ContactListActivity;
 import com.nuvolect.securesuite.util.LogUtil.LogType;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,6 +53,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -377,7 +380,18 @@ public class Util {
             is.close();
             os.close();
         }
-    }  
+    }
+    
+    public static String copyFile(InputStream in) {
+
+        StringWriter writer = new StringWriter();
+        try {
+            IOUtils.copy( in, writer, "UTF-8");
+        } catch (IOException e) {
+            return "";
+        }
+        return writer.toString();
+    }
 
     /**
      * Restart the entire application

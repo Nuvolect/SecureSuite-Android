@@ -132,6 +132,9 @@ public class SqlIncSyncSource {
          */
         if( syncIncManifest.isEmpty()) {
             LogUtil.log(SQL_INC_SYNC_SRC, "startIncSyncSource, manifest is empty, nothing to sync");
+            
+            setSyncInProgress( false);
+            
             return WebUtil.response(CConst.RESPONSE_CODE_EMPTY_MANIFEST_103);
         }
 

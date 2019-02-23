@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static androidx.test.InstrumentationRegistry.getTargetContext;
+import static com.nuvolect.securesuite.main.App.getContext;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -38,7 +38,7 @@ public class OmniTest {
 
     @Before
     public void setup(){
-        boolean setupOk = Omni.init( getTargetContext());
+        boolean setupOk = Omni.init( getContext());
         assertThat( setupOk, is( true ));
     }
 

@@ -10,15 +10,20 @@ package com.nuvolect.securesuite.webserver;
 import android.content.Context;
 
 import com.nuvolect.securesuite.util.LogUtil;
+import com.nuvolect.securesuite.util.Omni;
+import com.nuvolect.securesuite.util.OmniFile;
 import com.nuvolect.securesuite.util.Passphrase;
 import com.nuvolect.securesuite.util.Persist;
 
+import org.spongycastle.asn1.ASN1Encodable;
+import org.spongycastle.asn1.DERSequence;
 import org.spongycastle.asn1.x500.X500Name;
 import org.spongycastle.asn1.x500.X500NameBuilder;
 import org.spongycastle.asn1.x500.style.BCStyle;
 import org.spongycastle.asn1.x509.BasicConstraints;
 import org.spongycastle.asn1.x509.ExtendedKeyUsage;
 import org.spongycastle.asn1.x509.Extension;
+import org.spongycastle.asn1.x509.GeneralName;
 import org.spongycastle.asn1.x509.KeyPurposeId;
 import org.spongycastle.asn1.x509.KeyUsage;
 import org.spongycastle.cert.X509CertificateHolder;
@@ -28,18 +33,28 @@ import org.spongycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.operator.ContentSigner;
 import org.spongycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.spongycastle.util.io.pem.PemObject;
+import org.spongycastle.util.io.pem.PemWriter;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Enumeration;
 
 /**
  * Generate a self-signed certificate and store it in a keystore.
@@ -51,10 +66,13 @@ import java.util.Date;
  *
  * https://stackoverflow.com/questions/29852290/self-signed-x509-certificate-with-bouncy-castle-in-java
  * Robert Vazan, https://stackoverflow.com/users/1981276/robert-va%C5%BEan
+ * 
+ * MKK notes:
+ * pkcs9
  */
 public class SelfSignedCertificate {
 
-    public static boolean makeKeystore(Context ctx, String keystoreFilepath, boolean recreate){
+    public static boolean makeKeystore(Context ctx, String keystoreFilepath, boolean recreate){ // BLOCK 1
 
         boolean success = true;
         File keystoreFile = new File( keystoreFilepath );
@@ -95,6 +113,9 @@ public class SelfSignedCertificate {
                     .addRDN(BCStyle.C, "US")
                     .addRDN(BCStyle.L, "Orlando")
                     .addRDN(BCStyle.ST, "FL")
+                    .addRDN(BCStyle.EmailAddress, "support@nuvolect.com")
+                    .addRDN(BCStyle.UnstructuredName, "securesuite.org")
+                    .addRDN(BCStyle.UnstructuredAddress, "FL")
                     .build();
             byte[] id = new byte[20];
             random.nextBytes(id);
@@ -130,6 +151,16 @@ public class SelfSignedCertificate {
                     Extension.extendedKeyUsage,
                     false,
                     usageEx.getEncoded());
+            String myIpAddress = WebUtil.getServerIp( ctx);
+            DERSequence subjectAlternativeNames = new DERSequence(new ASN1Encodable[] {
+                    new GeneralName(GeneralName.dNSName, "securesuite.org"),
+                    new GeneralName(GeneralName.dNSName, "nuvolect.com"),
+                    new GeneralName(GeneralName.dNSName, myIpAddress)
+            });
+            certificate.addExtension(
+                    Extension.subjectAlternativeName,
+                    false,
+                    subjectAlternativeNames);
 
 
             // build BouncyCastle certificate
@@ -141,7 +172,7 @@ public class SelfSignedCertificate {
             JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
             converter.setProvider(new BouncyCastleProvider());
             X509Certificate x509Certificate = converter.getCertificate(holder);
-
+            
             KeyStore keyStore = KeyStore.getInstance("BKS");
             keyStore.load( null, storePassword);// Initialize it
             keyStore.setCertificateEntry("deepdive_cert", x509Certificate);
@@ -161,6 +192,41 @@ public class SelfSignedCertificate {
             success = false;
         }
         return success;
+    }
+    
+    public static boolean exportCertificate(Context ctx, String keystoreFilepath) 
+            throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
+
+        File keystoreFile = new File( keystoreFilepath );
+        char[] password = Persist.getSelfsignedKsKey( ctx);
+
+        boolean success = keystoreFile.exists();
+        
+        if( success){
+
+            InputStream keystoreStream = new java.io.FileInputStream( keystoreFile );
+            KeyStore keystore = KeyStore.getInstance("BKS");
+            keystore.load(keystoreStream, password);
+            keystoreStream.close();
+
+            Enumeration<String> aliases = keystore.aliases();
+            String alias = aliases.nextElement();
+            Certificate certificate = keystore.getCertificate(alias);
+
+            StringWriter writer = new StringWriter();
+            PemWriter pemWriter = new PemWriter(writer);
+            pemWriter.writeObject(new PemObject("CERTIFICATE", certificate.getEncoded()));
+            pemWriter.flush();
+            pemWriter.close();
+            
+            OmniFile certificateFile = new OmniFile( Omni.cryptoVolumeId, "/deepdive_cert.pem");
+            certificateFile.writeFile( writer.toString());
+
+//            OmniFile passFile = new OmniFile( Omni.cryptoVolumeId, "/deepdive_cert_password.txt");
+//            passFile.writeFile(CrypUtil.toString( password));
+        }
+
+        return  success;
     }
 }
 

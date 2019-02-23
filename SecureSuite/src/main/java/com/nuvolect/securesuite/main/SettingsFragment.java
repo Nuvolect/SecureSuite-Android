@@ -68,14 +68,19 @@ import com.nuvolect.securesuite.util.Persist;
 import com.nuvolect.securesuite.util.Util;
 import com.nuvolect.securesuite.webserver.Comm;
 import com.nuvolect.securesuite.webserver.CrypServer;
+import com.nuvolect.securesuite.webserver.SelfSignedCertificate;
 import com.nuvolect.securesuite.webserver.SyncRest;
 import com.nuvolect.securesuite.webserver.WebUtil;
 
 import org.json.JSONException;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -396,6 +401,37 @@ public class SettingsFragment extends PreferenceFragment
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
 
+        String error = "";
+        
+        if (preference.getKey().contentEquals("export_certificate")) {
+
+            String keystoreFilename = CConst.SELF_SIGNED_NAME;
+            File file = new File( m_act.getFilesDir(), keystoreFilename);
+            String absolutePath = file.getAbsolutePath();
+
+            try {
+                boolean success = SelfSignedCertificate.exportCertificate( m_act, absolutePath);
+                if( ! success)
+                    error = "Keystore not found";
+            } catch (KeyStoreException e) {
+                LogUtil.logException(LogUtil.LogType.SETTINGS, e);
+                error = "KeyStore Exception Error";
+            } catch (CertificateException e) {
+                LogUtil.logException(LogUtil.LogType.SETTINGS, e);
+                error = "Certificate Exception Error";
+            } catch (NoSuchAlgorithmException e) {
+                LogUtil.logException(LogUtil.LogType.SETTINGS, e);
+                error = "NoSuchAlgorithm Exception Error";
+            } catch (IOException e) {
+                LogUtil.logException(LogUtil.LogType.SETTINGS, e);
+                error = "IO Exception Error";
+            }
+            if( error.isEmpty())
+                Toast.makeText(m_act, "Certificate exported", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(m_act, error, Toast.LENGTH_SHORT).show();
+        }
+        
         if (preference.getKey().contentEquals("database_passphrase")) {
 
             /* Create a dialog showing the clear text passcode

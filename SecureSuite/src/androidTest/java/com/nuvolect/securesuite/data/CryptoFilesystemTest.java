@@ -10,7 +10,7 @@ import java.io.File;
 
 import info.guardianproject.iocipher.VirtualFileSystem;
 
-import static androidx.test.InstrumentationRegistry.getTargetContext;
+import static com.nuvolect.securesuite.main.App.getContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -22,7 +22,7 @@ public class CryptoFilesystemTest {
     @Test
     public void vfsCreateTest() {
 
-        Context ctx = getTargetContext();
+        Context ctx = getContext();
 
         String FILESYSTEM_NAME = "/test_cryp_filesystem";
         String path = ctx.getDir("vfs", Context.MODE_PRIVATE).getAbsolutePath() + FILESYSTEM_NAME;
