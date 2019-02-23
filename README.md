@@ -13,6 +13,8 @@ The current stable release is on Google Play
 <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' 
 width="172" height="60" /></a>
 
+[Sideload the app if necessary](https://github.com/Nuvolect/SecureSuite-Android/tree/master/signed_apps)  
+
 ## Contributing Bug Reports
 We use GitHub for bug tracking. Please search the existing issues for your bug and create a new one if the issue is not yet tracked.
 <https://github.com/teamnuvolect/securesuite/issues>
@@ -63,6 +65,6 @@ export under the License Exception ENC Technology Software Unrestricted (TSU) ex
 
 ## License 
 
-Copyright 2016-2017 Nuvolect LLC
+Copyright 2016-2019 Nuvolect LLC
 
 Licensed under the GPLv3: <http://www.gnu.org/licenses/gpl-3.0.html>
