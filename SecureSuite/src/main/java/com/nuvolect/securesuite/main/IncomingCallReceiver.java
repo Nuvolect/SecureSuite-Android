@@ -37,7 +37,6 @@ import com.nuvolect.securesuite.util.TimeUtil;
 import net.sqlcipher.Cursor;
 
 /**
- *
  * Incoming number during a call in android?
  http://stackoverflow.com/questions/12659536/incoming-number-during-a-call-in-android?rq=1
  *
@@ -45,7 +44,7 @@ import net.sqlcipher.Cursor;
  http://stackoverflow.com/questions/33243248/how-to-determine-if-second-incoming-call-was-answered-declined-or-ignored-on-a?rq=1
  */
 
-public class IncomingCallReceiver extends BroadcastReceiver {
+public class IncomingCallReceiver extends BroadcastReceiver {// FIXME returns empty number on some devices
 
     private Context mContext;
     private Intent mIntent;
