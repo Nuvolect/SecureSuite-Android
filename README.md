@@ -17,8 +17,7 @@ width="172" height="60" /></a>
 
 ## Contributing Bug Reports
 We use GitHub for bug tracking. Please search the existing issues for your bug and create a new one if the issue is not yet tracked.
-<https://github.com/teamnuvolect/securesuite/issues>
-
+<https://github.com/Nuvolect/SecureSuite-Android/issues>
 ## Joining the Beta  
 
 Want to live life on the bleeding edge and help out with testing?
