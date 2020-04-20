@@ -25,7 +25,7 @@ confirmations, or any protocol-level "advisory" message.
 
 ### Useful bug reports
 1. Please search both open and closed issues first to make sure your issue is not a duplicate.
-1. Read the [Submitting useful bug reports guide](https://github.com/Nuvolect/SecureSuite-Android/wiki/Submitting-useful-bug-reports) before posting a bug.
+1. Read the [Submitting useful bug reports guide](https://github.com/Nuvolect/SecureSuite-Android/wiki/Submitting-useful-bug-reports)<!-- @IGNORE PREVIOUS: link --> before posting a bug.
 
 ### Issue tracker is for bugs
 The main purpose of this issue tracker is to track bugs for the Android client. 
@@ -35,7 +35,7 @@ Relevant, concise and to the point comments that help to solve the issue are ver
 Please do **not** ask support questions at the issue tracker. We want to help you using SecureSuite 
 and we have created our support system just for that. You can reach support by sending email to 
 support@nuvolect.com. You can also search for existing troubleshooting articles on the 
-[Wiki](https://github.com/Nuvolect/SecureSuite-Android/wiki).
+[Wiki](https://github.com/Nuvolect/SecureSuite-Android/wiki)<!-- @IGNORE PREVIOUS: link -->.
 
 ##### Not a discussion forum
 Please do **not** use this issue tracker as a discussion forum. Discussion related to the bug in 
@@ -52,7 +52,7 @@ time and only comment if you have relevant new information to add.
 ### Open issues
 
 #### If it's open it's tracked
-Have you followed all the points in the [Submitting useful bug reports guide](https://github.com/Nuvolect/SecureSuite-Android/wiki/Submitting-useful-bug-reports) 
+Have you followed all the points in the [Submitting useful bug reports guide](https://github.com/Nuvolect/SecureSuite-Android/wiki/Submitting-useful-bug-reports)<!-- @IGNORE PREVIOUS: link -->
 but nobody has commented on your issue? Is there no milestone or person assigned to it? Don't worry, 
 the developers read every issue and if it's open it means it's tracked and taken into account. 
 It might just take time as other issues have higher priority. And remember that this is an open 
@@ -75,7 +75,7 @@ You need to sign our CLA before your pull request can be merged. You can find it
 [https://nuvolect.com/cla.pdf](https://nuvolect.com/cla.pdf)
 
 ### Follow the Code Style Guidelines
-Before submitting a pull request please check that your code adheres to the [Code Style Guidelines](https://github.com/Nuvolect/SecureSuite-Android/wiki/Code-Style-Guidelines).
+Before submitting a pull request please check that your code adheres to the [Code Style Guidelines](https://github.com/Nuvolect/SecureSuite-Android/wiki/Code-Style-Guidelines)<!-- @IGNORE PREVIOUS: link -->.
 
 ### Submit only complete PRs and test them
 Please do not submit pull requests that are still a work in progress. Pull requests should be ready 
@@ -96,7 +96,7 @@ Anyone can help by
 - advising new people about the guidelines of this project
  - redirecting support questions to support@nuvolect.com
  - redirecting non-bug related discussions to the [community forum](https://nuvolect.freeforums.net)
-- improving documentation in the [wiki](https://github.com/Nuvolect/SecureSuite-Android/wiki)
+- improving documentation in the [wiki](https://github.com/Nuvolect/SecureSuite-Android/wiki)<!-- @IGNORE PREVIOUS: link -->
 - finding and marking duplicate issues
 - trying to reproduce issues
 - finding solutions to open issues and posting relevant findings as comments
