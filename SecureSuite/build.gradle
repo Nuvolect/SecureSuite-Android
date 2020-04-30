@@ -53,7 +53,7 @@ android {
 
     defaultConfig {
         applicationId "com.nuvolect.securesuite"
-        minSdkVersion 26
+        minSdkVersion 25
         targetSdkVersion 29
 
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
@@ -91,13 +91,11 @@ android {
 }
 
 dependencies {
-    implementation files('libs/commons-codec.jar')
-    implementation files('libs/ez-vcard-0.9.6.jar')
-    implementation files('libs/jackson-core-2.3.3.jar')
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.11'
+    implementation group: 'com.googlecode.ez-vcard', name: 'ez-vcard', version: '0.10.6'
     implementation 'com.squareup.okio:okio:2.5.0'
     implementation 'com.squareup.okhttp:okhttp:2.7.5'
     implementation 'com.squareup.okhttp:okhttp-urlconnection:2.7.5'
-//    implementation 'net.zetetic:android-database-sqlcipher:3.5.9'
     implementation 'net.zetetic:android-database-sqlcipher:4.3.0'
     implementation 'info.guardianproject.iocipher:IOCipher:0.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -107,13 +105,11 @@ dependencies {
 
     // APACHE COMMONS LIBRARIES
     implementation 'commons-cli:commons-cli:20040117.000000'
-//    implementation 'commons-io:commons-io:20030203.000550'
+
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation group: 'commons-io', name: 'commons-io', version: '2.6'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.1'
-
-
 
 
     // Required for local unit tests (JUnit 4 framework)
