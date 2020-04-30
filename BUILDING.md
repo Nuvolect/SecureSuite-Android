@@ -8,9 +8,6 @@ SecureSuite uses [Gradle](http://gradle.org) to build the project and to maintai
 dependencies.  However, you needn't install it yourself; the
 "gradle wrapper" `gradlew`, mentioned below, will do that for you.
 
-Building SecureSuite
---------------------
-
 The following steps should help you (re)build SecureSuite from the command line.
 
 1. Checkout the SecureSuite-Android project source with the command:
@@ -41,10 +38,21 @@ Setting up a development environment
 1. From the Quickstart panel, choose "Configure" then "SDK Manager".
 1. In the SDK Tools tab of the SDK Manager, make sure that the "Android Support Repository" is installed, and that the latest "Android SDK build-tools" are installed. Click "OK" to return to the Quickstart panel.
 1. From the Quickstart panel, choose "Checkout from Version Control" then "git".
-1. Paste the URL for the SecureSuite-Android project when prompted (https://github.com/Nuvolect/SecureSuite-Android.git).
+1. Paste the URL for the SecureSuite-Android project when prompted, [https://github.com/Nuvolect/SecureSuite-Android.git](https://github.com/Nuvolect/SecureSuite-Android.git).
 1. Android studio should detect the presence of a project file and ask you whether to open it. Click "yes".
 1. Default config options should be good enough.
 1. Project initialisation and build should proceed.
+
+Testing
+-------
+There are 50+ instrumented tests, start by creating a run configuration:
+1. Edit Configurations
+1. Add New Configuration, Android Instrumented Tests
+1. Default nae: "All Tests"
+1. Select module SecureSuite-SecureSuite
+1. Select OK
+
+Run tests on your development hardware or emulated Android device.
 
 Contributing code
 -----------------

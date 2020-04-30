@@ -1,8 +1,8 @@
 # Contributing to SecureSuite  
 
-Thank you for deciding to help this project! If you have contributed to other open source projects 
-before please note that some conventions here might be a bit different than what you are used to. 
-Reading this document will save you, other contributors and the developers time.
+Thank you, we appreciate your help. Please note the conventions used in this app,
+they might be a bit different than what you are used to.
+Reading this document will save you and other contributors time.
 
 
 ## Development Ideology
@@ -12,7 +12,7 @@ Truths which we believe to be self-evident:
 1. **The answer is not more options.**  If you feel compelled to add a preference that's exposed to 
 the user, it's very possible you've made a wrong turn somewhere.
 1. **The user doesn't know what a key is.**  We need to minimize the points at which a user is 
-exposed to this sort of terminology as extremely as possible.
+exposed to this sort of terminology.
 1. **There are no power users.** The idea that some users "understand" concepts better than others 
 has proven to be, for the most part, false. If anything, "power users" are more dangerous than the rest, 
 and we should avoid exposing dangerous functionality to them.
@@ -31,7 +31,7 @@ confirmations, or any protocol-level "advisory" message.
 The main purpose of this issue tracker is to track bugs for the Android client. 
 Relevant, concise and to the point comments that help to solve the issue are very welcome.
 
-##### Send support questions to support
+##### Send support questions
 Please do **not** ask support questions at the issue tracker. We want to help you using SecureSuite 
 and we have created our support system just for that. You can reach support by sending email to 
 support@nuvolect.com. You can also search for existing troubleshooting articles on the 
@@ -94,9 +94,10 @@ We are sorry!
 ## How can I contribute?
 Anyone can help by
 - advising new people about the guidelines of this project
- - redirecting support questions to support@nuvolect.com
- - redirecting non-bug related discussions to the [community forum](https://nuvolect.freeforums.net)
+   - redirecting support questions to support@nuvolect.com
+   - redirecting non-bug related discussions to the [community forum](https://nuvolect.freeforums.net)
 - improving documentation in the [wiki](https://github.com/Nuvolect/SecureSuite-Android/wiki)<!-- @IGNORE PREVIOUS: link -->
+- help write tests,[TEST_README](SecureSuite/src/androidTest/java/com/nuvolect/securesuite/TEST_README.md)
 - finding and marking duplicate issues
 - trying to reproduce issues
 - finding solutions to open issues and posting relevant findings as comments
