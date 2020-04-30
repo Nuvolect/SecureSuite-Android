@@ -195,17 +195,14 @@ public class ExportVcf {
             {
                 StructuredName n = new StructuredName();
                 String prefix = SqlCipher.getKv( contact_id, KvTab.name_prefix);
-                n.addPrefix(prefix);
+                n.getPrefixes().add(prefix);
                 String first = SqlCipher.getKv( contact_id, KvTab.name_first);
                 n.setGiven( first );
                 String last = SqlCipher.getKv( contact_id, KvTab.name_last);
                 n.setFamily( last );
                 String suffix = SqlCipher.getKv( contact_id, KvTab.name_suffix);
-                n.addSuffix( suffix );
+                n.getSuffixes().add(suffix );
                 vcard.setStructuredName(n);
-
-//                if( prefix.isEmpty() && first.isEmpty() && last.isEmpty() && suffix.isEmpty())//TODO remove
-//                    n.setFamily(full_name);
             }
             {
                 JSONArray itemArray = new JSONArray( SqlCipher.get( contact_id, DTab.address));
@@ -219,10 +216,10 @@ public class ExportVcf {
                     Address adr = new Address();
                     adr.setStreetAddress( item_value);
                     if( item_label.contentEquals("HOME"))
-                        adr.addType(AddressType.HOME);
+                        adr.getTypes().add(AddressType.HOME);
                     else
                     if( item_label.contentEquals("WORK"))
-                        adr.addType(AddressType.WORK);
+                        adr.getTypes().add(AddressType.WORK);
 
                     vcard.addAddress(adr);
                 }

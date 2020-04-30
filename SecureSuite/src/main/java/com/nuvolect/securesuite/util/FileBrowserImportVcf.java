@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nuvolect.securesuite.R;
 import com.nuvolect.securesuite.main.CConst;
@@ -112,7 +113,6 @@ public class FileBrowserImportVcf extends Activity {
             LogUtil.e( TAG, "unable to write on the sd card ");
         }
 
-        // Checks whether path exists
         if (path.exists()) {
             FilenameFilter filter = new FilenameFilter() {
                 @Override
@@ -124,6 +124,13 @@ public class FileBrowserImportVcf extends Activity {
             };
 
             String[] fList = path.list(filter);
+            // Result can be null if there is an I/O error or no names are accepted by the filter.
+            if( fList == null) {
+                fList = new String[0];//
+                String err = "Input or output error";
+                Toast.makeText( getApplicationContext(), err, Toast.LENGTH_LONG).show();
+                LogUtil.e( TAG, err);
+            }
             fileList = new Item[fList.length];
             for (int i = 0; i < fList.length; i++) {
                 fileList[i] = new Item(fList[i], R.drawable.file_icon);

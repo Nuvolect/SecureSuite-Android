@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -419,7 +420,7 @@ public class ImportVcard {
                 }
                 value = uri.toString();
             }
-            Set<TelephoneType> set = phone.getTypes();
+            Set<TelephoneType> set = new HashSet<>(phone.getTypes());
             String type = "MOBILE";
             if( ! set.isEmpty()){
 
@@ -451,7 +452,7 @@ public class ImportVcard {
             if( value.isEmpty()){
                 continue;
             }
-            Set<EmailType> set = email.getTypes();
+            Set<EmailType> set = new HashSet<>(email.getTypes());
             String type = "HOME";
             if( ! set.isEmpty()){
 
@@ -491,7 +492,7 @@ public class ImportVcard {
 
             String value = street + poBox + city + state +zipCode + country;
 
-            Set<AddressType> set = address.getTypes();
+            Set<AddressType> set = new HashSet<>(address.getTypes());
             String type = "HOME";
             if( ! set.isEmpty()){
 
