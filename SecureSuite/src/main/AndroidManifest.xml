@@ -49,7 +49,8 @@
         android:name="com.nuvolect.securesuite.main.App"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name" >
+        android:label="@string/app_name"
+        android:extractNativeLibs="true" >
 
         <service
             android:name="com.nuvolect.securesuite.util.WorkerService"
