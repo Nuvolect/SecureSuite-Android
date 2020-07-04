@@ -24,6 +24,12 @@ def versionMinor = 5
 def versionPatch = 2
 def versionBuild = 3
 
+def versionCode = 15203
+def versionName = "1.5.2"
+
+// versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+// versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+
 // Load keystore
 def keystoreProperties = new Properties()
 def keystorePropertiesPath = System.getProperty("user.home")+"/.gradle/keystore.properties"
@@ -55,9 +61,6 @@ android {
         applicationId "com.nuvolect.securesuite"
         minSdkVersion 25
         targetSdkVersion 29
-
-        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
