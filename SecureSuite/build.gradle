@@ -19,7 +19,7 @@
 
 apply plugin: 'com.android.application'
 
-def versionCode = 15304 // major * 10000 + minor * 1000 + patch * 100 + build
+def versionCode = 15401 // major * 10000 + minor * 1000 + patch * 100 + build
 def versionName = "1.5.4"
 
 // Load keystore
