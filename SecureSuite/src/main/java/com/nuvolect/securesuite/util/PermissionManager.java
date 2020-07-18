@@ -43,7 +43,7 @@ import static android.Manifest.permission.READ_PHONE_STATE;
 
 
 /**
- * Show user a dialog allowing them to enable and disable their permissions.
+ * Show user a dialog allowing them to enable and disable app permissions.
  */
 public class PermissionManager {
 

@@ -59,7 +59,7 @@ public class BackupRestore {
     public static void dumpDbToFile(Context ctx){
 
         // Create necessary folder, return path
-        String appFolderPath = Util.createAppPublicFolder();
+        String appFolderPath = Util.createAppPublicFolder( ctx);
 
         // Create a unique name
         String filename = Util.makeDateTimeFilename();

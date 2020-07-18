@@ -348,7 +348,7 @@ public class ExportVcf {
         @Override
         protected String doInBackground(Void...groups) {
 
-            Util.createAppPublicFolder();
+            Util.createAppPublicFolder( m_act);
             String basePath = Environment.getExternalStorageDirectory()+CConst.FOLDER_NAME;
 
             int c_id_index = m_cursor.getColumnIndex("contact_id");

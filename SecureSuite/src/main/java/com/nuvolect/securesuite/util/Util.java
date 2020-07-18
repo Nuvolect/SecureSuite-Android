@@ -31,6 +31,7 @@ import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -233,7 +234,7 @@ public class Util {
     public static String createTimeStampedBackupFolder(Context m_ctx) {
 
         // Create the app folder if necessary
-        String appPublicFolder = createAppPublicFolder();
+        String appPublicFolder = createAppPublicFolder( m_ctx);
         if( appPublicFolder.isEmpty())
             return ""; // error condition
 
@@ -262,9 +263,23 @@ public class Util {
      * path to that folder.  Path includes a trailing slash.
      * @return
      */
-    public static String createAppPublicFolder(){
+    public static String createAppPublicFolder(Context ctx){
 
-        String appFolderPath = Environment.getExternalStorageDirectory()+CConst.FOLDER_NAME;
+//mkk        String appFolderPath = Environment.getExternalStorageDirectory()+CConst.FOLDER_NAME;
+
+        File file = ctx.getExternalFilesDir(null);
+        String appFolderPath = file.getPath() + CConst.FOLDER_NAME;
+
+//        @deprecated To improve user privacy, direct access to shared/external
+//        storage devices is deprecated. When an app targets
+//        {@link android.os.Build.VERSION_CODES#Q}, the path returned
+//        from this method is no longer directly accessible to apps.
+//        Apps can continue to access content stored on shared/external
+//        storage by migrating to alternatives such as
+//        {@link Context#getExternalFilesDir(String)},
+//        {@link MediaStore
+//        }, or {@link Intent#ACTION_OPEN_DOCUMENT}.
+
         File appFolder = new File( appFolderPath );
         if(!appFolder.exists()) {
 
