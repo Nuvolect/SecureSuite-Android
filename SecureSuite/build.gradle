@@ -19,16 +19,8 @@
 
 apply plugin: 'com.android.application'
 
-def versionMajor = 1
-def versionMinor = 5
-def versionPatch = 3
-def versionBuild = 3
-
-def versionCode = 15303
-def versionName = "1.5.3"
-
-// versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
-// versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+def versionCode = 15304 // major * 10000 + minor * 1000 + patch * 100 + build
+def versionName = "1.5.4"
 
 // Load keystore
 def keystoreProperties = new Properties()
