@@ -13,7 +13,7 @@ The current stable release is on Google Play
 <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' 
 width="172" height="60" /></a>
 
-[Sideload the app if necessary](https://github.com/Nuvolect/SecureSuite-Android/tree/master/signed_apps)  
+[Sideload Android SecureSuite 1.5.2](https://securesuite.org/signed_apps/1.5.2/SecureSuite-release.apk)  
 
 ## Contributing Bug Reports
 We use GitHub for bug tracking. Please search the existing issues for your bug and create a new one if the issue is not yet tracked.
