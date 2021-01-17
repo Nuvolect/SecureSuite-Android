@@ -5,7 +5,7 @@
  * without the GPLv3 restrictions.
  */
 
-package com.nuvolect.deepdive.util;
+package com.nuvolect.securesuite.util;
 
 import org.json.JSONArray;
 import org.json.JSONException;

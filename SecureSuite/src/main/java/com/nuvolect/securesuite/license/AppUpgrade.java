@@ -5,7 +5,7 @@
  * without the GPLv3 restrictions.
  */
 
-package com.nuvolect.deepdive.license;
+package com.nuvolect.securesuite.license;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -23,7 +23,7 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.nuvolect.deepdive.util.JsonReader;
+import com.nuvolect.securesuite.util.JsonReader;
 import com.nuvolect.securesuite.R;
 
 import org.json.JSONArray;
