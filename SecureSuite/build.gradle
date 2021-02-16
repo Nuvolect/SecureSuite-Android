@@ -19,9 +19,6 @@
 
 apply plugin: 'com.android.application'
 
-def versionCode = 15501 // major * 10000 + minor * 1000 + patch * 100 + build
-def versionName = "1.5.5"
-
 // Load keystore
 def keystoreProperties = new Properties()
 def keystorePropertiesPath = System.getProperty("user.home")+"/.gradle/keystore.properties"
@@ -46,13 +43,15 @@ android {
         }
     }
 
-    compileSdkVersion 29
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "29.0.2"
 
     defaultConfig {
         applicationId "com.nuvolect.securesuite"
         minSdkVersion 25
-        targetSdkVersion 29
+        targetSdkVersion 30
+        versionCode 15601
+        versionName "1.5.6"
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
