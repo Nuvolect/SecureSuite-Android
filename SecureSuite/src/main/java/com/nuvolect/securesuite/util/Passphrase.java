@@ -22,40 +22,72 @@ public class Passphrase {
     public static int HEX         = 16;
     public static int SYSTEM_MODE = ALPHA_UPPER | ALPHA_LOWER | NUMERIC;
 
+    static final String ALPHA_UPPERS    = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    static final String ALPHA_LOWERS    = "abcdefghijklmnopqrstuvwxyz";
+    static final String NUMERICS        = "0123456789";
+    static final String SPECIALS        = "!$%@#";
+    static final String HEXS            = "0123456789ABCDEF";
 
     /**
      * Generate a random password of the specific length using a variety of character types.
-     * Does not guarantee each variety of character types is used.
+     * Validate and guarantee each variety of character types is used.
      * @param length
-     * @param mode
+     * @param modeTarget
      * @return
      */
-    public static char[] generateRandomPasswordChars(int length, int mode) {
+    public static char[] generateRandomPasswordChars(int length, int modeTarget) {
+
+        boolean types_validated = false;
+        char[] ranChars = new char[ length];
+        int modeFound = 0;
 
         StringBuffer sourceBuffer = new StringBuffer( 0 );
 
-        if( (mode & ALPHA_UPPER) > 0)
-            sourceBuffer.append("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-        if( (mode & ALPHA_LOWER) > 0)
-            sourceBuffer.append("abcdefghijklmnopqrstuvwxyz");
-        if( (mode & NUMERIC) > 0)
-            sourceBuffer.append("0123456789");
-        if( (mode & SPECIAL) > 0)
-            sourceBuffer.append("!$%@#");
-        if( (mode & HEX) > 0)
-            sourceBuffer.append("0123456789abcdef");
+        if( (modeTarget & ALPHA_UPPER) > 0)
+            sourceBuffer.append( ALPHA_UPPERS);
+        if( (modeTarget & ALPHA_LOWER) > 0)
+            sourceBuffer.append( ALPHA_LOWERS);
+        if( (modeTarget & NUMERIC) > 0)
+            sourceBuffer.append( NUMERICS);
+        if( (modeTarget & SPECIAL) > 0)
+            sourceBuffer.append( SPECIALS);
+        if( (modeTarget & HEX) > 0)
+            sourceBuffer.append( HEXS);
 
         if( sourceBuffer.length() == 0)
             sourceBuffer.append("0123456789");
 
         int sourceLength = sourceBuffer.length();
 
-        char[] ranChars = new char[ length];
+        while (!types_validated) {
 
-        for (int i = 0; i < length; i++) {
-            double index = Math.random() * sourceLength;
-            ranChars[i] = sourceBuffer.charAt((int) index);
+            for (int i = 0; i < length; i++) {
+                double index = Math.random() * sourceLength;
+                char randomChar = sourceBuffer.charAt((int) index);
+                ranChars[i] = randomChar;
+
+                if ( ALPHA_UPPERS.contains(String.valueOf(randomChar)))
+                    modeFound |= ALPHA_UPPER;
+                if ( ALPHA_LOWERS.contains(String.valueOf(randomChar)))
+                    modeFound |= ALPHA_LOWER;
+                if ( NUMERICS.contains(String.valueOf(randomChar)))
+                    modeFound |= NUMERIC;
+                if ( SPECIALS.contains(String.valueOf(randomChar)))
+                    modeFound |= SPECIAL;
+                if ( HEXS.contains(String.valueOf(randomChar)))
+                    modeFound |= HEX;
+            }
+            /**
+             * Support the case where extra conditions are met. Certain upper case letters
+             * also qualify as HEX as do numbers 0-9. The conditional makes sure you get at
+             * least the type want but sometimes you also get HEX.
+             */
+            if ( (modeFound & modeTarget) == modeTarget)
+                types_validated = true;
+            else
+                modeFound = 0;
         }
+
         sourceBuffer.delete( 0, sourceLength);
 
         return ranChars;
@@ -63,7 +95,6 @@ public class Passphrase {
 
     /**
      * Generate a random password of the specific length using a variety of character types.
-     * Does not guarantee each variety of character types is used.
      *
      * @param length
      * @param mode
@@ -79,7 +110,6 @@ public class Passphrase {
 
     /**
      * Generate a random password of the specific length using a variety of character types.
-     * Does not guarantee each variety of character types is used.
      *
      * @param length
      * @param mode
@@ -88,7 +118,9 @@ public class Passphrase {
     public static String generateRandomString(int length, int mode) {
 
         char[] chars = generateRandomPasswordChars( length, mode);
-        String string = chars.toString();
+        String string = new String(chars);
+
+        // Dispose of the char array
         chars = CrypUtil.cleanArray( chars);
 
         return string;

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":SecureSuite" external.linked.project.path="$MODULE_DIR$/../../../SecureSuite" external.root.project.path="$MODULE_DIR$/../../.." external.system.id="GRADLE" external.system.module.group="SecureSuite" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="android-gradle" name="Android-Gradle">
+      <configuration>
+        <option name="GRADLE_PROJECT_PATH" value=":SecureSuite" />
+        <option name="LAST_SUCCESSFUL_SYNC_AGP_VERSION" value="4.1.2" />
+        <option name="LAST_KNOWN_AGP_VERSION" value="4.1.2" />
+      </configuration>
+    </facet>
+    <facet type="android" name="Android">
+      <configuration>
+        <option name="SELECTED_BUILD_VARIANT" value="release" />
+        <option name="ASSEMBLE_TASK_NAME" value="assembleRelease" />
+        <option name="COMPILE_JAVA_TASK_NAME" value="compileReleaseSources" />
+        <afterSyncTasks>
+          <task>generateReleaseSources</task>
+        </afterSyncTasks>
+        <option name="ALLOW_USER_CONFIGURATION" value="false" />
+        <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
+        <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
+        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/../../../SecureSuite/src/main/res;file://$MODULE_DIR$/../../../SecureSuite/src/release/res;file://$MODULE_DIR$/../../../SecureSuite/build/generated/res/rs/release;file://$MODULE_DIR$/../../../SecureSuite/build/generated/res/resValues/release" />
+        <option name="TEST_RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/../../../SecureSuite/src/androidTest/res;file://$MODULE_DIR$/../../../SecureSuite/src/androidTestRelease/res" />
+        <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7">
+    <output url="file://$MODULE_DIR$/../../../SecureSuite/build/intermediates/javac/release/classes" />
+    <output-test url="file://$MODULE_DIR$/../../../SecureSuite/build/intermediates/javac/releaseUnitTest/classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../SecureSuite">
+      <sourceFolder url="file://$MODULE_DIR$/../../../SecureSuite/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../SecureSuite/src/androidTest/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../SecureSuite/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../SecureSuite/src/main/assets" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../SecureSuite/src/main/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../SecureSuite/build/generated/ap_generated_sources/release/out" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../SecureSuite/build/generated/source/buildConfig/release" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../SecureSuite/build/generated/res/resValues/release" type="java-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../SecureSuite/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../SecureSuite/build" />
+    </content>
+    <orderEntry type="jdk" jdkName="Android API 30 Platform" jdkType="Android SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.13" level="project" />
+    <orderEntry type="library" name="Gradle: commons-codec:commons-codec:1.11" level="project" />
+    <orderEntry type="library" name="Gradle: com.googlecode.ez-vcard:ez-vcard:0.10.6" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okhttp:okhttp-urlconnection:2.7.5" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okhttp:okhttp:2.7.5" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okio:okio:2.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.googlecode.libphonenumber:libphonenumber:8.12.1" level="project" />
+    <orderEntry type="library" name="Gradle: joda-time:joda-time:2.9.9" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.8.6" level="project" />
+    <orderEntry type="library" name="Gradle: commons-cli:commons-cli:20040117.000000" level="project" />
+    <orderEntry type="library" name="Gradle: commons-io:commons-io:2.6" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-lang3:3.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.madgag.spongycastle:bcpkix-jdk15on:1.58.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.madgag.spongycastle:bcpg-jdk15on:1.58.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.mangstadt:vinnie:2.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.jsoup:jsoup:1.13.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.freemarker:freemarker:2.3.30" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.10.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.70" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.70" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.collection:collection:1.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-common:2.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.arch.core:core-common:2.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.annotation:annotation:1.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.madgag.spongycastle:prov:1.58.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.madgag.spongycastle:core:1.58.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="library" name="Gradle: net.zetetic:android-database-sqlcipher:4.3.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: info.guardianproject.iocipher:IOCipher:0.5@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.legacy:legacy-support-v4:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.sqlite:sqlite:2.0.1@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.media:media:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.fragment:fragment:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.legacy:legacy-support-core-ui:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.legacy:legacy-support-core-utils:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.loader:loader:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.viewpager:viewpager:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.coordinatorlayout:coordinatorlayout:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.drawerlayout:drawerlayout:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.slidingpanelayout:slidingpanelayout:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.customview:customview:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.swiperefreshlayout:swiperefreshlayout:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.asynclayoutinflater:asynclayoutinflater:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.core:core:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.versionedparcelable:versionedparcelable:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-runtime:2.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.documentfile:documentfile:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.localbroadcastmanager:localbroadcastmanager:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.print:print:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.interpolator:interpolator:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.cursoradapter:cursoradapter:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-viewmodel:2.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-livedata:2.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-livedata-core:2.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.arch.core:core-runtime:2.0.0@aar" level="project" />
+  </component>
+</module>
