@@ -8,7 +8,8 @@ The concept is to provide a similar workflow to cloud based apps, without the se
 in an Internet cloud.
 Your private information is always with you, encrypted in your pocket and nowhere else.
 
-The current stable release is on Google Play  
+The current stable release is ~~on~~ NOT ON Google Play  
+Google does not like the number monitoring feature. When receiving an incoming call, SecureSuite will find an associated contact and display the name of the caller. Seems like a useful thing to do, this is how Android works but apparently not for 3-party apps. If you are a curious type and kind of handy, your participation in finding a way is appreciated.  
 <a href='https://play.google.com/store/apps/details?id=com.nuvolect.securesuite&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
 <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' 
 width="172" height="60" /></a>
@@ -18,6 +19,11 @@ width="172" height="60" /></a>
 ## Contributing Bug Reports
 We use GitHub for bug tracking. Please search the existing issues for your bug and create a new one if the issue is not yet tracked.
 <https://github.com/Nuvolect/SecureSuite-Android/issues>
+
+## Discussions
+Join the discussion, ask a question, and share what you have learned.  
+<https://github.com/Nuvolect/SecureSuite-Android/discussions>
+
 ## Joining the Beta  
 
 Want to live life on the bleeding edge and help out with testing?
